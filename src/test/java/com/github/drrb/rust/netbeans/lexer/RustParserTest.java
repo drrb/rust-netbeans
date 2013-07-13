@@ -1,21 +1,10 @@
 package com.github.drrb.rust.netbeans.lexer;
 
 import com.github.drrb.rust.netbeans.RustLexer;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.junit.Test;
-import org.antlr.v4.runtime.Token;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-import static com.github.drrb.rust.netbeans.RustLexer.*;
-import static com.github.drrb.rust.netbeans.RustParser.*;
 import com.github.drrb.rust.netbeans.RustParser;
 import org.antlr.v4.runtime.UnbufferedTokenStream;
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
 
 public class RustParserTest {
     @Test

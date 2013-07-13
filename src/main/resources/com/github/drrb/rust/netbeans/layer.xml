@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
-</filesystem>
 
+    <folder name="Editors">
+        <folder name="text">
+            <folder name="x-rust-source">
+                <attr name="displayName" bundlevalue="com.github.drrb.rust.netbeans.Bundle#Editors/text/x-rust-source"/>
+                <folder name="FontsColors">
+                    <folder name="NetBeans">
+                        <folder name="Defaults">
+                            <file name="FontAndColors.xml">
+                                <attr name="displayName" bundlevalue="com.github.drrb.rust.netbeans.Bundle#Editors/text/x-rust-source/FontsColors/NetBeans/Defaults/FontAndColors.xml"/>
+                            </file>
+                        </folder>
+                    </folder>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+
+    <folder name="OptionsDialog">
+        <folder name="PreviewExamples">
+            <folder name="text">
+                <file name="x-rust-source" url="RustPreviewExample.rs"/>
+            </folder>
+        </folder>
+    </folder>
+
+</filesystem>
