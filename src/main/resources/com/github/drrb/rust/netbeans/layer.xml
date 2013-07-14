@@ -9,8 +9,8 @@
                 <folder name="FontsColors">
                     <folder name="NetBeans">
                         <folder name="Defaults">
-                            <file name="FontAndColors.xml">
-                                <attr name="displayName" bundlevalue="com.github.drrb.rust.netbeans.Bundle#Editors/text/x-rust-source/FontsColors/NetBeans/Defaults/FontAndColors.xml"/>
+                            <file name="FontAndColors.xml" url="FontAndColors.xml"><!-- Don't "Use displayName instead": this is where we keep the token type names -->
+                                <attr name="SystemFileSystem.localizingBundle" stringvalue="com.github.drrb.rust.netbeans.Bundle"/>
                             </file>
                         </folder>
                     </folder>
