@@ -1,6 +1,7 @@
 package com.github.drrb.rust.netbeans;
 
 import java.util.Collection;
+import static java.util.Collections.*;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,13 +11,8 @@ import org.netbeans.spi.lexer.LexerRestartInfo;
 
 public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
     
-    private static final Map<Integer, RustTokenId> ANLTR_TOKEN_TYPE_TO_NETBANS_TOKEN_TYPE = new HashMap<Integer, RustTokenId>();
-    
-    static {
-        for (RustTokenId rustTokenId : RustTokenId.values()) {
-            ANLTR_TOKEN_TYPE_TO_NETBANS_TOKEN_TYPE.put(rustTokenId.antlrTokenType(), rustTokenId);
-        }
-    }
+    private static final Map<Integer, RustTokenId> ANLTR_TOKEN_TYPE_TO_NETBANS_TOKEN_TYPE = unmodifiableMap(buildTokenMap());
+    private static final Collection<RustTokenId> TOKEN_IDS = unmodifiableSet(EnumSet.allOf(RustTokenId.class));
 
     public static RustTokenId tokenForAntlrTokenType(int type) {
         RustTokenId tokenId = ANLTR_TOKEN_TYPE_TO_NETBANS_TOKEN_TYPE.get(type);
@@ -29,7 +25,7 @@ public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
 
     @Override
     protected Collection<RustTokenId> createTokenIds() {
-        return EnumSet.allOf(RustTokenId.class);
+        return TOKEN_IDS;
     }
 
     @Override
@@ -42,4 +38,11 @@ public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
         return RustLanguage.MIME_TYPE;
     }
     
+    private static Map<Integer, RustTokenId> buildTokenMap() {
+        Map<Integer, RustTokenId> tokens = new HashMap<Integer, RustTokenId>(RustTokenId.values().length);
+        for (RustTokenId rustTokenId : RustTokenId.values()) {
+            tokens.put(rustTokenId.antlrTokenType(), rustTokenId);
+        }
+        return tokens;
+    }
 }
