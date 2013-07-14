@@ -156,6 +156,12 @@
                 <artifactId>nbm-maven-plugin</artifactId>
                 <version>3.10.1</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <!-- TODO:
+                    <licenseName></licenseName>
+                    <licenseFile></licenseFile>
+                    -->
+                </configuration>
             </plugin>
 
             <plugin>
