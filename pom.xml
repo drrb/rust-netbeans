@@ -141,6 +141,11 @@
             <artifactId>org-netbeans-modules-editor-fold</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-editor-indent</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
 
         <!-- Non-NetBeans Dependencies -->
         <dependency>
