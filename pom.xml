@@ -236,6 +236,11 @@
     <profiles>
         <profile>
             <id>generate-grammar</id>
+            <activation>
+                <file>
+                    <missing>.no-generate-parser</missing>
+                </file>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
