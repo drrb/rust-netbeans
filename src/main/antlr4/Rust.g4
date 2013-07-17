@@ -798,10 +798,10 @@ INNER_DOC_COMMENT : '//!' ~[\n]*
 
 // HELPER DEFINITIONS:
 
-WS : [ \t\r\n]+; // skip spaces, tabs, newlines
-OTHER_LINE_COMMENT : '//' ~[\n] *;
-OTHER_BLOCK_COMMENT : '/*' (~[*] | ('*'+ ~[*/]))* '*'+ '/';
-SHEBANG_LINE : {at_beginning_of_file()}? '#!' ~[\n]* '\n';
+WS : [ \t\r\n]+ -> channel(HIDDEN) ; // skip spaces, tabs, newlines
+OTHER_LINE_COMMENT : '//' ~[\n] * -> channel(HIDDEN) ;
+OTHER_BLOCK_COMMENT : '/*' (~[*] | ('*'+ ~[*/]))* '*'+ '/' -> channel(HIDDEN) ;
+SHEBANG_LINE : {at_beginning_of_file()}? '#!' ~[\n]* '\n' -> channel(HIDDEN) ;
 
 BINDIGIT : [0-1_] ;
 DECDIGIT : [0-9] ;

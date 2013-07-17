@@ -1,6 +1,5 @@
-package com.github.drrb.rust.netbeans.lexer;
+package com.github.drrb.rust.netbeans;
 
-import com.github.drrb.rust.netbeans.RustLexer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,21 +18,23 @@ public class RustLexerTest {
     @Test
     public void shouldTokenizeWhitespace() {
         String input = "  \t ";
-        List<Token> tokens = tokenize(input);
+        Iterator<Token> tokens = tokenize(input).iterator();
 
-        assertEquals(2, tokens.size());
-        assertEquals(RustLexer.WS, tokens.get(0).getType());
-        assertEquals(Token.EOF, tokens.get(1).getType());
+        assertEquals(RustLexer.WS, tokens.next().getType());
+        assertEquals(Token.EOF, tokens.next().getType());
     }
 
     @Test
     public void shouldTokenizeFunction() {
         StringBuilder function = new StringBuilder();
+        function.append("// Say Hello\n");
         function.append("fn greet(name: str)   {\n");
         function.append("    io::println(fmt!(\"Hello, %?\", name));\n");
         function.append("}\n");
         Iterator<Token> tokens = tokenize(function).iterator();
 
+        assertThat(tokens.next(), is(token(OTHER_LINE_COMMENT, "// Say Hello")));
+        assertThat(tokens.next(), is(token(WS, "\n")));
         assertThat(tokens.next(), is(token(FN, "fn")));
         assertThat(tokens.next(), is(token(WS, " ")));
         assertThat(tokens.next(), is(token(IDENT, "greet")));
