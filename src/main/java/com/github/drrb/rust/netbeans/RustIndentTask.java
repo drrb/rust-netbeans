@@ -22,24 +22,30 @@ import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.modules.editor.indent.spi.Context;
 import org.netbeans.modules.editor.indent.spi.ExtraLock;
 import org.netbeans.modules.editor.indent.spi.IndentTask;
-import org.openide.awt.StatusDisplayer;
 
 public class RustIndentTask implements IndentTask {
 
     private final Context context;
 
-    RustIndentTask(Context context) {
+    protected RustIndentTask(Context context) {
         this.context = context;
     }
 
     @Override
     public void reindent() throws BadLocationException {
-        StatusDisplayer.getDefault().setStatusText("Indenting...");
-        Document document = context.document();
         int lineStart = context.lineStartOffset(context.startOffset());
-        int previousLineStart = context.lineStartOffset(lineStart - 1);
+        int previousLineEnd = lineStart - 1;
+        int previousLineStart = context.lineStartOffset(previousLineEnd);
         int previousLineIndent = context.lineIndent(previousLineStart);
-        context.modifyIndent(lineStart, previousLineIndent + 4);
+        Document document = context.document();
+        String lastCharOfPreviousLine = document.getText(previousLineEnd - 1, 1);
+        int targetIndent;
+        if ("{".equals(lastCharOfPreviousLine)) {
+            targetIndent = previousLineIndent + 4;
+        } else {
+            targetIndent = previousLineIndent;
+        }
+        context.modifyIndent(lineStart, targetIndent);
     }
 
     @Override
