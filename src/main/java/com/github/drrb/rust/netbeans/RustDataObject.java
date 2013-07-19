@@ -18,7 +18,7 @@ import org.openide.util.NbBundle.Messages;
 @MIMEResolver.ExtensionRegistration(
         mimeType = RustLanguage.MIME_TYPE,
         displayName = "#LBL_Rust_LOADER",
-        extension = {"rs"})
+        extension = {"rs", "rc"})
 @DataObject.Registration(
         mimeType = RustLanguage.MIME_TYPE,
         iconBase = "com/github/drrb/rust/netbeans/rust_icon_small.png",
