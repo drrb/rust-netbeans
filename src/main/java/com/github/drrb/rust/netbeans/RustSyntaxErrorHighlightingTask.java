@@ -18,13 +18,19 @@ package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.NetbeansRustParser.SyntaxError;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.text.Document;
+import org.netbeans.api.editor.mimelookup.MimeRegistration;
+import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.ParserResultTask;
 import org.netbeans.modules.parsing.spi.Scheduler;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
+import org.netbeans.modules.parsing.spi.SchedulerTask;
+import org.netbeans.modules.parsing.spi.TaskFactory;
 import org.netbeans.spi.editor.hints.ErrorDescription;
 import org.netbeans.spi.editor.hints.ErrorDescriptionFactory;
 import org.netbeans.spi.editor.hints.HintsController;
@@ -81,5 +87,14 @@ public class RustSyntaxErrorHighlightingTask extends ParserResultTask {
             errors.add(errorDescription);
         }
         return errors;
+    }
+    
+    @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TaskFactory.class)
+    public static class Factory extends TaskFactory {
+
+        @Override
+        public Collection<? extends SchedulerTask> create(Snapshot snapshot) {
+            return Collections.singleton(new RustSyntaxErrorHighlightingTask());
+        }
     }
 }

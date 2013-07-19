@@ -35,59 +35,37 @@ import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.spi.editor.fold.FoldManagerFactory;
 
 public class RustFoldManager implements FoldManager {
-
+    
     private static final FoldType COMMENT_FOLD_TYPE = new FoldType("/*...*/");
-    private FoldOperation operation;
+    private FoldOperation operations;
 
     @Override
-    public void init(FoldOperation operation) {
-        this.operation = operation;
+    public void init(FoldOperation operations) {
+        this.operations = operations;
     }
 
     @Override
     public void initFolds(FoldHierarchyTransaction transaction) {
-        FoldHierarchy hierarchy = operation.getHierarchy();
-        Document document = hierarchy.getComponent().getDocument();
-        TokenHierarchy<Document> hi = TokenHierarchy.get(document);
-        TokenSequence<RustTokenId> ts = (TokenSequence<RustTokenId>) hi.tokenSequence();
-        FoldType type = null;
-        int start = 0;
-        int offset = 0;
-        while (ts.moveNext()) {
-            offset = ts.offset();
-            Token<RustTokenId> token = ts.token();
-            RustTokenId id = token.id();
-            if (EnumSet.of(OTHER_BLOCK_COMMENT, OUTER_DOC_COMMENT).contains(id) && type == null) {
-                type = COMMENT_FOLD_TYPE;
-                start = offset;
-                try {
-                    operation.addToHierarchy(
-                            type,
-                            type.toString(),
-                            false,
-                            start,
-                            offset + token.length(),
-                            0,
-                            0,
-                            hierarchy,
-                            transaction);
-                } catch (BadLocationException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            }
-        }
+        removeAllFolds(transaction);
+        createAllFolds(transaction);
     }
 
     @Override
-    public void insertUpdate(DocumentEvent de, FoldHierarchyTransaction fht) {
+    public void insertUpdate(DocumentEvent event, FoldHierarchyTransaction transaction) {
+        removeAllFolds(transaction);
+        createAllFolds(transaction);
     }
 
     @Override
-    public void removeUpdate(DocumentEvent de, FoldHierarchyTransaction fht) {
+    public void removeUpdate(DocumentEvent event, FoldHierarchyTransaction transaction) {
+        removeAllFolds(transaction);
+        createAllFolds(transaction);
     }
 
     @Override
-    public void changedUpdate(DocumentEvent de, FoldHierarchyTransaction fht) {
+    public void changedUpdate(DocumentEvent event, FoldHierarchyTransaction transaction) {
+        removeAllFolds(transaction);
+        createAllFolds(transaction);
     }
 
     @Override
@@ -104,6 +82,51 @@ public class RustFoldManager implements FoldManager {
 
     @Override
     public void release() {
+    }
+
+    private void removeAllFolds(FoldHierarchyTransaction transaction) {
+        FoldHierarchy hierarchy = operations.getHierarchy();
+        Fold rootFold = hierarchy.getRootFold();
+        recursivelyRemoveFolds(rootFold, transaction);
+    }
+    
+    private void recursivelyRemoveFolds(Fold fold, FoldHierarchyTransaction transaction) {
+        for (int i = 0; i < fold.getFoldCount(); i++) {
+            Fold childFold = fold.getFold(i);
+            recursivelyRemoveFolds(childFold, transaction);
+        }
+        if (!fold.equals(fold.getHierarchy().getRootFold())) {
+            operations.removeFromHierarchy(fold, transaction);
+        }
+    }
+
+    private void createAllFolds(FoldHierarchyTransaction transaction) {
+        FoldHierarchy hierarchy = operations.getHierarchy();
+        Document document = hierarchy.getComponent().getDocument();
+        TokenHierarchy<Document> hi = TokenHierarchy.get(document);
+        TokenSequence<RustTokenId> ts = (TokenSequence<RustTokenId>) hi.tokenSequence();
+        while (ts.moveNext()) {
+            int offset = ts.offset();
+            Token<RustTokenId> token = ts.token();
+            RustTokenId id = token.id();
+            if (EnumSet.of(OTHER_BLOCK_COMMENT, OUTER_DOC_COMMENT).contains(id)) {
+                FoldType type = COMMENT_FOLD_TYPE;
+                try {
+                    operations.addToHierarchy(
+                            type,
+                            type.toString(),
+                            false,
+                            offset,
+                            offset + token.length(),
+                            0,
+                            0,
+                            hierarchy, //Could be null, but maybe we pass this so we can get at it later?
+                            transaction);
+                } catch (BadLocationException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
     }
 
     @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = FoldManagerFactory.class)

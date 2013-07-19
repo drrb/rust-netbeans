@@ -46,4 +46,13 @@ public class RustIndentTask implements IndentTask {
     public ExtraLock indentLock() {
         return null;
     }
+    
+    @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = IndentTask.Factory.class)
+    public static class Factory implements IndentTask.Factory {
+
+        @Override
+        public IndentTask createTask(Context context) {
+            return new RustIndentTask(context);
+        }
+    }
 }

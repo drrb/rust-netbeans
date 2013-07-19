@@ -17,7 +17,7 @@ public class RustLanguage extends DefaultLanguageConfig {
     }
 
     @Override
-    public Language getLexerLanguage() {
+    public Language<RustTokenId> getLexerLanguage() {
         return RustTokenId.getLanguage();
     }
     

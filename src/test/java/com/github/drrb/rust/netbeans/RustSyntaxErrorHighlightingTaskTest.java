@@ -46,7 +46,7 @@ public class RustSyntaxErrorHighlightingTaskTest {
         
         Document document = RustDocument.containing(function);
         Snapshot snapshot = snapshotOf(document);
-        RustSyntaxErrorHighlightingFactory factory = new RustSyntaxErrorHighlightingFactory();
+        RustSyntaxErrorHighlightingTask.Factory factory = new RustSyntaxErrorHighlightingTask.Factory();
         Collection<? extends SchedulerTask> tasks = factory.create(snapshot);
         RustSyntaxErrorHighlightingTask highlightingTask = (RustSyntaxErrorHighlightingTask) tasks.iterator().next();
         NetbeansRustParserResult parseResult = new NetbeansRustParserResult(snapshot, null, Arrays.asList(syntaxError));
