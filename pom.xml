@@ -136,11 +136,13 @@
             <artifactId>org-netbeans-modules-parsing-api</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!-- For Fold Manager -->
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-fold</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!-- For Indenting Task -->
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-indent</artifactId>
