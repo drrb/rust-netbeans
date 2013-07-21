@@ -148,6 +148,17 @@
             <artifactId>org-netbeans-modules-editor-indent</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!-- Code completion -->
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-editor-completion</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-editor-mimelookup</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
 
         <!-- Non-NetBeans Dependencies -->
         <dependency>
