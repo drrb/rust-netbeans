@@ -28,6 +28,24 @@ public class RustParserTest {
         assertThat(syntaxError.getMessage(), is("no viable alternative at input 'xxx io'"));
     }
 
+    @Test
+    public void shouldParseRustdoc() throws Exception {
+        StringBuilder function = new StringBuilder();
+        function.append("/**\n");
+        function.append(" * Say Hello\n");
+        function.append(" */\n");
+        function.append("fn greet(name: str) {\n");
+        function.append("    io::println(fmt!(\"Hello, %?\", name));\n");
+        function.append("}\n");
+        
+        NetbeansRustParserResult result = parse(function);
+        
+        Iterator<Rustdoc> rustdocs = result.getRustdocs().iterator();
+        Rustdoc rustdoc = rustdocs.next();
+        assertThat(rustdoc.getText(), is("/**\n * Say Hello\n */"));
+        assertThat(rustdoc.getIdentifier(), is("greet"));
+    }
+
     private NetbeansRustParserResult parse(CharSequence input) throws Exception {
         Document document = RustDocument.containing(input);
         Source source = Source.create(document);

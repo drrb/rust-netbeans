@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.event.ChangeListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
@@ -28,6 +29,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.netbeans.modules.csl.api.Error;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.Snapshot;
@@ -44,12 +46,14 @@ public class NetbeansRustParser extends Parser {
 
     private Snapshot snapshot;
     private RustParser parser;
+    private LinkedList<Rustdoc> rustdocs;
     private List<SyntaxError> syntaxErrors;
 
     @Override
     public void parse(final Snapshot snapshot, Task task, SourceModificationEvent event) {
         this.snapshot = snapshot;
         this.parser = createParser(snapshot);
+        this.rustdocs = new LinkedList<Rustdoc>();
         this.syntaxErrors = new LinkedList<SyntaxError>();
         this.parser.addErrorListener(new BaseErrorListener() {
 
@@ -59,6 +63,7 @@ public class NetbeansRustParser extends Parser {
             }
             
         });
+        this.parser.addParseListener(new RustdocCollectingParseListener(rustdocs));
         try {
             parser.prog();
         } catch (Exception ex) {
@@ -68,7 +73,7 @@ public class NetbeansRustParser extends Parser {
 
     @Override
     public NetbeansRustParserResult getResult(Task task) throws ParseException {
-        return new NetbeansRustParserResult(snapshot, parser, syntaxErrors);
+        return new NetbeansRustParserResult(snapshot, parser, rustdocs, syntaxErrors);
     }
 
     @Override
@@ -113,28 +118,34 @@ public class NetbeansRustParser extends Parser {
     public static class NetbeansRustParserResult extends ParserResult {
         private final RustParser parser;
         private final List<SyntaxError> syntaxErrors;
-        private boolean valid = true;
+        private final AtomicBoolean valid = new AtomicBoolean(true);
+        private final List<Rustdoc> rustdocs;
         
-        protected NetbeansRustParserResult(Snapshot snapshot, RustParser parser, List<SyntaxError> syntaxErrors) {
+        protected NetbeansRustParserResult(Snapshot snapshot, RustParser parser, List<Rustdoc> rustdocs, List<SyntaxError> syntaxErrors) {
             super(snapshot);
             this.parser = parser;
-            this.syntaxErrors = Collections.unmodifiableList(new ArrayList<SyntaxError>(syntaxErrors));
+            this.rustdocs = rustdocs;
+            this.syntaxErrors = new ArrayList<SyntaxError>(syntaxErrors);
         }
 
         public RustParser getRustParser() throws ParseException {
-            if (!valid) {
+            if (!valid.get()) {
                 throw new ParseException();
             }
             return parser;
         }
 
         public List<SyntaxError> getSyntaxErrors() {
-            return syntaxErrors;
+            return Collections.unmodifiableList(syntaxErrors);
+        }
+        
+        public List<Rustdoc> getRustdocs() {
+            return Collections.unmodifiableList(rustdocs);
         }
 
         @Override
         protected void invalidate() {
-            valid = false;
+            valid.set(false);
         }
 
         @Override
