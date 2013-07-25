@@ -9,7 +9,6 @@ License: TODO
 -------------------------------------------------------------------------
 
 ANTLR Runtime
-Version: 4.0
 URL: https://github.com/antlr/antlr4
 License: Modified BSD License
 
@@ -41,3 +40,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -------------------------------------------------------------------------
+
+Pegdown
+URL: http://pegdown.org
+License: Apache License Version 2.0
+
+-------------------------------------------------------------------------
+
