@@ -1,0 +1,19 @@
+diff --git a/../rust-antlr/Rust.g4 b/src/main/antlr4/Rust.g4
+index f917393..9a1ab55 100644
+--- a/../rust-antlr/Rust.g4
++++ b/src/main/antlr4/Rust.g4
+@@ -798,10 +798,10 @@ INNER_DOC_COMMENT : '//!' ~[\n]*
+ 
+ // HELPER DEFINITIONS:
+ 
+-WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
+-OTHER_LINE_COMMENT : '//' ~[\n] * -> skip ;
+-OTHER_BLOCK_COMMENT : '/*' (~[*] | ('*'+ ~[*/]))* '*'+ '/' -> skip ;
+-SHEBANG_LINE : {at_beginning_of_file()}? '#!' ~[\n]* '\n' -> skip ;
++WS : [ \t\r\n]+ -> channel(HIDDEN) ; // skip spaces, tabs, newlines
++OTHER_LINE_COMMENT : '//' ~[\n] * -> channel(HIDDEN) ;
++OTHER_BLOCK_COMMENT : '/*' (~[*] | ('*'+ ~[*/]))* '*'+ '/' -> channel(HIDDEN) ;
++SHEBANG_LINE : {at_beginning_of_file()}? '#!' ~[\n]* '\n' -> channel(HIDDEN) ;
+ 
+ BINDIGIT : [0-1_] ;
+ DECDIGIT : [0-9] ;
