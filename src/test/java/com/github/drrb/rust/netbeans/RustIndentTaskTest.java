@@ -77,4 +77,22 @@ public class RustIndentTaskTest {
         
         verify(context).modifyIndent(16, 8);
     }
+    
+    @Test
+    public void shouldIgnoreSpaceAfterBrace() throws Exception {
+        StringBuilder source = new StringBuilder();
+        source.append("    fn main() {  \t \n") //As though we just pressed return at the end of this line
+              .append("");
+        Document document = RustDocument.containing(source);
+        
+        when(context.document()).thenReturn(document);
+        when(context.startOffset()).thenReturn(20);
+        when(context.lineStartOffset(20)).thenReturn(20);
+        when(context.lineStartOffset(19)).thenReturn(0);
+        when(context.lineIndent(0)).thenReturn(4);
+
+        indentTask.reindent();
+        
+        verify(context).modifyIndent(20, 8);
+    }
 }

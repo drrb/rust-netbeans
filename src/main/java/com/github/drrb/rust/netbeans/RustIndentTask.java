@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import static java.lang.Character.isWhitespace;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
@@ -38,14 +39,24 @@ public class RustIndentTask implements IndentTask {
         int previousLineStart = context.lineStartOffset(previousLineEnd);
         int previousLineIndent = context.lineIndent(previousLineStart);
         Document document = context.document();
-        String lastCharOfPreviousLine = document.getText(previousLineEnd - 1, 1);
+        char lastCharOfPreviousLine = lastNonWhiteCharacter(previousLineStart, previousLineEnd, document);
         int targetIndent;
-        if ("{".equals(lastCharOfPreviousLine)) {
+        if (lastCharOfPreviousLine == '{') {
             targetIndent = previousLineIndent + 4;
         } else {
             targetIndent = previousLineIndent;
         }
         context.modifyIndent(lineStart, targetIndent);
+    }
+    
+    private static char lastNonWhiteCharacter(int lineStart, int lineEnd, Document document) throws BadLocationException {
+        for (int i = lineEnd; i > lineStart; i--) {
+            char character = document.getText(i - 1, 1).charAt(0);
+            if (!isWhitespace(character)) {
+                return character;
+            }
+        }
+        return ' ';
     }
 
     @Override
