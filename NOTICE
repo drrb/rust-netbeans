@@ -1,0 +1,100 @@
+This project depends on the following libraries (including test and runtime dependencies)
+
+An ANTLR grammar for Rust
+URL: https://github.com/jbclements/rust-antlr
+License: TODO
+
+  abego TreeLayout Core under BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)
+  ANTLR 3 Runtime under BSD licence
+  ANTLR 4 Runtime under The BSD License
+  ANTLR 4 Tool under The BSD License
+  AntLR Parser Generator under BSD License
+  ANTLR StringTemplate under BSD licence
+  ASM Analysis under BSD
+  ASM Core under BSD
+  ASM Tree under BSD
+  ASM Util under BSD
+  Hamcrest All under New BSD License
+  Hamcrest Core under New BSD License
+  Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
+  JUnit under Common Public License Version 1.0
+  Lucene Core under Apache 2
+  Maven definition for swing-layout-1.0.4.jar - external part of NetBeans module. under GPL v2
+  Mockito under The MIT License
+  Objenesis under Apache 2
+  org-jdesktop-layout under GPL v2
+  org-netbeans-api-annotations-common under GPL v2
+  org-netbeans-api-java-classpath under GPL v2
+  org-netbeans-api-progress under GPL v2
+  org-netbeans-api-search under GPL v2
+  org-netbeans-bootstrap under GPL v2
+  org-netbeans-core under GPL v2
+  org-netbeans-core-multiview under GPL v2
+  org-netbeans-core-startup under GPL v2
+  org-netbeans-core-ui under GPL v2
+  org-netbeans-libs-lucene under GPL v2
+  org-netbeans-modules-csl-api under GPL v2
+  org-netbeans-modules-diff under GPL v2
+  org-netbeans-modules-editor under GPL v2
+  org-netbeans-modules-editor-breadcrumbs under GPL v2
+  org-netbeans-modules-editor-codetemplates under GPL v2
+  org-netbeans-modules-editor-completion under GPL v2
+  org-netbeans-modules-editor-errorstripe under GPL v2
+  org-netbeans-modules-editor-errorstripe-api under GPL v2
+  org-netbeans-modules-editor-fold under GPL v2
+  org-netbeans-modules-editor-guards under GPL v2
+  org-netbeans-modules-editor-indent under GPL v2
+  org-netbeans-modules-editor-lib under GPL v2
+  org-netbeans-modules-editor-lib2 under GPL v2
+  org-netbeans-modules-editor-mimelookup under GPL v2
+  org-netbeans-modules-editor-settings under GPL v2
+  org-netbeans-modules-editor-settings-storage under GPL v2
+  org-netbeans-modules-editor-util under GPL v2
+  org-netbeans-modules-jumpto under GPL v2
+  org-netbeans-modules-keyring under GPL v2
+  org-netbeans-modules-lexer under GPL v2
+  org-netbeans-modules-masterfs under GPL v2
+  org-netbeans-modules-options-api under GPL v2
+  org-netbeans-modules-options-editor under GPL v2
+  org-netbeans-modules-options-keymap under GPL v2
+  org-netbeans-modules-parsing-api under GPL v2
+  org-netbeans-modules-parsing-lucene under GPL v2
+  org-netbeans-modules-project-indexingbridge under GPL v2
+  org-netbeans-modules-projectapi under GPL v2
+  org-netbeans-modules-projectuiapi under GPL v2
+  org-netbeans-modules-queries under GPL v2
+  org-netbeans-modules-refactoring-api under GPL v2
+  org-netbeans-modules-sampler under GPL v2
+  org-netbeans-spi-editor-hints under GPL v2
+  org-netbeans-spi-navigator under GPL v2
+  org-netbeans-spi-quicksearch under GPL v2
+  org-netbeans-spi-tasklist under GPL v2
+  org-netbeans-swing-outline under GPL v2
+  org-netbeans-swing-plaf under GPL v2
+  org-netbeans-swing-tabcontrol under GPL v2
+  org-openide-actions under GPL v2
+  org-openide-awt under GPL v2
+  org-openide-dialogs under GPL v2
+  org-openide-execution under GPL v2
+  org-openide-explorer under GPL v2
+  org-openide-filesystems under GPL v2
+  org-openide-io under GPL v2
+  org-openide-loaders under GPL v2
+  org-openide-modules under GPL v2
+  org-openide-nodes under GPL v2
+  org-openide-text under GPL v2
+  org-openide-util under GPL v2
+  org-openide-util-lookup under GPL v2
+  org-openide-windows under GPL v2
+  parboiled-core under Apache 2
+  parboiled-java under Apache 2
+  pegdown under Apache 2
+  powermock-api-mockito under The Apache Software License, Version 2.0
+  powermock-api-support under The Apache Software License, Version 2.0
+  powermock-core under The Apache Software License, Version 2.0
+  powermock-module-junit4 under The Apache Software License, Version 2.0
+  powermock-module-junit4-common under The Apache Software License, Version 2.0
+  powermock-reflect under The Apache Software License, Version 2.0
+  rust-netbeans under GNU General Public License, Version 3
+  StringTemplate 4 under BSD licence
+

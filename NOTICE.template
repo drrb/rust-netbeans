@@ -1,0 +1,7 @@
+This project depends on the following libraries (including test and runtime dependencies)
+
+An ANTLR grammar for Rust
+URL: https://github.com/jbclements/rust-antlr
+License: TODO
+
+#GENERATED_NOTICES#

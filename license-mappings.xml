@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<license-lookup xmlns="https://source.jasig.org/schemas/maven-notice-plugin/license-lookup" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://source.jasig.org/schemas/maven-notice-plugin/license-lookup https://source.jasig.org/schemas/maven-notice-plugin/license-lookup/license-lookup-v1.0.xsd">
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-jdesktop-layout</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-annotations-common</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-java-classpath</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-progress</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-search</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-core-multiview</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-libs-lucene</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-csl-api</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-diff</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-codetemplates</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-completion</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-errorstripe-api</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-fold</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-guards</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-indent</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-lib</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-lib2</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-mimelookup</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-settings</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-util</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-keyring</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-lexer</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-options-api</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-parsing-api</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-projectapi</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-projectuiapi</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-queries</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-refactoring-api</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-sampler</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-spi-editor-hints</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-spi-navigator</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-spi-quicksearch</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-spi-tasklist</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-swing-outline</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-swing-plaf</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-swing-tabcontrol</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-actions</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-awt</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-dialogs</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-execution</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-explorer</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-filesystems</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-io</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-loaders</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-modules</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-nodes</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-text</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-util</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-util-lookup</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-windows</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.external</groupId>
+        <artifactId>swing-layout-1.0.4</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-bootstrap</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-core</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-core-startup</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-core-ui</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-editor-breadcrumbs</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-editor-errorstripe</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-editor-settings-storage</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-jumpto</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-masterfs</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-options-editor</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-options-keymap</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-parsing-lucene</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-project-indexingbridge</artifactId>
+        <version>RELEASE731</version>
+        <license>GPL v2</license>
+    </artifact>
+</license-lookup>
