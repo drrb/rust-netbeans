@@ -16,12 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+set -e
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+echo "Downloading Rust ANTLR grammar"
+cd `dirname "${BASH_SOURCE[0]}"`/..
 mkdir -p src/main/antlr4
 cd src/main/antlr4
 wget https://raw.github.com/jbclements/rust-antlr/master/Rust.g4
 wget https://raw.github.com/jbclements/rust-antlr/master/xidstart.g4
 wget https://raw.github.com/jbclements/rust-antlr/master/xidcont.g4
 cd -
-
+git apply --reverse src/etc/rust-antlr.patch 

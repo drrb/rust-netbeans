@@ -317,7 +317,7 @@
                             <header>license-header.txt</header>
                             <strictCheck>true</strictCheck>
                             <excludes>
-				<exclude>LICENSE.txt</exclude>
+                                <exclude>LICENSE.txt</exclude>
                                 <exclude>**/*.rs</exclude>
                                 <exclude>README.md</exclude>
                                 <exclude>NOTICE</exclude>
@@ -347,6 +347,36 @@
                                     <goal>generate</goal>
                                 </goals>
                                 <phase>process-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>set-up-grammar</id>
+            <activation>
+                <file>
+                    <missing>src/main/antlr4/Rust.g4</missing>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>download-and-patch-grammar</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>scripts/set-up-grammar.sh</executable>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
