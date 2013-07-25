@@ -2,6 +2,16 @@
 
 Rust support for NetBeans
 
+So far, it includes
+
+* basic syntax highlighting
+* basic error highlighting
+* basic code completion
+* basic code folding
+* basic indentation
+
+NB: For the purposes of this readme, "basic" is defined as "embarrassingly minimal"
+
 ## Contributing
 
 1. Fork it
