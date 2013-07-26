@@ -2,6 +2,8 @@
 
 Rust support for NetBeans
 
+[![Build Status](https://travis-ci.org/drrb/rust-netbeans.png?branch=master)](https://travis-ci.org/drrb/rust-netbeans)
+
 So far, it includes
 
 * basic syntax highlighting
