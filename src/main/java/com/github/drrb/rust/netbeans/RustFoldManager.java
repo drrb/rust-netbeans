@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import com.github.drrb.rust.netbeans.NetbeansRustParser.NetbeansRustParserResult;
 import java.util.EnumSet;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.BadLocationException;
@@ -31,12 +32,21 @@ import org.netbeans.spi.editor.fold.FoldManager;
 import org.netbeans.spi.editor.fold.FoldOperation;
 import org.openide.util.Exceptions;
 import static com.github.drrb.rust.netbeans.RustTokenId.*;
+import com.github.drrb.rust.netbeans.parse.RustFunctionCollectingVisitor;
+import java.util.Collection;
+import java.util.Collections;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
+import org.netbeans.modules.parsing.api.ParserManager;
+import org.netbeans.modules.parsing.api.ResultIterator;
+import org.netbeans.modules.parsing.api.Source;
+import org.netbeans.modules.parsing.api.UserTask;
+import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.spi.editor.fold.FoldManagerFactory;
 
 public class RustFoldManager implements FoldManager {
-    
+
     private static final FoldType COMMENT_FOLD_TYPE = new FoldType("/*...*/");
+    private static final FoldType FUNCTION_FOLD_TYPE = new FoldType("fn { .. }");
     private FoldOperation operations;
 
     @Override
@@ -89,7 +99,7 @@ public class RustFoldManager implements FoldManager {
         Fold rootFold = hierarchy.getRootFold();
         recursivelyRemoveFolds(rootFold, transaction);
     }
-    
+
     private void recursivelyRemoveFolds(Fold fold, FoldHierarchyTransaction transaction) {
         for (int i = 0; i < fold.getFoldCount(); i++) {
             Fold childFold = fold.getFold(i);
@@ -100,8 +110,8 @@ public class RustFoldManager implements FoldManager {
         }
     }
 
-    private void createAllFolds(FoldHierarchyTransaction transaction) {
-        FoldHierarchy hierarchy = operations.getHierarchy();
+    private void createAllFolds(final FoldHierarchyTransaction transaction) {
+        final FoldHierarchy hierarchy = operations.getHierarchy();
         Document document = hierarchy.getComponent().getDocument();
         TokenHierarchy<Document> hi = TokenHierarchy.get(document);
         TokenSequence<RustTokenId> ts = (TokenSequence<RustTokenId>) hi.tokenSequence();
@@ -126,6 +136,34 @@ public class RustFoldManager implements FoldManager {
                     Exceptions.printStackTrace(ex);
                 }
             }
+        }
+        try {
+            ParserManager.parse(Collections.singletonList(Source.create(document)), new UserTask() {
+                @Override
+                public void run(ResultIterator resultIterator) throws Exception {
+                    NetbeansRustParserResult result = (NetbeansRustParserResult) resultIterator.getParserResult();
+                    RustParser.ProgContext prog = result.getAst();
+                    Collection<RustFunction> functions = prog.accept(new RustFunctionCollectingVisitor());
+                    for (RustFunction function : functions) {
+                        try {
+                            operations.addToHierarchy(
+                                    FUNCTION_FOLD_TYPE,
+                                    String.format("fn %s { ... }", function.getName()),
+                                    false,
+                                    function.getStartIndex(),
+                                    function.getEndIndex() + 1,
+                                    0,
+                                    0,
+                                    hierarchy, //Could be null, but maybe we pass this so we can get at it later?
+                                    transaction);
+                        } catch (BadLocationException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
+                    }
+                }
+            });
+        } catch (ParseException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 

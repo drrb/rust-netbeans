@@ -57,7 +57,6 @@ public class RustCompletionProvider implements CompletionProvider {
         @Override
         protected void query(CompletionResultSet completionResultSet, Document document, int caretOffset) {
             List<String> rustTokens = Arrays.asList("fn", "pub");
-
             String filter = null;
             int startOffset = caretOffset - 1;
 

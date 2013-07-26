@@ -29,7 +29,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.netbeans.modules.csl.api.Error;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.Snapshot;
@@ -48,6 +47,7 @@ public class NetbeansRustParser extends Parser {
     private RustParser parser;
     private LinkedList<Rustdoc> rustdocs;
     private List<SyntaxError> syntaxErrors;
+    private RustParser.ProgContext ast;
 
     @Override
     public void parse(final Snapshot snapshot, Task task, SourceModificationEvent event) {
@@ -65,7 +65,7 @@ public class NetbeansRustParser extends Parser {
         });
         this.parser.addParseListener(new RustdocCollectingParseListener(rustdocs));
         try {
-            parser.prog();
+            ast = parser.prog();
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -73,7 +73,7 @@ public class NetbeansRustParser extends Parser {
 
     @Override
     public NetbeansRustParserResult getResult(Task task) throws ParseException {
-        return new NetbeansRustParserResult(snapshot, parser, rustdocs, syntaxErrors);
+        return new NetbeansRustParserResult(snapshot, parser, ast, rustdocs, syntaxErrors);
     }
 
     @Override
@@ -119,11 +119,13 @@ public class NetbeansRustParser extends Parser {
         private final RustParser parser;
         private final List<SyntaxError> syntaxErrors;
         private final AtomicBoolean valid = new AtomicBoolean(true);
+        private final RustParser.ProgContext ast;
         private final List<Rustdoc> rustdocs;
         
-        protected NetbeansRustParserResult(Snapshot snapshot, RustParser parser, List<Rustdoc> rustdocs, List<SyntaxError> syntaxErrors) {
+        protected NetbeansRustParserResult(Snapshot snapshot, RustParser parser, RustParser.ProgContext ast, List<Rustdoc> rustdocs, List<SyntaxError> syntaxErrors) {
             super(snapshot);
             this.parser = parser;
+            this.ast = ast;
             this.rustdocs = rustdocs;
             this.syntaxErrors = new ArrayList<SyntaxError>(syntaxErrors);
         }
@@ -141,6 +143,10 @@ public class NetbeansRustParser extends Parser {
         
         public List<Rustdoc> getRustdocs() {
             return Collections.unmodifiableList(rustdocs);
+        }
+
+        public RustParser.ProgContext getAst() {
+            return ast;
         }
 
         @Override
