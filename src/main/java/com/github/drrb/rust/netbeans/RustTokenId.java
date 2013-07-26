@@ -123,10 +123,12 @@ public enum RustTokenId implements TokenId {
     XIDSTART(RustLexer.XIDSTART, TokenCategory.IDENTIFIER),
     XIDCONT(RustLexer.XIDCONT, TokenCategory.IDENTIFIER);
 
+    private static final Language<RustTokenId> LANGUAGE = new RustLanguageHierarchy().language();
+
     public static Language<RustTokenId> getLanguage() {
-        return new RustLanguageHierarchy().language();
+        return LANGUAGE;
     }
-    
+
     private final int antlrTokenType;
     private final TokenCategory primaryCategory;
 

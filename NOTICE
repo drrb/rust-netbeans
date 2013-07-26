@@ -36,6 +36,7 @@ License: TODO
   org-netbeans-modules-csl-api under GPL v2
   org-netbeans-modules-diff under GPL v2
   org-netbeans-modules-editor under GPL v2
+  org-netbeans-modules-editor-bracesmatching under GPL v2
   org-netbeans-modules-editor-breadcrumbs under GPL v2
   org-netbeans-modules-editor-codetemplates under GPL v2
   org-netbeans-modules-editor-completion under GPL v2
