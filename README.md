@@ -11,6 +11,7 @@ So far, it includes
 * basic code completion
 * basic code folding
 * basic indentation
+* brace matching
 
 NB: For the purposes of this readme, "basic" is defined as "embarrassingly minimal"
 
