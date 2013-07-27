@@ -23,7 +23,6 @@ import javax.swing.text.BadLocationException;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenSequence;
-import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.spi.editor.bracesmatching.BracesMatcher;
 import org.netbeans.spi.editor.bracesmatching.BracesMatcherFactory;
 import org.netbeans.spi.editor.bracesmatching.MatcherContext;
@@ -34,23 +33,8 @@ import org.netbeans.spi.editor.bracesmatching.MatcherContext;
 public class RustBracesMatcher implements BracesMatcher {
 
     private static final Logger LOGGER = Logger.getLogger(RustBracesMatcher.class.getName());
-    private final RustLexUtils rustLexUtils;
-
-    private enum BracePair {
-
-        PARENS(RustTokenId.LPAREN, RustTokenId.RPAREN),
-        BRACES(RustTokenId.LBRACE, RustTokenId.RBRACE),
-        BRACKETS(RustTokenId.LBRACKET, RustTokenId.RBRACKET),
-        ANGLES(RustTokenId.LT, RustTokenId.GT);
-        final RustTokenId open;
-        final RustTokenId close;
-
-        private BracePair(RustTokenId open, RustTokenId close) {
-            this.open = open;
-            this.close = close;
-        }
-    }
     private final MatcherContext context;
+    private final RustLexUtils rustLexUtils;
 
     public RustBracesMatcher(MatcherContext context, RustLexUtils rustLexUtils) {
         this.context = context;
@@ -68,26 +52,26 @@ public class RustBracesMatcher implements BracesMatcher {
                 LOGGER.warning("Couldn't get Rust token sequence for braces matching");
                 return null;
             } else {
-                return getBraceAtOffset(tokenSequence, offset);
+                return getBraceAtOffset(tokenSequence, offset).ends();
             }
         } finally {
             document.readUnlock();
         }
     }
 
-    private int[] getBraceAtOffset(TokenSequence<RustTokenId> tokenSequence, int offset) {
+    private OffsetRange getBraceAtOffset(TokenSequence<RustTokenId> tokenSequence, int offset) {
         tokenSequence.move(offset);
         if (tokenSequence.moveNext()) {
             Token<RustTokenId> token = tokenSequence.token();
             for (BracePair bracePair : BracePair.values()) {
                 if (token.id() == bracePair.open || token.id() == bracePair.close) {
-                    return new int[]{tokenSequence.offset(), tokenSequence.offset() + token.length()};
+                    return OffsetRange.ofCurrentToken(tokenSequence);
                 }
             }
         } else {
             LOGGER.log(Level.WARNING, "No token at offset {0}", offset);
         }
-        return null;
+        return OffsetRange.NONE;
     }
 
     @Override
@@ -101,43 +85,40 @@ public class RustBracesMatcher implements BracesMatcher {
                 LOGGER.warning("Couldn't get Rust token sequence for braces matching");
                 return null;
             } else {
-                return getBraceMatchingTheOneAtOffset(tokenSequence, offset);
+                return getBraceMatchingTheOneAtOffset(tokenSequence, offset).ends();
             }
         } finally {
             document.readUnlock();
         }
     }
 
-    private int[] getBraceMatchingTheOneAtOffset(TokenSequence<RustTokenId> tokenSequence, int offset) {
+    private OffsetRange getBraceMatchingTheOneAtOffset(TokenSequence<RustTokenId> tokenSequence, int offset) {
         tokenSequence.move(offset);
         if (tokenSequence.moveNext()) {
             Token<RustTokenId> token = tokenSequence.token();
-            OffsetRange offsetRange;
             for (BracePair bracePair : BracePair.values()) {
                 if (token.id() == bracePair.open) {
-                    offsetRange = findForward(tokenSequence, bracePair.open, bracePair.close);
-                    return new int[]{offsetRange.getStart(), offsetRange.getEnd()};
+                    return findCloseBraceForward(tokenSequence, bracePair);
                 } else if (token.id() == bracePair.close) {
-                    offsetRange = findBackward(tokenSequence, bracePair.open, bracePair.close);
-                    return new int[]{offsetRange.getStart(), offsetRange.getEnd()};
+                    return findOpenBraceBackward(tokenSequence, bracePair);
                 }
             }
         } else {
             LOGGER.log(Level.WARNING, "No token at offset {0}", offset);
         }
-        return null;
+        return OffsetRange.NONE;
     }
 
-    private static OffsetRange findForward(TokenSequence<? extends RustTokenId> ts, RustTokenId up, RustTokenId down) {
+    private static OffsetRange findCloseBraceForward(TokenSequence<? extends RustTokenId> tokenSequence, BracePair bracePair) {
         int balance = 0;
 
-        while (ts.moveNext()) {
-            Token<? extends RustTokenId> token = ts.token();
-            if (token.id() == up) {
+        while (tokenSequence.moveNext()) {
+            Token<? extends RustTokenId> token = tokenSequence.token();
+            if (token.id() == bracePair.open) {
                 balance++;
-            } else if (token.id() == down) {
+            } else if (token.id() == bracePair.close) {
                 if (balance == 0) {
-                    return new OffsetRange(ts.offset(), ts.offset() + token.length());
+                    return OffsetRange.ofCurrentToken(tokenSequence);
                 }
                 balance--;
             }
@@ -146,17 +127,17 @@ public class RustBracesMatcher implements BracesMatcher {
         return OffsetRange.NONE;
     }
 
-    private static OffsetRange findBackward(TokenSequence<? extends RustTokenId> ts, RustTokenId up, RustTokenId down) {
+    private static OffsetRange findOpenBraceBackward(TokenSequence<? extends RustTokenId> tokenSequence, BracePair bracePair) {
         int balance = 0;
 
-        while (ts.movePrevious()) {
-            Token<? extends RustTokenId> token = ts.token();
-            if (token.id() == up) {
+        while (tokenSequence.movePrevious()) {
+            Token<? extends RustTokenId> token = tokenSequence.token();
+            if (token.id() == bracePair.open) {
                 if (balance == 0) {
-                    return new OffsetRange(ts.offset(), ts.offset() + token.length());
+                    return OffsetRange.ofCurrentToken(tokenSequence);
                 }
                 balance++;
-            } else if (token.id() == down) {
+            } else if (token.id() == bracePair.close) {
                 balance--;
             }
         }
@@ -170,6 +151,46 @@ public class RustBracesMatcher implements BracesMatcher {
         @Override
         public BracesMatcher createMatcher(MatcherContext context) {
             return new RustBracesMatcher(context, new RustLexUtils());
+        }
+    }
+
+    private enum BracePair {
+
+        PARENS(RustTokenId.LPAREN, RustTokenId.RPAREN),
+        BRACES(RustTokenId.LBRACE, RustTokenId.RBRACE),
+        BRACKETS(RustTokenId.LBRACKET, RustTokenId.RBRACKET),
+        ANGLES(RustTokenId.LT, RustTokenId.GT);
+        final RustTokenId open;
+        final RustTokenId close;
+
+        private BracePair(RustTokenId open, RustTokenId close) {
+            this.open = open;
+            this.close = close;
+        }
+    }
+
+    private static class OffsetRange {
+
+        static final OffsetRange NONE = new OffsetRange(-1, -1);
+        private final int start;
+        private final int end;
+
+        OffsetRange(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        int[] ends() {
+            if (this == NONE) {
+                return null;
+            } else {
+                return new int[]{start, end};
+            }
+        }
+
+        static OffsetRange ofCurrentToken(TokenSequence<?> tokenSequence) {
+            Token<?> token = tokenSequence.token();
+            return new OffsetRange(tokenSequence.offset(), tokenSequence.offset() + token.length());
         }
     }
 }

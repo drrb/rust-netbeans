@@ -36,119 +36,119 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({MatcherContext.class})
 public class RustBracesMatcherTest {
-      
+
     @Mock
     private MatcherContext context;
     @Mock
     private RustLexUtils rustLexUtils;
     private RustBracesMatcher bracesMatcher;
-    
+
     @Before
     public void setUp() {
         bracesMatcher = new RustBracesMatcher(context, rustLexUtils);
     }
-    
+
     @Test
     public void shouldFindNoOriginInBracelessDocument() throws Exception {
         StringBuilder source = new StringBuilder();
         //Carat here:  /|/
         source.append("//");
         Document document = RustDocument.containing(source);
-        
+
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(1);
         when(rustLexUtils.getRustTokenSequence(document, 1)).thenReturn(tokenSequenceFor(source));
-        
+
         int[] origin = bracesMatcher.findOrigin();
-        
+
         assertThat(origin, is(nullValue()));
     }
-    
+
     @Test
     public void shouldFindOriginNextToBrace() throws Exception {
         StringBuilder source = new StringBuilder();
         //Carat here:  fn main() |{ }
         source.append("fn main() { }");
         Document document = RustDocument.containing(source);
-        
+
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(10);
         when(rustLexUtils.getRustTokenSequence(document, 10)).thenReturn(tokenSequenceFor(source));
-        
+
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {10, 11};
-        
+
         assertThat(origin, is(expectedOrigin));
     }
-    
+
     @Test
     public void shouldFindOriginNextToParenthesis() throws Exception {
         StringBuilder source = new StringBuilder();
         //Carat here:  fn main|( ) { }
         source.append("fn main( ) { }");
         Document document = RustDocument.containing(source);
-        
+
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(7);
         when(rustLexUtils.getRustTokenSequence(document, 7)).thenReturn(tokenSequenceFor(source));
-        
+
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {7, 8};
-        
+
         assertThat(origin, is(expectedOrigin));
     }
-    
+
     @Test
     public void shouldFindOriginNextToAngleBrackets() throws Exception {
         StringBuilder source = new StringBuilder();
         //Carat here:  fn main|<T> () { }
         source.append("fn main<T> () { }");
         Document document = RustDocument.containing(source);
-        
+
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(7);
         when(rustLexUtils.getRustTokenSequence(document, 7)).thenReturn(tokenSequenceFor(source));
-        
+
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {7, 8};
-        
+
         assertThat(origin, is(expectedOrigin));
     }
-    
+
     @Test
     public void shouldFindObviousMatchForwards() throws Exception {
         StringBuilder source = new StringBuilder();
         //Carat here:  fn main<T>() |{ }\n
         source.append("fn main<T>() { }\n");
         Document document = RustDocument.containing(source);
-        
+
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(13);
         when(rustLexUtils.getRustTokenSequence(document, 13)).thenReturn(tokenSequenceFor(source));
-        
+
         int[] origin = bracesMatcher.findMatches();
         int[] expectedOrigin = {15, 16};
-        
+
         assertThat(origin, is(expectedOrigin));
     }
-    
+
     @Test
     public void shouldFindObviousMatchBackwards() throws Exception {
         StringBuilder source = new StringBuilder();
         //Carat here:  fn main<T>() { |}
         source.append("fn main<T>() { }");
         Document document = RustDocument.containing(source);
-        
+
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(15);
         when(rustLexUtils.getRustTokenSequence(document, 15)).thenReturn(tokenSequenceFor(source));
-        
+
         int[] origin = bracesMatcher.findMatches();
         int[] expectedOrigin = {13, 14};
-        
+
         assertThat(origin, is(expectedOrigin));
     }
-    
+
     private TokenSequence<RustTokenId> tokenSequenceFor(CharSequence input) {
         return TokenHierarchy.create(input, RustTokenId.getLanguage()).tokenSequence(RustTokenId.getLanguage());
     }
