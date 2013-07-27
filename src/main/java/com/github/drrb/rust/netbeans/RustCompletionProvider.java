@@ -34,9 +34,6 @@ import org.openide.util.Exceptions;
 @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = CompletionProvider.class)
 public class RustCompletionProvider implements CompletionProvider {
 
-    public RustCompletionProvider() {
-    }
-
     @Override
     public CompletionTask createTask(int queryType, JTextComponent textComponent) {
 
@@ -56,7 +53,6 @@ public class RustCompletionProvider implements CompletionProvider {
 
         @Override
         protected void query(CompletionResultSet completionResultSet, Document document, int caretOffset) {
-            List<String> rustTokens = Arrays.asList("fn", "pub");
             String filter = null;
             int startOffset = caretOffset - 1;
 
@@ -75,9 +71,9 @@ public class RustCompletionProvider implements CompletionProvider {
                 Exceptions.printStackTrace(ex);
             }
 
-            for (String rustToken : rustTokens) {
-                if (rustToken.startsWith(filter)) {
-                    completionResultSet.addItem(new RustCompletionItem(rustToken, startOffset, caretOffset));
+            for (RustKeyword keyword : RustKeyword.values()) {
+                if (keyword.image().startsWith(filter)) {
+                    completionResultSet.addItem(new RustCompletionItem(keyword.image(), startOffset, caretOffset));
                 }
             }
             completionResultSet.finish();
