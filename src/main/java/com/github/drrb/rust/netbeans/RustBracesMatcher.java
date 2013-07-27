@@ -151,6 +151,10 @@ public class RustBracesMatcher implements BracesMatcher {
         @Override
         public BracesMatcher createMatcher(MatcherContext context) {
             return new RustBracesMatcher(context, new RustLexUtils());
+            // TODO: is our implementation better than just doing this?:
+            //return BracesMatcherSupport.defaultMatcher(context, -1, -1);
+            // Probably, because it's dealing with tokens instead of characters
+            // but let's keep the option open in case it does stuff ours doesn't
         }
     }
 
