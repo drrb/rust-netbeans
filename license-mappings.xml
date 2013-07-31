@@ -348,4 +348,24 @@
         <artifactId>org-netbeans-modules-editor-bracesmatching</artifactId>
         <license>GPL v2</license>
     </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-sendopts</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-core-execution</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-favorites</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-projectui</artifactId>
+        <license>GPL v2</license>
+    </artifact>
 </license-lookup>

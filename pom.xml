@@ -171,6 +171,26 @@
             <version>${netbeans.version}</version>
         </dependency>
 
+        <!-- Project Type -->
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-projectuiapi</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-projectapi</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+	<!-- TODO: causes "friend" error. Not sure if we actually need it though -->
+	<!--
+	<dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-projectui</artifactId>
+            <version>${netbeans.version}</version>
+	</dependency>
+	-->
+
         <!-- Non-NetBeans Dependencies -->
         <dependency>
             <groupId>org.antlr</groupId>
@@ -201,7 +221,7 @@
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
             <scope>test</scope>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
@@ -311,7 +331,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    
+
                     <plugin>
                         <groupId>com.mycila.maven-license-plugin</groupId>
                         <artifactId>maven-license-plugin</artifactId>
@@ -342,7 +362,7 @@
                             </excludes>
                         </configuration>
                     </plugin>
-                    
+
                     <plugin>
                         <groupId>org.jasig.maven</groupId>
                         <artifactId>maven-notice-plugin</artifactId>
