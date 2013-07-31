@@ -43,11 +43,11 @@ public class RustProjectFactory implements ProjectFactory {
 
     @Override
     public Project loadProject(FileObject projectDirectory, ProjectState state) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return isProject(projectDirectory) ? new RustProject(projectDirectory, state) : null;
     }
 
     @Override
     public void saveProject(Project project) throws IOException, ClassCastException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Tutorial left this empty
     }
 }

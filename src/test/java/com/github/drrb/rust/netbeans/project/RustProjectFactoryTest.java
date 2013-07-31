@@ -25,6 +25,8 @@ import org.openide.filesystems.FileObject;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
+import org.netbeans.api.project.Project;
+import org.netbeans.spi.project.ProjectState;
 
 /**
  *
@@ -33,7 +35,9 @@ import static org.mockito.Mockito.*;
 public class RustProjectFactoryTest {
 
     @Mock
-    private FileObject folder;
+    private FileObject projectFolder;
+    @Mock
+    private ProjectState projectState;
     private RustProjectFactory factory;
 
     @Before
@@ -43,56 +47,77 @@ public class RustProjectFactoryTest {
 
     @Test
     public void shouldNotIdentifyEmptyFolderAsProject() {
-        boolean projectDetected = factory.isProject(folder);
+        boolean projectDetected = factory.isProject(projectFolder);
         assertThat(projectDetected, is(false));
     }
 
     @Test
     public void shouldIdentifyAProjectWithAMainFile() {
-        when(folder.getFileObject("main.rs")).thenReturn(aFile());
+        when(projectFolder.getFileObject("main.rs")).thenReturn(aFile());
 
-        boolean projectDetected = factory.isProject(folder);
+        boolean projectDetected = factory.isProject(projectFolder);
 
         assertThat(projectDetected, is(true));
     }
 
     @Test
     public void shouldIdentifyAProjectWithALibFile() {
-        when(folder.getFileObject("lib.rs")).thenReturn(aFile());
+        when(projectFolder.getFileObject("lib.rs")).thenReturn(aFile());
 
-        boolean projectDetected = factory.isProject(folder);
+        boolean projectDetected = factory.isProject(projectFolder);
 
         assertThat(projectDetected, is(true));
     }
 
     @Test
     public void shouldIdentifyAProjectWithATestFile() {
-        when(folder.getFileObject("test.rs")).thenReturn(aFile());
+        when(projectFolder.getFileObject("test.rs")).thenReturn(aFile());
 
-        boolean projectDetected = factory.isProject(folder);
+        boolean projectDetected = factory.isProject(projectFolder);
 
         assertThat(projectDetected, is(true));
     }
 
     @Test
     public void shouldIdentifyAProjectWithABenchFile() {
-        when(folder.getFileObject("bench.rs")).thenReturn(aFile());
+        when(projectFolder.getFileObject("bench.rs")).thenReturn(aFile());
 
-        boolean projectDetected = factory.isProject(folder);
+        boolean projectDetected = factory.isProject(projectFolder);
 
         assertThat(projectDetected, is(true));
     }
 
     @Test
     public void shouldIdentifyAProjectWithAPackageScript() {
-        when(folder.getFileObject("pkg.rs")).thenReturn(aFile());
+        when(projectFolder.getFileObject("pkg.rs")).thenReturn(aFile());
 
-        boolean projectDetected = factory.isProject(folder);
+        boolean projectDetected = factory.isProject(projectFolder);
 
         assertThat(projectDetected, is(true));
     }
 
+    @Test
+    public void shouldNotLoadAProjectIfItIsntARustProjectDirectory() throws Exception {
+        Project project = factory.loadProject(projectFolder, projectState);
+
+        assertNull(project);
+    }
+
+    @Test
+    public void shouldLoadAProjectFromAProjectDirectory() throws Exception {
+        projectFolder = aProject();
+        Project project = factory.loadProject(projectFolder, projectState);
+
+        assertNotNull(project);
+    }
+
     private FileObject aFile() {
         return mock(FileObject.class);
+    }
+
+    private FileObject aProject() {
+        FileObject folder = mock(FileObject.class);
+        when(folder.getFileObject("main.rs")).thenReturn(aFile());
+        return folder;
     }
 }
