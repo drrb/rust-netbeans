@@ -1,0 +1,68 @@
+/**
+ * Copyright (C) 2013 drrb
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.github.drrb.rust.netbeans.project;
+
+import java.awt.Image;
+import javax.swing.Action;
+import org.netbeans.api.annotations.common.StaticResource;
+import org.netbeans.api.project.ProjectUtils;
+import org.netbeans.spi.project.ui.support.CommonProjectActions;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.nodes.FilterNode;
+import org.openide.nodes.Node;
+import org.openide.util.ImageUtilities;
+import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
+
+class RustProjectNode extends FilterNode {
+
+    @StaticResource
+    public static final String CUSTOMER_ICON = "com/github/drrb/rust/netbeans/project/rust_project_icon_small.png";
+    private final RustProject project;
+
+    public RustProjectNode(Node projectDirectoryNode, RustProject project) throws DataObjectNotFoundException {
+        super(projectDirectoryNode,
+                new FilterNode.Children(projectDirectoryNode),
+                new ProxyLookup(Lookups.singleton(project), projectDirectoryNode.getLookup()));
+        this.project = project;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return ProjectUtils.getInformation(project).getDisplayName();
+    }
+
+    @Override
+    public Image getIcon(int type) {
+        return ImageUtilities.loadImage(CUSTOMER_ICON);
+    }
+
+    @Override
+    public Image getOpenedIcon(int type) {
+        return getIcon(type);
+    }
+
+    @Override
+    public Action[] getActions(boolean context) {
+        return new Action[] {
+            CommonProjectActions.newFileAction(),
+            CommonProjectActions.copyProjectAction(),
+            CommonProjectActions.deleteProjectAction(),
+            CommonProjectActions.closeProjectAction()
+        };
+    }
+}

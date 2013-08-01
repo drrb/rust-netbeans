@@ -23,7 +23,14 @@ import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataFolder;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
+import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
@@ -32,6 +39,7 @@ import org.openide.util.lookup.Lookups;
  *
  */
 class RustProject implements Project {
+
     private final FileObject projectDirectory;
     private final ProjectState state;
 
@@ -47,7 +55,9 @@ class RustProject implements Project {
 
     @Override
     public Lookup getLookup() {
-        return Lookups.fixed(new Info());
+        return Lookups.fixed(
+                new Info(),
+                new LogicalView());
     }
 
     private class Info implements ProjectInformation {
@@ -81,6 +91,33 @@ class RustProject implements Project {
 
         @Override
         public void removePropertyChangeListener(PropertyChangeListener listener) {
+        }
+    }
+
+    private class LogicalView implements LogicalViewProvider {
+
+        @Override
+        public Node createLogicalView() {
+            //TODO: test this!
+            //TODO: remove these comments if necessary
+            try {
+                //Obtain the project directory's node:
+                FileObject projectDirectory = getProjectDirectory();
+                DataFolder projectFolder = DataFolder.findFolder(projectDirectory);
+                Node nodeOfProjectFolder = projectFolder.getNodeDelegate();
+                //Decorate the project directory's node:
+                return new RustProjectNode(nodeOfProjectFolder, RustProject.this);
+            } catch (DataObjectNotFoundException e) {
+                Exceptions.printStackTrace(e);
+                //Fallback-the directory couldn't be created -
+                //read-only filesystem or something evil happened
+                return new AbstractNode(Children.LEAF);
+            }
+        }
+
+        @Override
+        public Node findPath(Node root, Object target) {
+            return null;
         }
     }
 }

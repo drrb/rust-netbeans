@@ -29,6 +29,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
+import org.netbeans.spi.project.ui.LogicalViewProvider;
 
 /**
  *
@@ -82,5 +83,11 @@ public class RustProjectTest {
 
         assertThat(info.getIcon().getIconWidth(), is(16));
         assertThat(info.getIcon().getIconHeight(), is(16));
+    }
+
+    @Test
+    public void shouldHaveLogicalViewProvider() {
+        LogicalViewProvider logicalViewProvider = project.getLookup().lookup(LogicalViewProvider.class);
+        assertThat(logicalViewProvider, is(not(nullValue())));
     }
 }
