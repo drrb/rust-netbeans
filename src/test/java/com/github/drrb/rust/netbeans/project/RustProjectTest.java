@@ -22,18 +22,25 @@ import org.mockito.Mock;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.api.project.ProjectUtils;
 
 /**
  *
  */
+@RunWith(MockitoJUnitRunner.class)
 public class RustProjectTest {
 
     @Mock
     private FileObject projectDirectory;
     @Mock
     private ProjectState projectState;
-    private RustProject project;
+    private Project project;
 
     @Before
     public void setUp() {
@@ -43,5 +50,37 @@ public class RustProjectTest {
     @Test
     public void shouldReturnProjectFolder() {
         assertThat(project.getProjectDirectory(), is(projectDirectory));
+    }
+
+    @Test
+    public void shouldProvideProjectInfo() {
+        ProjectInformation info = ProjectUtils.getInformation(project);
+
+        assertThat(info.getProject(), is(project));
+    }
+
+    @Test
+    public void shouldNameProjectAfterDirectory() {
+        when(projectDirectory.getName()).thenReturn("myrustproject");
+        ProjectInformation info = ProjectUtils.getInformation(project);
+
+        assertThat(info.getName(), is("myrustproject"));
+    }
+
+    @Test
+    public void shouldDisplayTheProjectName() {
+        when(projectDirectory.getName()).thenReturn("myrustproject");
+        ProjectInformation info = ProjectUtils.getInformation(project);
+
+        assertThat(info.getDisplayName(), is("myrustproject"));
+    }
+
+    @Test
+    public void shouldDisplayTheRustProjectIcon() {
+        when(projectDirectory.getName()).thenReturn("myrustproject");
+        ProjectInformation info = ProjectUtils.getInformation(project);
+
+        assertThat(info.getIcon().getIconWidth(), is(16));
+        assertThat(info.getIcon().getIconHeight(), is(16));
     }
 }

@@ -16,10 +16,17 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import java.beans.PropertyChangeListener;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
 /**
  *
@@ -40,6 +47,40 @@ class RustProject implements Project {
 
     @Override
     public Lookup getLookup() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Lookups.fixed(new Info());
+    }
+
+    private class Info implements ProjectInformation {
+
+        @StaticResource
+        private static final String RUST_PROJECT_ICON = "com/github/drrb/rust/netbeans/project/rust_project_icon_small.png";
+
+        @Override
+        public String getName() {
+            return projectDirectory.getName();
+        }
+
+        @Override
+        public String getDisplayName() {
+            return getName();
+        }
+
+        @Override
+        public Icon getIcon() {
+            return new ImageIcon(ImageUtilities.loadImage(RUST_PROJECT_ICON));
+        }
+
+        @Override
+        public Project getProject() {
+            return RustProject.this;
+        }
+
+        @Override
+        public void addPropertyChangeListener(PropertyChangeListener listener) {
+        }
+
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener listener) {
+        }
     }
 }
