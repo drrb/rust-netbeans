@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans;
 
 import org.netbeans.api.lexer.Language;
+import org.netbeans.modules.csl.spi.CommentHandler;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
@@ -40,5 +41,15 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public Parser getParser() {
         return new NetbeansRustParser();
+    }
+
+    @Override
+    public String getPreferredExtension() {
+        return "rs";
+    }
+
+    @Override
+    public String getLineCommentPrefix() {
+        return "//";
     }
 }

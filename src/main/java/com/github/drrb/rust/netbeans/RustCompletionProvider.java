@@ -16,14 +16,14 @@
  */
 package com.github.drrb.rust.netbeans;
 
-import java.util.Arrays;
-import java.util.List;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
+import org.netbeans.lib.editor.util.CharSequenceUtilities;
+import org.netbeans.lib.editor.util.swing.DocumentUtilities;
 import org.netbeans.spi.editor.completion.CompletionProvider;
 import org.netbeans.spi.editor.completion.CompletionResultSet;
 import org.netbeans.spi.editor.completion.CompletionTask;
@@ -57,9 +57,8 @@ public class RustCompletionProvider implements CompletionProvider {
             int startOffset = caretOffset - 1;
 
             try {
-                final StyledDocument bDoc = (StyledDocument) document;
-                final int lineStartOffset = getRowFirstNonWhite(bDoc, caretOffset);
-                final char[] line = bDoc.getText(lineStartOffset, caretOffset - lineStartOffset).toCharArray();
+                final int lineStartOffset = DocUtil.getRowFirstNonWhite(document, caretOffset);
+                final char[] line = document.getText(lineStartOffset, caretOffset - lineStartOffset).toCharArray();
                 final int whiteOffset = indexOfWhite(line);
                 filter = new String(line, whiteOffset + 1, line.length - whiteOffset - 1);
                 if (whiteOffset > 0) {
@@ -78,24 +77,6 @@ public class RustCompletionProvider implements CompletionProvider {
             }
             completionResultSet.finish();
         }
-    }
-
-    static int getRowFirstNonWhite(StyledDocument doc, int offset) throws BadLocationException {
-        Element lineElement = doc.getParagraphElement(offset);
-        int start = lineElement.getStartOffset();
-        while (start + 1 < lineElement.getEndOffset()) {
-            try {
-                if (doc.getText(start, 1).charAt(0) != ' ') {
-                    break;
-                }
-            } catch (BadLocationException ex) {
-                throw (BadLocationException) new BadLocationException(
-                        "calling getText(" + start + ", " + (start + 1)
-                        + ") on doc of length: " + doc.getLength(), start).initCause(ex);
-            }
-            start++;
-        }
-        return start;
     }
 
     static int indexOfWhite(char[] line) {

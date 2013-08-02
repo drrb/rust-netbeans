@@ -17,15 +17,15 @@
 package com.github.drrb.rust.netbeans;
 
 import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
+import org.netbeans.editor.GuardedDocument;
 
 /**
  * Document for testing
  */
-public class RustDocument extends PlainDocument {
+public class RustDocument extends GuardedDocument {
 
     public RustDocument() {
-        putProperty("mimeType", "text/x-rust-source");
+        super("text/x-rust-source");
     }
     
     public static RustDocument containing(CharSequence contents) {

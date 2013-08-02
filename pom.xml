@@ -172,6 +172,12 @@
             <artifactId>org-netbeans-modules-editor-lib</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!-- Commenting -->
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-editor-util</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
 
         <!-- Project Type -->
         <dependency>
@@ -184,14 +190,14 @@
             <artifactId>org-netbeans-modules-projectapi</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
-	<!-- TODO: causes "friend" error. Not sure if we actually need it though -->
-	<!--
-	<dependency>
+        <!-- TODO: causes "friend" error. Not sure if we actually need it though -->
+        <!--
+        <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-projectui</artifactId>
             <version>${netbeans.version}</version>
-	</dependency>
-	-->
+        </dependency>
+        -->
 
         <!-- Non-NetBeans Dependencies -->
         <dependency>
