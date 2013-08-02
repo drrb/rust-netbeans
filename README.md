@@ -12,6 +12,7 @@ So far, it includes
 * basic code folding
 * basic indentation
 * brace matching
+* comment toggling
 
 NB: For the purposes of this readme, "basic" is defined as "embarrassingly minimal"
 
