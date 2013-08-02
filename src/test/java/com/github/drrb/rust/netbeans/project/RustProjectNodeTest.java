@@ -67,13 +67,13 @@ public class RustProjectNodeTest {
 
     @Test
     public void shouldDisplayProjectIcon() {
-        assertThat(projectNode.getIcon(BeanInfo.ICON_COLOR_16x16), isA(Image.class));
+        assertThat(projectNode.getIcon(BeanInfo.ICON_COLOR_16x16), is(Image.class));
     }
 
     @Test
     public void shouldHaveActions() {
         Action[] actions = projectNode.getActions(true);
 
-        assertThat(actions, is(not(emptyArray())));
+        assertThat(actions.length, is(not(0)));
     }
 }

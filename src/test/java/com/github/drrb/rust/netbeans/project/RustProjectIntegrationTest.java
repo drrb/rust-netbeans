@@ -14,10 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.category;
+package com.github.drrb.rust.netbeans.project;
+
+import junit.framework.Test;
+import org.netbeans.jellytools.JellyTestCase;
+import org.netbeans.junit.NbModuleSuite;
 
 /**
  *
  */
-public @interface UnitTest {
+public class RustProjectIntegrationTest extends JellyTestCase {
+
+    public static Test suite() {
+        return NbModuleSuite.allModules(RustProjectIntegrationTest.class);
+    }
+
+    public RustProjectIntegrationTest(String testName) {
+        super(testName);
+    }
+
+    public void testSomething() {
+    }
+
 }

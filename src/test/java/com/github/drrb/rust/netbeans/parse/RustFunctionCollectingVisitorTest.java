@@ -37,7 +37,7 @@ public class RustFunctionCollectingVisitorTest {
         CharSequence input = new StringBuilder("//");
         RustParser.ProgContext prog = parse(input).prog();
         Collection<RustFunction> functions = prog.accept(new RustFunctionCollectingVisitor());
-        assertThat(functions, is(emptyIterable()));
+        assertThat(functions.size(), is(0));
     }
 
     @Test

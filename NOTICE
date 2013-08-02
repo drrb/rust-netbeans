@@ -14,8 +14,8 @@ License: TODO
   ASM Core under BSD
   ASM Tree under BSD
   ASM Util under BSD
-  Hamcrest All under New BSD License
-  Hamcrest Core under New BSD License
+  Hamcrest All under BSD style
+  Hamcrest Core under BSD style
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   JUnit under Common Public License Version 1.0
   Lucene Core under Apache 2

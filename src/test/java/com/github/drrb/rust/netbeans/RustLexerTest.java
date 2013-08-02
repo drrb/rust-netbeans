@@ -102,7 +102,7 @@ public class RustLexerTest {
     private Matcher<Token> token(final int expectedType, final String expectedText) {
         return new TypeSafeMatcher<Token>() {
             @Override
-            protected boolean matchesSafely(Token item) {
+            public boolean matchesSafely(Token item) {
                 return item.getType() == expectedType && (expectedText == null || item.getText().equals(expectedText));
             }
 
