@@ -18,14 +18,14 @@
 
 -->
 <actions>
-        <action>
-            <actionName>rebuild</actionName>
-            <goals>
-                <goal>clean</goal>
-                <goal>install</goal>
-            </goals>
-            <activatedProfiles>
-                <activatedProfile>generate-grammar</activatedProfile>
-            </activatedProfiles>
-        </action>
-    </actions>
+    <action>
+        <actionName>rebuild</actionName>
+        <goals>
+            <goal>clean</goal>
+            <goal>install</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>generate-parser</activatedProfile>
+        </activatedProfiles>
+    </action>
+</actions>

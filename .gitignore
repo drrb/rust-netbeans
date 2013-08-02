@@ -1,5 +1,6 @@
 /target/
 .no-generate-parser
+.not-ci
 src/main/antlr4/Rust.g4
 src/main/antlr4/xidstart.g4
 src/main/antlr4/xidcont.g4

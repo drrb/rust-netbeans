@@ -368,7 +368,7 @@
         <artifactId>org-netbeans-modules-projectui</artifactId>
         <license>GPL v2</license>
     </artifact>
-     <artifact>
+    <artifact>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-api-visual</artifactId>
         <license>GPL v2</license>
@@ -406,6 +406,11 @@
     <artifact>
         <groupId>org.netbeans.modules</groupId>
         <artifactId>org-netbeans-insane</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-jellytools-ide</artifactId>
         <license>GPL v2</license>
     </artifact>
 </license-lookup>

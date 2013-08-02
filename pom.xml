@@ -216,13 +216,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>4.10</version> <!-- NbJunit needs 4.10 -->
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <version>1.1</version>
+            <version>1.1</version> <!-- JUnit 4.10 needs 1.1 -->
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -244,6 +244,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Functional test dependencies -->
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-nbjunit</artifactId>
@@ -256,14 +257,29 @@
             <version>${netbeans.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-jellytools-ide</artifactId>
+            <version>${netbeans.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>nbm-maven-plugin</artifactId>
+                    <version>3.10.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>3.10.1</version>
                 <extensions>true</extensions>
                 <configuration>
                     <!-- TODO:
@@ -271,14 +287,16 @@
                     <licenseFile></licenseFile>
                     -->
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>cluster</goal>
-                        </goals>
-                    </execution>
-                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <!-- to have the jar plugin pickup the nbm generated manifest -->
+                    <useDefaultManifestFile>true</useDefaultManifestFile>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -303,41 +321,7 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.15</version>
-                <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>cluster.path.final</name>
-                            <value>${project.build.directory}/netbeans_clusters/extra:${netbeans.installation}/platform</value>
-                        </property>
-                    </systemProperties>
-                    <includes>
-                        <include>**/*IntegrationTest.java</include>
-                    </includes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <!-- to have the jar plugin pickup the nbm generated manifest -->
-                    <useDefaultManifestFile>true</useDefaultManifestFile>
-                </configuration>
-            </plugin>
-
+            <!-- Generate the parser with ANTLR -->
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
@@ -354,6 +338,7 @@
                 </configuration>
             </plugin>
 
+            <!-- Add the ANTLR-generated sources to the project (used when we don't regenerate the parser) -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -367,7 +352,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>target/generated-sources/antlr4</source>
+                                <source>${project.build.directory}/generated-sources/antlr4</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -377,8 +362,9 @@
     </build>
 
     <profiles>
+        <!-- Generate the parser, but allow us to decide not to do it -->
         <profile>
-            <id>generate-grammar</id>
+            <id>generate-parser</id>
             <activation>
                 <file>
                     <missing>.no-generate-parser</missing>
@@ -451,6 +437,7 @@
             </build>
         </profile>
 
+        <!-- Download the Rust ANTLR grammar from GitHub, until we have a license -->
         <profile>
             <id>set-up-grammar</id>
             <activation>
@@ -473,6 +460,83 @@
                                 </goals>
                                 <configuration>
                                     <executable>scripts/set-up-grammar.sh</executable>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>functional-tests</id>
+            <activation>
+                <file>
+                    <exists>.not-ci</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>nbm-maven-plugin</artifactId>
+                        <executions>
+                            <!-- Make the module available for the functional tests -->
+                            <execution>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>cluster</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Run NbJunit functional tests with Failsafe -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.15</version>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>cluster.path.final</name>
+                                    <value>${project.build.directory}/netbeans_clusters/extra:${netbeans.installation}/ide:${netbeans.installation}/platform:${netbeans.installation}/java</value>
+                                </property>
+                            </systemProperties>
+                            <includes>
+                                <include>**/*IntegrationTest.java</include>
+                            </includes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Set up the functional test data -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.6</version>
+
+                        <executions>
+                            <execution>
+                                <id>set-up-functional-test-data</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/data</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/test/qa-functional/data</directory>
+                                        </resource>
+                                    </resources>
                                 </configuration>
                             </execution>
                         </executions>

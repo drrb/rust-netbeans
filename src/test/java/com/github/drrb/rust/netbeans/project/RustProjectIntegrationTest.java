@@ -16,8 +16,11 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import java.util.Arrays;
 import junit.framework.Test;
 import org.netbeans.jellytools.JellyTestCase;
+import org.netbeans.jellytools.ProjectsTabOperator;
+import org.netbeans.jellytools.nodes.ProjectRootNode;
 import org.netbeans.junit.NbModuleSuite;
 
 /**
@@ -33,7 +36,17 @@ public class RustProjectIntegrationTest extends JellyTestCase {
         super(testName);
     }
 
-    public void testSomething() {
+    public void testOpenProject() throws Exception {
+        openDataProjects("projects/simplerustproject");
+        ProjectsTabOperator projectsTabOperator = new ProjectsTabOperator();
+        ProjectRootNode projectRootNode = projectsTabOperator.getProjectRootNode("simplerustproject");
+
+        assertEquals(projectRootNode.getText(), "simplerustproject");
+        assertArrayEquals(projectRootNode.getChildren(), new String[]{"main.rs"});
     }
 
+    protected <T> void assertArrayEquals(T[] expected, T[] actual) {
+        String error = String.format("Expected %s, but got %s", Arrays.toString(expected), Arrays.toString(actual));
+        assertTrue(error, Arrays.equals(expected, actual));
+    }
 }
