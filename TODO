@@ -1,0 +1,26 @@
+
+
+features:
+    editor:
+        - Code completion
+        - Documentation in code completion
+        - MD highlighting for doc comments
+        - Go to declaration
+        - Instant rename
+    run:
+        - Run tests
+        - Compile and run
+        - Rustpkg stuff
+    project:
+        - 'New Rust project'
+        - Logical Rustpgk view
+        - Icons (ask for help)
+        - Icon badging (e.g. play arrow for main class)
+        - Project customizer: https://platform.netbeans.org/tutorials/nbm-projecttype.html#projectcustomizer
+
+development:
+    testing:
+        - Functional tests on Travis: http://about.travis-ci.org/docs/user/gui-and-headless-browsers
+    release:
+        - Add repository to Maven
+        - How do we distribute a NetBeans plugin
