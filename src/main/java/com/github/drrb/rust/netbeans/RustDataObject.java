@@ -113,7 +113,7 @@ public class RustDataObject extends MultiDataObject {
             iconBase = "com/github/drrb/rust/netbeans/rust_icon_small.png",
             mimeType = RustLanguage.MIME_TYPE,
             persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
-            preferredID = "Rust",
+            preferredID = "rust.source",
             position = 1000)
     @Messages("LBL_Rust_EDITOR=Source")
     public static MultiViewEditorElement createEditor(Lookup lookup) {
