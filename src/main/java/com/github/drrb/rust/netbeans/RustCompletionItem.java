@@ -48,8 +48,8 @@ public class RustCompletionItem implements CompletionItem {
     private final int dotOffset;
     private final int caretOffset;
 
-    public RustCompletionItem(String text, int dotOffset, int caretOffset) {
-        this.text = text;
+    public RustCompletionItem(CharSequence text, int dotOffset, int caretOffset) {
+        this.text = text.toString();
         this.dotOffset = dotOffset;
         this.caretOffset = caretOffset;
     }

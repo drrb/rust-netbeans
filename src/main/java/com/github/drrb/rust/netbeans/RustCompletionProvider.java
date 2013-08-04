@@ -16,14 +16,15 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
-import org.netbeans.lib.editor.util.CharSequenceUtilities;
-import org.netbeans.lib.editor.util.swing.DocumentUtilities;
+import org.netbeans.api.lexer.Token;
+import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.spi.editor.completion.CompletionProvider;
 import org.netbeans.spi.editor.completion.CompletionResultSet;
 import org.netbeans.spi.editor.completion.CompletionTask;
@@ -70,11 +71,35 @@ public class RustCompletionProvider implements CompletionProvider {
                 Exceptions.printStackTrace(ex);
             }
 
+            Set<String> suggestions = new LinkedHashSet<String>();
+            AbstractDocument doc = (AbstractDocument) document;
+            doc.readLock();
+            try {
+                TokenSequence<RustTokenId> tokenSequence = new RustLexUtils().getRustTokenSequence(document, 0);
+                tokenSequence.move(0);
+                while (tokenSequence.moveNext()) {
+                    Token<RustTokenId> token = tokenSequence.token();
+                    int start = tokenSequence.offset();
+                    int end = start + token.length();
+                    if (token.id() == RustTokenId.IDENT
+                            && caretOffset != end
+                            && token.text().toString().startsWith(filter)) {
+                        suggestions.add(token.text().toString());
+                    }
+                }
+            } finally {
+                doc.readUnlock();
+            }
             for (RustKeyword keyword : RustKeyword.values()) {
                 if (keyword.image().startsWith(filter)) {
-                    completionResultSet.addItem(new RustCompletionItem(keyword.image(), startOffset, caretOffset));
+                    suggestions.add(keyword.image());
                 }
             }
+
+            for (String suggestion : suggestions) {
+                completionResultSet.addItem(new RustCompletionItem(suggestion, startOffset, caretOffset));
+            }
+
             completionResultSet.finish();
         }
     }
