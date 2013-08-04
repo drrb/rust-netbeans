@@ -40,6 +40,8 @@ import org.openide.util.lookup.Lookups;
  */
 class RustProject implements Project {
 
+    public static final String TYPE = "com-github-drrb-rust-netbeans-project";
+
     private final FileObject projectDirectory;
     private final ProjectState state;
 
@@ -56,6 +58,7 @@ class RustProject implements Project {
     @Override
     public Lookup getLookup() {
         return Lookups.fixed(
+                this, // So people can cast it without casting it, you know?
                 new Info(),
                 new LogicalView());
     }

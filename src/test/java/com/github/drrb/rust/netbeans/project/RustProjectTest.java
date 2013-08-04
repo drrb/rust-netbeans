@@ -17,14 +17,19 @@
 package com.github.drrb.rust.netbeans.project;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
 import static org.hamcrest.Matchers.*;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.netbeans.api.project.Project;
@@ -57,6 +62,13 @@ public class RustProjectTest {
     }
 
     @Test
+    public void shouldBeInItsOwnLookup() {
+        Project projectInLookup = project.getLookup().lookup(Project.class);
+
+        assertThat(projectInLookup, is(project));
+    }
+
+    @Test
     public void shouldProvideProjectInfo() {
         ProjectInformation info = ProjectUtils.getInformation(project);
 
@@ -86,20 +98,44 @@ public class RustProjectTest {
     }
 
     @Test
-    public void shouldHaveLogicalViewProvider() {
+    public void shouldHaveLogicalViewProvider() throws Exception {
         LogicalViewProvider logicalViewProvider = project.getLookup().lookup(LogicalViewProvider.class);
         Node projectNode = logicalViewProvider.createLogicalView();
         assertThat(projectNode.getDisplayName(), is("testrustproject"));
 
-        //TODO: why does this fail? I see them in the UI!
-        //Node[] children = projectNode.getChildren().getNodes();
-        //assertThat(children.length, is(1));
-        //assertThat(children[0].getDisplayName(), is("main.rs"));
+        assertThat(projectNode, hasChildren("main.rs"));
     }
 
     protected File getData(String path) {
         File dataDir = new File("target", "test-data").getAbsoluteFile();
         File dataFile = new File(dataDir, path);
         return dataFile;
+    }
+
+    private Matcher<Node> hasChildren(String... children) {
+        return new HasChildren(children);
+    }
+
+    private static class HasChildren extends TypeSafeMatcher<Node> {
+        private final String[] children;
+
+        public HasChildren(String[] children) {
+            this.children = children.clone();
+        }
+
+        @Override
+        public boolean matchesSafely(Node node) {
+            Node[] childNodes = node.getChildren().getNodes(true); // 'true' loads the children if they're lazily loading (otherwise they're displayed as "Please Wait..."
+            List<String> names = new ArrayList<String>(childNodes.length);
+            for (Node child : childNodes) {
+                names.add(child.getDisplayName());
+            }
+            return names.equals(Arrays.asList(children));
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("node with children: ").appendValueList("<", ", ", ">", children);
+        }
     }
 }

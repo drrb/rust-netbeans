@@ -21,6 +21,7 @@ import javax.swing.Action;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.spi.project.ui.support.CommonProjectActions;
+import org.netbeans.spi.project.ui.support.NodeFactorySupport;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
@@ -36,7 +37,7 @@ class RustProjectNode extends FilterNode {
 
     public RustProjectNode(Node projectDirectoryNode, RustProject project) throws DataObjectNotFoundException {
         super(projectDirectoryNode,
-                new FilterNode.Children(projectDirectoryNode),
+                NodeFactorySupport.createCompositeChildren(project, String.format("Projects/%s/Nodes", RustProject.TYPE)),
                 new ProxyLookup(Lookups.singleton(project), projectDirectoryNode.getLookup()));
         this.project = project;
     }
@@ -58,7 +59,7 @@ class RustProjectNode extends FilterNode {
 
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] {
+        return new Action[]{
             CommonProjectActions.newFileAction(),
             CommonProjectActions.copyProjectAction(),
             CommonProjectActions.deleteProjectAction(),
