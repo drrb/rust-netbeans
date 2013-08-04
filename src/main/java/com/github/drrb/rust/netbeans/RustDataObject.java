@@ -17,6 +17,8 @@
 package com.github.drrb.rust.netbeans;
 
 import java.io.IOException;
+import org.netbeans.core.spi.multiview.MultiViewElement;
+import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -26,7 +28,9 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.TopComponent;
 
 @Messages({
     "LBL_Rust_LOADER=Files of Rust"
@@ -96,11 +100,23 @@ public class RustDataObject extends MultiDataObject {
 
     public RustDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        registerEditor(RustLanguage.MIME_TYPE, false);
+        registerEditor(RustLanguage.MIME_TYPE, true);
     }
 
     @Override
     protected int associateLookup() {
         return 1;
+    }
+
+    @MultiViewElement.Registration(
+            displayName = "#LBL_Rust_EDITOR",
+            iconBase = "com/github/drrb/rust/netbeans/rust_icon_small.png",
+            mimeType = RustLanguage.MIME_TYPE,
+            persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
+            preferredID = "Rust",
+            position = 1000)
+    @Messages("LBL_Rust_EDITOR=Source")
+    public static MultiViewEditorElement createEditor(Lookup lookup) {
+        return new MultiViewEditorElement(lookup);
     }
 }
