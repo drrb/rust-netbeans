@@ -26,6 +26,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
+import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.editor.completion.Completion;
 import org.netbeans.spi.editor.completion.CompletionItem;
 import org.netbeans.spi.editor.completion.CompletionResultSet;
@@ -38,17 +39,42 @@ import org.openide.util.ImageUtilities;
 
 /**
  *
- * @author drrb
  */
 public class RustCompletionItem implements CompletionItem {
 
-    private static final ImageIcon fieldIcon = new ImageIcon(ImageUtilities.loadImage("com/github/drrb/rust/netbeans/rust_icon_small.png"));
-    private static final Color fieldColor = Color.decode("0x0000B2");
+    @StaticResource
+    private static final String FIELD_ICON_PATH = "com/github/drrb/rust/netbeans/resources/field.png";
+    @StaticResource
+    private static final String FUNCTION_ICON_PATH = "com/github/drrb/rust/netbeans/resources/function.png";
+    @StaticResource
+    private static final String PACKAGE_ICON_PATH = "com/github/drrb/rust/netbeans/resources/package.gif";
+    @StaticResource
+    private static final String STRUCT_ICON_PATH = "com/github/drrb/rust/netbeans/resources/struct.png";
+    @StaticResource
+    private static final String TRAIT_ICON_PATH = "com/github/drrb/rust/netbeans/resources/trait.png";
+    public enum Type {
+
+        FIELD("0x0000B2", FIELD_ICON_PATH),
+        FUNCTION("0x0000B2", FUNCTION_ICON_PATH),
+        KEYWORD("0x0000B2", FIELD_ICON_PATH),
+        PACKAGE("0x0000B2", PACKAGE_ICON_PATH),
+        STRUCT("0x0000B2", STRUCT_ICON_PATH),
+        TRAIT("0x0000B2", TRAIT_ICON_PATH);
+        private final Color color;
+        private final ImageIcon icon;
+
+        private Type(String color, String imagePath) {
+            this.color = Color.decode(color);
+            this.icon = ImageUtilities.loadImageIcon(imagePath, false);
+        }
+    }
+    private final Type type;
     private final String text;
     private final int dotOffset;
     private final int caretOffset;
 
-    public RustCompletionItem(CharSequence text, int dotOffset, int caretOffset) {
+    public RustCompletionItem(Type type, CharSequence text, int dotOffset, int caretOffset) {
+        this.type = type;
         this.text = text.toString();
         this.dotOffset = dotOffset;
         this.caretOffset = caretOffset;
@@ -79,7 +105,7 @@ public class RustCompletionItem implements CompletionItem {
 
     @Override
     public void render(Graphics g, Font defaultFont, Color defaultColor, Color backgroundColor, int width, int height, boolean selected) {
-        CompletionUtilities.renderHtml(fieldIcon, text, null, g, defaultFont, (selected ? Color.white : fieldColor), width, height, selected);
+        CompletionUtilities.renderHtml(type.icon, text, null, g, defaultFont, (selected ? Color.white : type.color), width, height, selected);
     }
 
     @Override
@@ -125,7 +151,7 @@ public class RustCompletionItem implements CompletionItem {
     public CharSequence getInsertPrefix() {
         return text;
     }
-    
+
     public String getText() {
         return text;
     }

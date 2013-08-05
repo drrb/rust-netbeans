@@ -31,6 +31,7 @@ import org.netbeans.spi.editor.completion.CompletionTask;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
 import org.openide.util.Exceptions;
+import static com.github.drrb.rust.netbeans.RustCompletionItem.Type.*;
 
 @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = CompletionProvider.class)
 public class RustCompletionProvider implements CompletionProvider {
@@ -81,23 +82,21 @@ public class RustCompletionProvider implements CompletionProvider {
                     Token<RustTokenId> token = tokenSequence.token();
                     int start = tokenSequence.offset();
                     int end = start + token.length();
+                    String tokenText = token.text().toString();
                     if (token.id() == RustTokenId.IDENT
                             && caretOffset != end
-                            && token.text().toString().startsWith(filter)) {
-                        suggestions.add(token.text().toString());
+                            && tokenText.startsWith(filter)) {
+                        completionResultSet.addItem(new RustCompletionItem(FUNCTION, tokenText, startOffset, caretOffset));
                     }
                 }
             } finally {
                 doc.readUnlock();
             }
             for (RustKeyword keyword : RustKeyword.values()) {
-                if (keyword.image().startsWith(filter)) {
-                    suggestions.add(keyword.image());
+                String keywordImage = keyword.image();
+                if (keywordImage.startsWith(filter)) {
+                    completionResultSet.addItem(new RustCompletionItem(KEYWORD, keywordImage, startOffset, caretOffset));
                 }
-            }
-
-            for (String suggestion : suggestions) {
-                completionResultSet.addItem(new RustCompletionItem(suggestion, startOffset, caretOffset));
             }
 
             completionResultSet.finish();
