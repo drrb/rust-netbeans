@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.NetbeansRustParser.SyntaxError;
+import com.github.drrb.rust.netbeans.RustLanguage;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.SyntaxError;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -88,7 +89,7 @@ public class RustSyntaxErrorHighlightingTask extends ParserResultTask {
         }
         return errors;
     }
-    
+
     @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TaskFactory.class)
     public static class Factory extends TaskFactory {
 

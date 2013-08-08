@@ -14,9 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.highlighting;
 
 import javax.swing.text.Document;
+
+import com.github.drrb.rust.netbeans.RustDocument;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

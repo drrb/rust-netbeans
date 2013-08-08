@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.formatting;
 
 import javax.swing.text.Document;
+import com.github.drrb.rust.netbeans.RustDocument;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,23 +33,23 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
 public class RustIndentTaskTest {
-    
+
     @Mock
     private Context context;
     private RustIndentTask indentTask;
-    
+
     @Before
     public void setUp() {
         indentTask = new RustIndentTask(context);
     }
-    
+
     @Test
     public void shouldIndentLineTheSameAsThePreviousLine() throws Exception {
         StringBuilder source = new StringBuilder();
         source.append("    let x = 0;\n") //As though we just pressed return at the end of this line
               .append("");
         Document document = RustDocument.containing(source);
-        
+
         when(context.document()).thenReturn(document);
         when(context.startOffset()).thenReturn(15);
         when(context.lineStartOffset(15)).thenReturn(15);
@@ -56,17 +57,17 @@ public class RustIndentTaskTest {
         when(context.lineIndent(0)).thenReturn(4);
 
         indentTask.reindent();
-        
+
         verify(context).modifyIndent(15, 4);
     }
-    
+
     @Test
     public void shouldIncreaseIndentIfPreviousLineEndsInOpenBrace() throws Exception {
         StringBuilder source = new StringBuilder();
         source.append("    fn main() {\n") //As though we just pressed return at the end of this line
               .append("");
         Document document = RustDocument.containing(source);
-        
+
         when(context.document()).thenReturn(document);
         when(context.startOffset()).thenReturn(16);
         when(context.lineStartOffset(16)).thenReturn(16);
@@ -74,17 +75,17 @@ public class RustIndentTaskTest {
         when(context.lineIndent(0)).thenReturn(4);
 
         indentTask.reindent();
-        
+
         verify(context).modifyIndent(16, 8);
     }
-    
+
     @Test
     public void shouldIgnoreSpaceAfterBrace() throws Exception {
         StringBuilder source = new StringBuilder();
         source.append("    fn main() {  \t \n") //As though we just pressed return at the end of this line
               .append("");
         Document document = RustDocument.containing(source);
-        
+
         when(context.document()).thenReturn(document);
         when(context.startOffset()).thenReturn(20);
         when(context.lineStartOffset(20)).thenReturn(20);
@@ -92,7 +93,7 @@ public class RustIndentTaskTest {
         when(context.lineIndent(0)).thenReturn(4);
 
         indentTask.reindent();
-        
+
         verify(context).modifyIndent(20, 8);
     }
 }

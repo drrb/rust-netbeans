@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.completion;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,6 +22,11 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+
+import com.github.drrb.rust.netbeans.DocUtil;
+import com.github.drrb.rust.netbeans.RustLanguage;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenSequence;
@@ -31,7 +36,7 @@ import org.netbeans.spi.editor.completion.CompletionTask;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
 import org.openide.util.Exceptions;
-import static com.github.drrb.rust.netbeans.RustCompletionItem.Type.*;
+import static com.github.drrb.rust.netbeans.completion.RustCompletionItem.Type.*;
 
 @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = CompletionProvider.class)
 public class RustCompletionProvider implements CompletionProvider {

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
 public enum TokenCategory {
     CHARACTER("character"),
@@ -30,11 +30,11 @@ public enum TokenCategory {
     WHITESPACE("whitespace"),
     METHOD_DECLARATION("method-declaration");
     private final String name;
-    
+
     private TokenCategory(String categoryName) {
         this.name = categoryName;
     }
-    
+
     public String getName() {
         return name;
     }

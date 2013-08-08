@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
-import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import java.util.List;
 
 public class RustdocCollectingParseListener extends RustBaseListener {
 

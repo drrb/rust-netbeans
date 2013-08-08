@@ -14,19 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
 import java.util.Collection;
 import static java.util.Collections.*;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.github.drrb.rust.netbeans.RustLanguage;
 import org.netbeans.spi.lexer.LanguageHierarchy;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerRestartInfo;
 
 public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
-    
+
     private static final Map<Integer, RustTokenId> ANLTR_TOKEN_TYPE_TO_NETBANS_TOKEN_TYPE = unmodifiableMap(buildTokenMap());
     private static final Collection<RustTokenId> TOKEN_IDS = unmodifiableSet(EnumSet.allOf(RustTokenId.class));
 
@@ -53,7 +55,7 @@ public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
     protected String mimeType() {
         return RustLanguage.MIME_TYPE;
     }
-    
+
     private static Map<Integer, RustTokenId> buildTokenMap() {
         Map<Integer, RustTokenId> tokens = new HashMap<Integer, RustTokenId>(RustTokenId.values().length);
         for (RustTokenId rustTokenId : RustTokenId.values()) {

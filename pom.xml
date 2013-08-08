@@ -370,7 +370,7 @@
                     </includes>
                     <arguments>
                         <argument>-package</argument>
-                        <argument>com.github.drrb.rust.netbeans</argument>
+                        <argument>com.github.drrb.rust.netbeans.parsing</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -481,7 +481,7 @@
             <id>set-up-grammar</id>
             <activation>
                 <file>
-                    <missing>src/main/antlr4/Rust.g4</missing>
+                    <missing>src/main/antlr4/com/github/drrb/rust/netbeans/parsing/Rust.g4</missing>
                 </file>
             </activation>
             <build>

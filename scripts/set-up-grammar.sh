@@ -20,10 +20,11 @@ set -e
 
 echo "Downloading Rust ANTLR grammar"
 cd `dirname "${BASH_SOURCE[0]}"`/..
-mkdir -p src/main/antlr4
+mkdir -p src/main/antlr4/com/github/drrb/rust/netbeans/parsing
 cd src/main/antlr4
-wget https://raw.github.com/jbclements/rust-antlr/master/Rust.g4
 wget https://raw.github.com/jbclements/rust-antlr/master/xidstart.g4
 wget https://raw.github.com/jbclements/rust-antlr/master/xidcont.g4
 cd -
+cd src/main/antlr4/
+wget https://raw.github.com/jbclements/rust-antlr/master/Rust.g4
 git apply --reverse src/etc/rust-antlr.patch 

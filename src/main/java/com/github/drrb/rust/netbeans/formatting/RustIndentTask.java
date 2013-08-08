@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.formatting;
 
+import com.github.drrb.rust.netbeans.RustLanguage;
 import static java.lang.Character.isWhitespace;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -48,7 +49,7 @@ public class RustIndentTask implements IndentTask {
         }
         context.modifyIndent(lineStart, targetIndent);
     }
-    
+
     private static char lastNonWhiteCharacter(int lineStart, int lineEnd, Document document) throws BadLocationException {
         for (int i = lineEnd; i > lineStart; i--) {
             char character = document.getText(i - 1, 1).charAt(0);
@@ -63,7 +64,7 @@ public class RustIndentTask implements IndentTask {
     public ExtraLock indentLock() {
         return null;
     }
-    
+
     @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = IndentTask.Factory.class)
     public static class Factory implements IndentTask.Factory {
 

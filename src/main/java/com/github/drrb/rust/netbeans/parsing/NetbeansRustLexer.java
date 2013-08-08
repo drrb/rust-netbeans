@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
 import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.Lexer;
@@ -50,5 +50,5 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
     public void release() {
         //Tutorial left this blank
     }
-    
+
 }

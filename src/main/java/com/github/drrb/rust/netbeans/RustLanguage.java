@@ -16,6 +16,8 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
@@ -25,7 +27,7 @@ import org.openide.util.NbBundle;
 
 @LanguageRegistration(mimeType = RustLanguage.MIME_TYPE)
 public class RustLanguage extends DefaultLanguageConfig {
-    
+
     public static final String MIME_TYPE = "text/x-rust-source";
 
     @Override
@@ -47,7 +49,7 @@ public class RustLanguage extends DefaultLanguageConfig {
     public Language<RustTokenId> getLexerLanguage() {
         return RustTokenId.getLanguage();
     }
-    
+
     @Override
     public Parser getParser() {
         return new NetbeansRustParser();

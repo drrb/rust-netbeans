@@ -14,13 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parse;
+package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.RustBaseVisitor;
-import com.github.drrb.rust.netbeans.RustFunction;
-import com.github.drrb.rust.netbeans.RustParser;
-import java.util.ArrayList;
-import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.Collection;
 import java.util.LinkedList;

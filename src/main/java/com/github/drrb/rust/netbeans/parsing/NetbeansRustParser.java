@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +61,7 @@ public class NetbeansRustParser extends Parser {
             public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String message, RecognitionException e) {
                 syntaxErrors.add(new SyntaxError(line, charPositionInLine, message));
             }
-            
+
         });
         this.parser.addParseListener(new RustdocCollectingParseListener(rustdocs));
         try {
@@ -90,13 +90,13 @@ public class NetbeansRustParser extends Parser {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         return new RustParser(tokens);
     }
-    
+
     public static class SyntaxError {
         private final int line;
         private final int charPositionInLine;
         private final String message;
 
-        protected SyntaxError(int line, int charPositionInLine, String message) {
+        public SyntaxError(int line, int charPositionInLine, String message) {
             this.line = line;
             this.charPositionInLine = charPositionInLine;
             this.message = message;
@@ -121,8 +121,8 @@ public class NetbeansRustParser extends Parser {
         private final AtomicBoolean valid = new AtomicBoolean(true);
         private final RustParser.ProgContext ast;
         private final List<Rustdoc> rustdocs;
-        
-        protected NetbeansRustParserResult(Snapshot snapshot, RustParser parser, RustParser.ProgContext ast, List<Rustdoc> rustdocs, List<SyntaxError> syntaxErrors) {
+
+        public NetbeansRustParserResult(Snapshot snapshot, RustParser parser, RustParser.ProgContext ast, List<Rustdoc> rustdocs, List<SyntaxError> syntaxErrors) {
             super(snapshot);
             this.parser = parser;
             this.ast = ast;
@@ -140,7 +140,7 @@ public class NetbeansRustParser extends Parser {
         public List<SyntaxError> getSyntaxErrors() {
             return Collections.unmodifiableList(syntaxErrors);
         }
-        
+
         public List<Rustdoc> getRustdocs() {
             return Collections.unmodifiableList(rustdocs);
         }

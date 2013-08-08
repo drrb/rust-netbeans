@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.NetbeansRustParser.SyntaxError;
+import com.github.drrb.rust.netbeans.RustDocument;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.SyntaxError;
 import org.junit.Test;
 import java.util.Iterator;
 import javax.swing.text.Document;
@@ -34,9 +35,9 @@ public class RustParserTest {
         function.append("fn greet(name: str) {\n");
         function.append("    xxx io::println(fmt!(\"Hello, %?\", name));\n");
         function.append("}\n");
-        
+
         NetbeansRustParserResult result = parse(function);
-        
+
         Iterator<SyntaxError> syntaxErrors = result.getSyntaxErrors().iterator();
         SyntaxError syntaxError = syntaxErrors.next();
         assertThat(syntaxError.getLine(), is(2));
@@ -53,9 +54,9 @@ public class RustParserTest {
         function.append("fn greet(name: str) {\n");
         function.append("    io::println(fmt!(\"Hello, %?\", name));\n");
         function.append("}\n");
-        
+
         NetbeansRustParserResult result = parse(function);
-        
+
         Iterator<Rustdoc> rustdocs = result.getRustdocs().iterator();
         Rustdoc rustdoc = rustdocs.next();
         assertThat(rustdoc.getText(), is("/**\n * Say Hello\n */"));

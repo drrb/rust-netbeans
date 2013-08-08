@@ -14,12 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.highlighting;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
+
+import com.github.drrb.rust.netbeans.RustLanguage;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenSequence;

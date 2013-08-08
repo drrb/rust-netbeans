@@ -16,11 +16,14 @@
  */
 package com.github.drrb.rust.netbeans;
 
-import com.github.drrb.rust.netbeans.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.RustParser;
 import java.util.EnumSet;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+
+import com.github.drrb.rust.netbeans.parsing.RustFunction;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.editor.fold.Fold;
 import org.netbeans.api.editor.fold.FoldHierarchy;
 import org.netbeans.api.editor.fold.FoldType;
@@ -31,8 +34,8 @@ import org.netbeans.spi.editor.fold.FoldHierarchyTransaction;
 import org.netbeans.spi.editor.fold.FoldManager;
 import org.netbeans.spi.editor.fold.FoldOperation;
 import org.openide.util.Exceptions;
-import static com.github.drrb.rust.netbeans.RustTokenId.*;
-import com.github.drrb.rust.netbeans.parse.RustFunctionCollectingVisitor;
+import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
+import com.github.drrb.rust.netbeans.parsing.RustFunctionCollectingVisitor;
 import java.util.Collection;
 import java.util.Collections;
 import javax.swing.text.AbstractDocument;

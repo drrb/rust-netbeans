@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.NetbeansRustParser.SyntaxError;
+import com.github.drrb.rust.netbeans.RustDocument;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.SyntaxError;
+import com.github.drrb.rust.netbeans.parsing.Rustdoc;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +46,7 @@ public class RustSyntaxErrorHighlightingTaskTest {
         function.append("    xxx io::println(fmt!(\"Hello, %?\", name));\n");
         function.append("}\n");
         SyntaxError syntaxError = new SyntaxError(2, 5, "bad syntax!");
-        
+
         Document document = RustDocument.containing(function);
         Snapshot snapshot = snapshotOf(document);
         RustSyntaxErrorHighlightingTask.Factory factory = new RustSyntaxErrorHighlightingTask.Factory();
@@ -52,7 +54,7 @@ public class RustSyntaxErrorHighlightingTaskTest {
         RustSyntaxErrorHighlightingTask highlightingTask = (RustSyntaxErrorHighlightingTask) tasks.iterator().next();
         NetbeansRustParserResult parseResult = new NetbeansRustParserResult(snapshot, null, null, Collections.<Rustdoc>emptyList(), Arrays.asList(syntaxError));
         Iterator<ErrorDescription> errors = highlightingTask.getErrors(parseResult, document).iterator();
-        
+
         ErrorDescription error = errors.next();
         assertThat(error.getSeverity(), is(Severity.ERROR));
         assertThat(error.getDescription(), is("bad syntax!"));

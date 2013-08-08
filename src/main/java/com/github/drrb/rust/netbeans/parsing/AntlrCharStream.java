@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.Interval;
@@ -57,7 +57,7 @@ public class AntlrCharStream implements CharStream {
             return 0; //Behaviour is undefined when lookaheadAmount == 0
         }
     }
-    
+
     private int lookBack(int amount) {
         backup(amount); //TODO: should this be backup(amount + 1)?
         int character = read();
@@ -75,7 +75,7 @@ public class AntlrCharStream implements CharStream {
         backup(amount);
         return character;
     }
-    
+
     @Override
     public int mark() {
         return ++markDepth;
@@ -94,7 +94,7 @@ public class AntlrCharStream implements CharStream {
         if (index < 0) {
             throw new IllegalArgumentException(String.format("Invalid index (%s < 0)", index));
         }
-        
+
         if (index < this.index) {
             backup(this.index - index);
             this.index = index;

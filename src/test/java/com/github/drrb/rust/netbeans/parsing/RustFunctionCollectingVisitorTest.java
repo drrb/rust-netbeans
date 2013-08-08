@@ -14,11 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parse;
+package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.RustFunction;
-import com.github.drrb.rust.netbeans.RustLexer;
-import com.github.drrb.rust.netbeans.RustParser;
 import java.util.Collection;
 import java.util.Iterator;
 import org.antlr.v4.runtime.ANTLRInputStream;

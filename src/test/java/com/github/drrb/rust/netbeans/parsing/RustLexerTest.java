@@ -14,18 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.junit.Assert;
 import org.junit.Test;
 import org.antlr.v4.runtime.Token;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import static com.github.drrb.rust.netbeans.RustLexer.*;
+import static com.github.drrb.rust.netbeans.parsing.RustLexer.*;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
@@ -36,7 +37,7 @@ public class RustLexerTest {
         String input = "  \t ";
         Iterator<Token> tokens = tokenize(input).iterator();
 
-        assertEquals(RustLexer.WS, tokens.next().getType());
+        Assert.assertEquals(RustLexer.WS, tokens.next().getType());
         assertEquals(Token.EOF, tokens.next().getType());
     }
 
