@@ -60,26 +60,22 @@ public class RustFoldManager implements FoldManager {
 
     @Override
     public void initFolds(FoldHierarchyTransaction transaction) {
-        removeAllFolds(transaction);
-        createAllFolds(transaction);
+        recreateFolds(transaction);
     }
 
     @Override
     public void insertUpdate(DocumentEvent event, FoldHierarchyTransaction transaction) {
-        removeAllFolds(transaction);
-        createAllFolds(transaction);
+        recreateFolds(transaction);
     }
 
     @Override
     public void removeUpdate(DocumentEvent event, FoldHierarchyTransaction transaction) {
-        removeAllFolds(transaction);
-        createAllFolds(transaction);
+        recreateFolds(transaction);
     }
 
     @Override
     public void changedUpdate(DocumentEvent event, FoldHierarchyTransaction transaction) {
-        removeAllFolds(transaction);
-        createAllFolds(transaction);
+        recreateFolds(transaction);
     }
 
     @Override
@@ -114,37 +110,30 @@ public class RustFoldManager implements FoldManager {
         }
     }
 
-    private void createAllFolds(final FoldHierarchyTransaction transaction) {
-        final FoldHierarchy hierarchy = operations.getHierarchy();
-        AbstractDocument document = (AbstractDocument) hierarchy.getComponent().getDocument();
-        TokenHierarchy<AbstractDocument> hi = TokenHierarchy.get(document);
-        document.readLock();
-        try {
-            TokenSequence<RustTokenId> ts = hi.tokenSequence(RustTokenId.getLanguage());
-            while (ts.moveNext()) {
-                int offset = ts.offset();
-                Token<RustTokenId> token = ts.token();
-                RustTokenId id = token.id();
-                if (EnumSet.of(OTHER_BLOCK_COMMENT, OUTER_DOC_COMMENT).contains(id)) {
-                    FoldType type = COMMENT_FOLD_TYPE;
-                    try {
-                        operations.addToHierarchy(
-                                type,
-                                type.toString(),
-                                false,
-                                offset,
-                                offset + token.length(),
-                                0,
-                                0,
-                                hierarchy, //Could be null, but maybe we pass this so we can get at it later?
-                                transaction);
-                    } catch (BadLocationException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
+    private void createAllFolds(AbstractDocument document, final FoldHierarchy foldHierarchy, final FoldHierarchyTransaction transaction) {
+        TokenHierarchy<AbstractDocument> tokenHierarchy = TokenHierarchy.get(document);
+        TokenSequence<RustTokenId> ts = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
+        while (ts.moveNext()) {
+            int offset = ts.offset();
+            Token<RustTokenId> token = ts.token();
+            RustTokenId id = token.id();
+            if (EnumSet.of(OTHER_BLOCK_COMMENT, OUTER_DOC_COMMENT).contains(id)) {
+                FoldType type = COMMENT_FOLD_TYPE;
+                try {
+                    operations.addToHierarchy(
+                            type,
+                            type.toString(),
+                            false,
+                            offset,
+                            offset + token.length(),
+                            0,
+                            0,
+                            foldHierarchy, //Could be null, but maybe we pass this so we can get at it later?
+                            transaction);
+                } catch (BadLocationException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
             }
-        } finally {
-            document.readUnlock();
         }
         try {
             ParserManager.parse(Collections.singletonList(Source.create(document)), new UserTask() {
@@ -163,7 +152,7 @@ public class RustFoldManager implements FoldManager {
                                     function.getEndIndex() + 1,
                                     0,
                                     0,
-                                    hierarchy, //Could be null, but maybe we pass this so we can get at it later?
+                                    foldHierarchy, //Could be null, but maybe we pass this so we can get at it later?
                                     transaction);
                         } catch (BadLocationException ex) {
                             Exceptions.printStackTrace(ex);
@@ -173,6 +162,28 @@ public class RustFoldManager implements FoldManager {
             });
         } catch (ParseException ex) {
             Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private void recreateFolds(FoldHierarchyTransaction transaction) {
+        FoldHierarchy foldHierarchy = operations.getHierarchy();
+        AbstractDocument document = (AbstractDocument) foldHierarchy.getComponent().getDocument();
+        document.readLock();
+        try {
+            foldHierarchy.lock();
+            try {
+                FoldHierarchyTransaction foldHierarchyTransaction = operations.openTransaction();
+                try {
+                    removeAllFolds(foldHierarchyTransaction);
+                    createAllFolds(document, foldHierarchy, foldHierarchyTransaction);
+                } finally {
+                    foldHierarchyTransaction.commit();
+                }
+            } finally {
+                foldHierarchy.unlock();
+            }
+        } finally {
+            document.readUnlock();
         }
     }
 
