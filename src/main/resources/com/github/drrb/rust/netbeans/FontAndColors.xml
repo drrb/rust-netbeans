@@ -31,4 +31,19 @@
     <fontcolor name="string" default="string"/>
     <fontcolor name="separator" default="separator"/>
     <fontcolor name="whitespace" default="whitespace"/>
+    
+    <!-- CSL semantic highlighting -->
+    <fontcolor name="mod-method" foreColor="000000" >
+        <font style="bold" />
+    </fontcolor>
+    <fontcolor name="mod-class" >
+        <font style="bold" />
+    </fontcolor>
+    <fontcolor name="mod-enum" foreColor="009900">
+        <font style="italic" />
+    </fontcolor>
+    <fontcolor name="mod-field" foreColor="009900"/>
+    <fontcolor name="mod-static" >
+        <font style="italic" />
+    </fontcolor>
 </fontscolors>
