@@ -36,7 +36,6 @@ import org.netbeans.modules.parsing.spi.ParseException;
 
 /**
  *
- * @author drrb
  */
 public class RustSemanticAnalyzerTest {
 
@@ -82,6 +81,26 @@ public class RustSemanticAnalyzerTest {
         assertThat(analyzed(source), hasHighlight(7, 12, CLASS));
         assertThat(analyzed(source), hasHighlight(19, 20, FIELD));
         assertThat(analyzed(source), hasHighlight(33, 34, FIELD));
+    }
+
+    @Test
+    public void shouldFindTrait() {
+        StringBuilder source = new StringBuilder();
+        source.append("trait Printable {\n");
+        source.append("    fn print(&self);\n");
+        source.append("}\n");
+        assertThat(analyzed(source), hasHighlight(6, 15, CLASS));
+        assertThat(analyzed(source), hasHighlight(25, 30, METHOD));
+    }
+
+    @Test
+    public void shouldFindImplWithMethods() {
+        StringBuilder source = new StringBuilder();
+        source.append("impl Printable for int {\n");
+        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
+        source.append("}\n");
+        assertThat(analyzed(source), hasHighlight(5, 14, CLASS));
+        assertThat(analyzed(source), hasHighlight(32, 37, METHOD));
     }
 
     @Test

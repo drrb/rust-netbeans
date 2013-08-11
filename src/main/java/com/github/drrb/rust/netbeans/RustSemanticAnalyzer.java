@@ -19,6 +19,7 @@ package com.github.drrb.rust.netbeans;
 import com.github.drrb.rust.netbeans.NetbeansRustParser.NetbeansRustParserResult;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,35 +46,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
         cancelled.set(false);
 
         RustParser.ProgContext prog = result.getAst();
-        prog.accept(new RustBaseVisitor<Void>() {
-
-            @Override
-            public Void visitItem_fn_decl(RustParser.Item_fn_declContext ctx) {
-                return addHighlight(ctx.ident(), METHOD);
-            }
-
-            @Override
-            public Void visitEnum_decl(RustParser.Enum_declContext ctx) {
-                visitChildren(ctx);
-                return addHighlight(ctx.ident(), CLASS);
-            }
-
-            @Override
-            public Void visitEnum_variant_decl(RustParser.Enum_variant_declContext ctx) {
-                return addHighlight(ctx.ident(), ENUM);
-            }
-
-            @Override
-            public Void visitStruct_decl(RustParser.Struct_declContext ctx) {
-                visitChildren(ctx);
-                return addHighlight(ctx.ident(), CLASS);
-            }
-
-            @Override
-            public Void visitStruct_field(RustParser.Struct_fieldContext ctx) {
-                return addHighlight(ctx.ident(), FIELD);
-            }
-        });
+        prog.accept(new HighlightingVisitor());
     }
     
     private Void addHighlight(ParserRuleContext context, ColoringAttributes firstAttribute, ColoringAttributes... otherAttributes) {
@@ -103,5 +76,88 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
     @Override
     public void cancel() {
         cancelled.set(true);
+    }
+
+    private class HighlightingVisitor extends RustBaseVisitor<Void> {
+
+        @Override
+        public Void visitItem_fn_decl(RustParser.Item_fn_declContext ctx) {
+            return addHighlight(ctx.ident(), METHOD);
+        }
+
+        @Override
+        public Void visitEnum_decl(RustParser.Enum_declContext ctx) {
+            visitChildren(ctx);
+            return addHighlight(ctx.ident(), CLASS);
+        }
+
+        @Override
+        public Void visitEnum_variant_decl(RustParser.Enum_variant_declContext ctx) {
+            return addHighlight(ctx.ident(), ENUM);
+        }
+
+        @Override
+        public Void visitStruct_decl(RustParser.Struct_declContext ctx) {
+            visitChildren(ctx);
+            return addHighlight(ctx.ident(), CLASS);
+        }
+
+        @Override
+        public Void visitStruct_field(RustParser.Struct_fieldContext ctx) {
+            return addHighlight(ctx.ident(), FIELD);
+        }
+
+        @Override
+        public Void visitTrait_decl(RustParser.Trait_declContext ctx) {
+            visitChildren(ctx);
+            return addHighlight(ctx.ident(), CLASS);
+        }
+
+        @Override
+        public Void visitTrait_method(RustParser.Trait_methodContext ctx) {
+            return addHighlight(ctx.ident(), METHOD);
+        }
+
+        @Override
+        public Void visitImpl(RustParser.ImplContext ctx) {
+            visitChildren(ctx);
+            ctx.accept(new RustBaseVisitor<Void>() {
+
+                @Override
+                public Void visitNon_global_path(RustParser.Non_global_pathContext ctx) {
+                    List<RustParser.IdentContext> identifiers = ctx.ident();
+                    for (RustParser.IdentContext identifier : identifiers) {
+                        addHighlight(identifier, CLASS);
+                    }
+                    return null;
+                }
+                
+            });
+            return null;
+        }
+
+        @Override
+        public Void visitImpl_trait_for_type(RustParser.Impl_trait_for_typeContext ctx) {
+            visitChildren(ctx);
+            ctx.accept(new RustBaseVisitor<Void>() {
+
+                @Override
+                public Void visitNon_global_path(RustParser.Non_global_pathContext ctx) {
+                    List<RustParser.IdentContext> identifiers = ctx.ident();
+                    for (RustParser.IdentContext identifier : identifiers) {
+                        addHighlight(identifier, CLASS);
+                    }
+                    return null;
+                }
+                
+            });
+            return null;
+        }
+
+        @Override
+        public Void visitImpl_method(RustParser.Impl_methodContext ctx) {
+            visitChildren(ctx);
+            return addHighlight(ctx.ident(), METHOD);
+        }
     }
 }

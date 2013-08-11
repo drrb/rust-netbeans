@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans;
 
 import org.netbeans.api.lexer.Language;
+import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
@@ -33,6 +34,16 @@ public class RustLanguage extends DefaultLanguageConfig {
     }
 
     @Override
+    public String getPreferredExtension() {
+        return "rs";
+    }
+
+    @Override
+    public String getLineCommentPrefix() {
+        return "//";
+    }
+
+    @Override
     public Language<RustTokenId> getLexerLanguage() {
         return RustTokenId.getLanguage();
     }
@@ -43,12 +54,7 @@ public class RustLanguage extends DefaultLanguageConfig {
     }
 
     @Override
-    public String getPreferredExtension() {
-        return "rs";
-    }
-
-    @Override
-    public String getLineCommentPrefix() {
-        return "//";
+    public SemanticAnalyzer getSemanticAnalyzer() {
+        return new RustSemanticAnalyzer();
     }
 }
