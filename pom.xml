@@ -442,6 +442,8 @@
                                 <exclude>README.md</exclude>
                                 <exclude>NOTICE</exclude>
                                 <exclude>NOTICE.template</exclude>
+                                <exclude>TODO</exclude>
+                                <exclude>src/etc/rust-antlr.patch</exclude>
                                 <exclude>src/main/antlr4/Rust.g4</exclude>
                                 <exclude>src/main/antlr4/xidstart.g4</exclude>
                                 <exclude>src/main/antlr4/xidcont.g4</exclude>
