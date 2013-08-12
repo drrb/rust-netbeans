@@ -1,7 +1,7 @@
 diff --git a/src/main/antlr4/Rust.g4 b/src/main/antlr4/Rust.g4
 index 9a1ab55..f917393 100644
---- a/src/main/antlr4/Rust.g4
-+++ b/src/main/antlr4/Rust.g4
+--- a/src/main/antlr4/com/github/drrb/rust/netbeans/parsing/Rust.g4
++++ b/src/main/antlr4/com/github/drrb/rust/netbeans/parsing/Rust.g4
 @@ -798,10 +798,10 @@ INNER_DOC_COMMENT : '//!' ~[\n]*
  
  // HELPER DEFINITIONS:

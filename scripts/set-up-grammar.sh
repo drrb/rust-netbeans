@@ -18,13 +18,45 @@
 
 set -e
 
-echo "Downloading Rust ANTLR grammar"
+ANTLR_URL="https://raw.github.com/jbclements/rust-antlr/master"
+
+get() {
+    local file=$1
+
+    if [ -z "$ANTLR_DIR" ]
+    then
+	wget $ANTLR_URL/$file
+    else
+	cp -v $ANTLR_DIR/$file .
+    fi
+}
+
+log() {
+    echo "$@" >&2
+}
+
 cd `dirname "${BASH_SOURCE[0]}"`/..
+
+GRAMMAR_DIR_POINTER=.antlr-grammar-location
+if [ -f "$GRAMMAR_DIR_POINTER" ]
+then
+    ANTLR_DIR=$(cd `cat $GRAMMAR_DIR_POINTER` && pwd)
+    log "Offline mode: sourcing Rust ANTLR grammar from '$ANTLR_DIR'"
+    if [ ! -d "$ANTLR_DIR" ]
+    then
+	log "Error: directory not found - '$ANTLR_DIR'"
+	exit 1
+    fi
+else
+    log "Downloading Rust ANTLR grammar from '$ANTLR_URL'"
+fi
+
 mkdir -p src/main/antlr4/com/github/drrb/rust/netbeans/parsing
 cd src/main/antlr4
-wget https://raw.github.com/jbclements/rust-antlr/master/xidstart.g4
-wget https://raw.github.com/jbclements/rust-antlr/master/xidcont.g4
+get xidstart.g4
+get xidcont.g4
 cd -
-cd src/main/antlr4/
-wget https://raw.github.com/jbclements/rust-antlr/master/Rust.g4
+cd src/main/antlr4/com/github/drrb/rust/netbeans/parsing
+get Rust.g4
+cd -
 git apply --reverse src/etc/rust-antlr.patch 

@@ -1,5 +1,6 @@
 /target/
 .no-generate-parser
+.antlr-grammar-location
 .not-ci
 src/main/antlr4/**/*.g4
 .idea
