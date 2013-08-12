@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
+import com.github.drrb.rust.netbeans.RustDocument;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
@@ -94,7 +95,7 @@ public class RustSemanticAnalyzerTest {
     }
 
     @Test
-    public void shouldFindImplWithMethods() {
+    public void shouldFindTraitImplWithMethods() {
         StringBuilder source = new StringBuilder();
         source.append("impl Printable for int {\n");
         source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");

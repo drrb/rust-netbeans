@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
+import com.github.drrb.rust.netbeans.parsing.RustSemanticAnalyzer;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;

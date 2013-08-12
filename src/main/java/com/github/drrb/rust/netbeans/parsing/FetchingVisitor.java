@@ -14,25 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parse;
+package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.RustBaseVisitor;
-import java.util.LinkedList;
-import java.util.List;
+import org.antlr.v4.runtime.tree.RuleNode;
 
 /**
  *
  */
-public class CollectingVisitor<T> extends RustBaseVisitor<List<T>> {
+public class FetchingVisitor<T> extends RustBaseVisitor<T> {
 
     @Override
-    protected List<T> defaultResult() {
-        return new LinkedList<T>();
+    protected T defaultResult() {
+        return null;
     }
 
     @Override
-    protected List<T> aggregateResult(List<T> aggregate, List<T> nextResult) {
-        aggregate.addAll(nextResult);
-        return aggregate;
+    protected T aggregateResult(T aggregate, T nextResult) {
+        return aggregate == null ? nextResult : aggregate;
+    }
+
+    @Override
+    protected boolean shouldVisitNextChild(RuleNode node, T currentResult) {
+        return currentResult != null;
     }
 }

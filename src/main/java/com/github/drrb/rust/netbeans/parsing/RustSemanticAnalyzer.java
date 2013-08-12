@@ -14,10 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans;
+package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.parse.CollectingVisitor;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -44,7 +43,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
     private final Collection<Highlight> highlights = new LinkedList<Highlight>();
 
     @Override
-    public void run(NetbeansRustParser.NetbeansRustParserResult result, SchedulerEvent event) {
+    public void run(NetbeansRustParserResult result, SchedulerEvent event) {
         //TODO: Are these needed? Is this class disposable?
         highlights.clear();
         cancelled.set(false);
@@ -73,7 +72,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
     public void cancel() {
         cancelled.set(true);
     }
-    
+
     private Map<OffsetRange, Set<ColoringAttributes>> mapHighlights(Collection<Highlight> highlights) {
         Map<OffsetRange, Set<ColoringAttributes>> highlightsMap = new HashMap<OffsetRange, Set<ColoringAttributes>>(highlights.size());
         for (Highlight highlight : highlights) {
@@ -154,15 +153,12 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
                     return highlights;
                 }
             });
-            if (implNameHighlight == null) {
-                System.out.println("highlight is null");
-            }
             return aggregateResult(implNameHighlight, visitChildren(ctx));
         }
 
         @Override
         public List<Highlight> visitImpl_trait_for_type(RustParser.Impl_trait_for_typeContext ctx) {
-            List<Highlight> implNameHighlight = ctx.accept(new RustBaseVisitor<List<Highlight>>() {
+            List<Highlight> implNameHighlight = ctx.accept(new CollectingVisitor<Highlight>() {
                 @Override
                 public List<Highlight> visitNon_global_path(RustParser.Non_global_pathContext ctx) {
                     List<Highlight> highlights = new LinkedList<Highlight>();
