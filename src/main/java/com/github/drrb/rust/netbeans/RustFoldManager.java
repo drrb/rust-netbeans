@@ -1,28 +1,27 @@
 /**
  * Copyright (C) 2013 drrb
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.drrb.rust.netbeans;
 
+import com.github.drrb.rust.netbeans.parsing.CollectingVisitor;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.RustParser;
-import java.util.EnumSet;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.BadLocationException;
 
-import com.github.drrb.rust.netbeans.parsing.RustFunction;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.editor.fold.Fold;
 import org.netbeans.api.editor.fold.FoldHierarchy;
@@ -35,11 +34,13 @@ import org.netbeans.spi.editor.fold.FoldManager;
 import org.netbeans.spi.editor.fold.FoldOperation;
 import org.openide.util.Exceptions;
 import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
-import com.github.drrb.rust.netbeans.parsing.RustFunctionCollectingVisitor;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.text.AbstractDocument;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
+import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.parsing.api.ParserManager;
 import org.netbeans.modules.parsing.api.ResultIterator;
 import org.netbeans.modules.parsing.api.Source;
@@ -49,8 +50,9 @@ import org.netbeans.spi.editor.fold.FoldManagerFactory;
 
 public class RustFoldManager implements FoldManager {
 
+    private static final FoldType DOC_COMMENT_FOLD_TYPE = new FoldType("/**...*/");
     private static final FoldType COMMENT_FOLD_TYPE = new FoldType("/*...*/");
-    private static final FoldType FUNCTION_FOLD_TYPE = new FoldType("fn { .. }");
+    private static final FoldType FUNCTION_FOLD_TYPE = new FoldType("{...}");
     private FoldOperation operations;
 
     @Override
@@ -60,7 +62,7 @@ public class RustFoldManager implements FoldManager {
 
     @Override
     public void initFolds(FoldHierarchyTransaction transaction) {
-        recreateFolds(transaction);
+        createAllFolds(transaction);
     }
 
     @Override
@@ -95,7 +97,7 @@ public class RustFoldManager implements FoldManager {
     }
 
     private void removeAllFolds(FoldHierarchyTransaction transaction) {
-        FoldHierarchy hierarchy = operations.getHierarchy();
+        FoldHierarchy hierarchy = getFoldHierarchy();
         Fold rootFold = hierarchy.getRootFold();
         recursivelyRemoveFolds(rootFold, transaction);
     }
@@ -105,59 +107,37 @@ public class RustFoldManager implements FoldManager {
             Fold childFold = fold.getFold(i);
             recursivelyRemoveFolds(childFold, transaction);
         }
-        if (!fold.equals(fold.getHierarchy().getRootFold())) {
+        if (!fold.equals(fold.getHierarchy().getRootFold()) && operations.owns(fold)) {
             operations.removeFromHierarchy(fold, transaction);
         }
     }
 
-    private void createAllFolds(AbstractDocument document, final FoldHierarchy foldHierarchy, final FoldHierarchyTransaction transaction) {
-        TokenHierarchy<AbstractDocument> tokenHierarchy = TokenHierarchy.get(document);
-        TokenSequence<RustTokenId> ts = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
-        while (ts.moveNext()) {
-            int offset = ts.offset();
-            Token<RustTokenId> token = ts.token();
+    private void createAllFolds(final FoldHierarchyTransaction transaction) {
+        System.out.println("    creating folds");
+        TokenHierarchy<AbstractDocument> tokenHierarchy = TokenHierarchy.get(getDocument());
+        TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
+        List<OffsetRange> comments = new LinkedList<OffsetRange>();
+        List<OffsetRange> docComments = new LinkedList<OffsetRange>();
+        while (tokenSequence.moveNext()) {
+            int offset = tokenSequence.offset();
+            Token<RustTokenId> token = tokenSequence.token();
             RustTokenId id = token.id();
-            if (EnumSet.of(OTHER_BLOCK_COMMENT, OUTER_DOC_COMMENT).contains(id)) {
-                FoldType type = COMMENT_FOLD_TYPE;
-                try {
-                    operations.addToHierarchy(
-                            type,
-                            type.toString(),
-                            false,
-                            offset,
-                            offset + token.length(),
-                            0,
-                            0,
-                            foldHierarchy, //Could be null, but maybe we pass this so we can get at it later?
-                            transaction);
-                } catch (BadLocationException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
+            if (id == OTHER_BLOCK_COMMENT) {
+                comments.add(new OffsetRange(offset, offset + token.length()));
+            } else if (id == OUTER_DOC_COMMENT) {
+                docComments.add(new OffsetRange(offset, offset + token.length()));
             }
         }
+        createFolds(COMMENT_FOLD_TYPE, comments, transaction);
+        createFolds(DOC_COMMENT_FOLD_TYPE, docComments, transaction);
         try {
-            ParserManager.parse(Collections.singletonList(Source.create(document)), new UserTask() {
+            ParserManager.parse(Collections.singletonList(Source.create(getDocument())), new UserTask() {
                 @Override
                 public void run(ResultIterator resultIterator) throws Exception {
                     NetbeansRustParserResult result = (NetbeansRustParserResult) resultIterator.getParserResult();
                     RustParser.ProgContext prog = result.getAst();
-                    Collection<RustFunction> functions = prog.accept(new RustFunctionCollectingVisitor());
-                    for (RustFunction function : functions) {
-                        try {
-                            operations.addToHierarchy(
-                                    FUNCTION_FOLD_TYPE,
-                                    String.format("fn %s { ... }", function.getName()),
-                                    false,
-                                    function.getStartIndex(),
-                                    function.getEndIndex() + 1,
-                                    0,
-                                    0,
-                                    foldHierarchy, //Could be null, but maybe we pass this so we can get at it later?
-                                    transaction);
-                        } catch (BadLocationException ex) {
-                            Exceptions.printStackTrace(ex);
-                        }
-                    }
+                    Collection<OffsetRange> functions = prog.accept(new FunctionBodyCollectingVisitor());
+                    createFolds(FUNCTION_FOLD_TYPE, functions, transaction);
                 }
             });
         } catch (ParseException ex) {
@@ -165,25 +145,48 @@ public class RustFoldManager implements FoldManager {
         }
     }
 
-    private void recreateFolds(FoldHierarchyTransaction transaction) {
-        FoldHierarchy foldHierarchy = operations.getHierarchy();
-        AbstractDocument document = (AbstractDocument) foldHierarchy.getComponent().getDocument();
-        document.readLock();
-        try {
-            foldHierarchy.lock();
+    private void createFolds(FoldType foldType, Collection<OffsetRange> foldRanges, FoldHierarchyTransaction transaction) {
+        for (OffsetRange foldrange : foldRanges) {
             try {
-                FoldHierarchyTransaction foldHierarchyTransaction = operations.openTransaction();
-                try {
-                    removeAllFolds(foldHierarchyTransaction);
-                    createAllFolds(document, foldHierarchy, foldHierarchyTransaction);
-                } finally {
-                    foldHierarchyTransaction.commit();
-                }
-            } finally {
-                foldHierarchy.unlock();
+                operations.addToHierarchy(
+                        foldType,
+                        foldType.toString(),
+                        false,
+                        foldrange.getStart(),
+                        foldrange.getEnd(),
+                        0,
+                        0,
+                        getFoldHierarchy(), //Could be null, but maybe we pass this so we can get at it later?
+                        transaction);
+            } catch (BadLocationException ex) {
+                Exceptions.printStackTrace(ex);
             }
-        } finally {
-            document.readUnlock();
+        }
+    }
+
+    private void recreateFolds(FoldHierarchyTransaction transaction) {
+        removeAllFolds(transaction);
+        createAllFolds(transaction);
+    }
+
+    private FoldHierarchy getFoldHierarchy() {
+        return operations.getHierarchy();
+    }
+
+    private AbstractDocument getDocument() {
+        return (AbstractDocument) getFoldHierarchy().getComponent().getDocument();
+    }
+
+    private class FunctionBodyCollectingVisitor extends CollectingVisitor<OffsetRange> {
+
+        @Override
+        public List<OffsetRange> visitFun_body(RustParser.Fun_bodyContext functionBody) {
+            List<OffsetRange> result = new LinkedList<OffsetRange>();
+            int functionStartIndex = functionBody.getStart().getStartIndex();
+            int functionEndIndex = functionBody.getStop().getStopIndex() + 1;
+            OffsetRange functionLocation = new OffsetRange(functionStartIndex, functionEndIndex);
+            result.add(functionLocation);
+            return aggregateResult(result, visitChildren(functionBody));
         }
     }
 
