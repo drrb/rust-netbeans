@@ -31,7 +31,7 @@
     <fontcolor name="string" default="string"/>
     <fontcolor name="separator" default="separator"/>
     <fontcolor name="whitespace" default="whitespace"/>
-    
+
     <!-- CSL semantic highlighting -->
     <fontcolor name="mod-method" foreColor="000000" >
         <font style="bold" />
@@ -45,5 +45,10 @@
     <fontcolor name="mod-field" foreColor="009900"/>
     <fontcolor name="mod-static" >
         <font style="italic" />
+    </fontcolor>
+
+    <!-- CSL occurrence marking -->
+    <fontcolor name="mark-occurrences" bgColor="ECEBA3">
+
     </fontcolor>
 </fontscolors>

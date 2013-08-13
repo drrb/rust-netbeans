@@ -16,14 +16,11 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.RustDocument;
+import static com.github.drrb.rust.netbeans.TestParsing.*;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.SyntaxError;
 import org.junit.Test;
 import java.util.Iterator;
-import javax.swing.text.Document;
-import org.netbeans.modules.parsing.api.Snapshot;
-import org.netbeans.modules.parsing.api.Source;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
@@ -61,14 +58,5 @@ public class RustParserTest {
         Rustdoc rustdoc = rustdocs.next();
         assertThat(rustdoc.getText(), is("/**\n * Say Hello\n */"));
         assertThat(rustdoc.getIdentifier(), is("greet"));
-    }
-
-    private NetbeansRustParserResult parse(CharSequence input) throws Exception {
-        Document document = RustDocument.containing(input);
-        Source source = Source.create(document);
-        Snapshot snapshot = source.createSnapshot();
-        NetbeansRustParser parser = new NetbeansRustParser();
-        parser.parse(snapshot, null, null);
-        return parser.getResult(null);
     }
 }

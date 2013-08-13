@@ -19,7 +19,7 @@ package com.github.drrb.rust.netbeans.highlighting;
 import javax.swing.text.Document;
 
 import com.github.drrb.rust.netbeans.RustDocument;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import static com.github.drrb.rust.netbeans.TestParsing.*;
 import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +28,6 @@ import static org.hamcrest.Matchers.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
-import org.netbeans.api.lexer.TokenHierarchy;
-import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.spi.editor.bracesmatching.MatcherContext;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -61,7 +59,7 @@ public class RustBracesMatcherTest {
 
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(1);
-        when(rustLexUtils.getRustTokenSequence(document, 1)).thenReturn(tokenSequenceFor(source));
+        when(rustLexUtils.getRustTokenSequence(document, 1)).thenReturn(rustTokenSequenceFor(source));
 
         int[] origin = bracesMatcher.findOrigin();
 
@@ -77,7 +75,7 @@ public class RustBracesMatcherTest {
 
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(10);
-        when(rustLexUtils.getRustTokenSequence(document, 10)).thenReturn(tokenSequenceFor(source));
+        when(rustLexUtils.getRustTokenSequence(document, 10)).thenReturn(rustTokenSequenceFor(source));
 
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {10, 11};
@@ -94,7 +92,7 @@ public class RustBracesMatcherTest {
 
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(7);
-        when(rustLexUtils.getRustTokenSequence(document, 7)).thenReturn(tokenSequenceFor(source));
+        when(rustLexUtils.getRustTokenSequence(document, 7)).thenReturn(rustTokenSequenceFor(source));
 
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {7, 8};
@@ -111,7 +109,7 @@ public class RustBracesMatcherTest {
 
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(7);
-        when(rustLexUtils.getRustTokenSequence(document, 7)).thenReturn(tokenSequenceFor(source));
+        when(rustLexUtils.getRustTokenSequence(document, 7)).thenReturn(rustTokenSequenceFor(source));
 
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {7, 8};
@@ -128,7 +126,7 @@ public class RustBracesMatcherTest {
 
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(13);
-        when(rustLexUtils.getRustTokenSequence(document, 13)).thenReturn(tokenSequenceFor(source));
+        when(rustLexUtils.getRustTokenSequence(document, 13)).thenReturn(rustTokenSequenceFor(source));
 
         int[] origin = bracesMatcher.findMatches();
         int[] expectedOrigin = {15, 16};
@@ -145,15 +143,11 @@ public class RustBracesMatcherTest {
 
         when(context.getDocument()).thenReturn(document);
         when(context.getSearchOffset()).thenReturn(15);
-        when(rustLexUtils.getRustTokenSequence(document, 15)).thenReturn(tokenSequenceFor(source));
+        when(rustLexUtils.getRustTokenSequence(document, 15)).thenReturn(rustTokenSequenceFor(source));
 
         int[] origin = bracesMatcher.findMatches();
         int[] expectedOrigin = {13, 14};
 
         assertThat(origin, is(expectedOrigin));
-    }
-
-    private TokenSequence<RustTokenId> tokenSequenceFor(CharSequence input) {
-        return TokenHierarchy.create(input, RustTokenId.getLanguage()).tokenSequence(RustTokenId.getLanguage());
     }
 }

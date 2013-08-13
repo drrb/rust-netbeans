@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import com.github.drrb.rust.netbeans.RustDocument;
+import com.github.drrb.rust.netbeans.TestParsing;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
@@ -136,20 +137,7 @@ public class RustSemanticAnalyzerTest {
     }
 
     private Map<OffsetRange, Set<ColoringAttributes>> analyzed(CharSequence source) {
-        semanticAnalyzer.run(parse(source), null);
+        semanticAnalyzer.run(TestParsing.parse(source), null);
         return semanticAnalyzer.getHighlights();
-    }
-
-    private NetbeansRustParser.NetbeansRustParserResult parse(CharSequence input) {
-        Document document = RustDocument.containing(input);
-        Source source = Source.create(document);
-        Snapshot snapshot = source.createSnapshot();
-        NetbeansRustParser parser = new NetbeansRustParser();
-        parser.parse(snapshot, null, null);
-        try {
-            return parser.getResult(null);
-        } catch (ParseException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 }

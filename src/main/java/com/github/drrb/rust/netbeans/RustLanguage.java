@@ -19,7 +19,9 @@ package com.github.drrb.rust.netbeans;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustSemanticAnalyzer;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
 import org.netbeans.api.lexer.Language;
+import org.netbeans.modules.csl.api.OccurrencesFinder;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
@@ -59,5 +61,15 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public SemanticAnalyzer getSemanticAnalyzer() {
         return new RustSemanticAnalyzer();
+    }
+
+    @Override
+    public boolean hasOccurrencesFinder() {
+        return true;
+    }
+
+    @Override
+    public OccurrencesFinder getOccurrencesFinder() {
+        return new RustOccurrencesFinder();
     }
 }
