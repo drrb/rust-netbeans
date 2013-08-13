@@ -20,7 +20,9 @@ import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustSemanticAnalyzer;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
+import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
 import org.netbeans.api.lexer.Language;
+import org.netbeans.modules.csl.api.InstantRenamer;
 import org.netbeans.modules.csl.api.OccurrencesFinder;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
@@ -71,5 +73,10 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public OccurrencesFinder getOccurrencesFinder() {
         return new RustOccurrencesFinder();
+    }
+
+    @Override
+    public InstantRenamer getInstantRenamer() {
+        return new RustInstantRenamer();
     }
 }

@@ -45,7 +45,6 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
     @Override
     public void setCaretPosition(int caretPosition) {
         this.caretPosition = caretPosition;
-        System.out.println("setting caret position: " + caretPosition);
     }
 
     @Override
@@ -58,19 +57,15 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
         if (tokenSequence.moveNext()) {
             final Token<RustTokenId> tokenAtCaret = tokenSequence.token();
             if (tokenAtCaret.id() == RustTokenId.IDENT) {
-                System.out.println("identifier at carat position: '" + tokenAtCaret.text() + "'");
                 addOccurrence(getRangeOfCurrentToken(tokenSequence), LOCAL_VARIABLE);
                 RustParser.ProgContext prog = parseResult.getAst();
                 prog.accept(new RustBaseVisitor<Void>() {
                     @Override
                     public Void visitFun_body(RustParser.Fun_bodyContext ctx) {
-                        System.out.println("found function: " + getRange(ctx) + " " + ctx.getText());
                         if (getRange(ctx).containsInclusive(caretPosition)) {
-                            System.out.println("    function is at carat position");
                             ctx.accept(new RustBaseVisitor<Void>() {
                                 @Override
                                 public Void visitIdent(RustParser.IdentContext ctx) {
-                                    System.out.println("    found identifier: " + ctx.getText());
                                     if (tokenAtCaret.text().toString().equals(ctx.getText())) {
                                         addOccurrence(getRange(ctx), LOCAL_VARIABLE);
                                     }
