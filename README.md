@@ -13,6 +13,7 @@ So far, it includes
 * basic code folding
 * basic indentation
 * basic occurrence matching
+* basic variable renaming
 * brace matching
 * comment toggling
 
