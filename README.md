@@ -6,11 +6,13 @@ Rust support for NetBeans
 
 So far, it includes
 
+* basic project view
 * basic syntax highlighting
 * basic error highlighting
 * basic code completion
 * basic code folding
 * basic indentation
+* basic occurrence matching
 * brace matching
 * comment toggling
 
