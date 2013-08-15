@@ -103,7 +103,7 @@ public class RustProjectTest {
         Node projectNode = logicalViewProvider.createLogicalView();
         assertThat(projectNode.getDisplayName(), is("testrustproject"));
 
-        assertThat(projectNode, hasChildren("main.rs"));
+        assertThat(projectNode, hasChildren("Sources"));
     }
 
     protected File getData(String path) {

@@ -29,15 +29,16 @@ import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
-class RustProjectNode extends FilterNode {
+public class RustProjectNode extends FilterNode {
 
     @StaticResource
-    public static final String CUSTOMER_ICON = "com/github/drrb/rust/netbeans/project/rust_project_icon_small.png";
+    public static final String PROJECT_ICON = "com/github/drrb/rust/netbeans/project/rust_project_icon_small.png";
+    private static final String NODE_FACTORIES_PATH = String.format("Projects/%s/Nodes", RustProject.TYPE);
     private final RustProject project;
 
     public RustProjectNode(Node projectDirectoryNode, RustProject project) throws DataObjectNotFoundException {
         super(projectDirectoryNode,
-                NodeFactorySupport.createCompositeChildren(project, String.format("Projects/%s/Nodes", RustProject.TYPE)),
+                NodeFactorySupport.createCompositeChildren(project, NODE_FACTORIES_PATH),
                 new ProxyLookup(Lookups.singleton(project), projectDirectoryNode.getLookup()));
         this.project = project;
     }
@@ -49,7 +50,7 @@ class RustProjectNode extends FilterNode {
 
     @Override
     public Image getIcon(int type) {
-        return ImageUtilities.loadImage(CUSTOMER_ICON);
+        return ImageUtilities.loadImage(PROJECT_ICON);
     }
 
     @Override

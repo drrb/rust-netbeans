@@ -38,7 +38,7 @@ import org.openide.util.lookup.Lookups;
 /**
  *
  */
-class RustProject implements Project {
+public class RustProject implements Project {
 
     public static final String TYPE = "com-github-drrb-rust-netbeans-project";
     private final FileObject projectDirectory;
@@ -60,7 +60,8 @@ class RustProject implements Project {
                 this, // So people can cast it without casting it, you know?
                 new Info(),
                 new LogicalView(),
-                new RustProjectActionProvider());
+                new RustProjectActionProvider(),
+                new RustSources(this));
     }
 
     private class Info implements ProjectInformation {
