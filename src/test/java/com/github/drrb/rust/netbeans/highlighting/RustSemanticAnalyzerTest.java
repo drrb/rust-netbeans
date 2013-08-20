@@ -14,27 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.RustDocument;
 import com.github.drrb.rust.netbeans.TestParsing;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.text.Document;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import static org.hamcrest.Matchers.*;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 import org.netbeans.modules.csl.api.OffsetRange;
-import org.netbeans.modules.parsing.api.Snapshot;
-import org.netbeans.modules.parsing.api.Source;
-import org.netbeans.modules.parsing.spi.ParseException;
 
 /**
  *
@@ -106,6 +102,58 @@ public class RustSemanticAnalyzerTest {
     }
 
     @Test
+    public void shouldFindImplWithMethods() {
+        StringBuilder source = new StringBuilder();
+        source.append("impl Printable {\n");
+        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
+        source.append("}\n");
+        assertThat(analyzed(source), hasHighlight(5, 14, CLASS));
+        assertThat(analyzed(source), hasHighlight(24, 29, METHOD));
+    }
+
+    @Test
+    public void shouldNotFindTypesInMethod() {
+        StringBuilder source = new StringBuilder();
+        source.append("impl Point {\n");
+        source.append("    fn transpose(&self, x: float, y: float) -> Point {\n");
+        source.append("        let new_x_value = self.x + x;\n");
+        source.append("        let new_y_value = self.y + y;\n");
+        source.append("        Point{ x: new_x_value, y: new_y_value }\n");
+        source.append("    }\n");
+        source.append("}");
+        assertThat(analyzed(source), not(hasHighlight(40, 45)));
+        assertThat(analyzed(source), not(hasHighlight(50, 55)));
+        assertThat(analyzed(source), not(hasHighlight(60, 65)));
+    }
+
+    @Test
+    public void shouldNotFindIdentifiersInMethodsWhenImplentingStructs() {
+        StringBuilder source = new StringBuilder();
+        source.append("impl Printable {\n");
+        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
+        source.append("}\n");
+        assertThat(analyzed(source), not(hasHighlight(39, 46)));
+    }
+
+    @Test
+    public void shouldNotFindIdentifiersInMethodsWhenImplementingTraits() {
+        StringBuilder source = new StringBuilder();
+        source.append("impl Printable for int {\n");
+        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
+        source.append("}\n");
+        assertThat(analyzed(source), not(hasHighlight(47, 54)));
+    }
+
+    @Test
+    public void shouldNotFindClassesBeingImplementedForTraits() {
+        StringBuilder source = new StringBuilder();
+        source.append("impl Printable for int {\n");
+        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
+        source.append("}\n");
+        assertThat(analyzed(source), not(hasHighlight(19, 22)));
+    }
+
+    @Test
     public void shouldNotDieWhenIdentifierNotTypedYet() {
         StringBuilder source = new StringBuilder();
         source.append("struct ");
@@ -118,7 +166,11 @@ public class RustSemanticAnalyzerTest {
             public boolean matchesSafely(Map<OffsetRange, Set<ColoringAttributes>> colors) {
                 OffsetRange offsetRange = new OffsetRange(start, end);
                 if (colors.containsKey(offsetRange)) {
-                    return colors.get(offsetRange).equals(EnumSet.copyOf(Arrays.asList(coloringAttributes)));
+                    if (coloringAttributes.length == 0) {
+                        return true;
+                    } else {
+                        return colors.get(offsetRange).equals(EnumSet.copyOf(Arrays.asList(coloringAttributes)));
+                    }
                 } else {
                     return false;
                 }

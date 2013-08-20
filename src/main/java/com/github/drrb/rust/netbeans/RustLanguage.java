@@ -17,7 +17,7 @@
 package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
-import com.github.drrb.rust.netbeans.parsing.RustSemanticAnalyzer;
+import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
 import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;

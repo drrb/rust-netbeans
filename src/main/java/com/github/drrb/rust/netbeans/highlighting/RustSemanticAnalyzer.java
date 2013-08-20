@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.highlighting;
 
+import com.github.drrb.rust.netbeans.parsing.CollectingVisitor;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.RustParser;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -143,7 +145,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
 
         @Override
         public List<Highlight> visitImpl(RustParser.ImplContext ctx) {
-            List<Highlight> implNameHighlight = ctx.accept(new CollectingVisitor<Highlight>() {
+            List<Highlight> implNameHighlight = ctx.ty().accept(new CollectingVisitor<Highlight>() {
                 @Override
                 public List<Highlight> visitNon_global_path(RustParser.Non_global_pathContext ctx) {
                     List<Highlight> highlights = new LinkedList<Highlight>();
@@ -160,12 +162,17 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
         public List<Highlight> visitImpl_trait_for_type(RustParser.Impl_trait_for_typeContext ctx) {
             List<Highlight> implNameHighlight = ctx.accept(new CollectingVisitor<Highlight>() {
                 @Override
-                public List<Highlight> visitNon_global_path(RustParser.Non_global_pathContext ctx) {
-                    List<Highlight> highlights = new LinkedList<Highlight>();
-                    for (RustParser.IdentContext identifier : ctx.ident()) {
-                        highlights.add(new Highlight(identifier, CLASS_SET));
-                    }
-                    return highlights;
+                public List<Highlight> visitTrait(RustParser.TraitContext ctx) {
+                    return ctx.accept(new CollectingVisitor<Highlight>() {
+                        @Override
+                        public List<Highlight> visitNon_global_path(RustParser.Non_global_pathContext ctx) {
+                            List<Highlight> highlights = new LinkedList<Highlight>();
+                            for (RustParser.IdentContext identifier : ctx.ident()) {
+                                highlights.add(new Highlight(identifier, CLASS_SET));
+                            }
+                            return highlights;
+                        }
+                    });
                 }
             });
             return aggregateResult(implNameHighlight, visitChildren(ctx));
