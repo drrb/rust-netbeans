@@ -50,33 +50,48 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
     @Override
     public void run(Parser.Result result, SchedulerEvent event) {
         occurrences.clear();
+
         NetbeansRustParserResult parseResult = (NetbeansRustParserResult) result;
         TokenHierarchy<?> tokenHierarchy = result.getSnapshot().getTokenHierarchy();
         TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
+        Token<RustTokenId> token = tokenAt(caretPosition, tokenSequence);
+        if (token.id() != RustTokenId.IDENT && caretPosition > 0) {
+            token = tokenAt(caretPosition - 1, tokenSequence);
+        }
+        if (token == null) {
+            return;
+        }
+
+        final Token<RustTokenId> tokenAtCaret = token;
+        if (tokenAtCaret.id() == RustTokenId.IDENT) {
+            addOccurrence(getRangeOfCurrentToken(tokenSequence), LOCAL_VARIABLE);
+            RustParser.ProgContext prog = parseResult.getAst();
+            prog.accept(new RustBaseVisitor<Void>() {
+                @Override
+                public Void visitFun_body(RustParser.Fun_bodyContext ctx) {
+                    if (getRange(ctx).containsInclusive(caretPosition)) {
+                        ctx.accept(new RustBaseVisitor<Void>() {
+                            @Override
+                            public Void visitIdent(RustParser.IdentContext ctx) {
+                                if (tokenAtCaret.text().toString().equals(ctx.getText())) {
+                                    addOccurrence(getRange(ctx), LOCAL_VARIABLE);
+                                }
+                                return null;
+                            }
+                        });
+                    }
+                    return null;
+                }
+            });
+        }
+    }
+
+    private Token<RustTokenId> tokenAt(int caretPosition, TokenSequence<RustTokenId> tokenSequence) {
         tokenSequence.move(caretPosition);
         if (tokenSequence.moveNext()) {
-            final Token<RustTokenId> tokenAtCaret = tokenSequence.token();
-            if (tokenAtCaret.id() == RustTokenId.IDENT) {
-                addOccurrence(getRangeOfCurrentToken(tokenSequence), LOCAL_VARIABLE);
-                RustParser.ProgContext prog = parseResult.getAst();
-                prog.accept(new RustBaseVisitor<Void>() {
-                    @Override
-                    public Void visitFun_body(RustParser.Fun_bodyContext ctx) {
-                        if (getRange(ctx).containsInclusive(caretPosition)) {
-                            ctx.accept(new RustBaseVisitor<Void>() {
-                                @Override
-                                public Void visitIdent(RustParser.IdentContext ctx) {
-                                    if (tokenAtCaret.text().toString().equals(ctx.getText())) {
-                                        addOccurrence(getRange(ctx), LOCAL_VARIABLE);
-                                    }
-                                    return null;
-                                }
-                            });
-                        }
-                        return null;
-                    }
-                });
-            }
+            return tokenSequence.token();
+        } else {
+            return null;
         }
     }
 

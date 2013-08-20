@@ -74,6 +74,22 @@ public class RustOccurrencesFinderTest {
         assertThat(occurrences, not(hasOccurrence(63, 66, LOCAL_VARIABLE)));
     }
 
+    @Test
+    public void shouldMatchIdentifierAtRIght() {
+        StringBuilder source = new StringBuilder();
+        source.append("fn main() {\n");
+        source.append("    let name = ~\"john\";\n");
+        source.append("    println(name);\n");
+        source.append("}\n");
+        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+
+        occurrencesFinder.setCaretPosition(24); // Caret is at: let name| = ...
+        occurrencesFinder.run(result, null);
+        Map<OffsetRange, ColoringAttributes> occurrences = occurrencesFinder.getOccurrences();
+        assertThat(occurrences, hasOccurrence(20, 24, LOCAL_VARIABLE));
+        assertThat(occurrences, hasOccurrence(48, 52, LOCAL_VARIABLE));
+    }
+
     private Matcher<Map<OffsetRange, ColoringAttributes>> hasOccurrence(final int start, final int end, final ColoringAttributes type) {
         return new TypeSafeMatcher<Map<OffsetRange, ColoringAttributes>>() {
             @Override
