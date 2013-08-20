@@ -184,9 +184,13 @@ public class RustFoldManager implements FoldManager {
             List<OffsetRange> result = new LinkedList<OffsetRange>();
             int functionStartIndex = functionBody.getStart().getStartIndex();
             int functionEndIndex = functionBody.getStop().getStopIndex() + 1;
-            OffsetRange functionLocation = new OffsetRange(functionStartIndex, functionEndIndex);
-            result.add(functionLocation);
-            return aggregateResult(result, visitChildren(functionBody));
+            if (functionStartIndex < functionEndIndex) { //Weird stuff happens when we're part way through typing a function
+                OffsetRange functionLocation = new OffsetRange(functionStartIndex, functionEndIndex);
+                result.add(functionLocation);
+                return aggregateResult(result, visitChildren(functionBody));
+            } else {
+                return result;
+            }
         }
     }
 
