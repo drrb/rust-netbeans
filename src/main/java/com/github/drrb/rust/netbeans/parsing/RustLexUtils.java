@@ -54,14 +54,14 @@ public class RustLexUtils {
         return null;
     }
 
-    public static Option<Token<RustTokenId>> getIdentifierAt(int caretOffset, ParserResult info) {
+    public static Option<OffsetRustToken> getIdentifierAt(int caretOffset, ParserResult info) {
         TokenHierarchy<?> tokenHierarchy = info.getSnapshot().getTokenHierarchy();
         return getIdentifierAt(caretOffset, tokenHierarchy);
     }
 
-    public static Option<Token<RustTokenId>> getIdentifierAt(int caretOffset, TokenHierarchy<?> tokenHierarchy) {
+    public static Option<OffsetRustToken> getIdentifierAt(int caretOffset, TokenHierarchy<?> tokenHierarchy) {
         TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
-        Option<Token<RustTokenId>> tokenAtOffset = offsetTokenAt(caretOffset, tokenSequence);
+        Option<OffsetRustToken> tokenAtOffset = offsetTokenAt(caretOffset, tokenSequence);
         if (tokenAtOffset.isNot()) {
             return Option.none();
         }
@@ -69,7 +69,7 @@ public class RustLexUtils {
         if (tokenAtOffset.value().id() == RustTokenId.IDENT) {
             return tokenAtOffset;
         } else if (caretOffset > 0) {
-            Option<Token<RustTokenId>> tokenBeforeOffset = offsetTokenAt(caretOffset - 1, tokenSequence);
+            Option<OffsetRustToken> tokenBeforeOffset = offsetTokenAt(caretOffset - 1, tokenSequence);
             if (tokenBeforeOffset.is() && tokenBeforeOffset.value().id() == RustTokenId.IDENT) {
                 return tokenBeforeOffset;
             } else {
@@ -80,10 +80,10 @@ public class RustLexUtils {
         }
     }
 
-    private static Option<Token<RustTokenId>> offsetTokenAt(int caretPosition, TokenSequence<RustTokenId> tokenSequence) {
+    private static Option<OffsetRustToken> offsetTokenAt(int caretPosition, TokenSequence<RustTokenId> tokenSequence) {
         tokenSequence.move(caretPosition);
         if (tokenSequence.moveNext()) {
-            return Option.is(tokenSequence.offsetToken());
+            return Option.is(OffsetRustToken.atCurrentLocation(tokenSequence));
         } else {
             return Option.none();
         }

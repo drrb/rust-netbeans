@@ -17,12 +17,11 @@
 package com.github.drrb.rust.netbeans.refactor;
 
 import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
+import com.github.drrb.rust.netbeans.parsing.OffsetRustToken;
 import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.util.Option;
 import java.util.Map;
 import java.util.Set;
-import org.netbeans.api.lexer.Token;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import org.netbeans.modules.csl.api.InstantRenamer;
 import org.netbeans.modules.csl.api.OffsetRange;
@@ -37,7 +36,7 @@ public class RustInstantRenamer implements InstantRenamer {
 
     @Override
     public boolean isRenameAllowed(ParserResult info, int caretOffset, String[] explanationRetValue) {
-        Option<Token<RustTokenId>> identifierAtCaret = RustLexUtils.getIdentifierAt(caretOffset, info);
+        Option<OffsetRustToken> identifierAtCaret = RustLexUtils.getIdentifierAt(caretOffset, info);
         if (identifierAtCaret.is()) {
             return true;
         } else {

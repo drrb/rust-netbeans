@@ -37,6 +37,7 @@ import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
 import org.openide.util.Exceptions;
 import static com.github.drrb.rust.netbeans.completion.RustCompletionItem.Type.*;
+import org.netbeans.api.lexer.TokenUtilities;
 
 @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = CompletionProvider.class)
 public class RustCompletionProvider implements CompletionProvider {
@@ -87,10 +88,10 @@ public class RustCompletionProvider implements CompletionProvider {
                     Token<RustTokenId> token = tokenSequence.token();
                     int start = tokenSequence.offset();
                     int end = start + token.length();
-                    String tokenText = token.text().toString();
+                    CharSequence tokenText = token.text();
                     if (token.id() == RustTokenId.IDENT
                             && caretOffset != end
-                            && tokenText.startsWith(filter)) {
+                            && TokenUtilities.startsWith(tokenText, filter)) {
                         completionResultSet.addItem(new RustCompletionItem(FUNCTION, tokenText, startOffset, caretOffset));
                     }
                 }

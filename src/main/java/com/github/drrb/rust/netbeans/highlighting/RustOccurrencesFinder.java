@@ -17,16 +17,16 @@
 package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.OffsetRustToken;
 import com.github.drrb.rust.netbeans.parsing.RustBaseVisitor;
 import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import com.github.drrb.rust.netbeans.parsing.RustParser;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.util.Option;
 import java.util.HashMap;
 import java.util.Map;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
+import org.netbeans.api.lexer.TokenUtilities;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 import org.netbeans.modules.csl.api.OccurrencesFinder;
@@ -54,18 +54,59 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
 
         NetbeansRustParserResult parseResult = (NetbeansRustParserResult) result;
         TokenHierarchy<?> tokenHierarchy = result.getSnapshot().getTokenHierarchy();
-        final Option<Token<RustTokenId>> tokenAtCaret = RustLexUtils.getIdentifierAt(caretPosition, tokenHierarchy);
-        if (tokenAtCaret.is()) {
-            addOccurrence(getRange(tokenAtCaret.value(), tokenHierarchy), LOCAL_VARIABLE);
+        final Option<OffsetRustToken> identifierAtCaret = RustLexUtils.getIdentifierAt(caretPosition, tokenHierarchy);
+        if (identifierAtCaret.is()) {
+            addOccurrence(identifierAtCaret.value().getRangeIn(tokenHierarchy), LOCAL_VARIABLE);
             RustParser.ProgContext prog = parseResult.getAst();
             prog.accept(new RustBaseVisitor<Void>() {
+
+                //For when you select a function parameter: highlight it thoughout the function
+                @Override
+                public Void visitItem_fn_decl(final RustParser.Item_fn_declContext functionContext) {
+                    visitChildren(functionContext);
+                    return functionContext.accept(new RustBaseVisitor<Void>() {
+
+                        @Override
+                        public Void visitArg(RustParser.ArgContext ctx) {
+                            return ctx.pat().accept(new RustBaseVisitor<Void>() {
+
+                                @Override
+                                public Void visitNon_global_path(RustParser.Non_global_pathContext ctx) {
+                                    RustParser.IdentContext argContext = ctx.ident(ctx.ident().size() - 1);
+                                    if (getRange(argContext).containsInclusive(caretPosition)) {
+                                        return functionContext.accept(new RustBaseVisitor<Void>() {
+                                            @Override
+                                            public Void visitFun_body(RustParser.Fun_bodyContext functionBodyContext) {
+                                                return functionBodyContext.accept(new RustBaseVisitor<Void>() {
+                                                    @Override
+                                                    public Void visitIdent(RustParser.IdentContext ctx) {
+                                                        if (TokenUtilities.textEquals(identifierAtCaret.value().text(), ctx.getText())) {
+                                                            addOccurrence(getRange(ctx), LOCAL_VARIABLE);
+                                                        }
+                                                        return null;
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        return super.visitNon_global_path(ctx);
+                                    }
+                                }
+
+                            });
+                        }
+
+                    });
+                }
+
+                //For when you select an identifier in a function
                 @Override
                 public Void visitFun_body(RustParser.Fun_bodyContext ctx) {
                     if (getRange(ctx).containsInclusive(caretPosition)) {
                         ctx.accept(new RustBaseVisitor<Void>() {
                             @Override
                             public Void visitIdent(RustParser.IdentContext ctx) {
-                                if (tokenAtCaret.value().text().toString().equals(ctx.getText())) {
+                                if (TokenUtilities.textEquals(identifierAtCaret.value().text(), ctx.getText())) {
                                     addOccurrence(getRange(ctx), LOCAL_VARIABLE);
                                 }
                                 return null;
@@ -104,10 +145,5 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
 
     private OffsetRange getRange(ParserRuleContext identifier) {
         return new OffsetRange(identifier.getStart().getStartIndex(), identifier.getStop().getStopIndex() + 1);
-    }
-
-    private OffsetRange getRange(Token<RustTokenId> offsetToken, TokenHierarchy<?> tokenHierarchy) {
-        int tokenOffset = offsetToken.offset(tokenHierarchy);
-        return new OffsetRange(tokenOffset, tokenOffset + offsetToken.length());
     }
 }

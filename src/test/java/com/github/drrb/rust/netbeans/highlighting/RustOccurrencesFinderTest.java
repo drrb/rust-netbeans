@@ -90,6 +90,39 @@ public class RustOccurrencesFinderTest {
         assertThat(occurrences, hasOccurrence(48, 52, LOCAL_VARIABLE));
     }
 
+    @Test
+    public void shouldMatchIdentifiersInFmtCallArgs() { //TODO: what's the actual name for this type of thing? (General case)
+        StringBuilder source = new StringBuilder();
+        source.append("fn sayHello(name: ~str, greeting: ~str) {\n");
+        source.append("    log(fmt!(\"Saying '%?' to '%?'\", greeting, name));\n");
+        source.append("    println(fmt!(\"%?, %?\", greeting, name));\n");
+        source.append("}\n");
+        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+
+        occurrencesFinder.setCaretPosition(90); // Caret is at fist instance of: greeting, na|me)) ...
+        occurrencesFinder.run(result, null);
+        Map<OffsetRange, ColoringAttributes> occurrences = occurrencesFinder.getOccurrences();
+        assertThat(occurrences, hasOccurrence(88, 92, LOCAL_VARIABLE));
+        assertThat(occurrences, hasOccurrence(133, 137, LOCAL_VARIABLE));
+    }
+
+    @Test
+    public void shouldMatchFunctionParametersThroughoutFunctionBodies() {
+        StringBuilder source = new StringBuilder();
+        source.append("fn sayHello(name: ~str, greeting: ~str) {\n");
+        source.append("    log(\"Saying '\" + greeting + \"' to '\" + name + \"'\");\n");
+        source.append("    println(greeting + \", \" + name);\n");
+        source.append("}\n");
+        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+
+        occurrencesFinder.setCaretPosition(14); // Caret is at: sayHello(na|me: ...
+        occurrencesFinder.run(result, null);
+        Map<OffsetRange, ColoringAttributes> occurrences = occurrencesFinder.getOccurrences();
+        assertThat(occurrences, hasOccurrence(12, 16, LOCAL_VARIABLE));
+        assertThat(occurrences, hasOccurrence(85, 89, LOCAL_VARIABLE));
+        assertThat(occurrences, hasOccurrence(128, 132, LOCAL_VARIABLE));
+    }
+
     private Matcher<Map<OffsetRange, ColoringAttributes>> hasOccurrence(final int start, final int end, final ColoringAttributes type) {
         return new TypeSafeMatcher<Map<OffsetRange, ColoringAttributes>>() {
             @Override

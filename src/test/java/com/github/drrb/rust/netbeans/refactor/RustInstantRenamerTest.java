@@ -88,7 +88,7 @@ public class RustInstantRenamerTest {
     }
 
     @Test
-    public void shouldRenamingAllMatchingOccurrencesInAMethod() {
+    public void shouldRenameAllMatchingOccurrencesInAMethod() {
         StringBuilder source = new StringBuilder();
         source.append("fn main() {\n");
         source.append("    let name = ~\"john\";\n");
@@ -99,6 +99,19 @@ public class RustInstantRenamerTest {
 
         Set<OffsetRange> renameRegions = renamer.getRenameRegions(result, 22); // Caret is at: let na|me = ...
         assertThat(renameRegions, hasItems(range(20, 24), range(48, 52)));
+    }
+
+    @Test
+    public void shouldRenameFuncitonParametersThroughoutMethod() {
+        StringBuilder source = new StringBuilder();
+        source.append("fn sayHello(name: ~str, greeting: ~str) {\n");
+        source.append("    log(\"Saying '\" + greeting + \"' to '\" + name + \"'\");\n");
+        source.append("    println(greeting + \", \" + name);\n");
+        source.append("}\n");
+        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+
+        Set<OffsetRange> renameRegions = renamer.getRenameRegions(result, 14); // Caret is at: sayHello(na|me: ...
+        assertThat(renameRegions, hasItems(range(12, 16), range(85, 89), range(128, 132)));
     }
 
     private OffsetRange range(int from, int to) {
