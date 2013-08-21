@@ -75,7 +75,7 @@ public class RustOccurrencesFinderTest {
     }
 
     @Test
-    public void shouldMatchIdentifierAtRIght() {
+    public void shouldMatchIdentifierAtRight() {
         StringBuilder source = new StringBuilder();
         source.append("fn main() {\n");
         source.append("    let name = ~\"john\";\n");

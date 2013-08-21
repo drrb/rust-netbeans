@@ -18,14 +18,15 @@ package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.RustBaseVisitor;
+import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import com.github.drrb.rust.netbeans.parsing.RustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.util.Option;
 import java.util.HashMap;
 import java.util.Map;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
-import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 import org.netbeans.modules.csl.api.OccurrencesFinder;
@@ -53,18 +54,9 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
 
         NetbeansRustParserResult parseResult = (NetbeansRustParserResult) result;
         TokenHierarchy<?> tokenHierarchy = result.getSnapshot().getTokenHierarchy();
-        TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
-        Token<RustTokenId> token = tokenAt(caretPosition, tokenSequence);
-        if (token.id() != RustTokenId.IDENT && caretPosition > 0) {
-            token = tokenAt(caretPosition - 1, tokenSequence);
-        }
-        if (token == null) {
-            return;
-        }
-
-        final Token<RustTokenId> tokenAtCaret = token;
-        if (tokenAtCaret.id() == RustTokenId.IDENT) {
-            addOccurrence(getRangeOfCurrentToken(tokenSequence), LOCAL_VARIABLE);
+        final Option<Token<RustTokenId>> tokenAtCaret = RustLexUtils.getIdentifierAt(caretPosition, tokenHierarchy);
+        if (tokenAtCaret.is()) {
+            addOccurrence(getRange(tokenAtCaret.value(), tokenHierarchy), LOCAL_VARIABLE);
             RustParser.ProgContext prog = parseResult.getAst();
             prog.accept(new RustBaseVisitor<Void>() {
                 @Override
@@ -73,7 +65,7 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
                         ctx.accept(new RustBaseVisitor<Void>() {
                             @Override
                             public Void visitIdent(RustParser.IdentContext ctx) {
-                                if (tokenAtCaret.text().toString().equals(ctx.getText())) {
+                                if (tokenAtCaret.value().text().toString().equals(ctx.getText())) {
                                     addOccurrence(getRange(ctx), LOCAL_VARIABLE);
                                 }
                                 return null;
@@ -83,15 +75,6 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
                     return null;
                 }
             });
-        }
-    }
-
-    private Token<RustTokenId> tokenAt(int caretPosition, TokenSequence<RustTokenId> tokenSequence) {
-        tokenSequence.move(caretPosition);
-        if (tokenSequence.moveNext()) {
-            return tokenSequence.token();
-        } else {
-            return null;
         }
     }
 
@@ -123,7 +106,8 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
         return new OffsetRange(identifier.getStart().getStartIndex(), identifier.getStop().getStopIndex() + 1);
     }
 
-    private OffsetRange getRangeOfCurrentToken(TokenSequence<RustTokenId> tokenSequence) {
-        return new OffsetRange(tokenSequence.offset(), tokenSequence.offset() + tokenSequence.token().length());
+    private OffsetRange getRange(Token<RustTokenId> offsetToken, TokenHierarchy<?> tokenHierarchy) {
+        int tokenOffset = offsetToken.offset(tokenHierarchy);
+        return new OffsetRange(tokenOffset, tokenOffset + offsetToken.length());
     }
 }

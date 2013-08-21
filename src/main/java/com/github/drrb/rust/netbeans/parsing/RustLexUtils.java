@@ -16,11 +16,15 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
+import com.github.drrb.rust.netbeans.util.Option;
 import javax.swing.text.Document;
+import org.netbeans.api.lexer.Token;
 
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
+import org.netbeans.modules.csl.spi.ParserResult;
 
 public class RustLexUtils {
 
@@ -48,5 +52,40 @@ public class RustLexUtils {
             }
         }
         return null;
+    }
+
+    public static Option<Token<RustTokenId>> getIdentifierAt(int caretOffset, ParserResult info) {
+        TokenHierarchy<?> tokenHierarchy = info.getSnapshot().getTokenHierarchy();
+        return getIdentifierAt(caretOffset, tokenHierarchy);
+    }
+
+    public static Option<Token<RustTokenId>> getIdentifierAt(int caretOffset, TokenHierarchy<?> tokenHierarchy) {
+        TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
+        Option<Token<RustTokenId>> tokenAtOffset = offsetTokenAt(caretOffset, tokenSequence);
+        if (tokenAtOffset.isNot()) {
+            return Option.none();
+        }
+
+        if (tokenAtOffset.value().id() == RustTokenId.IDENT) {
+            return tokenAtOffset;
+        } else if (caretOffset > 0) {
+            Option<Token<RustTokenId>> tokenBeforeOffset = offsetTokenAt(caretOffset - 1, tokenSequence);
+            if (tokenBeforeOffset.is() && tokenBeforeOffset.value().id() == RustTokenId.IDENT) {
+                return tokenBeforeOffset;
+            } else {
+                return Option.none();
+            }
+        } else {
+            return Option.none();
+        }
+    }
+
+    private static Option<Token<RustTokenId>> offsetTokenAt(int caretPosition, TokenSequence<RustTokenId> tokenSequence) {
+        tokenSequence.move(caretPosition);
+        if (tokenSequence.moveNext()) {
+            return Option.is(tokenSequence.offsetToken());
+        } else {
+            return Option.none();
+        }
     }
 }

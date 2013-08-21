@@ -28,7 +28,6 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.netbeans.modules.csl.api.ColoringAttributes;
-import static org.netbeans.modules.csl.api.ColoringAttributes.LOCAL_VARIABLE;
 import org.netbeans.modules.csl.api.OffsetRange;
 
 /**
@@ -53,7 +52,21 @@ public class RustInstantRenamerTest {
         source.append("}\n");
         NetbeansRustParser.NetbeansRustParserResult result = parse(source);
 
-        boolean renameAllowed = renamer.isRenameAllowed(result, 22, new String[0]); // Caret is at: let na|me = ...
+        boolean renameAllowed = renamer.isRenameAllowed(result, 22, new String[1]); // Caret is at: let na|me = ...
+        assertTrue(renameAllowed);
+    }
+
+    @Test
+    public void shouldAllowRenamingAtEndOfAnIdentifier() {
+        StringBuilder source = new StringBuilder();
+        source.append("fn main() {\n");
+        source.append("    let name = ~\"john\";\n");
+        source.append("    println(name);\n");
+        source.append("    let age = 50;\n");
+        source.append("}\n");
+        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+
+        boolean renameAllowed = renamer.isRenameAllowed(result, 24, new String[1]); // Caret is at: let name| = ...
         assertTrue(renameAllowed);
     }
 
@@ -67,8 +80,11 @@ public class RustInstantRenamerTest {
         source.append("}\n");
         NetbeansRustParser.NetbeansRustParserResult result = parse(source);
 
-        boolean renameAllowed = renamer.isRenameAllowed(result, 1, new String[0]); // Caret is at: f|n main
+        String[] rejectionHolder = new String[1];
+        boolean renameAllowed = renamer.isRenameAllowed(result, 1, rejectionHolder); // Caret is at: f|n main
+        String rejectionMessage = rejectionHolder[0];
         assertFalse(renameAllowed);
+        assertThat(rejectionMessage, is(RustInstantRenamer.CANNOT_RENAME_MESSAGE));
     }
 
     @Test
