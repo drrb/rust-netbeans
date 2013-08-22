@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.*;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 import org.netbeans.modules.csl.api.OffsetRange;
@@ -91,6 +92,7 @@ public class RustOccurrencesFinderTest {
     }
 
     @Test
+    @Ignore
     public void shouldMatchIdentifiersInFmtCallArgs() { //TODO: what's the actual name for this type of thing? (General case)
         StringBuilder source = new StringBuilder();
         source.append("fn sayHello(name: ~str, greeting: ~str) {\n");
@@ -119,6 +121,23 @@ public class RustOccurrencesFinderTest {
         occurrencesFinder.run(result, null);
         Map<OffsetRange, ColoringAttributes> occurrences = occurrencesFinder.getOccurrences();
         assertThat(occurrences, hasOccurrence(12, 16, LOCAL_VARIABLE));
+        assertThat(occurrences, hasOccurrence(85, 89, LOCAL_VARIABLE));
+        assertThat(occurrences, hasOccurrence(128, 132, LOCAL_VARIABLE));
+    }
+
+    @Test
+    public void shouldMatchFunctionParametersInFunctionBodyWithTheParameter() {
+        StringBuilder source = new StringBuilder();
+        source.append("fn sayHello(name: ~str, greeting: ~str) {\n");
+        source.append("    log(\"Saying '\" + greeting + \"' to '\" + name + \"'\");\n");
+        source.append("    println(greeting + \", \" + name);\n");
+        source.append("}\n");
+        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+
+        occurrencesFinder.setCaretPosition(87); // Caret is at: to'" + na|me ...
+        occurrencesFinder.run(result, null);
+        Map<OffsetRange, ColoringAttributes> occurrences = occurrencesFinder.getOccurrences();
+        assertThat(occurrences, hasOccurrence(12, 16, PARAMETER));
         assertThat(occurrences, hasOccurrence(85, 89, LOCAL_VARIABLE));
         assertThat(occurrences, hasOccurrence(128, 132, LOCAL_VARIABLE));
     }

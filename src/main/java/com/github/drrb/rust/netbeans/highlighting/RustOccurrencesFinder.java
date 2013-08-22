@@ -59,17 +59,14 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
             addOccurrence(identifierAtCaret.value().getRangeIn(tokenHierarchy), LOCAL_VARIABLE);
             RustParser.ProgContext prog = parseResult.getAst();
             prog.accept(new RustBaseVisitor<Void>() {
-
                 //For when you select a function parameter: highlight it thoughout the function
                 @Override
                 public Void visitItem_fn_decl(final RustParser.Item_fn_declContext functionContext) {
                     visitChildren(functionContext);
                     return functionContext.accept(new RustBaseVisitor<Void>() {
-
                         @Override
                         public Void visitArg(RustParser.ArgContext ctx) {
                             return ctx.pat().accept(new RustBaseVisitor<Void>() {
-
                                 @Override
                                 public Void visitNon_global_path(RustParser.Non_global_pathContext ctx) {
                                     RustParser.IdentContext argContext = ctx.ident(ctx.ident().size() - 1);
@@ -92,28 +89,42 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
                                         return super.visitNon_global_path(ctx);
                                     }
                                 }
-
                             });
                         }
 
-                    });
-                }
-
-                //For when you select an identifier in a function
-                @Override
-                public Void visitFun_body(RustParser.Fun_bodyContext ctx) {
-                    if (getRange(ctx).containsInclusive(caretPosition)) {
-                        ctx.accept(new RustBaseVisitor<Void>() {
-                            @Override
-                            public Void visitIdent(RustParser.IdentContext ctx) {
-                                if (TokenUtilities.textEquals(identifierAtCaret.value().text(), ctx.getText())) {
-                                    addOccurrence(getRange(ctx), LOCAL_VARIABLE);
-                                }
-                                return null;
+                        //For when you select an identifier in a function
+                        @Override
+                        public Void visitFun_body(RustParser.Fun_bodyContext ctx) {
+                            if (getRange(ctx).containsInclusive(caretPosition)) {
+                                ctx.accept(new RustBaseVisitor<Void>() {
+                                    @Override
+                                    public Void visitIdent(RustParser.IdentContext identifierContext) {
+                                        if (TokenUtilities.textEquals(identifierAtCaret.value().text(), identifierContext.getText())) {
+                                            addOccurrence(getRange(identifierContext), LOCAL_VARIABLE);
+                                            //Check params to see if one matches
+                                            functionContext.accept(new RustBaseVisitor<Void>() {
+                                                @Override
+                                                public Void visitArg(RustParser.ArgContext ctx) {
+                                                    return ctx.pat().accept(new RustBaseVisitor<Void>() {
+                                                        @Override
+                                                        public Void visitNon_global_path(RustParser.Non_global_pathContext ctx) {
+                                                            RustParser.IdentContext argContext = ctx.ident(ctx.ident().size() - 1);
+                                                            if (TokenUtilities.textEquals(identifierAtCaret.value().text(), ctx.getText())) {
+                                                                addOccurrence(getRange(ctx), PARAMETER);
+                                                            }
+                                                            return null;
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                        return null;
+                                    }
+                                });
                             }
-                        });
-                    }
-                    return null;
+                            return null;
+                        }
+                    });
                 }
             });
         }
