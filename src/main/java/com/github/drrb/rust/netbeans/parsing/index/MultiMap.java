@@ -14,46 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.util;
+package com.github.drrb.rust.netbeans.parsing.index;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  */
-public class Option<T> {
+public class MultiMap<K, V> {
 
-    public static final Option<?> NONE = new Option<Void>(null);
+    private final Map<K, List<V>> map = new HashMap<K, List<V>>();
 
-    public static <T> Option<T> none() {
-        return (Option<T>) NONE;
-    }
-
-    public static <T> Option<T> is(T value) {
-        return new Option<T>(value);
-    }
-
-    public static <T> Option<T> isIfNotNull(T value) {
-        if (value == null) {
-            return none();
+    public List<V> get(K key) {
+        List<V> values = map.get(key);
+        if (values == null) {
+            return Collections.emptyList();
         } else {
-            return is(value);
+            return Collections.unmodifiableList(values);
         }
     }
 
-    private final T value;
-
-    public Option(T value) {
-        this.value = value;
-    }
-
-    public boolean is() {
-        return ! isNot();
-    }
-
-    public T value() {
-        return value;
-    }
-
-    public boolean isNot() {
-        return this == NONE;
+    public void add(K key, V value) {
+        List<V> values = map.get(key);
+        if (values == null) {
+            values = new LinkedList<V>();
+            map.put(key, values);
+        }
+        values.add(value);
     }
 }

@@ -16,6 +16,9 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
+import com.github.drrb.rust.netbeans.parsing.index.IndexingVisitor;
+import com.github.drrb.rust.netbeans.parsing.index.RustSourceIndex;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -158,6 +161,10 @@ public class NetbeansRustParser extends Parser {
         public List<? extends Error> getDiagnostics() {
             //TODO: why do we need this?
             return Collections.emptyList();
+        }
+
+        public RustSourceIndex getIndex() {
+            return getAst().accept(new IndexingVisitor());
         }
     }
 }

@@ -16,14 +16,14 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
 import com.github.drrb.rust.netbeans.util.Option;
 import javax.swing.text.Document;
-import org.netbeans.api.lexer.Token;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
+import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.spi.ParserResult;
 
 public class RustLexUtils {
@@ -87,5 +87,9 @@ public class RustLexUtils {
         } else {
             return Option.none();
         }
+    }
+
+    public static OffsetRange offsetRangeFor(ParserRuleContext context) {
+        return new OffsetRange(context.getStart().getStartIndex(), context.getStop().getStopIndex() + 1);
     }
 }

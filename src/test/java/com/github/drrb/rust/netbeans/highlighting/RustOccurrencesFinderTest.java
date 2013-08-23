@@ -120,7 +120,7 @@ public class RustOccurrencesFinderTest {
         occurrencesFinder.setCaretPosition(14); // Caret is at: sayHello(na|me: ...
         occurrencesFinder.run(result, null);
         Map<OffsetRange, ColoringAttributes> occurrences = occurrencesFinder.getOccurrences();
-        assertThat(occurrences, hasOccurrence(12, 16, LOCAL_VARIABLE));
+        assertThat(occurrences, hasOccurrence(12, 16, PARAMETER));
         assertThat(occurrences, hasOccurrence(85, 89, LOCAL_VARIABLE));
         assertThat(occurrences, hasOccurrence(128, 132, LOCAL_VARIABLE));
     }
