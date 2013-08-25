@@ -11,6 +11,7 @@ So far, it includes
 * basic error highlighting
 * basic code completion
 * basic code folding
+* basic file overview
 * basic indentation
 * basic occurrence matching
 * basic variable renaming

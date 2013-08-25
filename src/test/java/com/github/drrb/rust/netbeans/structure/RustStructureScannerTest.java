@@ -27,6 +27,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.netbeans.modules.csl.api.OffsetRange;
 import static com.github.drrb.rust.netbeans.test.Matchers.*;
+import static org.netbeans.modules.csl.api.ElementKind.*;
+import static org.netbeans.modules.csl.api.Modifier.*;
+import org.netbeans.modules.csl.api.StructureItem;
 
 /**
  *
@@ -41,7 +44,7 @@ public class RustStructureScannerTest {
     }
 
     @Test
-    public void shouldFoldMethods() {
+    public void shouldFoldFunctions() {
         RustSource source = new RustSource();
         source.appendln("/// Entry point");
         source.appendln("fn main () {");
@@ -73,6 +76,23 @@ public class RustStructureScannerTest {
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
         assertThat(folds, containsKey("comments").mappedToValue(listOf(range(0, 22))));
+    }
+
+    @Test
+    public void shouldFindFunctions() {
+        RustSource source = new RustSource();
+        source.appendln("/// Entry point");
+        source.appendln("fn main () {");
+        source.appendln("   let a = 1;");
+        source.appendln("}");
+        source.appendln("");
+        source.appendln("fn other() {");
+        source.appendln("}");
+        NetbeansRustParserResult parseResult = source.parse();
+        List<StructureItem> structure = (List<StructureItem>) structureScanner.scan(parseResult);
+
+        assertThat(structure, contains(structureItem("main", range(16, 44), METHOD, STATIC)));
+        assertThat(structure, contains(structureItem("other", range(46, 60), METHOD, STATIC)));
     }
 
     private <T> List<T> listOf(T... values) {

@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.antlr.v4.runtime.misc.MultiMap;
+import org.netbeans.modules.csl.api.ElementKind;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.StructureItem;
 import org.netbeans.modules.csl.api.StructureScanner;
@@ -40,6 +41,11 @@ public class RustStructureScanner implements StructureScanner {
 
         NetbeansRustParserResult parseResult = (NetbeansRustParserResult) info;
         RustSourceIndex index = parseResult.getIndex();
+
+        List<RustFunction> functions = index.getFunctions();
+        for (RustFunction function : functions) {
+            structureItems.add(new RustStructureItem(function.getName(), ElementKind.METHOD, function.getOffsetRange()));
+        }
 
         return structureItems;
     }

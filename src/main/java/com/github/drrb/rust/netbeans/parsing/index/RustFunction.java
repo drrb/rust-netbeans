@@ -27,19 +27,25 @@ import org.netbeans.modules.csl.api.OffsetRange;
  *
  */
 public class RustFunction {
+    private final String name;
 
     private final OffsetRange offsetRange;
     private final RustFunctionBody body;
     private final Map<String, RustFunctionParameterName> functionParameterNamesByName = new HashMap<String, RustFunctionParameterName>();
     private final RangeMap<RustFunctionParameterName> functionParameterNameRanges = new RangeMap<RustFunctionParameterName>();
 
-    RustFunction(OffsetRange offsetRange, RustFunctionBody body, List<RustFunctionParameterName> parameterNames) {
+    RustFunction(String name, OffsetRange offsetRange, RustFunctionBody body, List<RustFunctionParameterName> parameterNames) {
+        this.name = name;
         this.offsetRange = offsetRange;
         this.body = body;
         for (RustFunctionParameterName parameterName : parameterNames) {
             functionParameterNameRanges.put(parameterName.getOffsetRange(), parameterName);
             functionParameterNamesByName.put(parameterName.getText(), parameterName);
         }
+    }
+
+    public String getName() {
+        return name;
     }
 
     public RustFunctionBody getBody() {
@@ -64,12 +70,18 @@ public class RustFunction {
 
     public static class Builder {
 
+        private String name;
         private OffsetRange offsetRange;
         private RustFunctionBody body;
         private List<RustFunctionParameterName> parameterNames = new LinkedList<RustFunctionParameterName>();
 
         RustFunction build() {
-            return new RustFunction(offsetRange, body, parameterNames);
+            return new RustFunction(name, offsetRange, body, parameterNames);
+        }
+
+        Builder setName(String name) {
+            this.name = name;
+            return this;
         }
 
         Builder setOffsetRange(OffsetRange offsetRange) {

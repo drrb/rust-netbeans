@@ -19,6 +19,7 @@ package com.github.drrb.rust.netbeans.parsing.index;
 import com.github.drrb.rust.netbeans.parsing.RustBaseVisitor;
 import static com.github.drrb.rust.netbeans.parsing.RustLexUtils.offsetRangeFor;
 import com.github.drrb.rust.netbeans.parsing.RustParser;
+import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
@@ -40,8 +41,10 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
 
     @Override
     public RustSourceIndex visitItem_fn_decl(final RustParser.Item_fn_declContext functionContext) {
-        final RustFunction.Builder functionBuilder = RustFunction.builder().setOffsetRange(offsetRangeFor(functionContext));
         visitChildren(functionContext);
+        final RustFunction.Builder functionBuilder = RustFunction.builder()
+                .setName(functionContext.accept(new FunctionNameFinder()))
+                .setOffsetRange(offsetRangeFor(functionContext));
         functionContext.accept(new RustBaseVisitor<Void>() {
             @Override
             public Void visitArg(RustParser.ArgContext ctx) {
@@ -79,5 +82,27 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
             index.addDocComment(new RustDocComment(node.getText(), offsetRangeFor(node)));
         }
         return index;
+    }
+}
+
+class FunctionNameFinder extends RustBaseVisitor<String> {
+
+    @Override
+    public String visitIdent(RustParser.IdentContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    protected String aggregateResult(String aggregate, String nextResult) {
+        if (aggregate == null) {
+            return nextResult;
+        } else {
+            return aggregate;
+        }
+    }
+
+    @Override
+    protected boolean shouldVisitNextChild(RuleNode node, String currentResult) {
+        return currentResult == null;
     }
 }
