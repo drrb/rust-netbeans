@@ -28,6 +28,7 @@ public class RustSourceIndex {
 
     private final RangeMap<RustFunction> functionRanges = new RangeMap<RustFunction>();
     private final List<RustFunction> functions = new LinkedList<RustFunction>();
+    private final List<RustDocComment> docComments = new LinkedList<RustDocComment>();
 
     public List<RustFunction> getFunctions() {
         return Collections.unmodifiableList(functions);
@@ -40,5 +41,13 @@ public class RustSourceIndex {
     public void addFunction(RustFunction function) {
         functions.add(function);
         functionRanges.put(function.getOffsetRange(), function);
+    }
+
+    public List<RustDocComment> getDocComments() {
+        return Collections.unmodifiableList(docComments);
+    }
+
+    public void addDocComment(RustDocComment docComment) {
+        docComments.add(docComment);
     }
 }

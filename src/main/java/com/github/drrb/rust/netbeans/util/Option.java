@@ -16,10 +16,13 @@
  */
 package com.github.drrb.rust.netbeans.util;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 /**
  *
  */
-public class Option<T> {
+public class Option<T> implements Iterable<T> {
 
     public static final Option<?> NONE = new Option<Void>(null);
 
@@ -55,5 +58,14 @@ public class Option<T> {
 
     public boolean isNot() {
         return this == NONE;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        if (is()) {
+            return Collections.singletonList(value).iterator();
+        } else {
+            return Collections.<T>emptyList().iterator();
+        }
     }
 }

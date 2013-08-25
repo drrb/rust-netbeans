@@ -62,7 +62,7 @@ public class RustFunction {
         return new Builder();
     }
 
-    static class Builder {
+    public static class Builder {
 
         private OffsetRange offsetRange;
         private RustFunctionBody body;

@@ -139,12 +139,6 @@
             <artifactId>org-netbeans-modules-parsing-api</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
-        <!-- For Fold Manager -->
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-modules-editor-fold</artifactId>
-            <version>${netbeans.version}</version>
-        </dependency>
         <!-- For Indenting Task -->
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -200,6 +194,12 @@
         </dependency>
         -->
 
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-core-multiview</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+
         <!-- Non-NetBeans Dependencies -->
         <dependency>
             <groupId>org.antlr</groupId>
@@ -210,6 +210,11 @@
             <groupId>org.pegdown</groupId>
             <artifactId>pegdown</artifactId>
             <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -268,11 +273,6 @@
             <artifactId>org-netbeans-modules-masterfs</artifactId>
             <version>${netbeans.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-core-multiview</artifactId>
-            <version>${netbeans.version}</version>
         </dependency>
     </dependencies>
 

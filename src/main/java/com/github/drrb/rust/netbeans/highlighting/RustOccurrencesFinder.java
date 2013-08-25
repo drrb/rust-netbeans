@@ -54,28 +54,28 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
         NetbeansRustParserResult parseResult = (NetbeansRustParserResult) result;
         RustSourceIndex index = parseResult.getIndex();
 
-        Option<RustFunction> functionAtCaret = index.getFunctionAt(caretPosition);
-        if (functionAtCaret.is()) {
-            RustFunction function = functionAtCaret.value();
-            Option<RustFunctionParameterName> maybeParamName = function.getParameterNameAt(caretPosition);
+        Option<RustFunction> maybeFunctionAtCaret = index.getFunctionAt(caretPosition);
+        if (maybeFunctionAtCaret.is()) {
+            RustFunction functionAtCaret = maybeFunctionAtCaret.value();
+            Option<RustFunctionParameterName> maybeParamName = functionAtCaret.getParameterNameAt(caretPosition);
             if (maybeParamName.is()) {
                 RustFunctionParameterName paramName = maybeParamName.value();
                 OffsetRange paramNameTokenRange = paramName.getOffsetRange();
                 addOccurrence(paramNameTokenRange, PARAMETER);
-                List<RustLocalVariableIdentifier> matchingLocalVariables = function.getBody().getLocalVariableIdentifiersNamed(paramName.getText());
+                List<RustLocalVariableIdentifier> matchingLocalVariables = functionAtCaret.getBody().getLocalVariableIdentifiersNamed(paramName.getText());
                 for (RustLocalVariableIdentifier identifier : matchingLocalVariables) {
                     addOccurrence(identifier.getOffsetRange(), LOCAL_VARIABLE);
                 }
             } else {
-                RustFunctionBody functionBody = function.getBody();
-                Option<RustLocalVariableIdentifier> localVariableAtCaret = functionBody.getLocalVariableIdentifierAt(caretPosition);
-                if (localVariableAtCaret.is()) {
-                    RustLocalVariableIdentifier localVariable = localVariableAtCaret.value();
-                    List<RustLocalVariableIdentifier> matchingLocalVariables = functionBody.getLocalVariableIdentifiersNamed(localVariable.getText());
+                RustFunctionBody functionBody = functionAtCaret.getBody();
+                Option<RustLocalVariableIdentifier> maybeLocalVariableAtCaret = functionBody.getLocalVariableIdentifierAt(caretPosition);
+                if (maybeLocalVariableAtCaret.is()) {
+                    RustLocalVariableIdentifier localVariableAtCaret = maybeLocalVariableAtCaret.value();
+                    List<RustLocalVariableIdentifier> matchingLocalVariables = functionBody.getLocalVariableIdentifiersNamed(localVariableAtCaret.getText());
                     for (RustLocalVariableIdentifier identifier : matchingLocalVariables) {
                         addOccurrence(identifier.getOffsetRange(), LOCAL_VARIABLE);
                     }
-                    Option<RustFunctionParameterName> maybeMachingParamName = function.getParameterNameMatching(localVariable.getText());
+                    Option<RustFunctionParameterName> maybeMachingParamName = functionAtCaret.getParameterNameMatching(localVariableAtCaret.getText());
                     if (maybeMachingParamName.is()) {
                         RustFunctionParameterName matchingParamName = maybeMachingParamName.value();
                         addOccurrence(matchingParamName.getOffsetRange(), PARAMETER);

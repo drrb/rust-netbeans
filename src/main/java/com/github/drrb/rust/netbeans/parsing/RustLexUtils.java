@@ -19,6 +19,8 @@ package com.github.drrb.rust.netbeans.parsing;
 import com.github.drrb.rust.netbeans.util.Option;
 import javax.swing.text.Document;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
@@ -90,6 +92,18 @@ public class RustLexUtils {
     }
 
     public static OffsetRange offsetRangeFor(ParserRuleContext context) {
-        return new OffsetRange(context.getStart().getStartIndex(), context.getStop().getStopIndex() + 1);
+        return offsetRangeBetween(context.getStart(), context.getStop());
+    }
+
+    public static OffsetRange offsetRangeFor(TerminalNode node) {
+        return offsetRangeBetween(node.getSymbol(), node.getSymbol());
+    }
+
+    private static OffsetRange offsetRangeBetween(Token start, Token end) {
+        return range(start.getStartIndex(), end.getStopIndex() + 1);
+    }
+
+    public static OffsetRange range(int start, int end) {
+        return new OffsetRange(start, end);
     }
 }

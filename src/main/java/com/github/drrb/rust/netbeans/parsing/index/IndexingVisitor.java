@@ -19,6 +19,7 @@ package com.github.drrb.rust.netbeans.parsing.index;
 import com.github.drrb.rust.netbeans.parsing.RustBaseVisitor;
 import static com.github.drrb.rust.netbeans.parsing.RustLexUtils.offsetRangeFor;
 import com.github.drrb.rust.netbeans.parsing.RustParser;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
  *
@@ -69,6 +70,14 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
             }
         });
         index.addFunction(functionBuilder.build());
+        return index;
+    }
+
+    @Override
+    public RustSourceIndex visitTerminal(TerminalNode node) {
+        if (node.getSymbol().getType() == RustParser.OUTER_DOC_COMMENT) {
+            index.addDocComment(new RustDocComment(node.getText(), offsetRangeFor(node)));
+        }
         return index;
     }
 }

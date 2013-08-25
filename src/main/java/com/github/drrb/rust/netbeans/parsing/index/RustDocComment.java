@@ -14,34 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.parsing.index;
 
 import org.netbeans.modules.csl.api.OffsetRange;
 
 /**
  *
  */
-public class Rustdoc {
+public class RustDocComment {
 
-    private final String identifier;
     private final String text;
     private final OffsetRange offsetRange;
 
-    public Rustdoc(String identifier, String text, OffsetRange offsetRange) {
-        this.identifier = identifier;
+    public RustDocComment(String text, OffsetRange offsetRange) {
         this.text = text;
         this.offsetRange = offsetRange;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public OffsetRange getOffsetRange() {
+        return offsetRange;
     }
 
     public String getText() {
         return text;
-    }
-
-    public OffsetRange getOffsetRange() {
-        return offsetRange;
     }
 }

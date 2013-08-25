@@ -18,6 +18,8 @@ package com.github.drrb.rust.netbeans.parsing;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.List;
+import org.antlr.v4.runtime.Token;
+import org.netbeans.modules.csl.api.OffsetRange;
 
 public class RustdocCollectingParseListener extends RustBaseListener {
 
@@ -50,7 +52,9 @@ public class RustdocCollectingParseListener extends RustBaseListener {
     @Override
     public void enterIdent(RustParser.IdentContext context) {
         if (rustdocJustPassed != null && inFunction) {
-            rustdocs.add(new Rustdoc(context.getStart().getText(), rustdocJustPassed.getText()));
+            Token rustDoc = rustdocJustPassed.getSymbol();
+            OffsetRange rustdocOffsetRange = new OffsetRange(rustDoc.getStartIndex(), rustDoc.getStopIndex() + 1);
+            rustdocs.add(new Rustdoc(context.getStart().getText(), rustdocJustPassed.getText(), rustdocOffsetRange));
             rustdocJustPassed = null;
         }
     }
