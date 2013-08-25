@@ -34,6 +34,8 @@ import org.netbeans.modules.csl.spi.ParserResult;
  *
  */
 public class RustStructureScanner implements StructureScanner {
+    private static final String CODEBLOCKS_FOLD_TYPE = "codeblocks";
+    private static final String COMMENTS_FOLD_TYPE = "comments";
 
     @Override
     public List<? extends StructureItem> scan(ParserResult info) {
@@ -59,13 +61,13 @@ public class RustStructureScanner implements StructureScanner {
 
         List<RustFunction> functions = index.getFunctions();
         for (RustFunction function : functions) {
-            folds.map("codeblocks", function.getBody().getOffsetRange());
+            folds.map(CODEBLOCKS_FOLD_TYPE, function.getBody().getOffsetRange());
         }
 
         List<RustDocComment> rustdocs = index.getDocComments();
         for (RustDocComment docComment : rustdocs) {
             if (docComment.getText().contains("\n")) { //Don't fold single line comments
-                folds.map("comments", docComment.getOffsetRange());
+                folds.map(COMMENTS_FOLD_TYPE, docComment.getOffsetRange());
             }
         }
 
