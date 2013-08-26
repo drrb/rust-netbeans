@@ -105,7 +105,6 @@ public class RustStructureScannerTest {
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
         assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(48, 71))));
-        //assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(32, 71))));
     }
 
     @Test
@@ -191,6 +190,21 @@ public class RustStructureScannerTest {
         List<StructureItem> structure = (List<StructureItem>) structureScanner.scan(parseResult);
 
         assertThat(structure, contains(structureItem("Point", range(19, 60), CLASS)));
+    }
+
+    @Test
+    public void shouldIncludeTraitsInNavigatorPanel() {
+        RustSource source = new RustSource();
+        source.appendln("/// A thing that can be printed");
+        source.appendln("trait Printable {");
+        source.appendln("   fn print(&self);");
+        source.appendln("}");
+        source.appendln("");
+        source.appendln("");
+        NetbeansRustParserResult parseResult = source.parse();
+        List<StructureItem> structure = (List<StructureItem>) structureScanner.scan(parseResult);
+
+        assertThat(structure, contains(structureItem("Printable", range(32, 71), INTERFACE)));
     }
 
     private <T> List<T> listOf(T... values) {

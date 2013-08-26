@@ -61,6 +61,11 @@ public class RustStructureScanner implements StructureScanner {
             structureItems.add(new RustStructureItem(struct.getName(), struct.getOffsetRange(), CLASS));
         }
 
+        List<RustTrait> traits = index.getTraits();
+        for (RustTrait trait : traits) {
+            structureItems.add(new RustStructureItem(trait.getName(), trait.getOffsetRange(), INTERFACE));
+        }
+
         return structureItems;
     }
 
