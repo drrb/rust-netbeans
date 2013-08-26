@@ -24,11 +24,13 @@ import com.github.drrb.rust.netbeans.parsing.index.RustEnum;
 import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
 import com.github.drrb.rust.netbeans.parsing.index.RustImpl;
 import com.github.drrb.rust.netbeans.parsing.index.RustSourceIndex;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.antlr.v4.runtime.misc.MultiMap;
-import org.netbeans.modules.csl.api.ElementKind;
+import static org.netbeans.modules.csl.api.ElementKind.*;
+import static org.netbeans.modules.csl.api.Modifier.*;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.StructureItem;
 import org.netbeans.modules.csl.api.StructureScanner;
@@ -50,7 +52,12 @@ public class RustStructureScanner implements StructureScanner {
 
         List<RustFunction> functions = index.getFunctions();
         for (RustFunction function : functions) {
-            structureItems.add(new RustStructureItem(function.getName(), ElementKind.METHOD, function.getOffsetRange()));
+            structureItems.add(new RustStructureItem(function.getName(), function.getOffsetRange(), METHOD, EnumSet.of(STATIC)));
+        }
+
+        List<RustStruct> structs = index.getStructs();
+        for (RustStruct struct : structs) {
+            structureItems.add(new RustStructureItem(struct.getName(), struct.getOffsetRange(), CLASS));
         }
 
         return structureItems;

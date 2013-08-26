@@ -36,11 +36,20 @@ public class RustStructureItem implements StructureItem.CollapsedDefault {
     private final String name;
     private final OffsetRange offsetRange;
     private final ElementKind kind;
+    private final Set<Modifier> modifiers;
 
-    public RustStructureItem(String name, ElementKind kind, OffsetRange offsetRange) {
+    public RustStructureItem(String name, OffsetRange offsetRange, ElementKind kind) {
         this.name = name;
         this.kind = kind;
         this.offsetRange = offsetRange;
+        this.modifiers = Collections.emptySet();
+    }
+
+    public RustStructureItem(String name, OffsetRange offsetRange, ElementKind kind, Set<Modifier> modifiers) {
+        this.name = name;
+        this.kind = kind;
+        this.offsetRange = offsetRange;
+        this.modifiers = EnumSet.copyOf(modifiers);
     }
 
     @Override
@@ -70,7 +79,7 @@ public class RustStructureItem implements StructureItem.CollapsedDefault {
 
     @Override
     public Set<Modifier> getModifiers() {
-        return EnumSet.of(Modifier.STATIC);
+        return Collections.unmodifiableSet(modifiers);
     }
 
     @Override
@@ -105,6 +114,6 @@ public class RustStructureItem implements StructureItem.CollapsedDefault {
 
     @Override
     public String toString() {
-        return "RustStructureItem{" + "name=" + name + ", offsetRange=" + offsetRange + ", kind=" + kind + '}';
+        return "RustStructureItem{" + "name=" + name + ", offsetRange=" + offsetRange + ", kind=" + kind + ", modifiers=" + modifiers + '}';
     }
 }

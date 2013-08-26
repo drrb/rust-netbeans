@@ -147,7 +147,7 @@ public class RustStructureScannerTest {
     }
 
     @Test
-    public void shouldFindFunctions() {
+    public void shouldIncludeFunctionsInNavigatorPanel() {
         RustSource source = new RustSource();
         source.appendln("/// Entry point");
         source.appendln("fn main () {");
@@ -161,6 +161,20 @@ public class RustStructureScannerTest {
 
         assertThat(structure, contains(structureItem("main", range(16, 44), METHOD, STATIC)));
         assertThat(structure, contains(structureItem("other", range(46, 60), METHOD, STATIC)));
+    }
+
+    @Test
+    public void shouldIncludeStructsInNavigatorPanel() {
+        RustSource source = new RustSource();
+        source.appendln("/// Point in space");
+        source.appendln("struct Point {");
+        source.appendln("   x: float,");
+        source.appendln("   y: float");
+        source.appendln("}");
+        NetbeansRustParserResult parseResult = source.parse();
+        List<StructureItem> structure = (List<StructureItem>) structureScanner.scan(parseResult);
+
+        assertThat(structure, contains(structureItem("Point", range(19, 60), CLASS)));
     }
 
     private <T> List<T> listOf(T... values) {
