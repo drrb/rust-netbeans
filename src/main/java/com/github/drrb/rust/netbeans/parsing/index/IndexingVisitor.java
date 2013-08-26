@@ -22,6 +22,7 @@ import com.github.drrb.rust.netbeans.parsing.RustParser;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+
 /**
  *
  */
@@ -90,6 +91,19 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
     }
 
     @Override
+    public RustSourceIndex visitEnum_decl(RustParser.Enum_declContext enumContext) {
+        visitChildren(enumContext);
+        final RustEnum.Builder enumBuilder = RustEnum.builder()
+                .setName(enumContext.ident().getText())
+                .setOffsetRange(offsetRangeFor(enumContext));
+        TerminalNode openBrace = enumContext.LBRACE();
+        TerminalNode closeBrace = enumContext.RBRACE();
+        enumBuilder.setBody(new RustEnumBody(offsetRangeBetween(openBrace, closeBrace)));
+        index.addEnum(enumBuilder.build());
+        return index;
+    }
+
+    @Override
     public RustSourceIndex visitTerminal(TerminalNode node) {
         if (node.getSymbol().getType() == RustParser.OUTER_DOC_COMMENT) {
             index.addDocComment(new RustDocComment(node.getText(), offsetRangeFor(node)));
@@ -97,7 +111,6 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
         return index;
     }
 }
-
 class FunctionNameFinder extends RustBaseVisitor<String> {
 
     @Override

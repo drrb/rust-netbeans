@@ -75,6 +75,59 @@ public class RustStructureScannerTest {
     }
 
     @Test
+    public void shouldFoldImpls() {
+        RustSource source = new RustSource();
+        source.appendln("");
+        source.appendln("impl Point {");
+        source.appendln("   fn transpose(&self, dx: float, dy: float) {");
+        source.appendln("       Point { x: self.x + dx, y: self.y + dy }");
+        source.appendln("   }");
+        source.appendln("}");
+        source.appendln("");
+        source.appendln("");
+
+        NetbeansRustParserResult parseResult = source.parse();
+        Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
+
+        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(12, 115))));
+    }
+
+    @Test
+    public void shouldFoldTraitImpls() {
+        RustSource source = new RustSource();
+        source.appendln("");
+        source.appendln("impl Printable for Point {");
+        source.appendln("   fn print(&self) {");
+        source.appendln("       println(fmt!(\"%?, %?\"));");
+        source.appendln("   }");
+        source.appendln("}");
+        source.appendln("");
+        source.appendln("");
+
+        NetbeansRustParserResult parseResult = source.parse();
+        Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
+
+        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(26, 87))));
+    }
+
+    @Test
+    public void shouldFoldEnums() {
+        RustSource source = new RustSource();
+        source.appendln("/// A shape");
+        source.appendln("enum Shape {");
+        source.appendln("   Circle(Point, float),");
+        source.appendln("   Rectangle(Point, Point)");
+        source.appendln("}");
+        source.appendln("");
+        source.appendln("");
+
+        NetbeansRustParserResult parseResult = source.parse();
+        Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
+
+        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(23, 78))));
+    }
+
+    @Test
     public void shouldFoldMultilineDocComments() {
         RustSource source = new RustSource();
         source.appendln("/**");
