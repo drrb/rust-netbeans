@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.structure;
 
+import com.github.drrb.rust.netbeans.parsing.index.RustStruct;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.index.RustDocComment;
 import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
@@ -62,6 +63,11 @@ public class RustStructureScanner implements StructureScanner {
         List<RustFunction> functions = index.getFunctions();
         for (RustFunction function : functions) {
             folds.map(CODEBLOCKS_FOLD_TYPE, function.getBody().getOffsetRange());
+        }
+
+        List<RustStruct> structs = index.getStructs();
+        for (RustStruct struct : structs) {
+            folds.map(CODEBLOCKS_FOLD_TYPE, struct.getBody().getOffsetRange());
         }
 
         List<RustDocComment> rustdocs = index.getDocComments();

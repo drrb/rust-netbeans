@@ -17,7 +17,7 @@
 package com.github.drrb.rust.netbeans.parsing.index;
 
 import com.github.drrb.rust.netbeans.parsing.RustBaseVisitor;
-import static com.github.drrb.rust.netbeans.parsing.RustLexUtils.offsetRangeFor;
+import static com.github.drrb.rust.netbeans.parsing.RustLexUtils.*;
 import com.github.drrb.rust.netbeans.parsing.RustParser;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -73,6 +73,19 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
             }
         });
         index.addFunction(functionBuilder.build());
+        return index;
+    }
+
+    @Override
+    public RustSourceIndex visitStruct_decl(RustParser.Struct_declContext structContext) {
+        visitChildren(structContext);
+        final RustStruct.Builder structBuilder = RustStruct.builder()
+                .setName(structContext.ident().getText())
+                .setOffsetRange(offsetRangeFor(structContext));
+        TerminalNode openBrace = structContext.LBRACE();
+        TerminalNode closeBrace = structContext.RBRACE();
+        structBuilder.setBody(new RustStructBody(offsetRangeBetween(openBrace, closeBrace)));
+        index.addStruct(structBuilder.build());
         return index;
     }
 

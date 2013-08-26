@@ -60,6 +60,21 @@ public class RustStructureScannerTest {
     }
 
     @Test
+    public void shouldFoldStructs() {
+        RustSource source = new RustSource();
+        source.appendln("/// Point in space");
+        source.appendln("struct Point {");
+        source.appendln("   x: float,");
+        source.appendln("   y: float");
+        source.appendln("}");
+
+        NetbeansRustParserResult parseResult = source.parse();
+        Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
+
+        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(32, 60))));
+    }
+
+    @Test
     public void shouldFoldMultilineDocComments() {
         RustSource source = new RustSource();
         source.appendln("/**");

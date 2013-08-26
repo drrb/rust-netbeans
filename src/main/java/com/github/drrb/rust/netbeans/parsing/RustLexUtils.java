@@ -96,10 +96,14 @@ public class RustLexUtils {
     }
 
     public static OffsetRange offsetRangeFor(TerminalNode node) {
-        return offsetRangeBetween(node.getSymbol(), node.getSymbol());
+        return offsetRangeBetween(node, node);
     }
 
-    private static OffsetRange offsetRangeBetween(Token start, Token end) {
+    public static OffsetRange offsetRangeBetween(TerminalNode start, TerminalNode end) {
+        return offsetRangeBetween(start.getSymbol(), end.getSymbol());
+    }
+
+    public static OffsetRange offsetRangeBetween(Token start, Token end) {
         return range(start.getStartIndex(), end.getStopIndex() + 1);
     }
 

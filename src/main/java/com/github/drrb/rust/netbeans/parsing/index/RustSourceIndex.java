@@ -26,8 +26,9 @@ import java.util.List;
  */
 public class RustSourceIndex {
 
-    private final RangeMap<RustFunction> functionRanges = new RangeMap<RustFunction>();
+    private final List<RustStruct> structs = new LinkedList<RustStruct>();
     private final List<RustFunction> functions = new LinkedList<RustFunction>();
+    private final RangeMap<RustFunction> functionRanges = new RangeMap<RustFunction>();
     private final List<RustDocComment> docComments = new LinkedList<RustDocComment>();
 
     public List<RustFunction> getFunctions() {
@@ -38,7 +39,7 @@ public class RustSourceIndex {
         return functionRanges.get(offset);
     }
 
-    public void addFunction(RustFunction function) {
+    void addFunction(RustFunction function) {
         functions.add(function);
         functionRanges.put(function.getOffsetRange(), function);
     }
@@ -47,7 +48,15 @@ public class RustSourceIndex {
         return Collections.unmodifiableList(docComments);
     }
 
-    public void addDocComment(RustDocComment docComment) {
+    void addDocComment(RustDocComment docComment) {
         docComments.add(docComment);
+    }
+
+    public List<RustStruct> getStructs() {
+        return Collections.unmodifiableList(structs);
+    }
+
+    void addStruct(RustStruct struct) {
+        this.structs.add(struct);
     }
 }
