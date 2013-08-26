@@ -27,6 +27,7 @@ import java.util.List;
 public class RustSourceIndex {
 
     private final List<RustStruct> structs = new LinkedList<RustStruct>();
+    private final List<RustImpl> impls = new LinkedList<RustImpl>();
     private final List<RustEnum> enums = new LinkedList<RustEnum>();
     private final List<RustFunction> functions = new LinkedList<RustFunction>();
     private final RangeMap<RustFunction> functionRanges = new RangeMap<RustFunction>();
@@ -67,5 +68,13 @@ public class RustSourceIndex {
 
     void addEnum(RustEnum rustEnum) {
         enums.add(rustEnum);
+    }
+
+    public List<RustImpl> getImpls() {
+        return Collections.unmodifiableList(impls);
+    }
+
+    void addImpl(RustImpl impl) {
+        impls.add(impl);
     }
 }

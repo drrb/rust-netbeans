@@ -104,6 +104,19 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
     }
 
     @Override
+    public RustSourceIndex visitImpl(RustParser.ImplContext implContext) {
+        visitChildren(implContext);
+        RustParser.Non_global_pathContext path = implContext.ty().path().non_global_path();
+        final RustImpl.Builder implBuilder = RustImpl.builder()
+                .setName(path.ident(0).getText())
+                .setOffsetRange(offsetRangeFor(implContext));
+        RustParser.Impl_bodyContext bodyContext = implContext.impl_body();
+        implBuilder.setBody(new RustImplBody(offsetRangeFor(bodyContext)));
+        index.addImpl(implBuilder.build());
+        return index;
+    }
+
+    @Override
     public RustSourceIndex visitTerminal(TerminalNode node) {
         if (node.getSymbol().getType() == RustParser.OUTER_DOC_COMMENT) {
             index.addDocComment(new RustDocComment(node.getText(), offsetRangeFor(node)));

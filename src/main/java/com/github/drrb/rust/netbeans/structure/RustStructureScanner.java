@@ -21,6 +21,7 @@ import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustPars
 import com.github.drrb.rust.netbeans.parsing.index.RustDocComment;
 import com.github.drrb.rust.netbeans.parsing.index.RustEnum;
 import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
+import com.github.drrb.rust.netbeans.parsing.index.RustImpl;
 import com.github.drrb.rust.netbeans.parsing.index.RustSourceIndex;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,6 +75,11 @@ public class RustStructureScanner implements StructureScanner {
         List<RustEnum> enums = index.getEnums();
         for (RustEnum rustEnum : enums) {
             folds.map(CODEBLOCKS_FOLD_TYPE, rustEnum.getBody().getOffsetRange());
+        }
+
+        List<RustImpl> impls = index.getImpls();
+        for (RustImpl impl : impls) {
+            folds.map(CODEBLOCKS_FOLD_TYPE, impl.getBody().getOffsetRange());
         }
 
         List<RustDocComment> rustdocs = index.getDocComments();
