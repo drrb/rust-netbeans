@@ -16,13 +16,12 @@
  */
 package com.github.drrb.rust.netbeans;
 
-import com.github.drrb.rust.netbeans.TestParsing;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 
 /**
  *
  */
-public class RustSource {
+public class RustSource implements CharSequence {
 
     private final StringBuilder source = new StringBuilder();
 
@@ -33,5 +32,25 @@ public class RustSource {
 
     public NetbeansRustParser.NetbeansRustParserResult parse() {
         return TestParsing.parse(source);
+    }
+
+    @Override
+    public int length() {
+        return source.length();
+    }
+
+    @Override
+    public char charAt(int index) {
+        return source.charAt(index);
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return source.subSequence(start, end);
+    }
+
+    @Override
+    public String toString() {
+        return source.toString();
     }
 }

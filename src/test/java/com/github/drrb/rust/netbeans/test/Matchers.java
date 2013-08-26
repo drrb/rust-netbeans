@@ -17,11 +17,13 @@
 package com.github.drrb.rust.netbeans.test;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.Map;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.netbeans.modules.csl.api.CompletionProposal;
 import org.netbeans.modules.csl.api.ElementKind;
 import org.netbeans.modules.csl.api.Modifier;
 import org.netbeans.modules.csl.api.OffsetRange;
@@ -96,6 +98,24 @@ public class Matchers extends org.hamcrest.Matchers {
                         .appendText(" and OffsetRange: ").appendValue(offsetRange)
                         .appendText(" and ElementKind ").appendValue(elementKind)
                         .appendText(" and Modifiers ").appendValueList("<", ", ", ">", modifiers);
+            }
+        };
+    }
+
+    public static Matcher<CompletionProposal> completionProposal(final String name, final ElementKind kind, final Modifier... modifiers) {
+        return new TypeSafeMatcher<CompletionProposal>() {
+            @Override
+            public boolean matchesSafely(CompletionProposal item) {
+                return name.equals(item.getName())
+                        && item.getKind() == kind
+                        && Sets.newHashSet(modifiers).equals(item.getModifiers());
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("CompletionProposal with name ").appendValue(name)
+                        .appendText(" and kind ").appendValue(kind)
+                        .appendText(" and modifiers ").appendValueList("<", ",", ">", modifiers);
             }
         };
     }

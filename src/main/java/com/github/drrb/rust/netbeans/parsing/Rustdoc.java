@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import org.netbeans.modules.csl.api.OffsetRange;
+import org.pegdown.PegDownProcessor;
 
 /**
  *
@@ -43,5 +44,10 @@ public class Rustdoc {
 
     public OffsetRange getOffsetRange() {
         return offsetRange;
+    }
+
+    public String getHtml() {
+        PegDownProcessor pegdownProcessor = new PegDownProcessor();
+        return pegdownProcessor.markdownToHtml(text);
     }
 }

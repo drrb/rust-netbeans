@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import com.github.drrb.rust.netbeans.completion.RustCodeCompletionHandler;
 import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
@@ -23,6 +24,7 @@ import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
 import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
 import org.netbeans.api.lexer.Language;
+import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.InstantRenamer;
 import org.netbeans.modules.csl.api.OccurrencesFinder;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
@@ -53,6 +55,16 @@ public class RustLanguage extends DefaultLanguageConfig {
     }
 
     @Override
+    public boolean isIdentifierChar(char c) {
+        return isRustIdentifierChar(c);
+    }
+
+    public static boolean isRustIdentifierChar(char c) {
+        //TODO: is this true?
+        return Character.isJavaIdentifierPart(c);
+    }
+
+    @Override
     public Language<RustTokenId> getLexerLanguage() {
         return RustTokenId.getLanguage();
     }
@@ -60,6 +72,11 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public Parser getParser() {
         return new NetbeansRustParser();
+    }
+
+    @Override
+    public CodeCompletionHandler getCompletionHandler() {
+        return new RustCodeCompletionHandler();
     }
 
     @Override
