@@ -117,6 +117,19 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
     }
 
     @Override
+    public RustSourceIndex visitTrait_decl(RustParser.Trait_declContext traitContext) {
+        visitChildren(traitContext);
+        final RustTrait.Builder traitBuilder = RustTrait.builder()
+                .setName(traitContext.ident().getText())
+                .setOffsetRange(offsetRangeFor(traitContext));
+        TerminalNode openBrace = traitContext.LBRACE();
+        TerminalNode closeBrace = traitContext.RBRACE();
+        traitBuilder.setBody(new RustTraitBody(offsetRangeBetween(openBrace, closeBrace)));
+        index.addTrait(traitBuilder.build());
+        return index;
+    }
+
+    @Override
     public RustSourceIndex visitImpl_trait_for_type(RustParser.Impl_trait_for_typeContext traitImplContext) {
         visitChildren(traitImplContext);
         //TODO: use a visitor. This will almost definitely have NPEs

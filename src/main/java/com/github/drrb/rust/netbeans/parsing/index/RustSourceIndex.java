@@ -28,6 +28,7 @@ public class RustSourceIndex {
 
     private final List<RustStruct> structs = new LinkedList<RustStruct>();
     private final List<RustImpl> impls = new LinkedList<RustImpl>();
+    private final List<RustTrait> traits = new LinkedList<RustTrait>();
     private final List<RustTraitImpl> traitImpls = new LinkedList<RustTraitImpl>();
     private final List<RustEnum> enums = new LinkedList<RustEnum>();
     private final List<RustFunction> functions = new LinkedList<RustFunction>();
@@ -77,6 +78,14 @@ public class RustSourceIndex {
 
     void addImpl(RustImpl impl) {
         impls.add(impl);
+    }
+
+    public List<RustTrait> getTraits() {
+        return Collections.unmodifiableList(traits);
+    }
+
+    void addTrait(RustTrait trait) {
+        traits.add(trait);
     }
 
     public List<RustTraitImpl> getTraitImpls() {

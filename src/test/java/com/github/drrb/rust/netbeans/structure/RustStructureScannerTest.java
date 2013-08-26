@@ -93,6 +93,22 @@ public class RustStructureScannerTest {
     }
 
     @Test
+    public void shouldFoldTraits() {
+        RustSource source = new RustSource();
+        source.appendln("/// A thing that can be printed");
+        source.appendln("trait Printable {");
+        source.appendln("   fn print(&self);");
+        source.appendln("}");
+        source.appendln("");
+        source.appendln("");
+        NetbeansRustParserResult parseResult = source.parse();
+        Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
+
+        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(48, 71))));
+        //assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(32, 71))));
+    }
+
+    @Test
     public void shouldFoldTraitImpls() {
         RustSource source = new RustSource();
         source.appendln("");
