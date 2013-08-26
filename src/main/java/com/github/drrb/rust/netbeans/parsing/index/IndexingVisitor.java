@@ -22,7 +22,6 @@ import com.github.drrb.rust.netbeans.parsing.RustParser;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-
 /**
  *
  */
@@ -106,6 +105,7 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
     @Override
     public RustSourceIndex visitImpl(RustParser.ImplContext implContext) {
         visitChildren(implContext);
+        //TODO: use a visitor. This will almost definitely have NPEs
         RustParser.Non_global_pathContext path = implContext.ty().path().non_global_path();
         final RustImpl.Builder implBuilder = RustImpl.builder()
                 .setName(path.ident(0).getText())
@@ -117,6 +117,20 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
     }
 
     @Override
+    public RustSourceIndex visitImpl_trait_for_type(RustParser.Impl_trait_for_typeContext traitImplContext) {
+        visitChildren(traitImplContext);
+        //TODO: use a visitor. This will almost definitely have NPEs
+        RustParser.Non_global_pathContext traitNamePath = traitImplContext.trait().path().non_global_path();
+        final RustTraitImpl.Builder traitImplBuilder = RustTraitImpl.builder()
+                .setName(traitNamePath.getText()) //TODO: "name" doesn't really make sense here. For now, just doing it because the others have it
+                .setOffsetRange(offsetRangeFor(traitImplContext));
+        RustParser.Impl_bodyContext implBodyContext = traitImplContext.impl_body();
+        traitImplBuilder.setBody(new RustTraitImplBody(offsetRangeFor(implBodyContext)));
+        index.addTraitImpl(traitImplBuilder.build());
+        return index;
+    }
+
+    @Override
     public RustSourceIndex visitTerminal(TerminalNode node) {
         if (node.getSymbol().getType() == RustParser.OUTER_DOC_COMMENT) {
             index.addDocComment(new RustDocComment(node.getText(), offsetRangeFor(node)));
@@ -124,6 +138,7 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
         return index;
     }
 }
+
 class FunctionNameFinder extends RustBaseVisitor<String> {
 
     @Override
