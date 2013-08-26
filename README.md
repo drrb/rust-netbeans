@@ -10,7 +10,7 @@ So far, it includes
 * basic syntax highlighting
 * basic error highlighting
 * basic code completion
-* basic code folding
+* code folding
 * basic file overview
 * basic indentation
 * basic occurrence matching
