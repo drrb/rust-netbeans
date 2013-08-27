@@ -25,8 +25,14 @@ public class RustSource implements CharSequence {
 
     private final StringBuilder source = new StringBuilder();
 
+    public RustSource appendln() {
+        source.append("\n");
+        return this;
+    }
+
     public RustSource appendln(String line) {
-        source.append(line).append("\n");
+        source.append(line);
+        appendln();
         return this;
     }
 

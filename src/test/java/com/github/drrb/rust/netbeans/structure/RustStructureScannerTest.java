@@ -89,7 +89,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(12, 115))));
+        assertThat(folds.get("codeblocks"), contains(range(12, 115)));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(26, 87))));
+        assertThat(folds.get("codeblocks"), contains(range(26, 87)));
     }
 
     @Test
@@ -140,6 +140,41 @@ public class RustStructureScannerTest {
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
         assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(23, 78))));
+    }
+
+    @Test
+    public void shouldFoldImplMethods() {
+        RustSource source = new RustSource();
+        source.appendln("/// Point methods");
+        source.appendln("impl Point {");
+        source.appendln();
+        source.appendln("    fn transpose(&self, dx: float, dy: float) -> Point {");
+        source.appendln("        Point{ x: self.x + dx, y: self.y + dy}");
+        source.appendln("    }");
+        source.appendln("}");
+        source.appendln();
+
+        NetbeansRustParserResult parseResult = source.parse();
+        Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
+
+        assertThat(folds.get("codeblocks"), contains(range(87, 141)));
+    }
+
+    @Test
+    public void shouldFoldTraitImplMethods() {
+        RustSource source = new RustSource();
+        source.appendln();
+        source.appendln("impl Printable for Point {");
+        source.appendln("   fn print(&self) {");
+        source.appendln("       println(fmt!(\"%?, %?\"));");
+        source.appendln("   }");
+        source.appendln("}");
+        source.appendln();
+
+        NetbeansRustParserResult parseResult = source.parse();
+        Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
+
+        assertThat(folds.get("codeblocks"), contains(range(47, 85)));
     }
 
     @Test

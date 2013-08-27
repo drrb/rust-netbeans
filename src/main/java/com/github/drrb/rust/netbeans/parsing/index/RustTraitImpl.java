@@ -25,9 +25,9 @@ public class RustTraitImpl {
 
     private final String name;
     private final OffsetRange offsetRange;
-    private final RustTraitImplBody body;
+    private final RustImplBody body;
 
-    RustTraitImpl(String name, OffsetRange offsetRange, RustTraitImplBody body) {
+    RustTraitImpl(String name, OffsetRange offsetRange, RustImplBody body) {
         this.name = name;
         this.offsetRange = offsetRange;
         this.body = body;
@@ -37,7 +37,7 @@ public class RustTraitImpl {
         return name;
     }
 
-    public RustTraitImplBody getBody() {
+    public RustImplBody getBody() {
         return body;
     }
 
@@ -53,7 +53,7 @@ public class RustTraitImpl {
 
         private String name;
         private OffsetRange offsetRange;
-        private RustTraitImplBody body;
+        private RustImplBody body;
 
         RustTraitImpl build() {
             return new RustTraitImpl(name, offsetRange, body);
@@ -69,7 +69,7 @@ public class RustTraitImpl {
             return this;
         }
 
-        Builder setBody(RustTraitImplBody body) {
+        Builder setBody(RustImplBody body) {
             this.body = body;
             return this;
         }

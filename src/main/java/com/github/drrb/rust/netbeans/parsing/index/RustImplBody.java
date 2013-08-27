@@ -16,6 +16,9 @@
  */
 package com.github.drrb.rust.netbeans.parsing.index;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import org.netbeans.modules.csl.api.OffsetRange;
 
 /**
@@ -24,12 +27,43 @@ import org.netbeans.modules.csl.api.OffsetRange;
 public class RustImplBody {
 
     private final OffsetRange offsetRange;
+    private final List<RustImplMethod> methods;
 
-    RustImplBody(OffsetRange offsetRange) {
+    RustImplBody(OffsetRange offsetRange, List<RustImplMethod> methods) {
         this.offsetRange = offsetRange;
+        this.methods = methods;
     }
 
     public OffsetRange getOffsetRange() {
         return offsetRange;
+    }
+
+    public List<RustImplMethod> getMethods() {
+        return Collections.unmodifiableList(methods);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private OffsetRange offsetRange;
+        private RustImplMethodBody body;
+        private List<RustImplMethod> methods = new LinkedList<RustImplMethod>();
+
+        RustImplBody build() {
+            return new RustImplBody(offsetRange, methods);
+        }
+
+        Builder setOffsetRange(OffsetRange offsetRange) {
+            this.offsetRange = offsetRange;
+            return this;
+        }
+
+        Builder addMethod(RustImplMethod method) {
+            this.methods.add(method);
+            return this;
+        }
     }
 }

@@ -26,19 +26,20 @@ import org.netbeans.modules.csl.api.OffsetRange;
 /**
  *
  */
-public class RustFunction {
+public class RustImplMethod {
+
 
     private final String name;
     private final OffsetRange offsetRange;
-    private final RustFunctionBody body;
-    private final Map<String, RustFunctionParameterName> functionParameterNamesByName = new HashMap<String, RustFunctionParameterName>();
-    private final RangeMap<RustFunctionParameterName> functionParameterNameRanges = new RangeMap<RustFunctionParameterName>();
+    private final RustImplMethodBody body;
+    private final Map<String, RustImplMethodParameterName> functionParameterNamesByName = new HashMap<String, RustImplMethodParameterName>();
+    private final RangeMap<RustImplMethodParameterName> functionParameterNameRanges = new RangeMap<RustImplMethodParameterName>();
 
-    RustFunction(String name, OffsetRange offsetRange, RustFunctionBody body, List<RustFunctionParameterName> parameterNames) {
+    RustImplMethod(String name, OffsetRange offsetRange, RustImplMethodBody body, List<RustImplMethodParameterName> parameterNames) {
         this.name = name;
         this.offsetRange = offsetRange;
         this.body = body;
-        for (RustFunctionParameterName parameterName : parameterNames) {
+        for (RustImplMethodParameterName parameterName : parameterNames) {
             functionParameterNameRanges.put(parameterName.getOffsetRange(), parameterName);
             functionParameterNamesByName.put(parameterName.getText(), parameterName);
         }
@@ -48,7 +49,7 @@ public class RustFunction {
         return name;
     }
 
-    public RustFunctionBody getBody() {
+    public RustImplMethodBody getBody() {
         return body;
     }
 
@@ -56,11 +57,11 @@ public class RustFunction {
         return offsetRange;
     }
 
-    public Option<RustFunctionParameterName> getParameterNameAt(int offeset) {
+    public Option<RustImplMethodParameterName> getParameterNameAt(int offeset) {
         return functionParameterNameRanges.get(offeset);
     }
 
-    public Option<RustFunctionParameterName> getParameterNameMatching(String text) {
+    public Option<RustImplMethodParameterName> getParameterNameMatching(String text) {
         return Option.isIfNotNull(functionParameterNamesByName.get(text));
     }
 
@@ -72,11 +73,11 @@ public class RustFunction {
 
         private String name;
         private OffsetRange offsetRange;
-        private RustFunctionBody body;
-        private List<RustFunctionParameterName> parameterNames = new LinkedList<RustFunctionParameterName>();
+        private RustImplMethodBody body;
+        private List<RustImplMethodParameterName> parameterNames = new LinkedList<RustImplMethodParameterName>();
 
-        RustFunction build() {
-            return new RustFunction(name, offsetRange, body, parameterNames);
+        RustImplMethod build() {
+            return new RustImplMethod(name, offsetRange, body, parameterNames);
         }
 
         Builder setName(String name) {
@@ -89,12 +90,12 @@ public class RustFunction {
             return this;
         }
 
-        Builder setBody(RustFunctionBody body) {
+        Builder setBody(RustImplMethodBody body) {
             this.body = body;
             return this;
         }
 
-        Builder addParameterName(RustFunctionParameterName parameterName) {
+        Builder addParameterName(RustImplMethodParameterName parameterName) {
             parameterNames.add(parameterName);
             return this;
         }

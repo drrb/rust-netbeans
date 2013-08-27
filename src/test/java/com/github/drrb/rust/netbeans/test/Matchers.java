@@ -38,6 +38,10 @@ public class Matchers extends org.hamcrest.Matchers {
         return hasItem(elementMatcher);
     }
 
+    public static <T> Matcher<Iterable<T>> contains(T element) {
+        return hasItem(element);
+    }
+
     public static <K> MapMatcher<K> containsKey(K key) {
         return new MapMatcher(key);
     }

@@ -23,6 +23,7 @@ import com.github.drrb.rust.netbeans.parsing.index.RustDocComment;
 import com.github.drrb.rust.netbeans.parsing.index.RustEnum;
 import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
 import com.github.drrb.rust.netbeans.parsing.index.RustImpl;
+import com.github.drrb.rust.netbeans.parsing.index.RustImplMethod;
 import com.github.drrb.rust.netbeans.parsing.index.RustSourceIndex;
 import com.github.drrb.rust.netbeans.parsing.index.RustTrait;
 import java.util.EnumSet;
@@ -94,6 +95,10 @@ public class RustStructureScanner implements StructureScanner {
         List<RustImpl> impls = index.getImpls();
         for (RustImpl impl : impls) {
             folds.map(CODEBLOCKS_FOLD_TYPE, impl.getBody().getOffsetRange());
+            List<RustImplMethod> implMethods = impl.getBody().getMethods();
+            for (RustImplMethod implMethod : implMethods) {
+                folds.map(CODEBLOCKS_FOLD_TYPE, implMethod.getBody().getOffsetRange());
+            }
         }
 
         List<RustTrait> traits = index.getTraits();
@@ -104,6 +109,10 @@ public class RustStructureScanner implements StructureScanner {
         List<RustTraitImpl> traitImpls = index.getTraitImpls();
         for (RustTraitImpl traitImpl : traitImpls) {
             folds.map(CODEBLOCKS_FOLD_TYPE, traitImpl.getBody().getOffsetRange());
+            List<RustImplMethod> traitImplMethods = traitImpl.getBody().getMethods();
+            for (RustImplMethod traitImplMethod : traitImplMethods) {
+                folds.map(CODEBLOCKS_FOLD_TYPE, traitImplMethod.getBody().getOffsetRange());
+            }
         }
 
         List<RustDocComment> rustdocs = index.getDocComments();

@@ -16,25 +16,20 @@
  */
 package com.github.drrb.rust.netbeans.parsing.index;
 
-import java.util.List;
 import org.netbeans.modules.csl.api.OffsetRange;
 
 /**
  *
  */
-public class RustTraitImplBody {
+public class RustImplMethodBody {
 
     private final OffsetRange offsetRange;
 
-    public RustTraitImplBody(OffsetRange offsetRange) {
+    public RustImplMethodBody(OffsetRange offsetRange) {
         this.offsetRange = offsetRange;
     }
 
     public OffsetRange getOffsetRange() {
         return offsetRange;
-    }
-
-    public List<RustImplMethod> getMethods() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
