@@ -214,7 +214,7 @@ public class RustStructureScannerTest {
     }
 
     @Test
-    public void shouldIncludeStructsInNavigatorPanel() {
+    public void shouldIncludeStructFieldsInNavigatorPanel() {
         RustSource source = new RustSource();
         source.appendln("/// Point in space");
         source.appendln("struct Point {");
@@ -222,9 +222,12 @@ public class RustStructureScannerTest {
         source.appendln("   y: float");
         source.appendln("}");
         NetbeansRustParserResult parseResult = source.parse();
+
         List<StructureItem> structure = (List<StructureItem>) structureScanner.scan(parseResult);
 
-        assertThat(structure, contains(structureItem("Point", range(19, 60), CLASS)));
+        List<StructureItem> structNestedItems = (List<StructureItem>) structure.get(0).getNestedItems();
+        assertThat(structNestedItems, contains(structureItem("x", range(37, 38), FIELD)));
+        assertThat(structNestedItems, contains(structureItem("y", range(50, 51), FIELD)));
     }
 
     @Test

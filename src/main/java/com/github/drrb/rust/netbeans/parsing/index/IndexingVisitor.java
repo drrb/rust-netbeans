@@ -77,12 +77,23 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
 
     @Override
     public RustSourceIndex visitStruct_decl(RustParser.Struct_declContext structContext) {
-        RustStruct.Builder structBuilder = RustStruct.builder()
-                .setName(structContext.ident().getText())
-                .setOffsetRange(offsetRangeFor(structContext));
         TerminalNode openBrace = structContext.LBRACE();
         TerminalNode closeBrace = structContext.RBRACE();
-        structBuilder.setBody(new RustStructBody(offsetRangeBetween(openBrace, closeBrace)));
+        final RustStructBody.Builder structBodyBuilder = RustStructBody.builder()
+                .setOffsetRange(offsetRangeBetween(openBrace, closeBrace));
+        structContext.accept(new RustBaseVisitor<Void>() {
+            @Override
+            public Void visitStruct_field(RustParser.Struct_fieldContext fieldContext) {
+                RustParser.IdentContext identifier = fieldContext.ident();
+                structBodyBuilder.addField(new RustStructField(identifier.getText(), offsetRangeFor(identifier)));
+                return null;
+            }
+        });
+
+        RustStruct.Builder structBuilder = RustStruct.builder()
+                .setName(structContext.ident().getText())
+                .setOffsetRange(offsetRangeFor(structContext))
+                .setBody(structBodyBuilder.build());
         index.addStruct(structBuilder.build());
         return visitChildren(structContext);
     }

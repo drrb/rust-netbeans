@@ -25,6 +25,7 @@ import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
 import com.github.drrb.rust.netbeans.parsing.index.RustImpl;
 import com.github.drrb.rust.netbeans.parsing.index.RustImplMethod;
 import com.github.drrb.rust.netbeans.parsing.index.RustSourceIndex;
+import com.github.drrb.rust.netbeans.parsing.index.RustStructField;
 import com.github.drrb.rust.netbeans.parsing.index.RustTrait;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -59,7 +60,13 @@ public class RustStructureScanner implements StructureScanner {
 
         List<RustStruct> structs = index.getStructs();
         for (RustStruct struct : structs) {
-            structureItems.add(new RustStructureItem(struct.getName(), struct.getOffsetRange(), CLASS));
+            RustStructureItem structItem = new RustStructureItem(struct.getName(), struct.getOffsetRange(), CLASS);
+            structureItems.add(structItem);
+
+            List<RustStructField> fields = struct.getBody().getFields();
+            for (RustStructField field : fields) {
+                structItem.addNestedItem(new RustStructureItem(field.getName(), field.getOffsetRange(), FIELD));
+            }
         }
 
         List<RustTrait> traits = index.getTraits();

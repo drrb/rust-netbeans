@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans.structure;
 
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.swing.ImageIcon;
@@ -37,6 +38,7 @@ public class RustStructureItem implements StructureItem.CollapsedDefault {
     private final OffsetRange offsetRange;
     private final ElementKind kind;
     private final Set<Modifier> modifiers;
+    private final List<RustStructureItem> nestedItems = new LinkedList<RustStructureItem>();
 
     public RustStructureItem(String name, OffsetRange offsetRange, ElementKind kind) {
         this.name = name;
@@ -84,12 +86,12 @@ public class RustStructureItem implements StructureItem.CollapsedDefault {
 
     @Override
     public boolean isLeaf() {
-        return true;
+        return getNestedItems().isEmpty();
     }
 
     @Override
     public List<? extends StructureItem> getNestedItems() {
-        return Collections.emptyList();
+        return Collections.unmodifiableList(nestedItems);
     }
 
     @Override
@@ -115,5 +117,9 @@ public class RustStructureItem implements StructureItem.CollapsedDefault {
     @Override
     public String toString() {
         return "RustStructureItem{" + "name=" + name + ", offsetRange=" + offsetRange + ", kind=" + kind + ", modifiers=" + modifiers + '}';
+    }
+
+    void addNestedItem(RustStructureItem nestedItem) {
+        nestedItems.add(nestedItem);
     }
 }

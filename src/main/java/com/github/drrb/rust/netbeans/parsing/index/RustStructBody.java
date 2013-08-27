@@ -16,6 +16,9 @@
  */
 package com.github.drrb.rust.netbeans.parsing.index;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import org.netbeans.modules.csl.api.OffsetRange;
 
 /**
@@ -24,12 +27,43 @@ import org.netbeans.modules.csl.api.OffsetRange;
 public class RustStructBody {
 
     private final OffsetRange offsetRange;
+    private final List<RustStructField> fields;
 
-    RustStructBody(OffsetRange offsetRange) {
+    RustStructBody(OffsetRange offsetRange, List<RustStructField> fields) {
         this.offsetRange = offsetRange;
+        this.fields = fields;
     }
 
     public OffsetRange getOffsetRange() {
         return offsetRange;
+    }
+
+    public List<RustStructField> getFields() {
+        return Collections.unmodifiableList(fields);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private OffsetRange offsetRange;
+        private RustImplMethodBody body;
+        private List<RustStructField> fields = new LinkedList<RustStructField>();
+
+        RustStructBody build() {
+            return new RustStructBody(offsetRange, fields);
+        }
+
+        Builder setOffsetRange(OffsetRange offsetRange) {
+            this.offsetRange = offsetRange;
+            return this;
+        }
+
+        Builder addField(RustStructField field) {
+            this.fields.add(field);
+            return this;
+        }
     }
 }
