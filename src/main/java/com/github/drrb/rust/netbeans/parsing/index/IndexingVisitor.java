@@ -41,7 +41,6 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
 
     @Override
     public RustSourceIndex visitItem_fn_decl(final RustParser.Item_fn_declContext functionContext) {
-        visitChildren(functionContext);
         final RustFunction.Builder functionBuilder = RustFunction.builder()
                 .setName(functionContext.accept(new FunctionNameFinder()))
                 .setOffsetRange(offsetRangeFor(functionContext));
@@ -73,38 +72,35 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
             }
         });
         index.addFunction(functionBuilder.build());
-        return index;
+        return visitChildren(functionContext);
     }
 
     @Override
     public RustSourceIndex visitStruct_decl(RustParser.Struct_declContext structContext) {
-        visitChildren(structContext);
-        final RustStruct.Builder structBuilder = RustStruct.builder()
+        RustStruct.Builder structBuilder = RustStruct.builder()
                 .setName(structContext.ident().getText())
                 .setOffsetRange(offsetRangeFor(structContext));
         TerminalNode openBrace = structContext.LBRACE();
         TerminalNode closeBrace = structContext.RBRACE();
         structBuilder.setBody(new RustStructBody(offsetRangeBetween(openBrace, closeBrace)));
         index.addStruct(structBuilder.build());
-        return index;
+        return visitChildren(structContext);
     }
 
     @Override
     public RustSourceIndex visitEnum_decl(RustParser.Enum_declContext enumContext) {
-        visitChildren(enumContext);
-        final RustEnum.Builder enumBuilder = RustEnum.builder()
+        RustEnum.Builder enumBuilder = RustEnum.builder()
                 .setName(enumContext.ident().getText())
                 .setOffsetRange(offsetRangeFor(enumContext));
         TerminalNode openBrace = enumContext.LBRACE();
         TerminalNode closeBrace = enumContext.RBRACE();
         enumBuilder.setBody(new RustEnumBody(offsetRangeBetween(openBrace, closeBrace)));
         index.addEnum(enumBuilder.build());
-        return index;
+        return visitChildren(enumContext);
     }
 
     @Override
     public RustSourceIndex visitImpl(RustParser.ImplContext implContext) {
-        visitChildren(implContext);
         //TODO: use a visitor. This will almost definitely have NPEs
         RustParser.Non_global_pathContext path = implContext.ty().path().non_global_path();
         RustImpl.Builder implBuilder = RustImpl.builder()
@@ -128,12 +124,11 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
         });
         implBuilder.setBody(implBodyBuilder.build());
         index.addImpl(implBuilder.build());
-        return index;
+        return visitChildren(implContext);
     }
 
     @Override
     public RustSourceIndex visitTrait_decl(RustParser.Trait_declContext traitContext) {
-        visitChildren(traitContext);
         final RustTrait.Builder traitBuilder = RustTrait.builder()
                 .setName(traitContext.ident().getText())
                 .setOffsetRange(offsetRangeFor(traitContext));
@@ -141,12 +136,11 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
         TerminalNode closeBrace = traitContext.RBRACE();
         traitBuilder.setBody(new RustTraitBody(offsetRangeBetween(openBrace, closeBrace)));
         index.addTrait(traitBuilder.build());
-        return index;
+        return visitChildren(traitContext);
     }
 
     @Override
     public RustSourceIndex visitImpl_trait_for_type(RustParser.Impl_trait_for_typeContext traitImplContext) {
-        visitChildren(traitImplContext);
         //TODO: use a visitor. This will almost definitely have NPEs
         RustParser.Non_global_pathContext traitNamePath = traitImplContext.trait().path().non_global_path();
         RustTraitImpl.Builder traitImplBuilder = RustTraitImpl.builder()
@@ -170,7 +164,7 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
         });
         traitImplBuilder.setBody(traitImplBodyBuilder.build());
         index.addTraitImpl(traitImplBuilder.build());
-        return index;
+        return visitChildren(traitImplContext);
     }
 
     @Override
