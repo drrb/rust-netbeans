@@ -1,27 +1,27 @@
 /**
  * Copyright (C) 2013 drrb
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.parsing.index.RustLocalVariableIdentifier;
-import com.github.drrb.rust.netbeans.parsing.index.RustFunctionParameterName;
-import com.github.drrb.rust.netbeans.parsing.index.RustFunctionBody;
-import com.github.drrb.rust.netbeans.parsing.index.RustSourceIndex;
-import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
+import com.github.drrb.rust.netbeans.parsing.index.RustFunctionBody;
+import com.github.drrb.rust.netbeans.parsing.index.RustFunctionParameterName;
+import com.github.drrb.rust.netbeans.parsing.index.RustLocalVariableIdentifier;
+import com.github.drrb.rust.netbeans.parsing.index.RustSourceIndex;
 import com.github.drrb.rust.netbeans.util.Option;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +38,8 @@ import org.netbeans.modules.parsing.spi.SchedulerEvent;
  */
 public class RustOccurrencesFinder extends OccurrencesFinder<NetbeansRustParserResult> {
 
-    private int caretPosition;
     private final Map<OffsetRange, ColoringAttributes> occurrences = new HashMap<OffsetRange, ColoringAttributes>();
+    private int caretPosition;
 
     @Override
     public void setCaretPosition(int caretPosition) {

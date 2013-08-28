@@ -1,29 +1,29 @@
 /**
  * Copyright (C) 2013 drrb
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.completion.RustCodeCompletionHandler;
 import com.github.drrb.rust.netbeans.formatting.RustFormatter;
-import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
-import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
+import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
+import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.Formatter;
@@ -40,6 +40,11 @@ import org.openide.util.NbBundle;
 public class RustLanguage extends DefaultLanguageConfig {
 
     public static final String MIME_TYPE = "text/x-rust-source";
+
+    public static boolean isRustIdentifierChar(char c) {
+        //TODO: is this true?
+        return Character.isJavaIdentifierPart(c);
+    }
 
     @Override
     public String getDisplayName() {
@@ -59,11 +64,6 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public boolean isIdentifierChar(char c) {
         return isRustIdentifierChar(c);
-    }
-
-    public static boolean isRustIdentifierChar(char c) {
-        //TODO: is this true?
-        return Character.isJavaIdentifierPart(c);
     }
 
     @Override

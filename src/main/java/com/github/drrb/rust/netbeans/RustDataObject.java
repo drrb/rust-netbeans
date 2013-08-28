@@ -1,18 +1,18 @@
 /**
  * Copyright (C) 2013 drrb
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.github.drrb.rust.netbeans;
 
@@ -98,16 +98,6 @@ import org.openide.windows.TopComponent;
 })
 public class RustDataObject extends MultiDataObject {
 
-    public RustDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
-        super(pf, loader);
-        registerEditor(RustLanguage.MIME_TYPE, true);
-    }
-
-    @Override
-    protected int associateLookup() {
-        return 1;
-    }
-
     @MultiViewElement.Registration(
             displayName = "#LBL_Rust_EDITOR",
             iconBase = "com/github/drrb/rust/netbeans/rust_icon_small.png",
@@ -118,5 +108,15 @@ public class RustDataObject extends MultiDataObject {
     @Messages("LBL_Rust_EDITOR=Source")
     public static MultiViewEditorElement createEditor(Lookup lookup) {
         return new MultiViewEditorElement(lookup);
+    }
+
+    public RustDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
+        super(pf, loader);
+        registerEditor(RustLanguage.MIME_TYPE, true);
+    }
+
+    @Override
+    protected int associateLookup() {
+        return 1;
     }
 }
