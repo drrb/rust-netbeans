@@ -17,22 +17,27 @@
 package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
+import org.netbeans.lib.editor.util.swing.DocumentUtilities;
+import org.netbeans.modules.editor.indent.spi.IndentContextFactory;
 
 /**
  *
  */
-public class RustSource implements CharSequence {
+public class RustSourceSnapshot implements CharSequence {
 
+    @SuppressWarnings("StringBufferWithoutInitialCapacity")
     private final StringBuilder source = new StringBuilder();
 
-    public RustSource appendln() {
-        source.append("\n");
-        return this;
+    public RustSourceSnapshot appendln() {
+        return append("\n");
     }
 
-    public RustSource appendln(String line) {
-        source.append(line);
-        appendln();
+    public RustSourceSnapshot appendln(String line) {
+        return append(line).appendln();
+    }
+
+    public RustSourceSnapshot append(String string) {
+        source.append(string);
         return this;
     }
 
@@ -58,5 +63,17 @@ public class RustSource implements CharSequence {
     @Override
     public String toString() {
         return source.toString();
+    }
+
+    public RustDocument getDocument() {
+        return RustDocument.containing(this);
+    }
+
+    public String getDocumentText() {
+        return DocumentUtilities.getText(getDocument()).toString();
+    }
+
+    public IndentContextFactory.Builder getIndentContext() {
+        return IndentContextFactory.createFor(getDocument());
     }
 }

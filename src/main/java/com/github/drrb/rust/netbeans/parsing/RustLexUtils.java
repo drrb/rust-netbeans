@@ -31,7 +31,7 @@ public class RustLexUtils {
 
     public TokenSequence<RustTokenId> getRustTokenSequence(Document doc, int offset) {
         TokenHierarchy<Document> tokenHierarchy = TokenHierarchy.get(doc);
-        TokenSequence<RustTokenId> topLevelTokenSequence = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
+        TokenSequence<RustTokenId> topLevelTokenSequence = tokenHierarchy.tokenSequence(RustTokenId.language());
         if (topLevelTokenSequence != null) {
             return topLevelTokenSequence;
         }
@@ -46,7 +46,7 @@ public class RustLexUtils {
 
     private TokenSequence<RustTokenId> getEmbeddedRustTokenSequence(TokenHierarchy<Document> tokenHierarchy, int offset, boolean backwardBias) {
         for (TokenSequence<? extends TokenId> tokenSequence : tokenHierarchy.embeddedTokenSequences(offset, backwardBias)) {
-            if (tokenSequence.language() == RustTokenId.getLanguage()) {
+            if (tokenSequence.language() == RustTokenId.language()) {
                 @SuppressWarnings("unchecked")
                 TokenSequence<RustTokenId> embeddedTokenSequence = (TokenSequence<RustTokenId>) tokenSequence;
                 return embeddedTokenSequence;
@@ -61,7 +61,7 @@ public class RustLexUtils {
     }
 
     public static Option<OffsetRustToken> getIdentifierAt(int caretOffset, TokenHierarchy<?> tokenHierarchy) {
-        TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.getLanguage());
+        TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.language());
         Option<OffsetRustToken> tokenAtOffset = offsetTokenAt(caretOffset, tokenSequence);
         if (tokenAtOffset.isNot()) {
             return Option.none();

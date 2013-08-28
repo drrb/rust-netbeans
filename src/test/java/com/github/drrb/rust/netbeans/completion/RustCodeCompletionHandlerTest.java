@@ -16,7 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.completion;
 
-import com.github.drrb.rust.netbeans.RustSource;
+import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import static com.github.drrb.rust.netbeans.parsing.RustLexUtils.*;
 import org.junit.Before;
@@ -45,7 +45,7 @@ public class RustCodeCompletionHandlerTest {
 
     @Test
     public void shouldFindCompletionPrefix() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Say hello");
         source.appendln("fn greet() {");
         source.appendln("   println(\"hello\");");
@@ -62,7 +62,7 @@ public class RustCodeCompletionHandlerTest {
 
     @Test
     public void shouldSuggestMatchingMethod() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Say hello");
         source.appendln("fn greet() {");
         source.appendln("   println(\"hello\");");
@@ -78,7 +78,7 @@ public class RustCodeCompletionHandlerTest {
 
     @Test
     public void shouldProvideDocumentationForMethod() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Say hello");
         source.appendln("fn greet() {");
         source.appendln("   println(\"hello\");");
@@ -92,7 +92,7 @@ public class RustCodeCompletionHandlerTest {
         assertThat(documentation, is("/// Say hello"));
     }
 
-    private CodeCompletionContext completionContextFor(final RustSource source, final int caretOffset) {
+    private CodeCompletionContext completionContextFor(final RustSourceSnapshot source, final int caretOffset) {
         return new CodeCompletionContext() {
             @Override
             public int getCaretOffset() {

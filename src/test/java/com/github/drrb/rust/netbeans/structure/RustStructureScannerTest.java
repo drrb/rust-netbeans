@@ -16,7 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.structure;
 
-import com.github.drrb.rust.netbeans.RustSource;
+import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import static com.github.drrb.rust.netbeans.parsing.RustLexUtils.*;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldFunctions() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Entry point");
         source.appendln("fn main () {");
         source.appendln("   let a = 1;");
@@ -61,7 +61,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldStructs() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Point in space");
         source.appendln("struct Point {");
         source.appendln("   x: float,");
@@ -76,7 +76,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldImpls() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("");
         source.appendln("impl Point {");
         source.appendln("   fn transpose(&self, dx: float, dy: float) {");
@@ -94,7 +94,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldTraits() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// A thing that can be printed");
         source.appendln("trait Printable {");
         source.appendln("   fn print(&self);");
@@ -109,7 +109,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldTraitImpls() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("");
         source.appendln("impl Printable for Point {");
         source.appendln("   fn print(&self) {");
@@ -127,7 +127,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldEnums() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// A shape");
         source.appendln("enum Shape {");
         source.appendln("   Circle(Point, float),");
@@ -144,7 +144,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldImplMethods() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Point methods");
         source.appendln("impl Point {");
         source.appendln();
@@ -162,7 +162,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldTraitImplMethods() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln();
         source.appendln("impl Printable for Point {");
         source.appendln("   fn print(&self) {");
@@ -179,7 +179,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldFoldMultilineDocComments() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/**");
         source.appendln(" * Entry point");
         source.appendln(" */");
@@ -198,7 +198,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldIncludeFunctionsInNavigatorPanel() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Entry point");
         source.appendln("fn main () {");
         source.appendln("   let a = 1;");
@@ -215,7 +215,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldIncludeStructFieldsInNavigatorPanel() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Point in space");
         source.appendln("struct Point {");
         source.appendln("   x: float,");
@@ -232,7 +232,7 @@ public class RustStructureScannerTest {
 
     @Test
     public void shouldIncludeTraitsInNavigatorPanel() {
-        RustSource source = new RustSource();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// A thing that can be printed");
         source.appendln("trait Printable {");
         source.appendln("   fn print(&self);");

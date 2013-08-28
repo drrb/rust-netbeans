@@ -17,26 +17,24 @@
 package com.github.drrb.rust.netbeans.formatting;
 
 import com.github.drrb.rust.netbeans.RustDocument;
-import javax.swing.text.Document;
+import com.github.drrb.rust.netbeans.RustSourceSnapshot;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import static org.mockito.Mockito.*;
+import org.netbeans.lib.editor.util.swing.DocumentUtilities;
 import org.netbeans.modules.editor.indent.spi.Context;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Context.class)
 public class RustFormatterTest {
 
-    @Mock
     private Context context;
     private RustFormatter formatter;
+    private RustSourceSnapshot source = new RustSourceSnapshot();
+    private RustSourceSnapshot formattedSource = new RustSourceSnapshot();
 
     @Before
     public void setUp() {
@@ -45,55 +43,84 @@ public class RustFormatterTest {
 
     @Test
     public void shouldIndentLineTheSameAsThePreviousLine() throws Exception {
-        StringBuilder source = new StringBuilder();
-        source.append("    let x = 0;\n") //As though we just pressed return at the end of this line
-              .append("");
-        Document document = RustDocument.containing(source);
-
-        when(context.document()).thenReturn(document);
-        when(context.startOffset()).thenReturn(15);
-        when(context.lineStartOffset(15)).thenReturn(15);
-        when(context.lineStartOffset(14)).thenReturn(0);
-        when(context.lineIndent(0)).thenReturn(4);
+        source.appendln("    let x = 0;"); //As though we just pressed return at the end of this line
+        context = source.getIndentContext()
+                .withOffsetRange(15, 15)
+                .withCaretOffset(15)
+                .build();
 
         formatter.reindent(context);
 
-        verify(context).modifyIndent(15, 4);
+        formattedSource.appendln("    let x = 0;");
+        formattedSource.appendln("    ");
+        assertThat(textOf(context), is(formattedSource.toString()));
     }
 
     @Test
     public void shouldIncreaseIndentIfPreviousLineEndsInOpenBrace() throws Exception {
-        StringBuilder source = new StringBuilder();
-        source.append("    fn main() {\n") //As though we just pressed return at the end of this line
-              .append("");
-        Document document = RustDocument.containing(source);
-
-        when(context.document()).thenReturn(document);
-        when(context.startOffset()).thenReturn(16);
-        when(context.lineStartOffset(16)).thenReturn(16);
-        when(context.lineStartOffset(15)).thenReturn(0);
-        when(context.lineIndent(0)).thenReturn(4);
+        source.appendln("    fn main() {"); //As though we just pressed return at the end of this line
+        context = source.getIndentContext()
+                .withOffsetRange(16, 16)
+                .withCaretOffset(16)
+                .build();
 
         formatter.reindent(context);
 
-        verify(context).modifyIndent(16, 8);
+        formattedSource.appendln("    fn main() {");
+        formattedSource.appendln("        ");
+        assertThat(textOf(context), is(formattedSource.toString()));
     }
 
     @Test
     public void shouldIgnoreSpaceAfterBrace() throws Exception {
-        StringBuilder source = new StringBuilder();
-        source.append("    fn main() {  \t \n") //As though we just pressed return at the end of this line
-              .append("");
-        Document document = RustDocument.containing(source);
-
-        when(context.document()).thenReturn(document);
-        when(context.startOffset()).thenReturn(20);
-        when(context.lineStartOffset(20)).thenReturn(20);
-        when(context.lineStartOffset(19)).thenReturn(0);
-        when(context.lineIndent(0)).thenReturn(4);
+        source.appendln("    fn main() {  \t "); //As though we just pressed return at the end of this line
+        context = source.getIndentContext()
+                .withOffsetRange(20, 20)
+                .withCaretOffset(20)
+                .build();
 
         formatter.reindent(context);
 
-        verify(context).modifyIndent(20, 8);
+        formattedSource.appendln("    fn main() {  \t ");
+        formattedSource.appendln("        ");
+        assertThat(textOf(context), is(formattedSource.toString()));
+    }
+
+    @Test
+    public void shouldReformatMethodBraces() throws Exception {
+        source.appendln("fn main() {}");
+        context = source.getIndentContext()
+                .withOffsetRange(0, 12)
+                .withCaretOffset(0)
+                .build();
+
+        formatter.reformat(context, source.parse());
+
+        formattedSource.appendln("fn main() {");
+        formattedSource.appendln("}");
+        formattedSource.appendln();
+        assertThat(textOf(context), is(formattedSource.toString()));
+    }
+
+    @Test
+    @Ignore
+    public void shouldOnlyReformatInsideSelection() throws Exception {
+        source.appendln("fn main() {}");
+        source.appendln("fn other() {}");
+        context = source.getIndentContext()
+                .withOffsetRange(0, 12)
+                .withCaretOffset(0)
+                .build();
+
+        formatter.reformat(context, source.parse());
+
+        formattedSource.appendln("fn main() {");
+        formattedSource.appendln("}");
+        formattedSource.appendln("fn other() {}");
+        assertThat(textOf(context), is(formattedSource.toString()));
+    }
+
+    private String textOf(Context context) {
+        return DocumentUtilities.getText(context.document()).toString();
     }
 }

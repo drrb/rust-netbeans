@@ -24,6 +24,7 @@ import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
 import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
+import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.Formatter;
@@ -68,7 +69,7 @@ public class RustLanguage extends DefaultLanguageConfig {
 
     @Override
     public Language<RustTokenId> getLexerLanguage() {
-        return RustTokenId.getLanguage();
+        return RustTokenId.language();
     }
 
     @Override

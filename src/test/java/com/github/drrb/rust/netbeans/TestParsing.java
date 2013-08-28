@@ -64,10 +64,10 @@ public class TestParsing {
     }
 
     public static TokenHierarchy<CharSequence> rustTokenHierarchyFor(CharSequence input) {
-        return TokenHierarchy.create(input, RustTokenId.getLanguage());
+        return TokenHierarchy.create(input, RustTokenId.language());
     }
 
     public static TokenSequence<RustTokenId> rustTokenSequenceFor(CharSequence input) {
-        return rustTokenHierarchyFor(input).tokenSequence(RustTokenId.getLanguage());
+        return rustTokenHierarchyFor(input).tokenSequence(RustTokenId.language());
     }
 }

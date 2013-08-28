@@ -16,12 +16,21 @@
  */
 package com.github.drrb.rust.netbeans.formatting;
 
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import static java.lang.Character.isWhitespace;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import org.netbeans.api.lexer.Token;
+import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.editor.indent.spi.Context;
+import org.netbeans.modules.parsing.api.Snapshot;
 import org.openide.util.Exceptions;
 
 /**
@@ -31,11 +40,40 @@ public class RustFormatter implements Formatter {
 
     @Override
     public void reformat(Context context, ParserResult compilationInfo) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Logger.getLogger(RustFormatter.class.getName()).log(Level.WARNING, "reformat: {0} - {1}, caret = {2}", new Object[]{context.startOffset(), context.endOffset(), context.caretOffset()});
+        NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
+        Snapshot snapshot = parseResult.getSnapshot();
+        CharSequence text = snapshot.getText();
+        TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
+        tokenSequence.move(0);
+        final AbstractDocument document = (AbstractDocument) context.document();
+
+        while (tokenSequence.moveNext()) {
+            Token<RustTokenId> token = tokenSequence.token();
+            if (token.id() == RustTokenId.LBRACE) {
+                final int startOfGap = tokenSequence.offset() + 1;  //LBRACE width = 1
+                int nextCharPosition = startOfGap;
+                char nextChar = text.charAt(nextCharPosition);
+                while (Character.isWhitespace(nextChar)) {
+                    nextCharPosition++;
+                    nextChar = text.charAt(nextCharPosition);
+                }
+                int endOfGap = nextCharPosition; //We moved forward one extra to check
+                final int lengthOfGap = endOfGap - startOfGap;
+                try {
+                    //TODO: do we need a lock?
+                    System.out.format("replacing %s - %s with '\n'%n", startOfGap, endOfGap);
+                    document.replace(startOfGap, lengthOfGap, "\n", null);
+                } catch (BadLocationException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
     }
 
     @Override
     public void reindent(Context context) {
+        Logger.getLogger(RustFormatter.class.getName()).log(Level.WARNING, "reindent: {0} - {1}, {2}", new Object[]{context.startOffset(), context.endOffset(), context.caretOffset()});
         try {
             int lineStart = context.lineStartOffset(context.startOffset());
             int previousLineEnd = lineStart - 1;
@@ -67,8 +105,7 @@ public class RustFormatter implements Formatter {
 
     @Override
     public boolean needsParserResult() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        return false;
+        return true;
     }
 
     @Override

@@ -125,7 +125,7 @@ public enum RustTokenId implements TokenId {
 
     private static final Language<RustTokenId> LANGUAGE = new RustLanguageHierarchy().language();
 
-    public static Language<RustTokenId> getLanguage() {
+    public static Language<RustTokenId> language() {
         return LANGUAGE;
     }
 
