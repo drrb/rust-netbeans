@@ -16,14 +16,14 @@
  */
 package com.github.drrb.rust.netbeans.formatting;
 
-import javax.swing.text.Document;
 import com.github.drrb.rust.netbeans.RustDocument;
+import javax.swing.text.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.netbeans.modules.editor.indent.spi.Context;
 import static org.mockito.Mockito.*;
+import org.netbeans.modules.editor.indent.spi.Context;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -32,15 +32,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
-public class RustIndentTaskTest {
+public class RustFormatterTest {
 
     @Mock
     private Context context;
-    private RustIndentTask indentTask;
+    private RustFormatter formatter;
 
     @Before
     public void setUp() {
-        indentTask = new RustIndentTask(context);
+        formatter = new RustFormatter();
     }
 
     @Test
@@ -56,7 +56,7 @@ public class RustIndentTaskTest {
         when(context.lineStartOffset(14)).thenReturn(0);
         when(context.lineIndent(0)).thenReturn(4);
 
-        indentTask.reindent();
+        formatter.reindent(context);
 
         verify(context).modifyIndent(15, 4);
     }
@@ -74,7 +74,7 @@ public class RustIndentTaskTest {
         when(context.lineStartOffset(15)).thenReturn(0);
         when(context.lineIndent(0)).thenReturn(4);
 
-        indentTask.reindent();
+        formatter.reindent(context);
 
         verify(context).modifyIndent(16, 8);
     }
@@ -92,7 +92,7 @@ public class RustIndentTaskTest {
         when(context.lineStartOffset(19)).thenReturn(0);
         when(context.lineIndent(0)).thenReturn(4);
 
-        indentTask.reindent();
+        formatter.reindent(context);
 
         verify(context).modifyIndent(20, 8);
     }

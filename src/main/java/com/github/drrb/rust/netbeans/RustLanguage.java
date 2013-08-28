@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.completion.RustCodeCompletionHandler;
+import com.github.drrb.rust.netbeans.formatting.RustFormatter;
 import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
@@ -25,6 +26,7 @@ import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
 import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
+import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.api.InstantRenamer;
 import org.netbeans.modules.csl.api.OccurrencesFinder;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
@@ -80,7 +82,7 @@ public class RustLanguage extends DefaultLanguageConfig {
     }
 
     @Override
-    public SemanticAnalyzer getSemanticAnalyzer() {
+    public SemanticAnalyzer<?> getSemanticAnalyzer() {
         return new RustSemanticAnalyzer();
     }
 
@@ -90,7 +92,7 @@ public class RustLanguage extends DefaultLanguageConfig {
     }
 
     @Override
-    public OccurrencesFinder getOccurrencesFinder() {
+    public OccurrencesFinder<?> getOccurrencesFinder() {
         return new RustOccurrencesFinder();
     }
 
@@ -107,5 +109,15 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public StructureScanner getStructureScanner() {
         return new RustStructureScanner();
+    }
+
+    @Override
+    public boolean hasFormatter() {
+        return true;
+    }
+
+    @Override
+    public Formatter getFormatter() {
+        return new RustFormatter();
     }
 }

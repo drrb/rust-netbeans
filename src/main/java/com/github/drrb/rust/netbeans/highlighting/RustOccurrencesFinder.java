@@ -30,14 +30,13 @@ import org.netbeans.modules.csl.api.ColoringAttributes;
 import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 import org.netbeans.modules.csl.api.OccurrencesFinder;
 import org.netbeans.modules.csl.api.OffsetRange;
-import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.Scheduler;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
 
 /**
  *
  */
-public class RustOccurrencesFinder extends OccurrencesFinder {
+public class RustOccurrencesFinder extends OccurrencesFinder<NetbeansRustParserResult> {
 
     private int caretPosition;
     private final Map<OffsetRange, ColoringAttributes> occurrences = new HashMap<OffsetRange, ColoringAttributes>();
@@ -48,10 +47,9 @@ public class RustOccurrencesFinder extends OccurrencesFinder {
     }
 
     @Override
-    public void run(Parser.Result result, SchedulerEvent event) {
+    public void run(NetbeansRustParserResult parseResult, SchedulerEvent event) {
         occurrences.clear();
 
-        NetbeansRustParserResult parseResult = (NetbeansRustParserResult) result;
         RustSourceIndex index = parseResult.getIndex();
 
         Option<RustFunction> maybeFunctionAtCaret = index.getFunctionAt(caretPosition);
