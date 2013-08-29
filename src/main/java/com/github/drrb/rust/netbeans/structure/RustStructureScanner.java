@@ -43,6 +43,7 @@ import org.netbeans.modules.csl.spi.ParserResult;
  *
  */
 public class RustStructureScanner implements StructureScanner {
+
     private static final String CODEBLOCKS_FOLD_TYPE = "codeblocks";
     private static final String COMMENTS_FOLD_TYPE = "comments";
 
@@ -86,6 +87,7 @@ public class RustStructureScanner implements StructureScanner {
 
         List<RustFunction> functions = index.getFunctions();
         for (RustFunction function : functions) {
+            //TODO: this raises a NPE when typing a function. Insert millions of null checks?
             folds.map(CODEBLOCKS_FOLD_TYPE, function.getBody().getOffsetRange());
         }
 

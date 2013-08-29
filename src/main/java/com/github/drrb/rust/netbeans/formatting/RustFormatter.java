@@ -45,10 +45,15 @@ public class RustFormatter implements Formatter {
         Snapshot snapshot = parseResult.getSnapshot();
         CharSequence text = snapshot.getText();
         TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
-        tokenSequence.move(0);
+        tokenSequence.move(context.endOffset());
         final AbstractDocument document = (AbstractDocument) context.document();
 
-        while (tokenSequence.moveNext()) {
+        // Work backwards. Changing the document length while moving forwards wrecks offsets further ahead.
+        while (tokenSequence.movePrevious()) {
+            //TODO: test the limits here
+            if (tokenSequence.offset() < context.startOffset()) {
+                return;
+            }
             Token<RustTokenId> token = tokenSequence.token();
             if (token.id() == RustTokenId.LBRACE) {
                 final int startOfGap = tokenSequence.offset() + 1;  //LBRACE width = 1

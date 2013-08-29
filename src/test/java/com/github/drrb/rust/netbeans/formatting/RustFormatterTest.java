@@ -16,12 +16,10 @@
  */
 package com.github.drrb.rust.netbeans.formatting;
 
-import com.github.drrb.rust.netbeans.RustDocument;
 import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
 import org.netbeans.modules.editor.indent.spi.Context;
@@ -89,34 +87,39 @@ public class RustFormatterTest {
     @Test
     public void shouldReformatMethodBraces() throws Exception {
         source.appendln("fn main() {}");
+        source.appendln("fn other() {}");
         context = source.getIndentContext()
-                .withOffsetRange(0, 12)
+                .withOffsetRange(0, 26)
                 .withCaretOffset(0)
                 .build();
 
         formatter.reformat(context, source.parse());
 
         formattedSource.appendln("fn main() {");
+        formattedSource.appendln("}");
+        formattedSource.appendln("fn other() {");
         formattedSource.appendln("}");
         formattedSource.appendln();
         assertThat(textOf(context), is(formattedSource.toString()));
     }
 
     @Test
-    @Ignore
     public void shouldOnlyReformatInsideSelection() throws Exception {
-        source.appendln("fn main() {}");
-        source.appendln("fn other() {}");
+        source.appendln("fn one() {}");
+        source.appendln("fn two() {}"); //This method is selected
+        source.appendln("fn three() {}");
         context = source.getIndentContext()
-                .withOffsetRange(0, 12)
-                .withCaretOffset(0)
+                .withOffsetRange(12, 23)
+                .withCaretOffset(12)
                 .build();
 
         formatter.reformat(context, source.parse());
 
-        formattedSource.appendln("fn main() {");
+        formattedSource.appendln("fn one() {}");
+        formattedSource.appendln("fn two() {");
         formattedSource.appendln("}");
-        formattedSource.appendln("fn other() {}");
+        formattedSource.appendln("fn three() {}");
+        formattedSource.appendln();
         assertThat(textOf(context), is(formattedSource.toString()));
     }
 
