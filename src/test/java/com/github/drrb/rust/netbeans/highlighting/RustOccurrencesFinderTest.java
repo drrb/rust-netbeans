@@ -16,17 +16,17 @@
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
-import static com.github.drrb.rust.netbeans.TestParsing.*;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
+import com.github.drrb.rust.netbeans.RustSourceSnapshot;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import java.util.Map;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import static org.hamcrest.Matchers.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.hamcrest.TypeSafeMatcher;
 import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 import org.netbeans.modules.csl.api.OffsetRange;
@@ -45,12 +45,12 @@ public class RustOccurrencesFinderTest {
 
     @Test
     public void shouldFindTwoIdentifiersInAFunction() {
-        StringBuilder source = new StringBuilder();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.append("fn main() {\n");
         source.append("    let name = ~\"john\";\n");
         source.append("    println(name);\n");
         source.append("}\n");
-        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+        NetbeansRustParserResult result = source.parse();
 
         occurrencesFinder.setCaretPosition(22); // Caret is at: let na|me = ...
         occurrencesFinder.run(result, null);
@@ -61,13 +61,13 @@ public class RustOccurrencesFinderTest {
 
     @Test
     public void shouldNotMatchIdentifierWithADifferentName() {
-        StringBuilder source = new StringBuilder();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.append("fn main() {\n");
         source.append("    let name = ~\"john\";\n");
         source.append("    println(name);\n");
         source.append("    let age = 50;\n");
         source.append("}\n");
-        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+        NetbeansRustParserResult result = source.parse();
 
         occurrencesFinder.setCaretPosition(22); // Caret is at: let na|me = ...
         occurrencesFinder.run(result, null);
@@ -77,12 +77,12 @@ public class RustOccurrencesFinderTest {
 
     @Test
     public void shouldMatchIdentifierAtRight() {
-        StringBuilder source = new StringBuilder();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.append("fn main() {\n");
         source.append("    let name = ~\"john\";\n");
         source.append("    println(name);\n");
         source.append("}\n");
-        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+        NetbeansRustParserResult result = source.parse();
 
         occurrencesFinder.setCaretPosition(24); // Caret is at: let name| = ...
         occurrencesFinder.run(result, null);
@@ -94,12 +94,12 @@ public class RustOccurrencesFinderTest {
     @Test
     @Ignore
     public void shouldMatchIdentifiersInFmtCallArgs() { //TODO: what's the actual name for this type of thing? (General case)
-        StringBuilder source = new StringBuilder();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.append("fn sayHello(name: ~str, greeting: ~str) {\n");
         source.append("    log(fmt!(\"Saying '%?' to '%?'\", greeting, name));\n");
         source.append("    println(fmt!(\"%?, %?\", greeting, name));\n");
         source.append("}\n");
-        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+        NetbeansRustParserResult result = source.parse();
 
         occurrencesFinder.setCaretPosition(90); // Caret is at fist instance of: greeting, na|me)) ...
         occurrencesFinder.run(result, null);
@@ -110,12 +110,12 @@ public class RustOccurrencesFinderTest {
 
     @Test
     public void shouldMatchFunctionParametersThroughoutFunctionBodies() {
-        StringBuilder source = new StringBuilder();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.append("fn sayHello(name: ~str, greeting: ~str) {\n");
         source.append("    log(\"Saying '\" + greeting + \"' to '\" + name + \"'\");\n");
         source.append("    println(greeting + \", \" + name);\n");
         source.append("}\n");
-        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+        NetbeansRustParserResult result = source.parse();
 
         occurrencesFinder.setCaretPosition(14); // Caret is at: sayHello(na|me: ...
         occurrencesFinder.run(result, null);
@@ -127,12 +127,12 @@ public class RustOccurrencesFinderTest {
 
     @Test
     public void shouldMatchFunctionParametersInFunctionBodyWithTheParameter() {
-        StringBuilder source = new StringBuilder();
+        RustSourceSnapshot source = new RustSourceSnapshot();
         source.append("fn sayHello(name: ~str, greeting: ~str) {\n");
         source.append("    log(\"Saying '\" + greeting + \"' to '\" + name + \"'\");\n");
         source.append("    println(greeting + \", \" + name);\n");
         source.append("}\n");
-        NetbeansRustParser.NetbeansRustParserResult result = parse(source);
+        NetbeansRustParserResult result = source.parse();
 
         occurrencesFinder.setCaretPosition(87); // Caret is at: to'" + na|me ...
         occurrencesFinder.run(result, null);
@@ -165,5 +165,4 @@ public class RustOccurrencesFinderTest {
             }
         };
     }
-
 }

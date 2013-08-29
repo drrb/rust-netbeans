@@ -16,50 +16,30 @@
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
-import javax.swing.text.Document;
-
 import com.github.drrb.rust.netbeans.RustDocument;
+import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import static com.github.drrb.rust.netbeans.TestParsing.*;
 import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import static org.mockito.Mockito.*;
+import org.netbeans.modules.editor.bracesmatching.SpiAccessor;
 import org.netbeans.spi.editor.bracesmatching.MatcherContext;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(MatcherContext.class)
 public class RustBracesMatcherTest {
 
-    @Mock
-    private MatcherContext context;
-    @Mock
-    private RustLexUtils rustLexUtils;
+    private RustSourceSnapshot source = new RustSourceSnapshot();
     private RustBracesMatcher bracesMatcher;
-
-    @Before
-    public void setUp() {
-        bracesMatcher = new RustBracesMatcher(context, rustLexUtils);
-    }
 
     @Test
     public void shouldFindNoOriginInBracelessDocument() throws Exception {
-        StringBuilder source = new StringBuilder();
         //Carat here:  /|/
         source.append("//");
-        Document document = RustDocument.containing(source);
-
-        when(context.getDocument()).thenReturn(document);
-        when(context.getSearchOffset()).thenReturn(1);
-        when(rustLexUtils.getRustTokenSequence(document, 1)).thenReturn(rustTokenSequenceFor(source));
+        bracesMatcher = matcherAtOffset(1);
 
         int[] origin = bracesMatcher.findOrigin();
 
@@ -68,14 +48,9 @@ public class RustBracesMatcherTest {
 
     @Test
     public void shouldFindOriginNextToBrace() throws Exception {
-        StringBuilder source = new StringBuilder();
         //Carat here:  fn main() |{ }
         source.append("fn main() { }");
-        Document document = RustDocument.containing(source);
-
-        when(context.getDocument()).thenReturn(document);
-        when(context.getSearchOffset()).thenReturn(10);
-        when(rustLexUtils.getRustTokenSequence(document, 10)).thenReturn(rustTokenSequenceFor(source));
+        bracesMatcher = matcherAtOffset(10);
 
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {10, 11};
@@ -85,14 +60,9 @@ public class RustBracesMatcherTest {
 
     @Test
     public void shouldFindOriginNextToParenthesis() throws Exception {
-        StringBuilder source = new StringBuilder();
         //Carat here:  fn main|( ) { }
         source.append("fn main( ) { }");
-        Document document = RustDocument.containing(source);
-
-        when(context.getDocument()).thenReturn(document);
-        when(context.getSearchOffset()).thenReturn(7);
-        when(rustLexUtils.getRustTokenSequence(document, 7)).thenReturn(rustTokenSequenceFor(source));
+        bracesMatcher = matcherAtOffset(7);
 
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {7, 8};
@@ -102,14 +72,9 @@ public class RustBracesMatcherTest {
 
     @Test
     public void shouldFindOriginNextToAngleBrackets() throws Exception {
-        StringBuilder source = new StringBuilder();
         //Carat here:  fn main|<T> () { }
         source.append("fn main<T> () { }");
-        Document document = RustDocument.containing(source);
-
-        when(context.getDocument()).thenReturn(document);
-        when(context.getSearchOffset()).thenReturn(7);
-        when(rustLexUtils.getRustTokenSequence(document, 7)).thenReturn(rustTokenSequenceFor(source));
+        bracesMatcher = matcherAtOffset(7);
 
         int[] origin = bracesMatcher.findOrigin();
         int[] expectedOrigin = {7, 8};
@@ -119,14 +84,9 @@ public class RustBracesMatcherTest {
 
     @Test
     public void shouldFindObviousMatchForwards() throws Exception {
-        StringBuilder source = new StringBuilder();
         //Carat here:  fn main<T>() |{ }\n
         source.append("fn main<T>() { }\n");
-        Document document = RustDocument.containing(source);
-
-        when(context.getDocument()).thenReturn(document);
-        when(context.getSearchOffset()).thenReturn(13);
-        when(rustLexUtils.getRustTokenSequence(document, 13)).thenReturn(rustTokenSequenceFor(source));
+        bracesMatcher = matcherAtOffset(13);
 
         int[] origin = bracesMatcher.findMatches();
         int[] expectedOrigin = {15, 16};
@@ -136,18 +96,22 @@ public class RustBracesMatcherTest {
 
     @Test
     public void shouldFindObviousMatchBackwards() throws Exception {
-        StringBuilder source = new StringBuilder();
         //Carat here:  fn main<T>() { |}
         source.append("fn main<T>() { }");
-        Document document = RustDocument.containing(source);
-
-        when(context.getDocument()).thenReturn(document);
-        when(context.getSearchOffset()).thenReturn(15);
-        when(rustLexUtils.getRustTokenSequence(document, 15)).thenReturn(rustTokenSequenceFor(source));
+        bracesMatcher = matcherAtOffset(15);
 
         int[] origin = bracesMatcher.findMatches();
         int[] expectedOrigin = {13, 14};
 
         assertThat(origin, is(expectedOrigin));
+    }
+
+    private RustBracesMatcher matcherAtOffset(int caretOffset) {
+        SpiAccessor spiAccessor = SpiAccessor.get();
+        RustDocument document = source.getDocument();
+        MatcherContext context = spiAccessor.createCaretContext(document, caretOffset, true, 0);
+        RustLexUtils rustLexUtils = mock(RustLexUtils.class);
+        when(rustLexUtils.getRustTokenSequence(eq(document), anyInt())).thenReturn(rustTokenSequenceFor(source));
+        return new RustBracesMatcher(context, rustLexUtils);
     }
 }
