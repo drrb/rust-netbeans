@@ -84,6 +84,9 @@ public class RustFormatterTest {
         assertThat(textOf(context), is(formattedSource.toString()));
     }
 
+    //
+    // FORMATTING TESTS
+    //
     @Test
     public void shouldReformatMethodBraces() throws Exception {
         source.appendln("fn main() {}");
@@ -120,6 +123,33 @@ public class RustFormatterTest {
         formattedSource.appendln("}");
         formattedSource.appendln("fn three() {}");
         formattedSource.appendln();
+        assertThat(textOf(context), is(formattedSource.toString()));
+    }
+
+    @Test
+    public void shouldPreserveIndenting() throws Exception {
+        source.appendln("mod MyModule {");
+        source.appendln("    fn do_stuff() {}");
+        source.appendln("}");
+        context = source.getIndentContext()
+                .withOffsetRange(0, 36)
+                .withCaretOffset(12)
+                .build();
+
+        formatter.reformat(context, source.parse());
+
+        formattedSource.appendln("mod MyModule {");
+        formattedSource.appendln("    fn do_stuff() {");
+        formattedSource.appendln("    }");
+        formattedSource.appendln("}");
+        formattedSource.appendln();
+
+        System.out.println("expected:");
+        System.out.println(formattedSource.toString());
+        System.out.println();
+        System.out.println("actual:");
+        System.out.println(textOf(context));
+
         assertThat(textOf(context), is(formattedSource.toString()));
     }
 

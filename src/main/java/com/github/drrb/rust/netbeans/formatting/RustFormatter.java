@@ -19,7 +19,11 @@ package com.github.drrb.rust.netbeans.formatting;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
 import static java.lang.Character.isWhitespace;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.AbstractDocument;
@@ -38,40 +42,95 @@ import org.openide.util.Exceptions;
  */
 public class RustFormatter implements Formatter {
 
+    private static class CurlyBrace {
+
+        final char type;
+        final int offset;
+        final int desiredIndent;
+
+        CurlyBrace(char type, int offset, int desiredIndent) {
+            this.type = type;
+            this.offset = offset;
+            this.desiredIndent = desiredIndent;
+        }
+    }
+
     @Override
     public void reformat(Context context, ParserResult compilationInfo) {
+        List<CurlyBrace> curlyBraces = new LinkedList<CurlyBrace>();
         Logger.getLogger(RustFormatter.class.getName()).log(Level.WARNING, "reformat: {0} - {1}, caret = {2}", new Object[]{context.startOffset(), context.endOffset(), context.caretOffset()});
         NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
         Snapshot snapshot = parseResult.getSnapshot();
         CharSequence text = snapshot.getText();
         TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
-        tokenSequence.move(context.endOffset());
+        tokenSequence.move(0);
         final AbstractDocument document = (AbstractDocument) context.document();
 
-        // Work backwards. Changing the document length while moving forwards wrecks offsets further ahead.
-        while (tokenSequence.movePrevious()) {
-            //TODO: test the limits here
-            if (tokenSequence.offset() < context.startOffset()) {
-                return;
-            }
+        int indent = 0;
+        while (tokenSequence.moveNext()) {
             Token<RustTokenId> token = tokenSequence.token();
+            if (!EnumSet.of(LBRACE, RBRACE).contains(token.id())) {
+                continue;
+            }
+            int tokenOffset = tokenSequence.offset();
             if (token.id() == RustTokenId.LBRACE) {
-                final int startOfGap = tokenSequence.offset() + 1;  //LBRACE width = 1
+                curlyBraces.add(new CurlyBrace('{', tokenOffset, indent));
+                indent += indentSize();
+            } else if (token.id() == RustTokenId.RBRACE) {
+                indent -= indentSize();
+                curlyBraces.add(new CurlyBrace('}', tokenOffset, indent));
+            }
+        }
+
+        if (curlyBraces.isEmpty()) {
+            return;
+        }
+
+        // Work backwards. Changing the document length while moving forwards wrecks offsets further ahead.
+        for (int i = curlyBraces.size(); i > 0; i--) {
+            CurlyBrace curlyBrace = curlyBraces.get(i - 1);
+            //TODO: test the limits here
+            if (curlyBrace.offset > context.endOffset()) {
+                continue;
+            } else if (curlyBrace.offset < context.startOffset()) {
+                return;
+            } else if (curlyBrace.type == '}') {
+                continue;
+            }
+            int tokenOffset = curlyBrace.offset;
+            try {
+                final int startOfBraceLine = context.lineStartOffset(tokenOffset);
+                final int braceLineIndentLength = context.lineIndent(startOfBraceLine);
+                final int startOfGap = tokenOffset + 1;  //LBRACE width = 1
                 int nextCharPosition = startOfGap;
                 char nextChar = text.charAt(nextCharPosition);
                 while (Character.isWhitespace(nextChar)) {
                     nextCharPosition++;
                     nextChar = text.charAt(nextCharPosition);
                 }
-                int endOfGap = nextCharPosition; //We moved forward one extra to check
+                final int endOfGap = nextCharPosition;
                 final int lengthOfGap = endOfGap - startOfGap;
-                try {
-                    //TODO: do we need a lock?
-                    System.out.format("replacing %s - %s with '\n'%n", startOfGap, endOfGap);
-                    document.replace(startOfGap, lengthOfGap, "\n", null);
-                } catch (BadLocationException ex) {
-                    Exceptions.printStackTrace(ex);
+                final int indentLength;
+                if (nextChar == '}') {
+                    indentLength = braceLineIndentLength;
+                } else {
+                    indentLength = braceLineIndentLength + indentSize();
                 }
+                //TODO: do we need a lock?
+                //  Others use BaseDocument.runAtomic()
+                //  PHP also does
+                //MutableTextInput mti = (MutableTextInput) doc.getProperty(MutableTextInput.class);
+                //try {
+                //    mti.tokenHierarchyControl().setActive(false);
+                //    <format>
+                //} finally {
+                //    mti.tokenHierarchyControl().setActive(true);
+                //}
+                document.replace(startOfGap, lengthOfGap, "\n", null);
+                final int startOfNextLine = context.lineStartOffset(startOfGap + 1);
+                context.modifyIndent(startOfNextLine, indentLength);
+            } catch (BadLocationException ex) {
+                Exceptions.printStackTrace(ex);
             }
         }
     }
