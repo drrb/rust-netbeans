@@ -144,12 +144,6 @@ public class RustFormatterTest {
         formattedSource.appendln("}");
         formattedSource.appendln();
 
-        System.out.println("expected:");
-        System.out.println(formattedSource.toString());
-        System.out.println();
-        System.out.println("actual:");
-        System.out.println(textOf(context));
-
         assertThat(textOf(context), is(formattedSource.toString()));
     }
 
