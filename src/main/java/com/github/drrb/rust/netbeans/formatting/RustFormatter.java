@@ -43,55 +43,6 @@ import org.openide.util.Exceptions;
  */
 public class RustFormatter implements Formatter {
 
-    private static class CurlyBrace {
-
-        final char type;
-        final Position position;
-        final AbstractDocument document;
-
-        private CurlyBrace(char type, int offset, AbstractDocument document) throws BadLocationException {
-            this.type = type;
-            this.position = document.createPosition(offset);
-            this.document = document;
-        }
-
-        int offset() {
-            return position.getOffset();
-        }
-
-        void consumeSurroundingWhitespace() throws BadLocationException {
-            consumeLeadingWhitespace();
-            consumeTrailingWhitespace();
-        }
-
-        private void consumeLeadingWhitespace() throws BadLocationException {
-            final int endOfGap = offset();
-            int previousCharacterPosition = endOfGap;
-            char nextChar = charAt(previousCharacterPosition - 1);
-            while (Character.isWhitespace(nextChar)) {
-                previousCharacterPosition--;
-                nextChar = charAt(previousCharacterPosition - 1);
-            }
-            final int startOfGap = previousCharacterPosition;
-            final int lengthOfGap = endOfGap - startOfGap;
-            document.replace(startOfGap, lengthOfGap, "", null);
-        }
-
-        private void consumeTrailingWhitespace() throws BadLocationException {
-            final int startOfGap = offset() + 1;
-            int endOfGap = startOfGap;
-            for (int i = startOfGap; i < document.getLength() && Character.isWhitespace(charAt(i)); i++) {
-                endOfGap = i + 1;
-            }
-            final int lengthOfGap = endOfGap - startOfGap;
-            document.replace(startOfGap, lengthOfGap, "", null);
-        }
-
-        private char charAt(int nextCharPosition) {
-            return DocumentUtilities.getText(document).charAt(nextCharPosition);
-        }
-    }
-
     public enum State {
 
         IN_BLOCK,
@@ -100,10 +51,11 @@ public class RustFormatter implements Formatter {
     }
 
     @Override
-    public void reformat(final Context context, ParserResult compilationInfo) {
+    public void reformat(Context context, ParserResult compilationInfo) {
         Logger.getLogger(RustFormatter.class.getName()).log(Level.WARNING, "reformat: {0} - {1}, caret = {2}", new Object[]{context.startOffset(), context.endOffset(), context.caretOffset()});
         NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
-        final Snapshot snapshot = parseResult.getSnapshot();
+        BaseDocument document = (BaseDocument) context.document();
+
         //TODO:
         //In addition to locking, PHP also does
         //MutableTextInput mti = (MutableTextInput) doc.getProperty(MutableTextInput.class);
@@ -113,67 +65,8 @@ public class RustFormatter implements Formatter {
         //} finally {
         //    mti.tokenHierarchyControl().setActive(true);
         //}
-        final BaseDocument document = (BaseDocument) context.document();
-        document.runAtomic(
-                new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<CurlyBrace> curlyBraces = new LinkedList<CurlyBrace>();
-                    try {
-                        TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
-                        tokenSequence.move(0);
-
-                        while (tokenSequence.moveNext()) {
-                            Token<RustTokenId> token = tokenSequence.token();
-                            int tokenOffset = tokenSequence.offset();
-                            if (token.id() == RustTokenId.LBRACE) {
-                                curlyBraces.add(new CurlyBrace('{', tokenOffset, document));
-                            } else if (token.id() == RustTokenId.RBRACE) {
-                                curlyBraces.add(new CurlyBrace('}', tokenOffset, document));
-                            }
-                        }
-                    } finally {
-                        document.readUnlock();
-                    }
-
-                    int depth = 0;
-                    //We need these, because context.endOffset() doesn't update if we modify the document directly (i.e. not through
-                    Position startPosition = document.createPosition(context.startOffset());
-                    Position endPosition = document.createPosition(context.endOffset());
-                    for (CurlyBrace curlyBrace : curlyBraces) {
-                        //TODO: outside the zone, still modify indent depth, just don't format
-                        if (curlyBrace.offset() < startPosition.getOffset()) {
-                            continue;
-                        } else if (curlyBrace.offset() > endPosition.getOffset()) {
-                            break; //TODO: return?
-                        }
-                        curlyBrace.consumeSurroundingWhitespace();
-                        switch (curlyBrace.type) {
-                            case '{':
-                                depth++;
-                                document.insertString(curlyBrace.offset(), " ", null);
-                                document.insertString(curlyBrace.offset() + 1, "\n", null);
-                                final int startOfNextLine = curlyBrace.offset() + 2;
-                                if (DocumentUtilities.getText(document).charAt(startOfNextLine) == '}') {
-                                    context.modifyIndent(startOfNextLine, indentForDepth(depth - 1));
-                                } else {
-                                    context.modifyIndent(startOfNextLine, indentForDepth(depth));
-                                }
-                                break;
-                            case '}':
-                                depth--;
-                                document.insertString(curlyBrace.offset(), "\n", null);
-                                document.insertString(curlyBrace.offset() + 1, "\n", null);
-                                context.modifyIndent(curlyBrace.offset(), indentForDepth(depth));
-                                break;
-                        }
-                    }
-                } catch (BadLocationException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            }
-        });
+        //TODO: do we need the write lock the whole time? Looking for the braces just needs a read lock, but it seems like we can't get the write lock when we already have the read lock
+        document.runAtomic(new Formatter(parseResult, document, context));
     }
 
     @Override
@@ -240,5 +133,136 @@ public class RustFormatter implements Formatter {
     @Override
     public int hangingIndentSize() {
         return 8;
+    }
+
+    private class Formatter implements Runnable {
+
+        private final NetbeansRustParserResult parseResult;
+        private final BaseDocument document;
+        private final Context context;
+
+        Formatter(NetbeansRustParserResult parseResult, BaseDocument document, Context context) {
+            this.parseResult = parseResult;
+            this.document = document;
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            final Snapshot snapshot = parseResult.getSnapshot();
+            try {
+                List<Delimiter> delimiters = new LinkedList<Delimiter>();
+                TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
+                tokenSequence.move(0);
+
+                while (tokenSequence.moveNext()) {
+                    Token<RustTokenId> token = tokenSequence.token();
+                    int tokenOffset = tokenSequence.offset();
+                    if (token.id() == RustTokenId.LBRACE) {
+                        delimiters.add(new Delimiter(Delimiter.Type.OPEN_CURLY, tokenOffset, document));
+                    } else if (token.id() == RustTokenId.RBRACE) {
+                        delimiters.add(new Delimiter(Delimiter.Type.CLOSE_CURLY, tokenOffset, document));
+                    }
+                }
+
+                int depth = 0;
+                // We need these, because context.endOffset() doesn't update if we modify the document directly (i.e. not through the context object)
+                Position startPosition = document.createPosition(context.startOffset());
+                Position endPosition = document.createPosition(context.endOffset());
+                for (Delimiter delimiter : delimiters) {
+                    //TODO: outside the zone, still modify indent depth, just don't format
+                    //TODO: do more checking of these limits
+                    if (delimiter.offset() < startPosition.getOffset()) {
+                        continue;
+                    } else if (delimiter.offset() > endPosition.getOffset()) {
+                        break;
+                    }
+
+                    context.modifyIndent(delimiter.offset(), indentForDepth(depth));
+                    switch (delimiter.type) {
+                        case OPEN_CURLY:
+                            depth++;
+                            delimiter.setSurrounding(" ", "\n");
+                            final int startOfNextLine = delimiter.offset() + 2;
+                            //TODO: move this out of here and do it for *every* line
+                            if (DocumentUtilities.getText(document).charAt(startOfNextLine) != '}') {
+                                context.modifyIndent(startOfNextLine, indentForDepth(depth));
+                            }
+                            break;
+                        case CLOSE_CURLY:
+                            depth--;
+                            delimiter.setSurrounding("\n", "\n");
+                            context.modifyIndent(delimiter.offset(), indentForDepth(depth));
+                            break;
+                    }
+                }
+            } catch (BadLocationException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+
+    private static class Delimiter {
+
+        enum Type {
+
+            OPEN_CURLY,
+            CLOSE_CURLY
+        }
+        final Delimiter.Type type;
+        final Position position;
+        final AbstractDocument document;
+
+        private Delimiter(Delimiter.Type type, int offset, AbstractDocument document) throws BadLocationException {
+            this.type = type;
+            this.position = document.createPosition(offset);
+            this.document = document;
+        }
+
+        int offset() {
+            return position.getOffset();
+        }
+
+        void setSurrounding(String before, String after) throws BadLocationException {
+            consumeSurroundingWhitespace();
+            surroundWith(before, after);
+        }
+
+        void consumeSurroundingWhitespace() throws BadLocationException {
+            consumeLeadingWhitespace();
+            consumeTrailingWhitespace();
+        }
+
+        void surroundWith(String before, String after) throws BadLocationException {
+            document.insertString(offset(), before, null);
+            document.insertString(offset() + 1, after, null);
+        }
+
+        private void consumeLeadingWhitespace() throws BadLocationException {
+            final int endOfGap = offset();
+            int previousCharacterPosition = endOfGap;
+            char nextChar = charAt(previousCharacterPosition - 1);
+            while (Character.isWhitespace(nextChar)) {
+                previousCharacterPosition--;
+                nextChar = charAt(previousCharacterPosition - 1);
+            }
+            final int startOfGap = previousCharacterPosition;
+            final int lengthOfGap = endOfGap - startOfGap;
+            document.replace(startOfGap, lengthOfGap, "", null);
+        }
+
+        private void consumeTrailingWhitespace() throws BadLocationException {
+            final int startOfGap = offset() + 1;
+            int endOfGap = startOfGap;
+            for (int i = startOfGap; i < document.getLength() && Character.isWhitespace(charAt(i)); i++) {
+                endOfGap = i + 1;
+            }
+            final int lengthOfGap = endOfGap - startOfGap;
+            document.replace(startOfGap, lengthOfGap, "", null);
+        }
+
+        private char charAt(int nextCharPosition) {
+            return DocumentUtilities.getText(document).charAt(nextCharPosition);
+        }
     }
 }
