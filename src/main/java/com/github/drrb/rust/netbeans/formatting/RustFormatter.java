@@ -131,14 +131,16 @@ public class RustFormatter implements Formatter {
             //    mti.tokenHierarchyControl().setActive(true);
             //}
             int depth = 0;
+            //We need these, because context.endOffset() doesn't update if we modify the document directly (i.e. not through
+            Position startPosition = document.createPosition(context.startOffset());
+            Position endPosition = document.createPosition(context.endOffset());
             for (CurlyBrace curlyBrace : curlyBraces) {
                 //TODO: outside the zone, still modify indent depth, just don't format
-                if (curlyBrace.offset() < context.startOffset()) {
+                if (curlyBrace.offset() < startPosition.getOffset()) {
                     continue;
-                } else if (curlyBrace.offset() > context.endOffset()) {
+                } else if (curlyBrace.offset() > endPosition.getOffset()) {
                     break; //TODO: return?
                 }
-
                 curlyBrace.consumeSurroundingWhitespace();
                 switch (curlyBrace.type) {
                     case '{':
@@ -156,7 +158,8 @@ public class RustFormatter implements Formatter {
                         depth--;
                         document.insertString(curlyBrace.offset(), "\n", null);
                         document.insertString(curlyBrace.offset() + 1, "\n", null);
-                        context.modifyIndent(curlyBrace.offset() - 1, indentForDepth(depth));
+                        context.modifyIndent(curlyBrace.offset(), indentForDepth(depth));
+                        break;
                 }
             }
         } catch (BadLocationException ex) {
@@ -194,6 +197,20 @@ public class RustFormatter implements Formatter {
             }
         }
         return ' ';
+    }
+
+    private String renderPosition(AbstractDocument document, int offset) {
+        return "(between '" + renderCharAt(document, offset - 1) + "' and '" + renderCharAt(document, offset) + "')";
+    }
+
+    private String renderCharAt(AbstractDocument document, int offset) {
+        char c = DocumentUtilities.getText(document).charAt(offset);
+        switch (c) {
+            case '\n':
+                return "\\n";
+            default:
+                return String.valueOf(c);
+        }
     }
 
     @Override

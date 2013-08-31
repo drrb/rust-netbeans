@@ -127,19 +127,29 @@ public class RustFormatterTest {
     }
 
     @Test
-    public void shouldPreserveIndenting() throws Exception {
-        source.appendln("mod MyModule {");
-        source.appendln("    fn do_stuff() {}");
+    public void shouldIndentCodeBlocks() throws Exception {
+        source.appendln("impl Point {");
+        source.appendln("    ");
+        source.appendln("    fn transpose(&self, added_x: float, added_y: float) -> Point {");
+        source.appendln("        let new_x_value = self.x + added_x;");
+        source.appendln("        let new_y_value = self.y + added_y;");
+        source.appendln("        Point{ x: new_x_value, y: new_y_value }");
+        source.appendln("    }");
         source.appendln("}");
         context = source.getIndentContext()
-                .withOffsetRange(0, 36)
-                .withCaretOffset(12)
+                .withOffsetRange(0, 229) //TODO: works if you increase this. why?
+                .withCaretOffset(0)
                 .build();
 
         formatter.reformat(context, source.parse());
 
-        formattedSource.appendln("mod MyModule {");
-        formattedSource.appendln("    fn do_stuff() {");
+        formattedSource.appendln("impl Point {");
+        formattedSource.appendln("    fn transpose(&self, added_x: float, added_y: float) -> Point {");
+        formattedSource.appendln("        let new_x_value = self.x + added_x;");
+        formattedSource.appendln("        let new_y_value = self.y + added_y;");
+        formattedSource.appendln("        Point {");
+        formattedSource.appendln("            x: new_x_value, y: new_y_value");
+        formattedSource.appendln("        }");
         formattedSource.appendln("    }");
         formattedSource.appendln("}");
         formattedSource.appendln();
