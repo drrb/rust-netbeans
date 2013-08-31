@@ -12,13 +12,12 @@ So far, it includes
 * basic code completion
 * code folding
 * basic file overview
-* basic indentation
+* basic auto-indentation
+* basic auto-formatting
 * basic occurrence matching
 * basic variable renaming
 * brace matching
 * comment toggling
-
-NB: For the purposes of this readme, "basic" is defined as "embarrassingly minimal"
 
 ## Contributing
 
