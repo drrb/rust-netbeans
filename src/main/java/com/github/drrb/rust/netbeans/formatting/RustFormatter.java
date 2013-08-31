@@ -30,6 +30,7 @@ import javax.swing.text.Document;
 import javax.swing.text.Position;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenSequence;
+import org.netbeans.editor.BaseDocument;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
 import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.spi.ParserResult;
@@ -99,72 +100,80 @@ public class RustFormatter implements Formatter {
     }
 
     @Override
-    public void reformat(Context context, ParserResult compilationInfo) {
-        try {
-            List<CurlyBrace> curlyBraces = new LinkedList<CurlyBrace>();
-            Logger.getLogger(RustFormatter.class.getName()).log(Level.WARNING, "reformat: {0} - {1}, caret = {2}", new Object[]{context.startOffset(), context.endOffset(), context.caretOffset()});
-            NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
-            Snapshot snapshot = parseResult.getSnapshot();
-            //TODO: you need a read-lock when accessing token hierarchy
-            TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
-            tokenSequence.move(0);
-            final AbstractDocument document = (AbstractDocument) context.document();
+    public void reformat(final Context context, ParserResult compilationInfo) {
+        Logger.getLogger(RustFormatter.class.getName()).log(Level.WARNING, "reformat: {0} - {1}, caret = {2}", new Object[]{context.startOffset(), context.endOffset(), context.caretOffset()});
+        NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
+        final Snapshot snapshot = parseResult.getSnapshot();
+        //TODO:
+        //In addition to locking, PHP also does
+        //MutableTextInput mti = (MutableTextInput) doc.getProperty(MutableTextInput.class);
+        //try {
+        //    mti.tokenHierarchyControl().setActive(false);
+        //    <format>
+        //} finally {
+        //    mti.tokenHierarchyControl().setActive(true);
+        //}
+        final BaseDocument document = (BaseDocument) context.document();
+        document.runAtomic(
+                new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<CurlyBrace> curlyBraces = new LinkedList<CurlyBrace>();
+                    try {
+                        TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
+                        tokenSequence.move(0);
 
-            while (tokenSequence.moveNext()) {
-                Token<RustTokenId> token = tokenSequence.token();
-                int tokenOffset = tokenSequence.offset();
-                if (token.id() == RustTokenId.LBRACE) {
-                    curlyBraces.add(new CurlyBrace('{', tokenOffset, document));
-                } else if (token.id() == RustTokenId.RBRACE) {
-                    curlyBraces.add(new CurlyBrace('}', tokenOffset, document));
-                }
-            }
-
-            //TODO: do we need a lock?
-            //  Others use BaseDocument.runAtomic()
-            //  PHP also does
-            //MutableTextInput mti = (MutableTextInput) doc.getProperty(MutableTextInput.class);
-            //try {
-            //    mti.tokenHierarchyControl().setActive(false);
-            //    <format>
-            //} finally {
-            //    mti.tokenHierarchyControl().setActive(true);
-            //}
-            int depth = 0;
-            //We need these, because context.endOffset() doesn't update if we modify the document directly (i.e. not through
-            Position startPosition = document.createPosition(context.startOffset());
-            Position endPosition = document.createPosition(context.endOffset());
-            for (CurlyBrace curlyBrace : curlyBraces) {
-                //TODO: outside the zone, still modify indent depth, just don't format
-                if (curlyBrace.offset() < startPosition.getOffset()) {
-                    continue;
-                } else if (curlyBrace.offset() > endPosition.getOffset()) {
-                    break; //TODO: return?
-                }
-                curlyBrace.consumeSurroundingWhitespace();
-                switch (curlyBrace.type) {
-                    case '{':
-                        depth++;
-                        document.insertString(curlyBrace.offset(), " ", null);
-                        document.insertString(curlyBrace.offset() + 1, "\n", null);
-                        final int startOfNextLine = curlyBrace.offset() + 2;
-                        if (DocumentUtilities.getText(document).charAt(startOfNextLine) == '}') {
-                            context.modifyIndent(startOfNextLine, indentForDepth(depth - 1));
-                        } else {
-                            context.modifyIndent(startOfNextLine, indentForDepth(depth));
+                        while (tokenSequence.moveNext()) {
+                            Token<RustTokenId> token = tokenSequence.token();
+                            int tokenOffset = tokenSequence.offset();
+                            if (token.id() == RustTokenId.LBRACE) {
+                                curlyBraces.add(new CurlyBrace('{', tokenOffset, document));
+                            } else if (token.id() == RustTokenId.RBRACE) {
+                                curlyBraces.add(new CurlyBrace('}', tokenOffset, document));
+                            }
                         }
-                        break;
-                    case '}':
-                        depth--;
-                        document.insertString(curlyBrace.offset(), "\n", null);
-                        document.insertString(curlyBrace.offset() + 1, "\n", null);
-                        context.modifyIndent(curlyBrace.offset(), indentForDepth(depth));
-                        break;
+                    } finally {
+                        document.readUnlock();
+                    }
+
+                    int depth = 0;
+                    //We need these, because context.endOffset() doesn't update if we modify the document directly (i.e. not through
+                    Position startPosition = document.createPosition(context.startOffset());
+                    Position endPosition = document.createPosition(context.endOffset());
+                    for (CurlyBrace curlyBrace : curlyBraces) {
+                        //TODO: outside the zone, still modify indent depth, just don't format
+                        if (curlyBrace.offset() < startPosition.getOffset()) {
+                            continue;
+                        } else if (curlyBrace.offset() > endPosition.getOffset()) {
+                            break; //TODO: return?
+                        }
+                        curlyBrace.consumeSurroundingWhitespace();
+                        switch (curlyBrace.type) {
+                            case '{':
+                                depth++;
+                                document.insertString(curlyBrace.offset(), " ", null);
+                                document.insertString(curlyBrace.offset() + 1, "\n", null);
+                                final int startOfNextLine = curlyBrace.offset() + 2;
+                                if (DocumentUtilities.getText(document).charAt(startOfNextLine) == '}') {
+                                    context.modifyIndent(startOfNextLine, indentForDepth(depth - 1));
+                                } else {
+                                    context.modifyIndent(startOfNextLine, indentForDepth(depth));
+                                }
+                                break;
+                            case '}':
+                                depth--;
+                                document.insertString(curlyBrace.offset(), "\n", null);
+                                document.insertString(curlyBrace.offset() + 1, "\n", null);
+                                context.modifyIndent(curlyBrace.offset(), indentForDepth(depth));
+                                break;
+                        }
+                    }
+                } catch (BadLocationException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
             }
-        } catch (BadLocationException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        });
     }
 
     @Override
