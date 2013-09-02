@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.formatting;
 
 import com.github.drrb.rust.netbeans.RustSourceSnapshot;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -153,6 +154,13 @@ public class RustFormatterTest {
         formattedSource.appendln("    }");
         formattedSource.appendln("}");
         formattedSource.appendln();
+
+        System.out.println("Semi: " + RustTokenId.SEMI.text());
+
+        System.out.println("expected:");
+        System.out.println(formattedSource);
+        System.out.println("actual:");
+        System.out.println(textOf(context));
 
         assertThat(textOf(context), is(formattedSource.toString()));
     }

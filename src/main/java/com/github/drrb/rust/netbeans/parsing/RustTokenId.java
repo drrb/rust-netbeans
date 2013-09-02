@@ -122,13 +122,11 @@ public enum RustTokenId implements TokenId {
     NON_SLASH_OR_WS(RustLexer.NON_SLASH_OR_WS, TokenCategory.IDENTIFIER),
     XIDSTART(RustLexer.XIDSTART, TokenCategory.IDENTIFIER),
     XIDCONT(RustLexer.XIDCONT, TokenCategory.IDENTIFIER);
-
     private static final Language<RustTokenId> LANGUAGE = new RustLanguageHierarchy().language();
 
     public static Language<RustTokenId> language() {
         return LANGUAGE;
     }
-
     private final int antlrTokenType;
     private final TokenCategory primaryCategory;
 
@@ -145,5 +143,9 @@ public enum RustTokenId implements TokenId {
     @Override
     public String primaryCategory() {
         return primaryCategory.getName();
+    }
+
+    public String text() {
+        return RustLexer.tokenNames[antlrTokenType];
     }
 }
