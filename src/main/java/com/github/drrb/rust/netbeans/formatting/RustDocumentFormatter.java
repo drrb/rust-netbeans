@@ -33,14 +33,14 @@ import org.openide.util.Exceptions;
 /**
  *
  */
-public class Formatter {
+public class RustDocumentFormatter {
 
     private final RustFormatter formatter;
     private final NetbeansRustParserResult parseResult;
     private final BaseDocument document;
     private final Context context;
 
-    Formatter(RustFormatter formatter, NetbeansRustParserResult parseResult, BaseDocument document, Context context) {
+    RustDocumentFormatter(RustFormatter formatter, NetbeansRustParserResult parseResult, BaseDocument document, Context context) {
         this.formatter = formatter;
         this.parseResult = parseResult;
         this.document = document;
@@ -73,10 +73,11 @@ public class Formatter {
             for (Delimiter delimiter : delimiters) {
                 depth += delimiter.type.depthChangeBefore;
                 int nextDepth = depth + delimiter.type.depthChangeAfter;
-                //TODO: do more checking of these limits
                 if (delimiter.offset() >= startPosition.getOffset() && delimiter.offset() < endPosition.getOffset()) {
                     delimiter.adjustSurroundings();
                     delimiter.modifyIndentDepth(depth);
+
+                    //TODO: we wouldn't need this if we added a placeholding delimiter for lines before closing braces with no semicolon
                     if (delimiter.startOfNextLine() >= startPosition.getOffset() && delimiter.startOfNextLine() < endPosition.getOffset()) {
                         delimiter.modifyIndentDepthOfNextLine(nextDepth);
                     }
@@ -131,18 +132,8 @@ public class Formatter {
         }
 
         void setSurrounding(String before, String after) throws BadLocationException {
-            consumeSurroundingWhitespace();
-            surroundWith(before, after);
-        }
-
-        void consumeSurroundingWhitespace() throws BadLocationException {
-            consumeLeadingWhitespace();
-            consumeTrailingWhitespace();
-        }
-
-        void surroundWith(String before, String after) throws BadLocationException {
-            document.insertString(offset(), before, null);
-            document.insertString(offset() + TOKEN_WIDTH, after, null);
+            replaceLeadingWhitespace(before);
+            replaceTrailingWhitespace(after);
         }
 
         void modifyIndentDepth(int newDepth) throws BadLocationException {
@@ -153,13 +144,13 @@ public class Formatter {
             context.modifyIndent(startOfNextLine(), indentForDepth(depth));
         }
 
-        int startOfNextLine() {
+        int startOfNextLine() throws BadLocationException {
             assert type.suffix.equals("\n") : "This only works for delimiter types that are followed by newlines";
-            assert charAt(offset() + TOKEN_WIDTH) == type.suffix.charAt(0) : "Trying to find where the next line starts, but doing it dodgily!";
+            assert type.suffix.equals(getText(offset() + TOKEN_WIDTH, type.suffix.length())) : "Trying to find where the next line starts, but doing it dodgily!";
             return offset() + TOKEN_WIDTH + type.suffix.length();
         }
 
-        private void consumeLeadingWhitespace() throws BadLocationException {
+        private void replaceLeadingWhitespace(String prefix) throws BadLocationException {
             final int endOfGap = offset();
             int previousCharacterPosition = endOfGap;
             char nextChar = charAt(previousCharacterPosition - 1);
@@ -169,21 +160,25 @@ public class Formatter {
             }
             final int startOfGap = previousCharacterPosition;
             final int lengthOfGap = endOfGap - startOfGap;
-            document.replace(startOfGap, lengthOfGap, "", null);
+            document.replace(startOfGap, lengthOfGap, prefix, null);
         }
 
-        private void consumeTrailingWhitespace() throws BadLocationException {
+        private void replaceTrailingWhitespace(String suffix) throws BadLocationException {
             final int startOfGap = offset() + TOKEN_WIDTH;
             int endOfGap = startOfGap;
             for (int i = startOfGap; i < document.getLength() && Character.isWhitespace(charAt(i)); i++) {
                 endOfGap = i + 1;
             }
             final int lengthOfGap = endOfGap - startOfGap;
-            document.replace(startOfGap, lengthOfGap, "", null);
+            document.replace(startOfGap, lengthOfGap, suffix, null);
         }
 
         private char charAt(int nextCharPosition) {
             return DocumentUtilities.getText(document).charAt(nextCharPosition);
+        }
+
+        private String getText(int start, int length) throws BadLocationException {
+            return DocumentUtilities.getText(document, start, length).toString();
         }
     }
 }

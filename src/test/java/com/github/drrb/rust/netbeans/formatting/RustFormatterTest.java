@@ -190,6 +190,24 @@ public class RustFormatterTest {
         assertThat(textOf(context), is(formattedSource.toString()));
     }
 
+    @Test
+    public void shouldReformatBracesWithNoSurroundingSpaces() throws Exception {
+        source.appendln("fn two(){MyStruct{}}");
+        context = source.getIndentContext()
+                .withOffsetRange(0, 21)
+                .withCaretOffset(0)
+                .build();
+
+        formatter.reformat(context, source.parse());
+
+        formattedSource.appendln("fn two() {");
+        formattedSource.appendln("    MyStruct {");
+        formattedSource.appendln("    }");
+        formattedSource.appendln("}");
+        formattedSource.appendln();
+        assertThat(textOf(context), is(formattedSource.toString()));
+    }
+
     private String textOf(Context context) {
         return DocumentUtilities.getText(context.document()).toString();
     }
