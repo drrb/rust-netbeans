@@ -133,12 +133,12 @@ public class RustFormatterTest {
         source.appendln("    ");
         source.appendln("    fn transpose(&self, added_x: float, added_y: float) -> Point {");
         source.appendln("        let new_x_value = self.x + added_x;");
-        source.appendln("        let new_y_value = self.y + added_y;");
+        source.appendln("      let new_y_value = self.y + added_y;");
         source.appendln("        Point{ x: new_x_value, y: new_y_value }");
         source.appendln("    }");
         source.appendln("}");
         context = source.getIndentContext()
-                .withOffsetRange(0, 229) //TODO: works if you increase this. why?
+                .withOffsetRange(0, 227) //TODO: works if you increase this. why?
                 .withCaretOffset(0)
                 .build();
 
@@ -155,12 +155,37 @@ public class RustFormatterTest {
         formattedSource.appendln("}");
         formattedSource.appendln();
 
-        System.out.println("Semi: " + RustTokenId.SEMI.text());
+        assertThat(textOf(context), is(formattedSource.toString()));
+    }
 
-        System.out.println("expected:");
-        System.out.println(formattedSource);
-        System.out.println("actual:");
-        System.out.println(textOf(context));
+    @Test
+    public void shouldIndentInSelectionAsThoughWholeDocumentWasToBeIndented() throws Exception {
+        source.appendln("impl Point {");
+        source.appendln("    ");
+        source.appendln("fn transpose(&self, added_x: float, added_y: float) -> Point {");
+        source.appendln("    let new_x_value = self.x + added_x;");
+        source.appendln("    let new_y_value = self.y + added_y;");
+        source.appendln("    Point{ x: new_x_value, y: new_y_value }");
+        source.appendln("}");
+        source.appendln("}");
+        context = source.getIndentContext()
+                .withOffsetRange(21, 204) //TODO: works if you increase this. why?
+                .withCaretOffset(204)
+                .build();
+
+        formatter.reformat(context, source.parse());
+
+        formattedSource.appendln("impl Point {");
+        formattedSource.appendln("    ");
+        formattedSource.appendln("    fn transpose(&self, added_x: float, added_y: float) -> Point {");
+        formattedSource.appendln("        let new_x_value = self.x + added_x;");
+        formattedSource.appendln("        let new_y_value = self.y + added_y;");
+        formattedSource.appendln("        Point {");
+        formattedSource.appendln("            x: new_x_value, y: new_y_value");
+        formattedSource.appendln("        }");
+        formattedSource.appendln("}");
+        formattedSource.appendln("}");
+        formattedSource.appendln();
 
         assertThat(textOf(context), is(formattedSource.toString()));
     }

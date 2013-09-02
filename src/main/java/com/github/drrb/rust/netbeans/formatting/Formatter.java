@@ -62,7 +62,7 @@ public class Formatter {
                 } else if (token.id() == RustTokenId.RBRACE) {
                     delimiters.add(new Delimiter(DelimiterType.CLOSE_CURLY, tokenOffset));
                 } else if (token.id() == RustTokenId.SEMI) {
-                    //delimiters.add(new Delimiter(DelimiterType.SEMICOLON, tokenOffset));
+                    delimiters.add(new Delimiter(DelimiterType.SEMICOLON, tokenOffset));
                 }
             }
 
@@ -71,26 +71,17 @@ public class Formatter {
             Position startPosition = document.createPosition(context.startOffset());
             Position endPosition = document.createPosition(context.endOffset());
             for (Delimiter delimiter : delimiters) {
-                //TODO: outside the zone, still modify indent depth, just don't format
-                //TODO: do more checking of these limits
-                if (delimiter.offset() < startPosition.getOffset()) {
-                    continue;
-                } else if (delimiter.offset() > endPosition.getOffset()) {
-                    break;
-                }
-
-                delimiter.adjustSurroundings();
                 depth += delimiter.type.depthChangeBefore;
-                delimiter.modifyIndentDepth(depth);
-                depth += delimiter.type.depthChangeAfter;
-                //TODO: encapsulate these (surroundings / depth changing as Delimiter properties, delimiter types to include line endings)
-                if (delimiter.type == DelimiterType.OPEN_CURLY) {
-                    int startOfNextLine = delimiter.offset() + 2;
-                    //TODO: move this out of here and do it for *every* line
-                    if (DocumentUtilities.getText(document).charAt(startOfNextLine) != '}') {
-                        context.modifyIndent(startOfNextLine, indentForDepth(depth));
+                int nextDepth = depth + delimiter.type.depthChangeAfter;
+                //TODO: do more checking of these limits
+                if (delimiter.offset() >= startPosition.getOffset() && delimiter.offset() < endPosition.getOffset()) {
+                    delimiter.adjustSurroundings();
+                    delimiter.modifyIndentDepth(depth);
+                    if (delimiter.startOfNextLine() >= startPosition.getOffset() && delimiter.startOfNextLine() < endPosition.getOffset()) {
+                        delimiter.modifyIndentDepthOfNextLine(nextDepth);
                     }
                 }
+                depth = nextDepth;
             }
         } catch (BadLocationException ex) {
             Exceptions.printStackTrace(ex);
@@ -102,7 +93,7 @@ public class Formatter {
         return depth * formatter.indentSize();
     }
 
-    enum DelimiterType {
+    private enum DelimiterType {
 
         OPEN_CURLY(" ", "\n", 0, 1),
         CLOSE_CURLY("\n", "\n", -1, 0),
@@ -154,8 +145,18 @@ public class Formatter {
             document.insertString(offset() + TOKEN_WIDTH, after, null);
         }
 
-        private void modifyIndentDepth(int newDepth) throws BadLocationException {
+        void modifyIndentDepth(int newDepth) throws BadLocationException {
             context.modifyIndent(context.lineStartOffset(offset()), indentForDepth(newDepth));
+        }
+
+        void modifyIndentDepthOfNextLine(int depth) throws BadLocationException {
+            context.modifyIndent(startOfNextLine(), indentForDepth(depth));
+        }
+
+        int startOfNextLine() {
+            assert type.suffix.equals("\n") : "This only works for delimiter types that are followed by newlines";
+            assert charAt(offset() + TOKEN_WIDTH) == type.suffix.charAt(0) : "Trying to find where the next line starts, but doing it dodgily!";
+            return offset() + TOKEN_WIDTH + type.suffix.length();
         }
 
         private void consumeLeadingWhitespace() throws BadLocationException {
