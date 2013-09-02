@@ -20,13 +20,18 @@ import com.github.drrb.rust.netbeans.completion.RustCodeCompletionHandler;
 import com.github.drrb.rust.netbeans.formatting.RustFormatter;
 import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
 import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
+import com.github.drrb.rust.netbeans.indexing.RustIndexSearcher;
+import com.github.drrb.rust.netbeans.indexing.RustIndexer;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
 import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.Formatter;
+import org.netbeans.modules.csl.api.IndexSearcher;
 import org.netbeans.modules.csl.api.InstantRenamer;
 import org.netbeans.modules.csl.api.OccurrencesFinder;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
@@ -34,9 +39,11 @@ import org.netbeans.modules.csl.api.StructureScanner;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
+import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
 import org.openide.util.NbBundle;
 
 @LanguageRegistration(mimeType = RustLanguage.MIME_TYPE)
+//@PathRecognizerRegistration
 public class RustLanguage extends DefaultLanguageConfig {
 
     public static final String MIME_TYPE = "text/x-rust-source";
@@ -119,5 +126,16 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public Formatter getFormatter() {
         return new RustFormatter();
+    }
+
+    @Override
+    public EmbeddingIndexerFactory getIndexerFactory() {
+        Logger.getLogger(RustLanguage.class.getName()).log(Level.WARNING, "RustLanguage.getIndexerFactory())");
+        return new RustIndexer.Factory();
+    }
+
+    @Override
+    public IndexSearcher getIndexSearcher() {
+        return new RustIndexSearcher();
     }
 }

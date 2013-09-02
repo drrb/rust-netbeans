@@ -31,28 +31,32 @@ import org.openide.filesystems.FileObject;
  *
  */
 public class RustElementHandle implements ElementHandle {
+
     private final String name;
     private final OffsetRange offsetRange;
     private final ElementKind kind;
     private final Set<Modifier> modifiers;
+    private final FileObject fileObject;
 
     public RustElementHandle(String name, OffsetRange offsetRange, ElementKind kind) {
-        this.name = name;
-        this.offsetRange = offsetRange;
-        this.kind = kind;
-        this.modifiers = Collections.emptySet();
+        this(name, offsetRange, kind, Collections.<Modifier>emptySet());
     }
 
     public RustElementHandle(String name, OffsetRange offsetRange, ElementKind kind, Set<Modifier> modifiers) {
+        this(name, offsetRange, kind, modifiers, null);
+    }
+
+    public RustElementHandle(String name, OffsetRange offsetRange, ElementKind kind, Set<Modifier> modifiers, FileObject fileObject) {
         this.name = name;
         this.offsetRange = offsetRange;
         this.kind = kind;
-        this.modifiers = EnumSet.copyOf(modifiers);
+        this.modifiers = modifiers.isEmpty() ? Collections.<Modifier>emptySet() : EnumSet.copyOf(modifiers);
+        this.fileObject = fileObject;
     }
 
     @Override
     public FileObject getFileObject() {
-        return null;
+        return fileObject;
     }
 
     @Override
