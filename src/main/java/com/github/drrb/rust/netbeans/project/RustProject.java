@@ -67,7 +67,7 @@ public class RustProject implements Project {
     private class Info implements ProjectInformation {
 
         @StaticResource
-        private static final String RUST_PROJECT_ICON = "com/github/drrb/rust/netbeans/project/rust_project_icon_small.png";
+        private static final String RUST_PROJECT_ICON = "com/github/drrb/rust/netbeans/rust-icon_16x16.png";
 
         @Override
         public String getName() {

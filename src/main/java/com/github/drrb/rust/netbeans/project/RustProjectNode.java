@@ -32,7 +32,7 @@ import org.openide.util.lookup.ProxyLookup;
 public class RustProjectNode extends FilterNode {
 
     @StaticResource
-    public static final String PROJECT_ICON = "com/github/drrb/rust/netbeans/project/rust_project_icon_small.png";
+    public static final String PROJECT_ICON = "com/github/drrb/rust/netbeans/rust-icon_16x16.png";
     private static final String NODE_FACTORIES_PATH = String.format("Projects/%s/Nodes", RustProject.TYPE);
     private final RustProject project;
 

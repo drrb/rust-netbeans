@@ -41,7 +41,7 @@ import org.openide.windows.TopComponent;
         extension = {"rs", "rc"})
 @DataObject.Registration(
         mimeType = RustLanguage.MIME_TYPE,
-        iconBase = "com/github/drrb/rust/netbeans/rust_icon_small.png",
+        iconBase = "com/github/drrb/rust/netbeans/rust-icon_16x16.png",
         displayName = "#LBL_Rust_LOADER",
         position = 300)
 @ActionReferences({
@@ -100,7 +100,7 @@ public class RustDataObject extends MultiDataObject {
 
     @MultiViewElement.Registration(
             displayName = "#LBL_Rust_EDITOR",
-            iconBase = "com/github/drrb/rust/netbeans/rust_icon_small.png",
+            iconBase = "com/github/drrb/rust/netbeans/rust-icon_16x16.png",
             mimeType = RustLanguage.MIME_TYPE,
             persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
             preferredID = "rust.source",
