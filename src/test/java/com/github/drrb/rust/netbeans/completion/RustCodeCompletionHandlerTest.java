@@ -23,10 +23,10 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static com.github.drrb.rust.netbeans.test.Matchers.*;
-import java.util.EnumSet;
 import org.netbeans.modules.csl.api.CodeCompletionContext;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.CodeCompletionResult;
+import org.netbeans.modules.csl.api.ElementHandle;
 import static org.netbeans.modules.csl.api.ElementKind.*;
 import static org.netbeans.modules.csl.api.Modifier.*;
 import org.netbeans.modules.csl.spi.ParserResult;
@@ -61,7 +61,7 @@ public class RustCodeCompletionHandlerTest {
     }
 
     @Test
-    public void shouldSuggestMatchingMethod() {
+    public void shouldSuggestMatchingFunction() {
         RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Say hello");
         source.appendln("fn greet() {");
@@ -77,7 +77,7 @@ public class RustCodeCompletionHandlerTest {
     }
 
     @Test
-    public void shouldProvideDocumentationForMethod() {
+    public void shouldProvideDocumentationForFunction() {
         RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Say hello");
         source.appendln("fn greet() {");
@@ -88,8 +88,44 @@ public class RustCodeCompletionHandlerTest {
         source.appendln("   gr"); //Caret is at: gr|
         source.appendln("}");
 
-        String documentation = completionHandler.document(source.parse(), new RustElementHandle("greet", range(14, 49), METHOD, EnumSet.of(STATIC)));
+        ElementHandle element = completionHandler.complete(completionContextFor(source, 68)).getItems().get(0).getElement();
+        String documentation = completionHandler.document(source.parse(), element);
         assertThat(documentation, is("/// Say hello"));
+    }
+
+    @Test
+    public void shouldSuggestMatchingStruct() {
+        RustSourceSnapshot source = new RustSourceSnapshot();
+        source.appendln("/// A point in space");
+        source.appendln("struct Point {");
+        source.appendln("   x: float,");
+        source.appendln("   y: float");
+        source.appendln("}");
+        source.appendln("");
+        source.appendln("fn main() {");
+        source.appendln("   Poi"); //Caret is at: Poi|
+        source.appendln("}");
+
+        CodeCompletionResult completionResult = completionHandler.complete(completionContextFor(source, 82));
+        assertThat(completionResult.getItems(), contains(completionProposal("Point", CLASS)));
+    }
+
+    @Test
+    public void shouldProvideDocumentationForStruct() {
+        RustSourceSnapshot source = new RustSourceSnapshot();
+        source.appendln("/// A point in space");
+        source.appendln("struct Point {");
+        source.appendln("   x: float,");
+        source.appendln("   y: float");
+        source.appendln("}");
+        source.appendln("");
+        source.appendln("fn main() {");
+        source.appendln("   Poi"); //Caret is at: Poi|
+        source.appendln("}");
+
+        ElementHandle element = completionHandler.complete(completionContextFor(source, 82)).getItems().get(0).getElement();
+        String documentation = completionHandler.document(source.parse(), element);
+        assertThat(documentation, is("/// A point in space"));
     }
 
     private CodeCompletionContext completionContextFor(final RustSourceSnapshot source, final int caretOffset) {

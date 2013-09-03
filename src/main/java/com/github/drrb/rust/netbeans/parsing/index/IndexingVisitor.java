@@ -41,9 +41,13 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
 
     @Override
     public RustSourceIndex visitItem_fn_decl(final RustParser.Item_fn_declContext functionContext) {
+        RustParser.Mod_itemContext outerContext = (RustParser.Mod_itemContext) functionContext.getParent();
+        RustDocComment docComment = outerContext.attrs_and_vis().accept(new RustDocCollectingVisitor());
+
         final RustFunction.Builder functionBuilder = RustFunction.builder()
                 .setName(functionContext.accept(new FunctionNameFinder()))
-                .setOffsetRange(offsetRangeFor(functionContext));
+                .setOffsetRange(offsetRangeFor(functionContext))
+                .setDocComment(docComment);
         functionContext.accept(new RustBaseVisitor<Void>() {
             @Override
             public Void visitArg(RustParser.ArgContext ctx) {
@@ -90,10 +94,14 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
             }
         });
 
+        RustParser.Mod_itemContext outerContext = (RustParser.Mod_itemContext) structContext.getParent();
+        RustDocComment docComment = outerContext.attrs_and_vis().accept(new RustDocCollectingVisitor());
+
         RustStruct.Builder structBuilder = RustStruct.builder()
                 .setName(structContext.ident().getText())
                 .setOffsetRange(offsetRangeFor(structContext))
-                .setBody(structBodyBuilder.build());
+                .setBody(structBodyBuilder.build())
+                .setDocComment(docComment);
         index.addStruct(structBuilder.build());
         return visitChildren(structContext);
     }
@@ -184,6 +192,31 @@ public class IndexingVisitor extends RustBaseVisitor<RustSourceIndex> {
             index.addDocComment(new RustDocComment(node.getText(), offsetRangeFor(node)));
         }
         return index;
+    }
+}
+
+class RustDocCollectingVisitor extends RustBaseVisitor<RustDocComment> {
+
+    @Override
+    public RustDocComment visitTerminal(TerminalNode node) {
+        if (node.getSymbol().getType() == RustParser.OUTER_DOC_COMMENT) {
+            return new RustDocComment(node.getText(), offsetRangeFor(node));
+        }
+        return null;
+    }
+
+    @Override
+    protected RustDocComment aggregateResult(RustDocComment aggregate, RustDocComment nextResult) {
+        if (aggregate == null) {
+            return nextResult;
+        } else {
+            return aggregate;
+        }
+    }
+
+    @Override
+    protected boolean shouldVisitNextChild(RuleNode node, RustDocComment currentResult) {
+        return currentResult == null;
     }
 }
 

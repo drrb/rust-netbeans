@@ -18,9 +18,10 @@ package com.github.drrb.rust.netbeans.completion;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.parsing.Rustdoc;
+import com.github.drrb.rust.netbeans.parsing.index.RustDocComment;
 import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
 import com.github.drrb.rust.netbeans.parsing.index.RustSourceIndex;
+import com.github.drrb.rust.netbeans.parsing.index.RustStruct;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -59,14 +60,32 @@ public class RustCodeCompletionHandler implements CodeCompletionHandler {
         for (RustFunction function : index.getFunctions()) {
             String functionName = function.getName();
             if (functionName.startsWith(prefix)) {
-                proposals.add(RustCompletionProposal.forElement(new RustElementHandle(functionName, function.getOffsetRange(), ElementKind.METHOD, EnumSet.of(Modifier.STATIC))));
+                RustDocComment docComment = function.getDocComment();
+                RustElementHandle element =
+                        RustElementHandle.with(functionName, function.getOffsetRange(), ElementKind.METHOD)
+                        .withModifier(Modifier.STATIC)
+                        .withDocumentationHtml(docComment == null ? null : docComment.getText())
+                        .build();
+                proposals.add(RustCompletionProposal.forElement(element));
+            }
+        }
+
+        for (RustStruct struct : index.getStructs()) {
+            String structName = struct.getName();
+            if (structName.startsWith(prefix)) {
+                RustDocComment docComment = struct.getDocComment();
+                RustElementHandle element =
+                        RustElementHandle.with(structName, struct.getOffsetRange(), ElementKind.CLASS)
+                        .withDocumentationHtml(docComment == null ? null : docComment.getText())
+                        .build();
+                proposals.add(RustCompletionProposal.forElement(element));
             }
         }
 
         for (RustKeyword keyword : RustKeyword.values()) {
             final String keywordImage = keyword.image();
             if (keywordImage.startsWith(prefix)) {
-                proposals.add(RustCompletionProposal.forElement(new RustElementHandle(keywordImage, OffsetRange.NONE, ElementKind.KEYWORD)));
+                proposals.add(RustCompletionProposal.forElement(RustElementHandle.with(keywordImage, OffsetRange.NONE, ElementKind.KEYWORD).build()));
             }
         }
 
@@ -76,17 +95,8 @@ public class RustCodeCompletionHandler implements CodeCompletionHandler {
 
     @Override
     public String document(ParserResult info, ElementHandle element) {
-        NetbeansRustParserResult parseResult = (NetbeansRustParserResult) info;
-        if (ELEMENT_TYPES_WITH_DOCS.contains(element.getKind())) {
-            for (Rustdoc rustdoc : parseResult.getRustdocs()) {
-                if (element.getName().equals(rustdoc.getIdentifier())) {
-                    return rustdoc.getText();
-                }
-            }
-            return "No documentation found for " + element.getName();
-        } else {
-            return null;
-        }
+        RustElementHandle elementHandle = (RustElementHandle) element;
+        return elementHandle.getDocumentationHtml();
     }
 
     @Override

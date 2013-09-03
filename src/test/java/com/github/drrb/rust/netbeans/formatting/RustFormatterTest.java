@@ -17,7 +17,6 @@
 package com.github.drrb.rust.netbeans.formatting;
 
 import com.github.drrb.rust.netbeans.RustSourceSnapshot;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import org.junit.Before;

@@ -25,11 +25,13 @@ public class RustStruct {
 
     private final String name;
     private final OffsetRange offsetRange;
+    private final RustDocComment docComment;
     private final RustStructBody body;
 
-    RustStruct(String name, OffsetRange offsetRange, RustStructBody body) {
+    RustStruct(String name, OffsetRange offsetRange, RustDocComment docComment, RustStructBody body) {
         this.name = name;
         this.offsetRange = offsetRange;
+        this.docComment = docComment;
         this.body = body;
     }
 
@@ -45,6 +47,10 @@ public class RustStruct {
         return offsetRange;
     }
 
+    public RustDocComment getDocComment() {
+        return docComment;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -54,9 +60,10 @@ public class RustStruct {
         private String name;
         private OffsetRange offsetRange;
         private RustStructBody body;
+        private RustDocComment docComment;
 
         RustStruct build() {
-            return new RustStruct(name, offsetRange, body);
+            return new RustStruct(name, offsetRange, docComment, body);
         }
 
         Builder setName(String name) {
@@ -71,6 +78,11 @@ public class RustStruct {
 
         Builder setBody(RustStructBody body) {
             this.body = body;
+            return this;
+        }
+
+        Builder setDocComment(RustDocComment docComment) {
+            this.docComment = docComment;
             return this;
         }
     }

@@ -34,23 +34,17 @@ public class RustElementHandle implements ElementHandle {
 
     private final String name;
     private final OffsetRange offsetRange;
+    private final String documentationHtml;
     private final ElementKind kind;
     private final Set<Modifier> modifiers;
     private final FileObject fileObject;
 
-    public RustElementHandle(String name, OffsetRange offsetRange, ElementKind kind) {
-        this(name, offsetRange, kind, Collections.<Modifier>emptySet());
-    }
-
-    public RustElementHandle(String name, OffsetRange offsetRange, ElementKind kind, Set<Modifier> modifiers) {
-        this(name, offsetRange, kind, modifiers, null);
-    }
-
-    public RustElementHandle(String name, OffsetRange offsetRange, ElementKind kind, Set<Modifier> modifiers, FileObject fileObject) {
+    public RustElementHandle(String name, OffsetRange offsetRange, String documentationHtml, ElementKind kind, Set<Modifier> modifiers, FileObject fileObject) {
         this.name = name;
         this.offsetRange = offsetRange;
+        this.documentationHtml = documentationHtml;
         this.kind = kind;
-        this.modifiers = modifiers.isEmpty() ? Collections.<Modifier>emptySet() : EnumSet.copyOf(modifiers);
+        this.modifiers = modifiers == null || modifiers.isEmpty() ? Collections.<Modifier>emptySet() : EnumSet.copyOf(modifiers);
         this.fileObject = fileObject;
     }
 
@@ -92,5 +86,57 @@ public class RustElementHandle implements ElementHandle {
     @Override
     public OffsetRange getOffsetRange(ParserResult result) {
         return offsetRange;
+    }
+
+    public String getDocumentationHtml() {
+        if (documentationHtml == null) {
+            return "No documentation found for " + getName();
+        } else {
+            return documentationHtml;
+        }
+    }
+
+    public static Builder with(String name, OffsetRange offsetRange, ElementKind kind) {
+        return new Builder(name, offsetRange, kind);
+    }
+
+    public static class Builder {
+
+        private final String name;
+        private final OffsetRange offsetRange;
+        private final ElementKind kind;
+        private final Set<Modifier> modifiers = EnumSet.noneOf(Modifier.class);
+        private String documentationHtml;
+        private FileObject fileObject;
+
+        private Builder(String name, OffsetRange offsetRange, ElementKind kind) {
+            this.name = name;
+            this.offsetRange = offsetRange;
+            this.kind = kind;
+        }
+
+        public Builder withDocumentationHtml(String documentationHtml) {
+            this.documentationHtml = documentationHtml;
+            return this;
+        }
+
+        public Builder withModifiers(Set<Modifier> modifiers) {
+            this.modifiers.addAll(modifiers);
+            return this;
+        }
+
+        public Builder withModifier(Modifier modifier) {
+            this.modifiers.add(modifier);
+            return this;
+        }
+
+        public Builder withFileObject(FileObject fileObject) {
+            this.fileObject = fileObject;
+            return this;
+        }
+
+        public RustElementHandle build() {
+            return new RustElementHandle(name, offsetRange, documentationHtml, kind, modifiers, fileObject);
+        }
     }
 }

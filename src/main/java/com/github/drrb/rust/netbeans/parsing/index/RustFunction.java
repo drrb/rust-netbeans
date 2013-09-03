@@ -30,13 +30,15 @@ public class RustFunction {
 
     private final String name;
     private final OffsetRange offsetRange;
+    private final RustDocComment docComment;
     private final RustFunctionBody body;
     private final Map<String, RustFunctionParameterName> functionParameterNamesByName = new HashMap<String, RustFunctionParameterName>();
     private final RangeMap<RustFunctionParameterName> functionParameterNameRanges = new RangeMap<RustFunctionParameterName>();
 
-    RustFunction(String name, OffsetRange offsetRange, RustFunctionBody body, List<RustFunctionParameterName> parameterNames) {
+    RustFunction(String name, OffsetRange offsetRange, RustDocComment docComment, RustFunctionBody body, List<RustFunctionParameterName> parameterNames) {
         this.name = name;
         this.offsetRange = offsetRange;
+        this.docComment = docComment;
         this.body = body;
         for (RustFunctionParameterName parameterName : parameterNames) {
             functionParameterNameRanges.put(parameterName.getOffsetRange(), parameterName);
@@ -56,6 +58,10 @@ public class RustFunction {
         return offsetRange;
     }
 
+    public RustDocComment getDocComment() {
+        return docComment;
+    }
+
     public Option<RustFunctionParameterName> getParameterNameAt(int offeset) {
         return functionParameterNameRanges.get(offeset);
     }
@@ -73,10 +79,11 @@ public class RustFunction {
         private String name;
         private OffsetRange offsetRange;
         private RustFunctionBody body;
+        private RustDocComment docComment;
         private List<RustFunctionParameterName> parameterNames = new LinkedList<RustFunctionParameterName>();
 
         RustFunction build() {
-            return new RustFunction(name, offsetRange, body, parameterNames);
+            return new RustFunction(name, offsetRange, docComment, body, parameterNames);
         }
 
         Builder setName(String name) {
@@ -96,6 +103,11 @@ public class RustFunction {
 
         Builder addParameterName(RustFunctionParameterName parameterName) {
             parameterNames.add(parameterName);
+            return this;
+        }
+
+        Builder setDocComment(RustDocComment docComment) {
+            this.docComment = docComment;
             return this;
         }
     }

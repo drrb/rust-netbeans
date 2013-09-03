@@ -63,7 +63,6 @@ public class NetbeansRustParser extends Parser {
                 syntaxErrors.add(new SyntaxError(line, charPositionInLine, message));
             }
         });
-        this.parser.addParseListener(new RustdocCollectingParseListener(rustdocs));
         try {
             ast = parser.prog();
         } catch (Exception ex) {

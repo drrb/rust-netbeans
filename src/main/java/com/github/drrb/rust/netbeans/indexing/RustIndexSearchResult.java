@@ -57,7 +57,7 @@ public class RustIndexSearchResult extends IndexSearcher.Descriptor {
 
     @Override
     public ElementHandle getElement() {
-        return new RustElementHandle(simpleName, offsetRange, elementKind, modifiers, fileObject);
+        return RustElementHandle.with(simpleName, offsetRange, elementKind).withModifiers(modifiers).withFileObject(fileObject).build();
     }
 
     @Override
