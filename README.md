@@ -19,6 +19,17 @@ So far, it includes
 * brace matching
 * comment toggling
 
+## Building
+
+First, clone and build the pluging.
+
+```console
+git clone https://github.com/drrb/gitsu.git
+mvn package
+```
+
+You can then install the plugin from NetBeans (the plugin will have been packaged at `target/rust-netbeans-1.0.0-SNAPSHOT.nbm`).
+
 ## Contributing
 
 1. Fork it
