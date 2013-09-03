@@ -47,7 +47,6 @@ public class NetbeansRustParser extends Parser {
 
     private Snapshot snapshot;
     private RustParser parser;
-    private LinkedList<Rustdoc> rustdocs;
     private List<SyntaxError> syntaxErrors;
     private RustParser.ProgContext ast;
 
@@ -55,7 +54,6 @@ public class NetbeansRustParser extends Parser {
     public void parse(final Snapshot snapshot, Task task, SourceModificationEvent event) {
         this.snapshot = snapshot;
         this.parser = createParser(snapshot);
-        this.rustdocs = new LinkedList<Rustdoc>();
         this.syntaxErrors = new LinkedList<SyntaxError>();
         this.parser.addErrorListener(new BaseErrorListener() {
             @Override
@@ -72,7 +70,7 @@ public class NetbeansRustParser extends Parser {
 
     @Override
     public NetbeansRustParserResult getResult(Task task) throws ParseException {
-        return new NetbeansRustParserResult(snapshot, parser, ast, rustdocs, syntaxErrors);
+        return new NetbeansRustParserResult(snapshot, parser, ast, syntaxErrors);
     }
 
     @Override
@@ -121,13 +119,11 @@ public class NetbeansRustParser extends Parser {
         private final List<SyntaxError> syntaxErrors;
         private final AtomicBoolean valid = new AtomicBoolean(true);
         private final RustParser.ProgContext ast;
-        private final List<Rustdoc> rustdocs;
 
-        public NetbeansRustParserResult(Snapshot snapshot, RustParser parser, RustParser.ProgContext ast, List<Rustdoc> rustdocs, List<SyntaxError> syntaxErrors) {
+        public NetbeansRustParserResult(Snapshot snapshot, RustParser parser, RustParser.ProgContext ast, List<SyntaxError> syntaxErrors) {
             super(snapshot);
             this.parser = parser;
             this.ast = ast;
-            this.rustdocs = rustdocs;
             this.syntaxErrors = new ArrayList<SyntaxError>(syntaxErrors);
         }
 
@@ -140,10 +136,6 @@ public class NetbeansRustParser extends Parser {
 
         public List<SyntaxError> getSyntaxErrors() {
             return Collections.unmodifiableList(syntaxErrors);
-        }
-
-        public List<Rustdoc> getRustdocs() {
-            return Collections.unmodifiableList(rustdocs);
         }
 
         public RustParser.ProgContext getAst() {

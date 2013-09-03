@@ -19,10 +19,8 @@ package com.github.drrb.rust.netbeans.highlighting;
 import com.github.drrb.rust.netbeans.RustDocument;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.SyntaxError;
-import com.github.drrb.rust.netbeans.parsing.Rustdoc;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -52,7 +50,7 @@ public class RustSyntaxErrorHighlightingTaskTest {
         RustSyntaxErrorHighlightingTask.Factory factory = new RustSyntaxErrorHighlightingTask.Factory();
         Collection<? extends SchedulerTask> tasks = factory.create(snapshot);
         RustSyntaxErrorHighlightingTask highlightingTask = (RustSyntaxErrorHighlightingTask) tasks.iterator().next();
-        NetbeansRustParserResult parseResult = new NetbeansRustParserResult(snapshot, null, null, Collections.<Rustdoc>emptyList(), Arrays.asList(syntaxError));
+        NetbeansRustParserResult parseResult = new NetbeansRustParserResult(snapshot, null, null, Arrays.asList(syntaxError));
         Iterator<ErrorDescription> errors = highlightingTask.getErrors(parseResult, document).iterator();
 
         ErrorDescription error = errors.next();
