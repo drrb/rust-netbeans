@@ -26,6 +26,8 @@ import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
 import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
+import java.util.Collections;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.lexer.Language;
@@ -40,13 +42,16 @@ import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
+import org.netbeans.modules.parsing.spi.indexing.PathRecognizerRegistration;
 import org.openide.util.NbBundle;
 
 @LanguageRegistration(mimeType = RustLanguage.MIME_TYPE)
-//@PathRecognizerRegistration
+@PathRecognizerRegistration(mimeTypes = RustLanguage.MIME_TYPE, sourcePathIds = RustLanguage.SOURCE_CLASSPATH_ID, libraryPathIds = RustLanguage.BOOT_CLASSPATH_ID, binaryLibraryPathIds = {})
 public class RustLanguage extends DefaultLanguageConfig {
 
     public static final String MIME_TYPE = "text/x-rust-source";
+    public static final String BOOT_CLASSPATH_ID = "classpath/rust-boot"; //NOI18N
+    public static final String SOURCE_CLASSPATH_ID = "classpath/rust-source"; //NOI18N
 
     public static boolean isRustIdentifierChar(char c) {
         //TODO: is this true?
@@ -137,5 +142,15 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public IndexSearcher getIndexSearcher() {
         return new RustIndexSearcher();
+    }
+
+    @Override
+    public Set<String> getLibraryPathIds() {
+        return Collections.singleton(RustLanguage.BOOT_CLASSPATH_ID);
+    }
+
+    @Override
+    public Set<String> getSourcePathIds() {
+        return Collections.singleton(RustLanguage.SOURCE_CLASSPATH_ID);
     }
 }

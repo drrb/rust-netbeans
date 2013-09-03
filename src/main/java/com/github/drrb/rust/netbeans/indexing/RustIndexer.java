@@ -23,6 +23,8 @@ import com.github.drrb.rust.netbeans.parsing.index.RustStructField;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.indexing.Context;
@@ -38,8 +40,13 @@ import org.openide.util.Exceptions;
  */
 public class RustIndexer extends EmbeddingIndexer {
 
+    public static final String NAME = "rust";
+    public static final int VERSION = 0;
+    private static final Logger LOGGER = Logger.getLogger(RustIndexer.class.getName());
+
     @Override
     protected void index(Indexable indexable, Parser.Result parserResult, Context context) {
+        LOGGER.log(Level.WARNING, "RustIndexer.index({0})", indexable.getRelativePath());
         try {
             NetbeansRustParserResult parseResult = (NetbeansRustParserResult) parserResult;
             IndexingSupport indexingSupport = IndexingSupport.getInstance(context);
@@ -83,12 +90,12 @@ public class RustIndexer extends EmbeddingIndexer {
 
         @Override
         public String getIndexerName() {
-            return "rust";
+            return NAME;
         }
 
         @Override
         public int getIndexVersion() {
-            return 0;
+            return VERSION;
         }
     }
 }
