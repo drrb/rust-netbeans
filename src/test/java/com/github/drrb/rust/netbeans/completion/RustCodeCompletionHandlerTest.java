@@ -18,11 +18,10 @@ package com.github.drrb.rust.netbeans.completion;
 
 import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import static com.github.drrb.rust.netbeans.parsing.RustLexUtils.*;
+import static com.github.drrb.rust.netbeans.test.Matchers.*;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static com.github.drrb.rust.netbeans.test.Matchers.*;
 import org.netbeans.modules.csl.api.CodeCompletionContext;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.CodeCompletionResult;
@@ -90,7 +89,7 @@ public class RustCodeCompletionHandlerTest {
 
         ElementHandle element = completionHandler.complete(completionContextFor(source, 68)).getItems().get(0).getElement();
         String documentation = completionHandler.document(source.parse(), element);
-        assertThat(documentation, is("/// Say hello"));
+        assertThat(documentation, is("<p>Say hello</p>"));
     }
 
     @Test
@@ -125,7 +124,7 @@ public class RustCodeCompletionHandlerTest {
 
         ElementHandle element = completionHandler.complete(completionContextFor(source, 82)).getItems().get(0).getElement();
         String documentation = completionHandler.document(source.parse(), element);
-        assertThat(documentation, is("/// A point in space"));
+        assertThat(documentation, is("<p>A point in space</p>"));
     }
 
     private CodeCompletionContext completionContextFor(final RustSourceSnapshot source, final int caretOffset) {

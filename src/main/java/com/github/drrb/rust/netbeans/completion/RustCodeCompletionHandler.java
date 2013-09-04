@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.completion;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
+import static com.github.drrb.rust.netbeans.completion.RustElementDocumentation.forDocComment;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.index.RustDocComment;
 import com.github.drrb.rust.netbeans.parsing.index.RustFunction;
@@ -64,7 +65,7 @@ public class RustCodeCompletionHandler implements CodeCompletionHandler {
                 RustElementHandle element =
                         RustElementHandle.with(functionName, function.getOffsetRange(), ElementKind.METHOD)
                         .withModifier(Modifier.STATIC)
-                        .withDocumentationHtml(docComment == null ? null : docComment.getText())
+                        .withDocumentation(forDocComment(docComment))
                         .build();
                 proposals.add(RustCompletionProposal.forElement(element));
             }
@@ -76,7 +77,7 @@ public class RustCodeCompletionHandler implements CodeCompletionHandler {
                 RustDocComment docComment = struct.getDocComment();
                 RustElementHandle element =
                         RustElementHandle.with(structName, struct.getOffsetRange(), ElementKind.CLASS)
-                        .withDocumentationHtml(docComment == null ? null : docComment.getText())
+                        .withDocumentation(forDocComment(docComment))
                         .build();
                 proposals.add(RustCompletionProposal.forElement(element));
             }

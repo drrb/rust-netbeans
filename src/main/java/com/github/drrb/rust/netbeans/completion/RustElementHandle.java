@@ -34,15 +34,15 @@ public class RustElementHandle implements ElementHandle {
 
     private final String name;
     private final OffsetRange offsetRange;
-    private final String documentationHtml;
+    private final RustElementDocumentation documentation;
     private final ElementKind kind;
     private final Set<Modifier> modifiers;
     private final FileObject fileObject;
 
-    public RustElementHandle(String name, OffsetRange offsetRange, String documentationHtml, ElementKind kind, Set<Modifier> modifiers, FileObject fileObject) {
+    public RustElementHandle(String name, OffsetRange offsetRange, RustElementDocumentation documentation, ElementKind kind, Set<Modifier> modifiers, FileObject fileObject) {
         this.name = name;
         this.offsetRange = offsetRange;
-        this.documentationHtml = documentationHtml;
+        this.documentation = documentation;
         this.kind = kind;
         this.modifiers = modifiers == null || modifiers.isEmpty() ? Collections.<Modifier>emptySet() : EnumSet.copyOf(modifiers);
         this.fileObject = fileObject;
@@ -89,11 +89,7 @@ public class RustElementHandle implements ElementHandle {
     }
 
     public String getDocumentationHtml() {
-        if (documentationHtml == null) {
-            return "No documentation found for " + getName();
-        } else {
-            return documentationHtml;
-        }
+        return documentation.getHtml("No documentation found for " + getName());
     }
 
     public static Builder with(String name, OffsetRange offsetRange, ElementKind kind) {
@@ -106,7 +102,7 @@ public class RustElementHandle implements ElementHandle {
         private final OffsetRange offsetRange;
         private final ElementKind kind;
         private final Set<Modifier> modifiers = EnumSet.noneOf(Modifier.class);
-        private String documentationHtml;
+        private RustElementDocumentation documentation;
         private FileObject fileObject;
 
         private Builder(String name, OffsetRange offsetRange, ElementKind kind) {
@@ -115,8 +111,8 @@ public class RustElementHandle implements ElementHandle {
             this.kind = kind;
         }
 
-        public Builder withDocumentationHtml(String documentationHtml) {
-            this.documentationHtml = documentationHtml;
+        public Builder withDocumentation(RustElementDocumentation documentation) {
+            this.documentation = documentation;
             return this;
         }
 
@@ -136,7 +132,7 @@ public class RustElementHandle implements ElementHandle {
         }
 
         public RustElementHandle build() {
-            return new RustElementHandle(name, offsetRange, documentationHtml, kind, modifiers, fileObject);
+            return new RustElementHandle(name, offsetRange, documentation, kind, modifiers, fileObject);
         }
     }
 }
