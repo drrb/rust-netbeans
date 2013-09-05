@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.completion;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
+import com.github.drrb.rust.netbeans.completion.RustCompletionResult.Truncated;
 import static com.github.drrb.rust.netbeans.completion.RustElementDocumentation.forDocComment;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.index.RustDocComment;
@@ -40,7 +41,6 @@ import org.netbeans.modules.csl.api.ElementKind;
 import org.netbeans.modules.csl.api.Modifier;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.ParameterInfo;
-import org.netbeans.modules.csl.spi.DefaultCompletionResult;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.Snapshot;
 
@@ -90,7 +90,7 @@ public class RustCodeCompletionHandler implements CodeCompletionHandler {
             }
         }
 
-        CodeCompletionResult result = new DefaultCompletionResult(proposals, false); //Results aren't truncated: we're returning them all
+        CodeCompletionResult result = new RustCompletionResult(proposals, Truncated.NO);
         return result;
     }
 

@@ -18,14 +18,21 @@ package com.github.drrb.rust.netbeans.completion;
 
 import java.util.Collections;
 import java.util.Set;
+import javax.swing.ImageIcon;
+import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.modules.csl.api.ElementHandle;
+import org.netbeans.modules.csl.api.ElementKind;
 import org.netbeans.modules.csl.api.Modifier;
 import org.netbeans.modules.csl.spi.DefaultCompletionProposal;
+import org.openide.util.ImageUtilities;
 
 /**
  *
  */
 public class RustCompletionProposal extends DefaultCompletionProposal {
+
+    @StaticResource
+    private static final String RUST_ICON_PATH = "com/github/drrb/rust/netbeans/rust-icon_16x16.png";
 
     public static RustCompletionProposal forElement(ElementHandle element) {
         return new RustCompletionProposal(element);
@@ -37,6 +44,15 @@ public class RustCompletionProposal extends DefaultCompletionProposal {
         this.element = element;
         this.elementKind = element.getKind();
         this.modifiers = element.getModifiers();
+    }
+
+    @Override
+    public ImageIcon getIcon() {
+        if (element.getKind() == ElementKind.KEYWORD) {
+            return ImageUtilities.loadImageIcon(RUST_ICON_PATH, false);
+        } else {
+            return null;
+        }
     }
 
     @Override

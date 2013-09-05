@@ -18,8 +18,10 @@ package com.github.drrb.rust.netbeans.test;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import java.awt.Image;
 import java.util.Arrays;
 import java.util.Map;
+import javax.swing.ImageIcon;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -106,21 +108,57 @@ public class Matchers extends org.hamcrest.Matchers {
         };
     }
 
-    public static Matcher<CompletionProposal> completionProposal(final String name, final ElementKind kind, final Modifier... modifiers) {
-        return new TypeSafeMatcher<CompletionProposal>() {
+    public static CompletionProposalMatcher completionProposal(final String name, final ElementKind kind, final Modifier... modifiers) {
+        return new CompletionProposalMatcher(name, kind, modifiers);
+    }
+
+    public static Matcher<ImageIcon> hasDimensions(final int width, final int height) {
+        return new TypeSafeMatcher<ImageIcon>() {
             @Override
-            public boolean matchesSafely(CompletionProposal item) {
-                return name.equals(item.getName())
-                        && item.getKind() == kind
-                        && Sets.newHashSet(modifiers).equals(item.getModifiers());
+            public boolean matchesSafely(ImageIcon item) {
+                return item.getIconWidth() == width
+                        && item.getIconHeight() == height;
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("CompletionProposal with name ").appendValue(name)
-                        .appendText(" and kind ").appendValue(kind)
-                        .appendText(" and modifiers ").appendValueList("<", ",", ">", modifiers);
+                description.appendText("Icon with dimensions ").appendValueList("[", ",", "]", width, height);
             }
         };
+    }
+
+    public static class CompletionProposalMatcher extends TypeSafeMatcher<CompletionProposal> {
+
+        private final String name;
+        private final ElementKind kind;
+        private final Modifier[] modifiers;
+        private Matcher<? super ImageIcon> iconMatcher = is(nullValue());
+
+        public CompletionProposalMatcher(String name, ElementKind kind, Modifier[] modifiers) {
+            this.name = name;
+            this.kind = kind;
+            this.modifiers = modifiers;
+        }
+
+        public CompletionProposalMatcher withImageThat(Matcher<? super ImageIcon> iconMatcher) {
+            this.iconMatcher = iconMatcher;
+            return this;
+        }
+
+        @Override
+        public boolean matchesSafely(CompletionProposal item) {
+            return name.equals(item.getName())
+                    && item.getKind() == kind
+                    && Sets.newHashSet(modifiers).equals(item.getModifiers())
+                    && iconMatcher.matches(item.getIcon());
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("CompletionProposal with name ").appendValue(name)
+                    .appendText(" and kind ").appendValue(kind)
+                    .appendText(" and modifiers ").appendValueList("<", ",", ">", modifiers)
+                    .appendText(" and icon that ").appendDescriptionOf(iconMatcher);
+        }
     }
 }

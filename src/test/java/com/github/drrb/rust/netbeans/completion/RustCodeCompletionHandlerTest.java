@@ -60,6 +60,17 @@ public class RustCodeCompletionHandlerTest {
     }
 
     @Test
+    public void shouldSuggestMatchingKeyword() {
+        RustSourceSnapshot source = new RustSourceSnapshot();
+        source.appendln("fn main() {");
+        source.appendln("   le"); //Caret is at: le|
+        source.appendln("}");
+
+        CodeCompletionResult completionResult = completionHandler.complete(completionContextFor(source, 17));
+        assertThat(completionResult.getItems(), contains(completionProposal("let", KEYWORD).withImageThat(hasDimensions(16, 16))));
+    }
+
+    @Test
     public void shouldSuggestMatchingFunction() {
         RustSourceSnapshot source = new RustSourceSnapshot();
         source.appendln("/// Say hello");
