@@ -191,6 +191,11 @@
             <artifactId>org-netbeans-modules-projectapi</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-project-ant</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
         <!-- TODO: causes "friend" error. Not sure if we actually need it though -->
         <!--
         <dependency>
@@ -467,6 +472,9 @@
                                 <exclude>src/main/antlr4/xidstart.g4</exclude>
                                 <exclude>src/main/antlr4/xidcont.g4</exclude>
                                 <exclude>src/main/nbm/manifest.mf</exclude>
+                                <exclude>src/main/java/com/github/drrb/rust/netbeans/classpath/SourceRoots.java</exclude>
+                                <exclude>src/main/java/com/github/drrb/rust/netbeans/classpath/UpdateHelper.java</exclude>
+                                <exclude>src/main/java/com/github/drrb/rust/netbeans/classpath/UpdateImplementation.java</exclude>
                                 <exclude>.travis.yml</exclude>
                                 <exclude>.gitignore</exclude>
                             </excludes>

@@ -423,4 +423,34 @@
         <artifactId>org-netbeans-modules-editor-fold-nbui</artifactId>
 	<license>GPL v2</license>
     </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-apache-xml-resolver</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-api-xml</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-project-ant</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-project-libraries</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-xml-catalog</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.external</groupId>
+	<artifactId>resolver-1.2</artifactId>
+	<license>GPL v2</license>
+    </artifact>
 </license-lookup>
