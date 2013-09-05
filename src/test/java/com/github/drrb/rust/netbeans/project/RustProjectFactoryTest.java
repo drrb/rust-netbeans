@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectManager;
 import org.netbeans.spi.project.ProjectState;
 
 /**
@@ -109,6 +110,22 @@ public class RustProjectFactoryTest {
         Project project = factory.loadProject(projectFolder, projectState);
 
         assertNotNull(project);
+    }
+
+    @Test
+    public void shouldReturnAnIconWhenDirectoryIsProject() {
+        when(projectFolder.getFileObject("main.rs")).thenReturn(aFile());
+
+        ProjectManager.Result result = factory.isProject2(projectFolder);
+
+        assertThat(result.getIcon(), is(not(nullValue())));
+    }
+
+    @Test
+    public void shouldReturnNullWhenAnIconWhenDirectoryIsNotAProject() {
+        ProjectManager.Result result = factory.isProject2(projectFolder);
+
+        assertThat(result, is(nullValue()));
     }
 
     private FileObject aFile() {

@@ -40,6 +40,8 @@ import org.openide.util.lookup.Lookups;
  */
 public class RustProject implements Project {
 
+    @StaticResource
+    public static final String RUST_PROJECT_ICON = "com/github/drrb/rust/netbeans/rust-icon_16x16.png";
     public static final String TYPE = "com-github-drrb-rust-netbeans-project";
     private final FileObject projectDirectory;
     private final ProjectState state;
@@ -65,9 +67,6 @@ public class RustProject implements Project {
     }
 
     private class Info implements ProjectInformation {
-
-        @StaticResource
-        private static final String RUST_PROJECT_ICON = "com/github/drrb/rust/netbeans/rust-icon_16x16.png";
 
         @Override
         public String getName() {

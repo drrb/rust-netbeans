@@ -18,9 +18,12 @@ package com.github.drrb.rust.netbeans.project;
 
 import java.io.IOException;
 import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectManager;
 import org.netbeans.spi.project.ProjectFactory;
+import org.netbeans.spi.project.ProjectFactory2;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
+import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -30,7 +33,7 @@ import org.openide.util.lookup.ServiceProvider;
  * but still register it as a ProjectFactory instance in the lookup
  */
 @ServiceProvider(service = ProjectFactory.class)
-public class RustProjectFactory implements ProjectFactory {
+public class RustProjectFactory implements ProjectFactory2 {
 
     @Override
     public boolean isProject(FileObject projectDirectory) {
@@ -49,5 +52,14 @@ public class RustProjectFactory implements ProjectFactory {
     @Override
     public void saveProject(Project project) throws IOException, ClassCastException {
         //Tutorial left this empty
+    }
+
+    @Override
+    public ProjectManager.Result isProject2(FileObject projectDirectory) {
+        if (isProject(projectDirectory)) {
+            return new ProjectManager.Result(ImageUtilities.loadImageIcon(RustProject.RUST_PROJECT_ICON, false)); //NOI18N
+        } else {
+            return null;
+        }
     }
 }
