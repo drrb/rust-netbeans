@@ -25,7 +25,7 @@ import org.pegdown.PegDownProcessor;
  */
 public class RustElementDocumentation {
 
-    private static final RustElementDocumentation NONE = new RustElementDocumentation(null);
+    public static final RustElementDocumentation NONE = new RustElementDocumentation(null);
 
     public static RustElementDocumentation forDocComment(RustDocComment docComment) {
         if (docComment == null || docComment.getText().isEmpty()) {

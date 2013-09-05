@@ -102,7 +102,7 @@ public class RustElementHandle implements ElementHandle {
         private final OffsetRange offsetRange;
         private final ElementKind kind;
         private final Set<Modifier> modifiers = EnumSet.noneOf(Modifier.class);
-        private RustElementDocumentation documentation;
+        private RustElementDocumentation documentation = RustElementDocumentation.NONE;
         private FileObject fileObject;
 
         private Builder(String name, OffsetRange offsetRange, ElementKind kind) {

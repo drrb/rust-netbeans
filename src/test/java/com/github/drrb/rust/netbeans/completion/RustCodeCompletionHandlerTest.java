@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.netbeans.modules.csl.api.CodeCompletionContext;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.CodeCompletionResult;
+import org.netbeans.modules.csl.api.CompletionProposal;
 import org.netbeans.modules.csl.api.ElementHandle;
 import static org.netbeans.modules.csl.api.ElementKind.*;
 import static org.netbeans.modules.csl.api.Modifier.*;
@@ -68,6 +69,20 @@ public class RustCodeCompletionHandlerTest {
 
         CodeCompletionResult completionResult = completionHandler.complete(completionContextFor(source, 17));
         assertThat(completionResult.getItems(), contains(completionProposal("let", KEYWORD).withImageThat(hasDimensions(16, 16))));
+    }
+
+    @Test
+    public void shouldProvideNoDocumentationForKeyword() {
+        RustSourceSnapshot source = new RustSourceSnapshot();
+        source.appendln("fn main() {");
+        source.appendln("   le"); //Caret is at: le|
+        source.appendln("}");
+
+        CodeCompletionResult completionResult = completionHandler.complete(completionContextFor(source, 17));
+        assertThat(completionResult.getItems(), contains(completionProposal("let", KEYWORD).withImageThat(hasDimensions(16, 16))));
+        CompletionProposal proposal = completionResult.getItems().iterator().next();
+        String documentation = completionHandler.document(null, proposal.getElement());
+        assertThat(documentation, containsString("No documentation found"));
     }
 
     @Test
