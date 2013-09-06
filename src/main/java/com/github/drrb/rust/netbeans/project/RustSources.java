@@ -19,29 +19,39 @@ package com.github.drrb.rust.netbeans.project;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.event.ChangeListener;
+import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.spi.project.ProjectServiceProvider;
 import org.netbeans.spi.project.support.GenericSources;
+import org.openide.filesystems.FileObject;
 
 /**
  *
  */
+@ProjectServiceProvider(service = Sources.class, projectType = RustProject.TYPE)
 public class RustSources implements Sources {
 
-    private final RustProject project;
+    private final Project project;
 
-    public RustSources(RustProject project) {
-        this.project = project;
+    public RustSources(Project project) {
+        //WARNING: don't examine the project in the constructor, as per ProjectServiceProvider's JavaDoc
+        this.project = (RustProject) project;
+    }
+
+    private RustProject project() {
+        return project.getLookup().lookup(RustProject.class);
     }
 
     @Override
     public SourceGroup[] getSourceGroups(String type) {
         List<SourceGroup> sourceGroups = new LinkedList<SourceGroup>();
         if (Sources.TYPE_GENERIC.equals(type)) {
-            sourceGroups.add(GenericSources.group(project, project.getProjectDirectory(), "ProjectRoot", ProjectUtils.getInformation(project).getDisplayName(), null, null));
+            // Return the project directory. Required by the Sources interface
+            sourceGroups.add(projectRootFolderAsSourceGroup());
         } else if (RustSourceGroup.NAME.equals(type)) {
-            sourceGroups.add(new RustSourceGroup(project));
+            sourceGroups.add(new RustSourceGroup(project()));
         }
         return sourceGroups.toArray(new SourceGroup[sourceGroups.size()]);
     }
@@ -52,5 +62,12 @@ public class RustSources implements Sources {
 
     @Override
     public void removeChangeListener(ChangeListener listener) {
+    }
+
+    private SourceGroup projectRootFolderAsSourceGroup() {
+        FileObject rootFolder = project.getProjectDirectory();
+        String name = "ProjectRoot";
+        String displayName = ProjectUtils.getInformation(project).getDisplayName();
+        return GenericSources.group(project, rootFolder, name, displayName, null, null);
     }
 }

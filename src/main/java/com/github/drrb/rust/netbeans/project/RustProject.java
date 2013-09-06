@@ -18,11 +18,11 @@ package com.github.drrb.rust.netbeans.project;
 
 import java.beans.PropertyChangeListener;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.support.LookupProviderSupport;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
@@ -40,9 +40,11 @@ import org.openide.util.lookup.Lookups;
  */
 public class RustProject implements Project {
 
+    public static final String TYPE = "com-github-drrb-rust-netbeans-project";
+    // Has things in it that are registered as @ProjectServiceProviders (e.g. Sources implementations)
+    private static final String PROJECT_LOOKUP_NAME = String.format("Projects/%s/Lookup", TYPE);
     @StaticResource
     public static final String RUST_PROJECT_ICON = "com/github/drrb/rust/netbeans/rust-icon_16x16.png";
-    public static final String TYPE = "com-github-drrb-rust-netbeans-project";
     private final FileObject projectDirectory;
     private final ProjectState state;
 
@@ -58,12 +60,14 @@ public class RustProject implements Project {
 
     @Override
     public Lookup getLookup() {
-        return Lookups.fixed(
+        Lookup baseLookup = Lookups.fixed(
                 this, // So people can cast it without casting it, you know?
                 new Info(),
                 new LogicalView(),
                 new RustProjectActionProvider(),
-                new RustSources(this));
+                LookupProviderSupport.createSourcesMerger());
+        // Provides Mergers in the base lookup with implementations from the Projects/TYPE/Lookup lookup (e.g. Sources implementations)
+        return LookupProviderSupport.createCompositeLookup(baseLookup, Lookups.forPath(PROJECT_LOOKUP_NAME));
     }
 
     private class Info implements ProjectInformation {
@@ -80,7 +84,7 @@ public class RustProject implements Project {
 
         @Override
         public Icon getIcon() {
-            return new ImageIcon(ImageUtilities.loadImage(RUST_PROJECT_ICON));
+            return ImageUtilities.loadImageIcon(RUST_PROJECT_ICON, false);
         }
 
         @Override

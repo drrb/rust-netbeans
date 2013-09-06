@@ -40,9 +40,7 @@ public class SourcesNodeFactory implements NodeFactory {
 
     @Override
     public NodeList<?> createNodes(Project project) {
-        RustProject p = project.getLookup().lookup(RustProject.class);
-        assert p != null; //TODO: maybe we'd be better off just casting it, or is there something else going on in the line above?
-        return new SourcesNodeList(p);
+        return new SourcesNodeList((RustProject) project);
     }
 
     private static class SourcesNodeList extends AbstractNodeList<SourceGroup> {
@@ -55,8 +53,8 @@ public class SourcesNodeFactory implements NodeFactory {
 
         @Override
         public List<SourceGroup> keys() {
-            Sources srcs = ProjectUtils.getSources(project);
-            SourceGroup[] rustGroup = srcs.getSourceGroups("rust");
+            Sources sources = ProjectUtils.getSources(project);
+            SourceGroup[] rustGroup = sources.getSourceGroups(RustSourceGroup.NAME);
             return Arrays.asList(rustGroup);
         }
 
