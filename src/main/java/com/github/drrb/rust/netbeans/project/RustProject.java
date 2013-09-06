@@ -67,7 +67,7 @@ public class RustProject implements Project {
                 new RustProjectActionProvider(),
                 LookupProviderSupport.createSourcesMerger());
         // Provides Mergers in the base lookup with implementations from the Projects/TYPE/Lookup lookup (e.g. Sources implementations)
-        return LookupProviderSupport.createCompositeLookup(baseLookup, Lookups.forPath(PROJECT_LOOKUP_NAME));
+        return LookupProviderSupport.createCompositeLookup(baseLookup, PROJECT_LOOKUP_NAME);
     }
 
     private class Info implements ProjectInformation {
