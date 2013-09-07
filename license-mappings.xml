@@ -413,4 +413,14 @@
         <artifactId>org-netbeans-modules-jellytools-ide</artifactId>
         <license>GPL v2</license>
     </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-editor-actions</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-editor-fold-nbui</artifactId>
+	<license>GPL v2</license>
+    </artifact>
 </license-lookup>
