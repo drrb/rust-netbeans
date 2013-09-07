@@ -1,8 +1,14 @@
 # Rust NetBeans Plugin
 
-Rust support for NetBeans
+This is a NetBeans plugin that adds support for [Rust](http://www.rust-lang.org)
 
 [![Build Status](https://travis-ci.org/drrb/rust-netbeans.png?branch=master)](https://travis-ci.org/drrb/rust-netbeans)
+
+## Requirements
+
+Needs NetBeans 7.4.x or above, and as such needs Java 7+
+
+## Features
 
 So far, it includes
 
@@ -19,7 +25,7 @@ So far, it includes
 * brace matching
 * comment toggling
 
-## Building
+## Installing
 
 First, clone and build the pluging.
 
