@@ -1,5 +1,6 @@
 language: java
+
+# From 7.4, NetBeans needs Java 7
 jdk:
     - oraclejdk7
     - openjdk7
-    - openjdk6
