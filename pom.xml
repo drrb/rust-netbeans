@@ -25,7 +25,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <netbeans.version>RELEASE731</netbeans.version>
         <netbeans.run.params.ide/>
-        <netbeans.run.params>${netbeans.run.params.ide}</netbeans.run.params>
+        <netbeans.run.params>${netbeans.run.params.ide} -J-Dnetbeans.full.hack=true</netbeans.run.params>
     </properties>
 
     <repositories>
