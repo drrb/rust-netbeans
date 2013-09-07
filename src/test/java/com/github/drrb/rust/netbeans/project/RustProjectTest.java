@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import static com.github.drrb.rust.netbeans.test.TestData.getData;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,20 +107,15 @@ public class RustProjectTest {
         assertThat(projectNode, hasChildren("Sources"));
     }
 
-    protected File getData(String path) {
-        File dataDir = new File("target", "test-data").getAbsoluteFile();
-        File dataFile = new File(dataDir, path);
-        return dataFile;
-    }
-
     private Matcher<Node> hasChildren(String... children) {
         return new HasChildren(children);
     }
 
     private static class HasChildren extends TypeSafeMatcher<Node> {
+
         private final String[] children;
 
-        public HasChildren(String[] children) {
+        HasChildren(String[] children) {
             this.children = children.clone();
         }
 

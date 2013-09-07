@@ -453,4 +453,64 @@
 	<artifactId>resolver-1.2</artifactId>
 	<license>GPL v2</license>
     </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-apache-tools-ant-module</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-api-java</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-libs-javacapi</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-classfile</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-editor-indent-project</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-java-lexer</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-java-platform</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-java-project</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.api</groupId>
+	<artifactId>org-netbeans-modules-java-source</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.external</groupId>
+	<artifactId>nb-javac-api</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.modules</groupId>
+	<artifactId>org-netbeans-modules-java-preprocessorbridge</artifactId>
+	<license>GPL v2</license>
+    </artifact>
+    <artifact>
+	<groupId>org.netbeans.modules</groupId>
+	<artifactId>org-netbeans-modules-options-java</artifactId>
+	<license>GPL v2</license>
+    </artifact>
 </license-lookup>

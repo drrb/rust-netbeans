@@ -24,6 +24,7 @@ import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.support.LookupProviderSupport;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
+import org.netbeans.spi.project.ui.support.UILookupMergerSupport;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -65,7 +66,11 @@ public class RustProject implements Project {
                 new Info(),
                 new LogicalView(),
                 new RustProjectActionProvider(),
-                LookupProviderSupport.createSourcesMerger());
+                LookupProviderSupport.createSourcesMerger(), // Gets implementations of Sources from named lookup below
+                //TODO: saw this in Maven project. What does it do?
+                //ProjectClassPathModifier.extenderForModifier(this), // Gets implementations of ProjectClassPathModifierImplementation from the named lookup below
+                UILookupMergerSupport.createProjectOpenHookMerger(null) // Gets implementations of ProjectOpenedHook from named lookup below
+                );
         // Provides Mergers in the base lookup with implementations from the Projects/TYPE/Lookup lookup (e.g. Sources implementations)
         return LookupProviderSupport.createCompositeLookup(baseLookup, PROJECT_LOOKUP_NAME);
     }

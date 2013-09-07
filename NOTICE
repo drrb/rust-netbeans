@@ -21,13 +21,14 @@ License: TODO
   JUnit under Common Public License Version 1.0
   Lucene Core under Apache 2
   Maven definition for jemmy-2.3.1.1.jar - external part of NetBeans module. under GPL v2
+  Maven definition for nb-javac-api.jar - external part of NetBeans module. under GPL v2
   Maven definition for resolver-1.2.jar - external part of NetBeans module. under GPL v2
-  Maven definition for swing-layout-1.0.4.jar - external part of NetBeans module. under GPL v2
   Mockito under The MIT License
   Objenesis under Apache 2
+  org-apache-tools-ant-module under GPL v2
   org-apache-xml-resolver under GPL v2
-  org-jdesktop-layout under GPL v2
   org-netbeans-api-annotations-common under GPL v2
+  org-netbeans-api-java under GPL v2
   org-netbeans-api-java-classpath under GPL v2
   org-netbeans-api-progress under GPL v2
   org-netbeans-api-search under GPL v2
@@ -40,8 +41,10 @@ License: TODO
   org-netbeans-core-startup under GPL v2
   org-netbeans-core-ui under GPL v2
   org-netbeans-insane under GPL v2
+  org-netbeans-libs-javacapi under GPL v2
   org-netbeans-libs-junit4 under GPL v2
   org-netbeans-libs-lucene under GPL v2
+  org-netbeans-modules-classfile under GPL v2
   org-netbeans-modules-csl-api under GPL v2
   org-netbeans-modules-diff under GPL v2
   org-netbeans-modules-editor under GPL v2
@@ -56,12 +59,18 @@ License: TODO
   org-netbeans-modules-editor-fold-nbui under GPL v2
   org-netbeans-modules-editor-guards under GPL v2
   org-netbeans-modules-editor-indent under GPL v2
+  org-netbeans-modules-editor-indent-project under GPL v2
   org-netbeans-modules-editor-lib under GPL v2
   org-netbeans-modules-editor-lib2 under GPL v2
   org-netbeans-modules-editor-mimelookup under GPL v2
   org-netbeans-modules-editor-settings under GPL v2
   org-netbeans-modules-editor-settings-storage under GPL v2
   org-netbeans-modules-editor-util under GPL v2
+  org-netbeans-modules-java-lexer under GPL v2
+  org-netbeans-modules-java-platform under GPL v2
+  org-netbeans-modules-java-preprocessorbridge under GPL v2
+  org-netbeans-modules-java-project under GPL v2
+  org-netbeans-modules-java-source under GPL v2
   org-netbeans-modules-jellytools-ide under GPL v2
   org-netbeans-modules-jellytools-platform under GPL v2
   org-netbeans-modules-jemmy under GPL v2
@@ -72,6 +81,7 @@ License: TODO
   org-netbeans-modules-nbjunit under GPL v2
   org-netbeans-modules-options-api under GPL v2
   org-netbeans-modules-options-editor under GPL v2
+  org-netbeans-modules-options-java under GPL v2
   org-netbeans-modules-options-keymap under GPL v2
   org-netbeans-modules-parsing-api under GPL v2
   org-netbeans-modules-parsing-lucene under GPL v2

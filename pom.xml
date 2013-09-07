@@ -204,12 +204,18 @@
             <version>${netbeans.version}</version>
         </dependency>
         -->
-        <!-- I get the impression we'll need this to properly implement classpath stuff -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-project</artifactId>
             <version>${netbeans.version}</version>
-        </dependency>-->
+        </dependency>
+
+        <!-- Classpath -->
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-api-java-classpath</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
 
         <!-- Options Panel -->
         <dependency>

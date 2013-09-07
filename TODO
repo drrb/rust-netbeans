@@ -11,6 +11,7 @@ features:
         - Run tests
         - Compile and run
         - Rustpkg stuff
+	- Debugger http://netbeans.dzone.com/how-reuse-netbeans-debugger
     project:
         - 'New Rust project'
         - Logical Rustpgk view

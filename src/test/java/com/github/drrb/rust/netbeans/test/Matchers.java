@@ -35,6 +35,21 @@ import org.netbeans.modules.csl.api.StructureItem;
  */
 public class Matchers extends org.hamcrest.Matchers {
 
+    public static Matcher<String> matchesRegex(final String regex) {
+        return new TypeSafeMatcher<String>() {
+
+            @Override
+            public boolean matchesSafely(String item) {
+                return item.matches(regex);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("string matching regex ").appendValue(regex);
+            }
+        };
+    }
+
     public static Matcher<Iterable<? extends Object>> empty() {
         return new TypeSafeMatcher<Iterable<? extends Object>>() {
 
