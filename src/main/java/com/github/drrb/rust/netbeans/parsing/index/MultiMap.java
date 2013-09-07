@@ -28,7 +28,7 @@ import java.util.Map;
 public class MultiMap<K, V> {
 
     @SuppressWarnings("CollectionWithoutInitialCapacity")
-    private final Map<K, List<V>> map = new HashMap<K, List<V>>();
+    private final Map<K, List<V>> map = new HashMap<>();
 
     public List<V> get(K key) {
         List<V> values = map.get(key);
@@ -42,7 +42,7 @@ public class MultiMap<K, V> {
     public void add(K key, V value) {
         List<V> values = map.get(key);
         if (values == null) {
-            values = new LinkedList<V>();
+            values = new LinkedList<>();
             map.put(key, values);
         }
         values.add(value);

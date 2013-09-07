@@ -56,7 +56,7 @@ public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
     }
 
     private static Map<Integer, RustTokenId> buildTokenMap() {
-        Map<Integer, RustTokenId> tokens = new HashMap<Integer, RustTokenId>(RustTokenId.values().length);
+        Map<Integer, RustTokenId> tokens = new HashMap<>(RustTokenId.values().length);
         for (RustTokenId rustTokenId : RustTokenId.values()) {
             tokens.put(rustTokenId.antlrTokenType(), rustTokenId);
         }

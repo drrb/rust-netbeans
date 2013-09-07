@@ -54,7 +54,7 @@ public class RustCodeCompletionHandler implements CodeCompletionHandler {
     @Override
     public CodeCompletionResult complete(CodeCompletionContext context) {
         String prefix = context.getPrefix();
-        List<CompletionProposal> proposals = new LinkedList<CompletionProposal>();
+        List<CompletionProposal> proposals = new LinkedList<>();
 
         NetbeansRustParserResult parseResult = (NetbeansRustParserResult) context.getParserResult();
         RustSourceIndex index = parseResult.getIndex();
@@ -62,8 +62,8 @@ public class RustCodeCompletionHandler implements CodeCompletionHandler {
             String functionName = function.getName();
             if (functionName.startsWith(prefix)) {
                 RustDocComment docComment = function.getDocComment();
-                RustElementHandle element =
-                        RustElementHandle.with(functionName, function.getOffsetRange(), ElementKind.METHOD)
+                RustElementHandle element
+                        = RustElementHandle.with(functionName, function.getOffsetRange(), ElementKind.METHOD)
                         .withModifier(Modifier.STATIC)
                         .withDocumentation(forDocComment(docComment))
                         .build();
@@ -75,8 +75,8 @@ public class RustCodeCompletionHandler implements CodeCompletionHandler {
             String structName = struct.getName();
             if (structName.startsWith(prefix)) {
                 RustDocComment docComment = struct.getDocComment();
-                RustElementHandle element =
-                        RustElementHandle.with(structName, struct.getOffsetRange(), ElementKind.CLASS)
+                RustElementHandle element
+                        = RustElementHandle.with(structName, struct.getOffsetRange(), ElementKind.CLASS)
                         .withDocumentation(forDocComment(docComment))
                         .build();
                 proposals.add(RustCompletionProposal.forElement(element));

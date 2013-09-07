@@ -27,7 +27,7 @@ import org.netbeans.modules.csl.api.OffsetRange;
 public class RangeMap<T> {
 
     @SuppressWarnings("CollectionWithoutInitialCapacity")
-    private final Map<OffsetRange, T> items = new HashMap<OffsetRange, T>();
+    private final Map<OffsetRange, T> items = new HashMap<>();
 
     public void put(OffsetRange offsetRange, T item) {
         items.put(offsetRange, item);

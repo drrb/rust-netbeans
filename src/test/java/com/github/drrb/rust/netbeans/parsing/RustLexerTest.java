@@ -87,7 +87,7 @@ public class RustLexerTest {
 
     private List<Token> tokenize(CharSequence input) {
         RustLexer lexer = new RustLexer(new ANTLRInputStream(input.toString()));
-        List<Token> tokens = new LinkedList<Token>();
+        List<Token> tokens = new LinkedList<>();
         Token token;
         do {
             token = lexer.nextToken();

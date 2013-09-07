@@ -26,14 +26,14 @@ import java.util.List;
  */
 public class RustSourceIndex {
 
-    private final List<RustStruct> structs = new LinkedList<RustStruct>();
-    private final List<RustImpl> impls = new LinkedList<RustImpl>();
-    private final List<RustTrait> traits = new LinkedList<RustTrait>();
-    private final List<RustTraitImpl> traitImpls = new LinkedList<RustTraitImpl>();
-    private final List<RustEnum> enums = new LinkedList<RustEnum>();
-    private final List<RustFunction> functions = new LinkedList<RustFunction>();
-    private final RangeMap<RustFunction> functionRanges = new RangeMap<RustFunction>();
-    private final List<RustDocComment> docComments = new LinkedList<RustDocComment>();
+    private final List<RustStruct> structs = new LinkedList<>();
+    private final List<RustImpl> impls = new LinkedList<>();
+    private final List<RustTrait> traits = new LinkedList<>();
+    private final List<RustTraitImpl> traitImpls = new LinkedList<>();
+    private final List<RustEnum> enums = new LinkedList<>();
+    private final List<RustFunction> functions = new LinkedList<>();
+    private final RangeMap<RustFunction> functionRanges = new RangeMap<>();
+    private final List<RustDocComment> docComments = new LinkedList<>();
 
     public List<RustFunction> getFunctions() {
         return Collections.unmodifiableList(functions);

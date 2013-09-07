@@ -54,7 +54,7 @@ public class NetbeansRustParser extends Parser {
     public void parse(final Snapshot snapshot, Task task, SourceModificationEvent event) {
         this.snapshot = snapshot;
         this.parser = createParser(snapshot);
-        this.syntaxErrors = new LinkedList<SyntaxError>();
+        this.syntaxErrors = new LinkedList<>();
         this.parser.addErrorListener(new BaseErrorListener() {
             @Override
             public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String message, RecognitionException e) {
@@ -124,7 +124,7 @@ public class NetbeansRustParser extends Parser {
             super(snapshot);
             this.parser = parser;
             this.ast = ast;
-            this.syntaxErrors = new ArrayList<SyntaxError>(syntaxErrors);
+            this.syntaxErrors = new ArrayList<>(syntaxErrors);
         }
 
         public RustParser getRustParser() throws ParseException {

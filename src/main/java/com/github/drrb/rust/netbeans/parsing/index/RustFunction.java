@@ -32,8 +32,8 @@ public class RustFunction {
     private final OffsetRange offsetRange;
     private final RustDocComment docComment;
     private final RustFunctionBody body;
-    private final Map<String, RustFunctionParameterName> functionParameterNamesByName = new HashMap<String, RustFunctionParameterName>();
-    private final RangeMap<RustFunctionParameterName> functionParameterNameRanges = new RangeMap<RustFunctionParameterName>();
+    private final Map<String, RustFunctionParameterName> functionParameterNamesByName = new HashMap<>();
+    private final RangeMap<RustFunctionParameterName> functionParameterNameRanges = new RangeMap<>();
 
     RustFunction(String name, OffsetRange offsetRange, RustDocComment docComment, RustFunctionBody body, List<RustFunctionParameterName> parameterNames) {
         this.name = name;
@@ -80,7 +80,7 @@ public class RustFunction {
         private OffsetRange offsetRange;
         private RustFunctionBody body;
         private RustDocComment docComment;
-        private List<RustFunctionParameterName> parameterNames = new LinkedList<RustFunctionParameterName>();
+        private List<RustFunctionParameterName> parameterNames = new LinkedList<>();
 
         RustFunction build() {
             return new RustFunction(name, offsetRange, docComment, body, parameterNames);

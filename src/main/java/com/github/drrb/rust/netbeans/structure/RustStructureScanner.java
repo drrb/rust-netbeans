@@ -53,7 +53,7 @@ public class RustStructureScanner implements StructureScanner {
 
     @Override
     public List<? extends StructureItem> scan(ParserResult info) {
-        List<StructureItem> structureItems = new LinkedList<StructureItem>();
+        List<StructureItem> structureItems = new LinkedList<>();
 
         NetbeansRustParserResult parseResult = (NetbeansRustParserResult) info;
         RustSourceIndex index = parseResult.getIndex();
@@ -84,7 +84,7 @@ public class RustStructureScanner implements StructureScanner {
 
     @Override
     public Map<String, List<OffsetRange>> folds(ParserResult info) {
-        MultiMap<String, OffsetRange> folds = new MultiMap<String, OffsetRange>();
+        MultiMap<String, OffsetRange> folds = new MultiMap<>();
 
         NetbeansRustParserResult parseResult = (NetbeansRustParserResult) info;
         RustSourceIndex index = parseResult.getIndex();

@@ -40,7 +40,7 @@ public class RustIndexSearcher implements IndexSearcher {
     @Override
     public Set<? extends IndexSearcher.Descriptor> getTypes(Project project, String textForQuery, QuerySupport.Kind searchType, IndexSearcher.Helper helper) {
         Logger.getLogger(RustIndexSearcher.class.getName()).log(Level.WARNING, "RustIndexSearcher.getTypes");
-        Set<RustIndexSearchResult> results = new HashSet<RustIndexSearchResult>();
+        Set<RustIndexSearchResult> results = new HashSet<>();
         Collection<FileObject> roots = QuerySupport.findRoots(project, null, null, null);
         try {
             QuerySupport querySupport = QuerySupport.forRoots("rust", 0, (FileObject[]) roots.toArray());

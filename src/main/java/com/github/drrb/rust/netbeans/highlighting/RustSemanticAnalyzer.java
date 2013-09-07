@@ -42,7 +42,7 @@ import org.netbeans.modules.parsing.spi.SchedulerEvent;
 public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserResult> {
 
     private final AtomicBoolean cancelled = new AtomicBoolean();
-    private final Collection<Highlight> highlights = new LinkedList<Highlight>();
+    private final Collection<Highlight> highlights = new LinkedList<>();
 
     @Override
     public void run(NetbeansRustParserResult result, SchedulerEvent event) {
@@ -76,7 +76,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
     }
 
     private Map<OffsetRange, Set<ColoringAttributes>> mapHighlights(Collection<Highlight> highlights) {
-        Map<OffsetRange, Set<ColoringAttributes>> highlightsMap = new HashMap<OffsetRange, Set<ColoringAttributes>>(highlights.size());
+        Map<OffsetRange, Set<ColoringAttributes>> highlightsMap = new HashMap<>(highlights.size());
         for (Highlight highlight : highlights) {
             highlightsMap.put(highlight.offsetRange, highlight.coloringAttributes);
         }
@@ -101,9 +101,9 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
     private class HighlightCollectingVisitor extends CollectingVisitor<Highlight> {
 
         private List<Highlight> highlight(ParserRuleContext identifier, ColoringAttributes firstColoringAttribute, ColoringAttributes... otherColoringAttributes) {
-            LinkedList<Highlight> highlightList = new LinkedList<Highlight>();
+            LinkedList<Highlight> highlightList = new LinkedList<>();
             if (identifier != null) {
-                return new LinkedList<Highlight>(Collections.singletonList(new Highlight(identifier, EnumSet.of(firstColoringAttribute, otherColoringAttributes))));
+                return new LinkedList<>(Collections.singletonList(new Highlight(identifier, EnumSet.of(firstColoringAttribute, otherColoringAttributes))));
             }
             return highlightList;
         }
@@ -148,7 +148,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
             List<Highlight> implNameHighlight = ctx.ty().accept(new CollectingVisitor<Highlight>() {
                 @Override
                 public List<Highlight> visitNon_global_path(RustParser.Non_global_pathContext ctx) {
-                    List<Highlight> highlights = new LinkedList<Highlight>();
+                    List<Highlight> highlights = new LinkedList<>();
                     for (RustParser.IdentContext identifier : ctx.ident()) {
                         highlights.add(new Highlight(identifier, CLASS_SET));
                     }
@@ -166,7 +166,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
                     return ctx.accept(new CollectingVisitor<Highlight>() {
                         @Override
                         public List<Highlight> visitNon_global_path(RustParser.Non_global_pathContext ctx) {
-                            List<Highlight> highlights = new LinkedList<Highlight>();
+                            List<Highlight> highlights = new LinkedList<>();
                             for (RustParser.IdentContext identifier : ctx.ident()) {
                                 highlights.add(new Highlight(identifier, CLASS_SET));
                             }

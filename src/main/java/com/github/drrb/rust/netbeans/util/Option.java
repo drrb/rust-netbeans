@@ -24,7 +24,7 @@ import java.util.Iterator;
  */
 public class Option<T> implements Iterable<T> {
 
-    public static final Option<?> NONE = new Option<Void>(null);
+    public static final Option<?> NONE = new Option<>(null);
 
     @SuppressWarnings("unchecked")
     public static <T> Option<T> none() {
@@ -32,7 +32,7 @@ public class Option<T> implements Iterable<T> {
     }
 
     public static <T> Option<T> is(T value) {
-        return new Option<T>(value);
+        return new Option<>(value);
     }
 
     public static <T> Option<T> isIfNotNull(T value) {

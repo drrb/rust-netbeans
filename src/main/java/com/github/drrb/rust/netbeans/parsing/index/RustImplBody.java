@@ -50,7 +50,7 @@ public class RustImplBody {
 
         private OffsetRange offsetRange;
         private RustImplMethodBody body;
-        private List<RustImplMethod> methods = new LinkedList<RustImplMethod>();
+        private final List<RustImplMethod> methods = new LinkedList<>();
 
         RustImplBody build() {
             return new RustImplBody(offsetRange, methods);

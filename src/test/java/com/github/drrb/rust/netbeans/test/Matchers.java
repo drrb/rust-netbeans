@@ -63,7 +63,7 @@ public class Matchers extends org.hamcrest.Matchers {
     }
 
     public static <K> MapMatcher<K> containsKey(K key) {
-        return new MapMatcher<K>(key);
+        return new MapMatcher<>(key);
     }
 
     public static class MapMatcher<K> extends TypeSafeMatcher<Map<K, ?>> {

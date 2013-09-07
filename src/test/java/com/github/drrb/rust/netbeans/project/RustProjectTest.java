@@ -126,7 +126,7 @@ public class RustProjectTest {
         @Override
         public boolean matchesSafely(Node node) {
             Node[] childNodes = node.getChildren().getNodes(true); // 'true' loads the children if they're lazily loading (otherwise they're displayed as "Please Wait..."
-            List<String> names = new ArrayList<String>(childNodes.length);
+            List<String> names = new ArrayList<>(childNodes.length);
             for (Node child : childNodes) {
                 names.add(child.getDisplayName());
             }

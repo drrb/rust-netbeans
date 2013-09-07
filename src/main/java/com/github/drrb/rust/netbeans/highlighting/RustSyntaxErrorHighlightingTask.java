@@ -79,7 +79,7 @@ public class RustSyntaxErrorHighlightingTask extends ParserResultTask<NetbeansRu
 
     protected List<ErrorDescription> getErrors(NetbeansRustParserResult parseResult, Document document) {
         List<SyntaxError> syntaxErrors = parseResult.getSyntaxErrors();
-        List<ErrorDescription> errors = new LinkedList<ErrorDescription>();
+        List<ErrorDescription> errors = new LinkedList<>();
         for (SyntaxError syntaxError : syntaxErrors) {
             String message = syntaxError.getMessage();
 

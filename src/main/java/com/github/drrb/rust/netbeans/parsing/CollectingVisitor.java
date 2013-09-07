@@ -26,7 +26,7 @@ public class CollectingVisitor<T> extends RustBaseVisitor<List<T>> {
 
     @Override
     protected List<T> defaultResult() {
-        return new LinkedList<T>();
+        return new LinkedList<>();
     }
 
     @Override

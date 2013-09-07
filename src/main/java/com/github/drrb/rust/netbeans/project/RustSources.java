@@ -37,7 +37,7 @@ public class RustSources implements Sources {
 
     public RustSources(Project project) {
         //WARNING: don't examine the project in the constructor, as per ProjectServiceProvider's JavaDoc
-        this.project = (RustProject) project;
+        this.project = project;
     }
 
     private RustProject project() {
@@ -46,7 +46,7 @@ public class RustSources implements Sources {
 
     @Override
     public SourceGroup[] getSourceGroups(String type) {
-        List<SourceGroup> sourceGroups = new LinkedList<SourceGroup>();
+        List<SourceGroup> sourceGroups = new LinkedList<>();
         if (Sources.TYPE_GENERIC.equals(type)) {
             // Return the project directory. Required by the Sources interface
             sourceGroups.add(projectRootFolderAsSourceGroup());

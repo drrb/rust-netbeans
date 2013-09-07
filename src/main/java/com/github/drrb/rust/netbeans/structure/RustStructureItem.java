@@ -38,7 +38,7 @@ public class RustStructureItem implements StructureItem.CollapsedDefault {
     private final OffsetRange offsetRange;
     private final ElementKind kind;
     private final Set<Modifier> modifiers;
-    private final List<RustStructureItem> nestedItems = new LinkedList<RustStructureItem>();
+    private final List<RustStructureItem> nestedItems = new LinkedList<>();
 
     public RustStructureItem(String name, OffsetRange offsetRange, ElementKind kind) {
         this.name = name;

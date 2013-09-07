@@ -28,12 +28,11 @@ import org.netbeans.modules.csl.api.OffsetRange;
  */
 public class RustImplMethod {
 
-
     private final String name;
     private final OffsetRange offsetRange;
     private final RustImplMethodBody body;
-    private final Map<String, RustImplMethodParameterName> functionParameterNamesByName = new HashMap<String, RustImplMethodParameterName>();
-    private final RangeMap<RustImplMethodParameterName> functionParameterNameRanges = new RangeMap<RustImplMethodParameterName>();
+    private final Map<String, RustImplMethodParameterName> functionParameterNamesByName = new HashMap<>();
+    private final RangeMap<RustImplMethodParameterName> functionParameterNameRanges = new RangeMap<>();
 
     RustImplMethod(String name, OffsetRange offsetRange, RustImplMethodBody body, List<RustImplMethodParameterName> parameterNames) {
         this.name = name;
@@ -74,7 +73,7 @@ public class RustImplMethod {
         private String name;
         private OffsetRange offsetRange;
         private RustImplMethodBody body;
-        private List<RustImplMethodParameterName> parameterNames = new LinkedList<RustImplMethodParameterName>();
+        private final List<RustImplMethodParameterName> parameterNames = new LinkedList<>();
 
         RustImplMethod build() {
             return new RustImplMethod(name, offsetRange, body, parameterNames);

@@ -26,8 +26,8 @@ import org.netbeans.modules.csl.api.OffsetRange;
  */
 public class RustFunctionBody {
 
-    private final MultiMap<String, RustLocalVariableIdentifier> localVariableIdentifiersByName = new MultiMap<String, RustLocalVariableIdentifier>();
-    private final RangeMap<RustLocalVariableIdentifier> localVariableIdentifiersByOffset = new RangeMap<RustLocalVariableIdentifier>();
+    private final MultiMap<String, RustLocalVariableIdentifier> localVariableIdentifiersByName = new MultiMap<>();
+    private final RangeMap<RustLocalVariableIdentifier> localVariableIdentifiersByOffset = new RangeMap<>();
     private final String text;
     private final OffsetRange offsetRange;
 
@@ -58,7 +58,7 @@ public class RustFunctionBody {
 
     public static class Builder {
 
-        private final List<RustLocalVariableIdentifier> localVariableIdentifiers = new LinkedList<RustLocalVariableIdentifier>();
+        private final List<RustLocalVariableIdentifier> localVariableIdentifiers = new LinkedList<>();
         private String text;
         private OffsetRange offsetRange;
 

@@ -38,7 +38,7 @@ import org.netbeans.modules.parsing.spi.SchedulerEvent;
  */
 public class RustOccurrencesFinder extends OccurrencesFinder<NetbeansRustParserResult> {
 
-    private final Map<OffsetRange, ColoringAttributes> occurrences = new HashMap<OffsetRange, ColoringAttributes>();
+    private final Map<OffsetRange, ColoringAttributes> occurrences = new HashMap<>();
     private int caretPosition;
 
     @Override
@@ -85,7 +85,7 @@ public class RustOccurrencesFinder extends OccurrencesFinder<NetbeansRustParserR
 
     @Override
     public Map<OffsetRange, ColoringAttributes> getOccurrences() {
-        return new HashMap<OffsetRange, ColoringAttributes>(occurrences);
+        return new HashMap<>(occurrences);
     }
 
     @Override

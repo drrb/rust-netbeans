@@ -50,7 +50,7 @@ public class RustDocumentFormatter {
     public void format() {
         final Snapshot snapshot = parseResult.getSnapshot();
         try {
-            List<Delimiter> delimiters = new LinkedList<Delimiter>();
+            List<Delimiter> delimiters = new LinkedList<>();
             TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
             tokenSequence.move(0);
 

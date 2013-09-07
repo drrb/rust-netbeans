@@ -44,7 +44,7 @@ public class RustIndexer extends EmbeddingIndexer {
             NetbeansRustParserResult parseResult = (NetbeansRustParserResult) parserResult;
             IndexingSupport indexingSupport = IndexingSupport.getInstance(context);
             RustSourceIndex index = parseResult.getIndex();
-            List<IndexDocument> indexDocuments = new LinkedList<IndexDocument>();
+            List<IndexDocument> indexDocuments = new LinkedList<>();
             List<RustStruct> structs = index.getStructs();
             for (RustStruct struct : structs) {
                 IndexDocument structDocument = indexingSupport.createDocument(indexable);

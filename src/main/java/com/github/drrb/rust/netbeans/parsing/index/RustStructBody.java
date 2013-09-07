@@ -49,7 +49,7 @@ public class RustStructBody {
     public static class Builder {
 
         private OffsetRange offsetRange;
-        private List<RustStructField> fields = new LinkedList<RustStructField>();
+        private List<RustStructField> fields = new LinkedList<>();
 
         RustStructBody build() {
             return new RustStructBody(offsetRange, fields);
