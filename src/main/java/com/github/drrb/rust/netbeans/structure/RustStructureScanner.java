@@ -32,8 +32,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.antlr.v4.runtime.misc.MultiMap;
-import static org.netbeans.modules.csl.api.ElementKind.*;
-import static org.netbeans.modules.csl.api.Modifier.*;
+import org.netbeans.api.editor.fold.FoldType;
+import static org.netbeans.modules.csl.api.ElementKind.CLASS;
+import static org.netbeans.modules.csl.api.ElementKind.FIELD;
+import static org.netbeans.modules.csl.api.ElementKind.INTERFACE;
+import static org.netbeans.modules.csl.api.ElementKind.METHOD;
+import static org.netbeans.modules.csl.api.Modifier.STATIC;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.StructureItem;
 import org.netbeans.modules.csl.api.StructureScanner;
@@ -44,8 +48,8 @@ import org.netbeans.modules.csl.spi.ParserResult;
  */
 public class RustStructureScanner implements StructureScanner {
 
-    private static final String CODEBLOCKS_FOLD_TYPE = "codeblocks";
-    private static final String COMMENTS_FOLD_TYPE = "comments";
+    private static final String CODEBLOCKS_FOLD_TYPE = FoldType.CODE_BLOCK.code();
+    private static final String DOC_COMMENTS_FOLD_TYPE = FoldType.DOCUMENTATION.code();
 
     @Override
     public List<? extends StructureItem> scan(ParserResult info) {
@@ -127,7 +131,7 @@ public class RustStructureScanner implements StructureScanner {
         List<RustDocComment> rustdocs = index.getDocComments();
         for (RustDocComment docComment : rustdocs) {
             if (docComment.getText().contains("\n")) { //Don't fold single line comments
-                folds.map(COMMENTS_FOLD_TYPE, docComment.getOffsetRange());
+                folds.map(DOC_COMMENTS_FOLD_TYPE, docComment.getOffsetRange());
             }
         }
 

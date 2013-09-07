@@ -173,6 +173,12 @@
             <artifactId>org-netbeans-modules-editor-util</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!-- For Code Folding -->
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-editor-fold</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
 
         <!-- Project Type -->
         <dependency>

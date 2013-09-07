@@ -56,7 +56,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(27, 44), range(57, 60))));
+        assertThat(folds, containsKey("code-block").mappedToValue(listOf(range(27, 44), range(57, 60))));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(32, 60))));
+        assertThat(folds, containsKey("code-block").mappedToValue(listOf(range(32, 60))));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds.get("codeblocks"), contains(range(12, 115)));
+        assertThat(folds.get("code-block"), contains(range(12, 115)));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(48, 71))));
+        assertThat(folds, containsKey("code-block").mappedToValue(listOf(range(48, 71))));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds.get("codeblocks"), contains(range(26, 87)));
+        assertThat(folds.get("code-block"), contains(range(26, 87)));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds, containsKey("codeblocks").mappedToValue(listOf(range(23, 78))));
+        assertThat(folds, containsKey("code-block").mappedToValue(listOf(range(23, 78))));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds.get("codeblocks"), contains(range(87, 141)));
+        assertThat(folds.get("code-block"), contains(range(87, 141)));
     }
 
     @Test
@@ -174,7 +174,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds.get("codeblocks"), contains(range(47, 85)));
+        assertThat(folds.get("code-block"), contains(range(47, 85)));
     }
 
     @Test
@@ -193,7 +193,7 @@ public class RustStructureScannerTest {
         NetbeansRustParserResult parseResult = source.parse();
         Map<String, List<OffsetRange>> folds = structureScanner.folds(parseResult);
 
-        assertThat(folds, containsKey("comments").mappedToValue(listOf(range(0, 22))));
+        assertThat(folds, containsKey("documentation").mappedToValue(listOf(range(0, 22))));
     }
 
     @Test

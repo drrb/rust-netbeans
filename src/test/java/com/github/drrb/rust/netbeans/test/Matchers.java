@@ -18,7 +18,6 @@ package com.github.drrb.rust.netbeans.test;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
-import java.awt.Image;
 import java.util.Arrays;
 import java.util.Map;
 import javax.swing.ImageIcon;
@@ -36,6 +35,25 @@ import org.netbeans.modules.csl.api.StructureItem;
  */
 public class Matchers extends org.hamcrest.Matchers {
 
+    public static Matcher<Iterable<? extends Object>> empty() {
+        return new TypeSafeMatcher<Iterable<? extends Object>>() {
+
+            @Override
+            public boolean matchesSafely(Iterable<? extends Object> item) {
+                int elements = 0;
+                for (Object element : item) {
+                    elements++;
+                }
+                return elements == 0;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Empty collection");
+            }
+        };
+    }
+
     public static <T> Matcher<Iterable<T>> contains(Matcher<? extends T> elementMatcher) {
         return hasItem(elementMatcher);
     }
@@ -45,7 +63,7 @@ public class Matchers extends org.hamcrest.Matchers {
     }
 
     public static <K> MapMatcher<K> containsKey(K key) {
-        return new MapMatcher(key);
+        return new MapMatcher<K>(key);
     }
 
     public static class MapMatcher<K> extends TypeSafeMatcher<Map<K, ?>> {
