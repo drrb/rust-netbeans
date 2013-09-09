@@ -8,7 +8,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
-    <name>rust-netbeans</name>
+    <name>Rust NetBeans Plugin</name>
     <description>NetBeans plugin to support the Rust language</description>
 
     <licenses>
