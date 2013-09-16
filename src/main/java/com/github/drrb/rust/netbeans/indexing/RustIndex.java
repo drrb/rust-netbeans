@@ -16,50 +16,38 @@
  */
 package com.github.drrb.rust.netbeans.indexing;
 
+import com.github.drrb.rust.netbeans.util.Lists;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.netbeans.modules.parsing.spi.indexing.support.IndexResult;
+import org.netbeans.api.project.Project;
+import org.netbeans.modules.parsing.spi.indexing.Context;
+import org.netbeans.modules.parsing.spi.indexing.support.IndexingSupport;
 import org.netbeans.modules.parsing.spi.indexing.support.QuerySupport;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 
 /**
  *
  */
 public class RustIndex {
 
-    private static final Logger LOGGER = Logger.getLogger(RustIndex.class.getName());
-    private static final RustIndex EMPTY = new RustIndex(null);
-
-    public static RustIndex get(Collection<FileObject> roots) {
+    public RustIndexWriter createIndexWriter(Context context) {
         try {
-            QuerySupport querySupport = QuerySupport.forRoots(RustIndexer.NAME, RustIndexer.VERSION, roots.toArray(new FileObject[roots.size()]));
-            return new RustIndex(querySupport);
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Couldn't get QuerySupport", e);
-            return EMPTY;
+            return new RustIndexWriter(IndexingSupport.getInstance(context));
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return RustIndexWriter.NO_OP;
         }
     }
-    private final QuerySupport querySupport;
 
-    RustIndex(QuerySupport querySupport) {
-        this.querySupport = querySupport;
-    }
-
-    private Collection<? extends IndexResult> query(
-            final String fieldName, final String fieldValue,
-            final QuerySupport.Kind kind, final String... fieldsToLoad) {
-        if (querySupport == null) {
-            return Collections.emptySet();
-        }
+    public RustIndexReader createIndexReader(Project project) {
         try {
-            return querySupport.query(fieldName, fieldValue, kind, fieldsToLoad);
-        } catch (IOException ioe) {
-            LOGGER.log(Level.WARNING, null, ioe);
+            Collection<FileObject> roots = QuerySupport.findRoots(project, null, null, null);
+            QuerySupport querySupport = QuerySupport.forRoots(RustIndexer.NAME, RustIndexer.VERSION, Lists.toArray(roots, FileObject.class));
+            return new RustIndexReader(querySupport);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return RustIndexReader.EMPTY;
         }
-
-        return Collections.emptySet();
     }
 }

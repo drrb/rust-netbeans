@@ -26,6 +26,7 @@ import org.netbeans.modules.csl.api.Modifier;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 
 /**
  *
@@ -65,7 +66,7 @@ public class RustElementHandle implements ElementHandle {
 
     @Override
     public String getIn() {
-        return null;
+        return fileObject.getNameExt();
     }
 
     @Override

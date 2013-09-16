@@ -16,9 +16,9 @@
  */
 package com.github.drrb.rust.netbeans.test;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import org.hamcrest.Description;
@@ -35,9 +35,22 @@ import org.netbeans.modules.csl.api.StructureItem;
  */
 public class Matchers extends org.hamcrest.Matchers {
 
+    public static Matcher<Collection<? extends Object>> hasSize(final int expectedSize) {
+        return new TypeSafeMatcher<Collection<? extends Object>>() {
+            @Override
+            public boolean matchesSafely(Collection<? extends Object> item) {
+                return item.size() == expectedSize;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Collection of size ").appendValue(expectedSize);
+            }
+        };
+    }
+
     public static Matcher<String> matchesRegex(final String regex) {
         return new TypeSafeMatcher<String>() {
-
             @Override
             public boolean matchesSafely(String item) {
                 return item.matches(regex);
@@ -52,7 +65,6 @@ public class Matchers extends org.hamcrest.Matchers {
 
     public static Matcher<Iterable<? extends Object>> empty() {
         return new TypeSafeMatcher<Iterable<? extends Object>>() {
-
             @Override
             public boolean matchesSafely(Iterable<? extends Object> item) {
                 int elements = 0;
@@ -99,13 +111,13 @@ public class Matchers extends org.hamcrest.Matchers {
             description.appendText("Map containing key ").appendValue(expectedKey);
         }
 
-        public <V> Matcher<Map<K, V>> mappedToValue(final V expectedValue) {
-            return new TypeSafeMatcher<Map<K, V>>() {
+        public <V> Matcher<Map<K, ? extends V>> mappedToValueThat(final Matcher<V> expectedValueMatcher) {
+            return new TypeSafeMatcher<Map<K, ? extends V>>() {
                 @Override
-                public boolean matchesSafely(Map<K, V> item) {
+                public boolean matchesSafely(Map<K, ? extends V> item) {
                     if (item.containsKey(expectedKey)) {
                         V actualValue = item.get(expectedKey);
-                        return Objects.equal(actualValue, expectedValue);
+                        return expectedValueMatcher.matches(actualValue);
                     } else {
                         return false;
                     }
@@ -114,9 +126,13 @@ public class Matchers extends org.hamcrest.Matchers {
                 @Override
                 public void describeTo(Description description) {
                     description.appendText("Map with key ").appendValue(expectedKey)
-                            .appendText(" mapped to ").appendValue(expectedValue);
+                            .appendText(" mapped to value that ").appendDescriptionOf(expectedValueMatcher);
                 }
             };
+        }
+
+        public <V> Matcher<Map<K, ? extends V>> mappedToValue(final V expectedValue) {
+            return mappedToValueThat(is(expectedValue));
         }
     }
 

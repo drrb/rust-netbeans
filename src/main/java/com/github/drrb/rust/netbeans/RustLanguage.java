@@ -20,6 +20,7 @@ import com.github.drrb.rust.netbeans.completion.RustCodeCompletionHandler;
 import com.github.drrb.rust.netbeans.formatting.RustFormatter;
 import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
 import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
+import com.github.drrb.rust.netbeans.indexing.RustIndex;
 import com.github.drrb.rust.netbeans.indexing.RustIndexSearcher;
 import com.github.drrb.rust.netbeans.indexing.RustIndexer;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
@@ -28,8 +29,6 @@ import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
 import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
 import java.util.Collections;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.Formatter;
@@ -135,15 +134,15 @@ public class RustLanguage extends DefaultLanguageConfig {
 
     @Override
     public EmbeddingIndexerFactory getIndexerFactory() {
-        Logger.getLogger(RustLanguage.class.getName()).log(Level.WARNING, "RustLanguage.getIndexerFactory())");
         return new RustIndexer.Factory();
     }
 
     @Override
     public IndexSearcher getIndexSearcher() {
-        return new RustIndexSearcher();
+        return new RustIndexSearcher(new RustIndex());
     }
 
+    //TODO: are these required? Is the annotation enough?
     @Override
     public Set<String> getLibraryPathIds() {
         return Collections.singleton(RustLanguage.BOOT_CLASSPATH_ID);

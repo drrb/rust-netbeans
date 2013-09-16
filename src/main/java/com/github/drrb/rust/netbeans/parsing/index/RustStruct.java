@@ -62,26 +62,26 @@ public class RustStruct {
         private RustStructBody body;
         private RustDocComment docComment;
 
-        RustStruct build() {
+        public RustStruct build() {
             return new RustStruct(name, offsetRange, docComment, body);
         }
 
-        Builder setName(String name) {
+        public Builder setName(String name) {
             this.name = name;
             return this;
         }
 
-        Builder setOffsetRange(OffsetRange offsetRange) {
+        public Builder setOffsetRange(OffsetRange offsetRange) {
             this.offsetRange = offsetRange;
             return this;
         }
 
-        Builder setBody(RustStructBody body) {
+        public Builder setBody(RustStructBody body) {
             this.body = body;
             return this;
         }
 
-        Builder setDocComment(RustDocComment docComment) {
+        public Builder setDocComment(RustDocComment docComment) {
             this.docComment = docComment;
             return this;
         }
