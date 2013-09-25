@@ -30,7 +30,7 @@ So far, it includes
 First, clone and build the pluging.
 
 ```console
-git clone https://github.com/drrb/gitsu.git
+git clone https://github.com/drrb/rust-netbeans.git
 mvn package
 ```
 
