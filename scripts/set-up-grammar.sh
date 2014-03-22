@@ -25,7 +25,7 @@ get() {
 
     if [ -z "$ANTLR_DIR" ]
     then
-	wget $ANTLR_URL/$file
+	wget $ANTLR_URL/$file --no-check-certificate
     else
 	cp -v $ANTLR_DIR/$file .
     fi
