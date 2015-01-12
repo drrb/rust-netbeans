@@ -16,31 +16,12 @@
  */
 package com.github.drrb.rust.netbeans;
 
-import com.github.drrb.rust.netbeans.completion.RustCodeCompletionHandler;
-import com.github.drrb.rust.netbeans.formatting.RustFormatter;
-import com.github.drrb.rust.netbeans.highlighting.RustOccurrencesFinder;
-import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
-import com.github.drrb.rust.netbeans.indexing.RustIndex;
-import com.github.drrb.rust.netbeans.indexing.RustIndexSearcher;
-import com.github.drrb.rust.netbeans.indexing.RustIndexer;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
-import com.github.drrb.rust.netbeans.refactor.RustInstantRenamer;
-import com.github.drrb.rust.netbeans.structure.RustStructureScanner;
 import java.util.Collections;
 import java.util.Set;
 import org.netbeans.api.lexer.Language;
-import org.netbeans.modules.csl.api.CodeCompletionHandler;
-import org.netbeans.modules.csl.api.Formatter;
-import org.netbeans.modules.csl.api.IndexSearcher;
-import org.netbeans.modules.csl.api.InstantRenamer;
-import org.netbeans.modules.csl.api.OccurrencesFinder;
-import org.netbeans.modules.csl.api.SemanticAnalyzer;
-import org.netbeans.modules.csl.api.StructureScanner;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
-import org.netbeans.modules.parsing.spi.Parser;
-import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
 import org.netbeans.modules.parsing.spi.indexing.PathRecognizerRegistration;
 import org.openide.util.NbBundle;
 
@@ -80,66 +61,6 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public Language<RustTokenId> getLexerLanguage() {
         return RustTokenId.language();
-    }
-
-    @Override
-    public Parser getParser() {
-        return new NetbeansRustParser();
-    }
-
-    @Override
-    public CodeCompletionHandler getCompletionHandler() {
-        return new RustCodeCompletionHandler();
-    }
-
-    @Override
-    public SemanticAnalyzer<?> getSemanticAnalyzer() {
-        return new RustSemanticAnalyzer();
-    }
-
-    @Override
-    public boolean hasOccurrencesFinder() {
-        return true;
-    }
-
-    @Override
-    public OccurrencesFinder<?> getOccurrencesFinder() {
-        return new RustOccurrencesFinder();
-    }
-
-    @Override
-    public InstantRenamer getInstantRenamer() {
-        return new RustInstantRenamer();
-    }
-
-    @Override
-    public boolean hasStructureScanner() {
-        return true;
-    }
-
-    @Override
-    public StructureScanner getStructureScanner() {
-        return new RustStructureScanner();
-    }
-
-    @Override
-    public boolean hasFormatter() {
-        return true;
-    }
-
-    @Override
-    public Formatter getFormatter() {
-        return new RustFormatter();
-    }
-
-    @Override
-    public EmbeddingIndexerFactory getIndexerFactory() {
-        return new RustIndexer.Factory();
-    }
-
-    @Override
-    public IndexSearcher getIndexSearcher() {
-        return new RustIndexSearcher(new RustIndex());
     }
 
     //TODO: are these required? Is the annotation enough?
