@@ -28,10 +28,10 @@ import org.netbeans.spi.lexer.LexerRestartInfo;
 
 public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
 
-    private static final Map<Integer, RustTokenId> ANLTR_TOKEN_TYPE_TO_NETBANS_TOKEN_TYPE = unmodifiableMap(buildTokenMap());
+    private static final Map<RustToken.Type, RustTokenId> ANLTR_TOKEN_TYPE_TO_NETBANS_TOKEN_TYPE = unmodifiableMap(buildTokenMap());
     private static final Collection<RustTokenId> TOKEN_IDS = unmodifiableSet(EnumSet.allOf(RustTokenId.class));
 
-    public static RustTokenId tokenForAntlrTokenType(int type) {
+    public static RustTokenId tokenIdForNativeTokenType(RustToken.Type type) {
         RustTokenId tokenId = ANLTR_TOKEN_TYPE_TO_NETBANS_TOKEN_TYPE.get(type);
         if (tokenId == null) {
             throw new RuntimeException(String.format("No RustTokenId for ANTLR token type '%s'", type));
@@ -55,10 +55,10 @@ public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
         return RustLanguage.MIME_TYPE;
     }
 
-    private static Map<Integer, RustTokenId> buildTokenMap() {
-        Map<Integer, RustTokenId> tokens = new HashMap<>(RustTokenId.values().length);
+    private static Map<RustToken.Type, RustTokenId> buildTokenMap() {
+        Map<RustToken.Type, RustTokenId> tokens = new HashMap<>(RustTokenId.values().length);
         for (RustTokenId rustTokenId : RustTokenId.values()) {
-            tokens.put(rustTokenId.antlrTokenType(), rustTokenId);
+            tokens.put(rustTokenId.nativeTokenType(), rustTokenId);
         }
         return tokens;
     }

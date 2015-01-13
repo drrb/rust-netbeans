@@ -16,8 +16,10 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import static org.antlr.v4.runtime.IntStream.EOF;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.Lexer;
+import org.netbeans.spi.lexer.LexerInput;
 import org.netbeans.spi.lexer.LexerRestartInfo;
 
 public class NetbeansRustLexer implements Lexer<RustTokenId> {
@@ -25,16 +27,20 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
     private final LexerRestartInfo<RustTokenId> info;
 
     public NetbeansRustLexer(LexerRestartInfo<RustTokenId> info) {
-        AntlrCharStream charStream = new AntlrCharStream(info.input(), "RustEditor");
-        this.lexer = new RustLexer(charStream);
         this.info = info;
+        LexerInput input = info.input();
+        reading: while(input.read() != LexerInput.EOF) {
+            continue reading;
+        }
+        String source = input.readText().toString();
+        this.lexer = new RustLexer(source);
     }
 
     @Override
     public Token<RustTokenId> nextToken() {
-        org.antlr.v4.runtime.Token token = lexer.nextToken();
-        if (token.getType() != RustLexer.EOF) {
-            RustTokenId tokenId = RustLanguageHierarchy.tokenForAntlrTokenType(token.getType());
+        RustToken.ByValue token = lexer.nextToken();
+        if (token.getType() != RustToken.Type.EOF) {
+            RustTokenId tokenId = RustLanguageHierarchy.tokenIdForNativeTokenType(token.getType());
             return info.tokenFactory().createToken(tokenId);
         }
         return null;

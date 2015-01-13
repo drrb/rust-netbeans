@@ -16,104 +16,121 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.junit.Assert;
 import org.junit.Test;
-import org.antlr.v4.runtime.Token;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import static com.github.drrb.rust.netbeans.parsing.RustLexer.*;
+import static com.github.drrb.rust.netbeans.parsing.RustToken.Type.*;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
+import org.junit.After;
 
 public class RustLexerTest {
+    private RustLexer lexer;
+    
+    @After
+    public void cleanUpLexer() {
+        lexer.release();
+    }
 
     @Test
     public void shouldTokenizeWhitespace() {
         String input = "  \t ";
-        Iterator<Token> tokens = tokenize(input).iterator();
+        lexer = new RustLexer(input);
 
-        Assert.assertEquals(RustLexer.WS, tokens.next().getType());
-        assertEquals(Token.EOF, tokens.next().getType());
+        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 0).to(1, 5));
+        assertThat(lexer.nextToken(), isToken(EOF).from(1, 0).to(1, 5));
+    }
+    
+    @Test
+    public void shouldCopeWithBadSource() throws Exception {
+        lexer = new RustLexer("fn main() å\n");
+        while (!lexer.nextToken().isEof()) {   
+        }
     }
 
     @Test
-    public void shouldTokenizeFunction() {
-        StringBuilder function = new StringBuilder();
-        function.append("// Say Hello\n");
-        function.append("fn greet(name: str)   {\n");
-        function.append("    io::println(fmt!(\"Hello, %?\", name));\n");
-        function.append("}\n");
-        Iterator<Token> tokens = tokenize(function).iterator();
-
-        assertThat(tokens.next(), is(token(OTHER_LINE_COMMENT, "// Say Hello")));
-        assertThat(tokens.next(), is(token(WS, "\n")));
-        assertThat(tokens.next(), is(token(FN, "fn")));
-        assertThat(tokens.next(), is(token(WS, " ")));
-        assertThat(tokens.next(), is(token(IDENT, "greet")));
-        assertThat(tokens.next(), is(token(LPAREN, "(")));
-        assertThat(tokens.next(), is(token(IDENT, "name")));
-        assertThat(tokens.next(), is(token(COLON, ":")));
-        assertThat(tokens.next(), is(token(WS, " ")));
-        assertThat(tokens.next(), is(token(IDENT, "str")));
-        assertThat(tokens.next(), is(token(RPAREN, ")")));
-        assertThat(tokens.next(), is(token(WS, "   ")));
-        assertThat(tokens.next(), is(token(LBRACE, "{")));
-        assertThat(tokens.next(), is(token(WS, "\n    ")));
-        assertThat(tokens.next(), is(token(IDENT, "io")));
-        assertThat(tokens.next(), is(token(MOD_SEP, "::")));
-        assertThat(tokens.next(), is(token(IDENT, "println")));
-        assertThat(tokens.next(), is(token(LPAREN, "(")));
-        assertThat(tokens.next(), is(token(IDENT, "fmt")));
-        assertThat(tokens.next(), is(token(NOT, "!")));
-        assertThat(tokens.next(), is(token(LPAREN, "(")));
-        assertThat(tokens.next(), is(token(LIT_STR, "\"Hello, %?\"")));
-        assertThat(tokens.next(), is(token(COMMA, ",")));
-        assertThat(tokens.next(), is(token(WS, " ")));
-        assertThat(tokens.next(), is(token(IDENT, "name")));
-        assertThat(tokens.next(), is(token(RPAREN, ")")));
-        assertThat(tokens.next(), is(token(RPAREN, ")")));
-        assertThat(tokens.next(), is(token(SEMI, ";")));
-        assertThat(tokens.next(), is(token(WS, "\n")));
-        assertThat(tokens.next(), is(token(RBRACE, "}")));
-        assertThat(tokens.next(), is(token(WS, "\n")));
-        assertThat(tokens.next(), is(token(EOF)));
-        assertThat(tokens.hasNext(), is(false));
+    public void shouldTokenizeRustString() throws Exception {
+        StringBuilder source = new StringBuilder();
+        source.append("fn main() {\n");
+        source.append("  println!(\"hi!\");\n");
+        source.append("}\n");
+        source.append("\n");
+        lexer = new RustLexer(source.toString());
+        assertThat(lexer.nextToken(), isToken(IDENT).from(1, 0).to(1, 2));
+        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 2).to(1, 3));
+        assertThat(lexer.nextToken(), isToken(IDENT).from(1, 3).to(1, 7));
+        assertThat(lexer.nextToken(), isToken(OPEN_DELIM).from(1, 7).to(1, 8));
+        assertThat(lexer.nextToken(), isToken(CLOSE_DELIM).from(1, 8).to(1, 9));
+        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 9).to(1, 10));
+        assertThat(lexer.nextToken(), isToken(OPEN_DELIM).from(1, 10).to(1, 11));
+        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 11).to(2, 2));
+        assertThat(lexer.nextToken(), isToken(IDENT).from(2, 2).to(2, 9));
+        assertThat(lexer.nextToken(), isToken(NOT).from(2, 9).to(2, 10));
+        assertThat(lexer.nextToken(), isToken(OPEN_DELIM).from(2, 10).to(2, 11));
+        assertThat(lexer.nextToken(), isToken(LITERAL).from(2, 11).to(2, 16));
+        assertThat(lexer.nextToken(), isToken(CLOSE_DELIM).from(2, 16).to(2, 17));
+        assertThat(lexer.nextToken(), isToken(SEMI).from(2, 17).to(2, 18));
+        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(2, 18).to(3, 0));
+        assertThat(lexer.nextToken(), isToken(CLOSE_DELIM).from(3, 0).to(3, 1));
+        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(3, 1).to(4, 1));
+        assertThat(lexer.nextToken(), isToken(EOF).from(3, 1).to(4, 1));
     }
 
-    private List<Token> tokenize(CharSequence input) {
-        RustLexer lexer = new RustLexer(new ANTLRInputStream(input.toString()));
-        List<Token> tokens = new LinkedList<>();
-        Token token;
-        do {
-            token = lexer.nextToken();
-            tokens.add(token);
-        } while (token.getType() != Token.EOF);
-        return tokens;
+    private static RustTokenMatcher.Builder isToken(RustToken.Type type) {
+        return new RustTokenMatcher.Builder(type);
     }
 
-    private Matcher<Token> token(final int expectedType) {
-        return token(expectedType, null);
-    }
+    private static class RustTokenMatcher extends TypeSafeMatcher<RustToken> {
 
-    private Matcher<Token> token(final int expectedType, final String expectedText) {
-        return new TypeSafeMatcher<Token>() {
-            @Override
-            public boolean matchesSafely(Token item) {
-                return item.getType() == expectedType && (expectedText == null || item.getText().equals(expectedText));
+        static class Builder {
+
+            private final RustToken.Type type;
+            private int startLine;
+            private int startCol;
+
+            public Builder(RustToken.Type type) {
+                this.type = type;
             }
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Token of type ").appendValue(RustLexer.tokenNames[expectedType]);
-                if (expectedText != null) {
-                    description.appendText(", with text ").appendValue(expectedText);
-                }
+            public Builder from(int startLine, int startCol) {
+                this.startLine = startLine;
+                this.startCol = startCol;
+                return this;
             }
-        };
+
+            public RustTokenMatcher to(int endLine, int endCol) {
+                return new RustTokenMatcher(type, startLine, startCol, endLine, endCol);
+            }
+        }
+
+        private final RustToken.Type type;
+        private final int startLine;
+        private final int startCol;
+        private final int endLine;
+        private final int endCol;
+
+        public RustTokenMatcher(RustToken.Type type, int startLine, int startCol, int endLine, int endCol) {
+            this.type = type;
+            this.startLine = startLine;
+            this.startCol = startCol;
+            this.endLine = endLine;
+            this.endCol = endCol;
+        }
+
+        @Override
+        public boolean matchesSafely(RustToken item) {
+            return item.getType() == type
+                    && item.startLine == startLine
+                    && item.startCol == startCol
+                    && item.endLine == endLine
+                    && item.endCol == endCol;
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("RustToken of type ")
+                    .appendValue(type)
+                    .appendText(String.format(" at %s,%s - %s,%s", startLine, startCol, endLine, endCol));
+        }
     }
 }
