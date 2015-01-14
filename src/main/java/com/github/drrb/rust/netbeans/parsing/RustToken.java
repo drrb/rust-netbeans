@@ -28,72 +28,8 @@ public class RustToken extends Structure {
     public static class ByValue extends RustToken implements Structure.ByValue {
 
         boolean isEof() {
-            return getType() == Type.EOF;
+            return getType() == RustTokenId.EOF;
         }
-    }
-
-    public enum Type {
-        EQ,
-        LT,
-        LE,
-        EQ_EQ,
-        NE,
-        GE,
-        GT,
-        AND_AND,
-        OR_OR,
-        NOT,
-        TILDE,
-        AT,
-        DOT,
-        DOT_DOT,
-        DOT_DOT_DOT,
-        COMMA,
-        SEMI,
-        COLON,
-        MOD_SEP,
-        R_ARROW,
-        L_ARROW,
-        FAT_ARROW,
-        POUND,
-        DOLLAR,
-        QUESTION,
-        IDENT,
-        UNDERSCORE,
-        LIFETIME,
-        INTERPOLATED,
-        DOC_COMMENT,
-        MATCH_NT,
-        SUBST_NT,
-        SPECIAL_VAR_NT,
-        WHITESPACE,
-        COMMENT,
-        SHEBANG,
-        EOF,
-        PLUS,
-        MINUS,
-        STAR,
-        SLASH,
-        PERCENT,
-        CARET,
-        AND,
-        OR,
-        SHL,
-        SHR,
-        OPEN_PAREN,
-        OPEN_BRACKET,
-        OPEN_BRACE,
-        CLOSE_PAREN,
-        CLOSE_BRACKET,
-        CLOSE_BRACE,
-        BYTE_LITERAL,
-        CHAR_LITERAL,
-        INTEGER_LITERAL,
-        FLOAT_LITERAL,
-        STR_LITERAL,
-        STR_RAW_LITERAL,
-        BINARY_LITERAL,
-        BINARY_RAW_LITERAL;
     }
 
     public int startLine;
@@ -102,8 +38,8 @@ public class RustToken extends Structure {
     public int endCol;
     public int type;
 
-    public Type getType() {
-        return Type.values()[type];
+    public RustTokenId getType() {
+        return RustTokenId.values()[type];
     }
 
     @Override

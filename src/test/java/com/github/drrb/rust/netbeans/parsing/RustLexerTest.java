@@ -19,7 +19,7 @@ package com.github.drrb.rust.netbeans.parsing;
 import org.junit.Test;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import static com.github.drrb.rust.netbeans.parsing.RustToken.Type.*;
+import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
 import static org.junit.Assert.*;
 import org.junit.After;
 
@@ -75,7 +75,7 @@ public class RustLexerTest {
         assertThat(lexer.nextToken(), isToken(EOF).from(3, 1).to(4, 1));
     }
 
-    private static RustTokenMatcher.Builder isToken(RustToken.Type type) {
+    private static RustTokenMatcher.Builder isToken(RustTokenId type) {
         return new RustTokenMatcher.Builder(type);
     }
 
@@ -83,11 +83,11 @@ public class RustLexerTest {
 
         static class Builder {
 
-            private final RustToken.Type type;
+            private final RustTokenId type;
             private int startLine;
             private int startCol;
 
-            public Builder(RustToken.Type type) {
+            public Builder(RustTokenId type) {
                 this.type = type;
             }
 
@@ -102,13 +102,13 @@ public class RustLexerTest {
             }
         }
 
-        private final RustToken.Type type;
+        private final RustTokenId type;
         private final int startLine;
         private final int startCol;
         private final int endLine;
         private final int endCol;
 
-        public RustTokenMatcher(RustToken.Type type, int startLine, int startCol, int endLine, int endCol) {
+        public RustTokenMatcher(RustTokenId type, int startLine, int startCol, int endLine, int endCol) {
             this.type = type;
             this.startLine = startLine;
             this.startCol = startCol;

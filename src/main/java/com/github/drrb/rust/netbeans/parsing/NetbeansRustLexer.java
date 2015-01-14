@@ -16,7 +16,6 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import static org.antlr.v4.runtime.IntStream.EOF;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerInput;
@@ -39,9 +38,8 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
     @Override
     public Token<RustTokenId> nextToken() {
         RustToken.ByValue token = lexer.nextToken();
-        if (token.getType() != RustToken.Type.EOF) {
-            RustTokenId tokenId = RustLanguageHierarchy.tokenIdForNativeTokenType(token.getType());
-            return info.tokenFactory().createToken(tokenId);
+        if (token.getType() != RustTokenId.EOF) {
+            return info.tokenFactory().createToken(token.getType());
         }
         return null;
     }
