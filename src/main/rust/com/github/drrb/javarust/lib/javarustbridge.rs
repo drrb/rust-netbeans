@@ -47,6 +47,10 @@ use syntax::diagnostics;
 use syntax::parse::lexer::Reader;
 use syntax::parse::lexer::StringReader;
 use syntax::parse::lexer;
+use syntax::parse::token::BinOpToken;
+use syntax::parse::token::DelimToken;
+use syntax::parse::token::Lit;
+use syntax::parse::token::Token;
 use syntax::parse::token;
 use syntax::parse;
 use syntax::visit::FnKind::FkItemFn;
@@ -105,7 +109,7 @@ pub struct RustToken {
     start_col: c_int,
     end_line: c_int,
     end_col: c_int,
-    token_type: *const c_char
+    token_type: TokenKind,
 }
 
 impl<'a> RustLexer<'a> {
@@ -124,8 +128,158 @@ impl<'a> RustLexer<'a> {
             start_col: lo_col as c_int,
             end_line: hi_line as c_int,
             end_col: hi_col as c_int,
-            token_type: to_ptr(format!("{:?}", token_and_span.tok))
+            token_type: token_type(token_and_span.tok)
         }
+    }
+}
+
+#[repr(C)]
+pub enum TokenKind {
+    Eq,
+    Lt,
+    Le,
+    EqEq,
+    Ne,
+    Ge,
+    Gt,
+    AndAnd,
+    OrOr,
+    Not,
+    Tilde,
+    //BinOp,
+    //BinOpEq,
+    At,
+    Dot,
+    DotDot,
+    DotDotDot,
+    Comma,
+    Semi,
+    Colon,
+    ModSep,
+    RArrow,
+    LArrow,
+    FatArrow,
+    Pound,
+    Dollar,
+    Question,
+    //OpenDelim,
+    //CloseDelim,
+    //Literal,
+    Ident,
+    Underscore,
+    Lifetime,
+    Interpolated,
+    DocComment,
+    MatchNt,
+    SubstNt,
+    SpecialVarNt,
+    Whitespace,
+    Comment,
+    Shebang,
+    Eof,
+
+    //BinOpToken
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    Percent,
+    Caret,
+    And,
+    Or,
+    Shl,
+    Shr,
+
+    //DelimToken
+    OpenParen,
+    OpenBracket,
+    OpenBrace,
+    CloseParen,
+    CloseBracket,
+    CloseBrace,
+
+    //Lit
+    ByteLiteral,
+    CharLiteral,
+    IntegerLiteral,
+    FloatLiteral,
+    StrLiteral,
+    StrRawLiteral,
+    BinaryLiteral,
+    BinaryRawLiteral,
+}
+
+fn token_type(token: Token) -> TokenKind {
+    match token {
+        Token::Eq => TokenKind::Eq,
+        Token::Lt => TokenKind::Lt,
+        Token::Le => TokenKind::Le,
+        Token::EqEq => TokenKind::EqEq,
+        Token::Ne => TokenKind::Ne,
+        Token::Ge => TokenKind::Ge,
+        Token::Gt => TokenKind::Gt,
+        Token::AndAnd => TokenKind::AndAnd,
+        Token::OrOr => TokenKind::OrOr,
+        Token::Not => TokenKind::Not,
+        Token::Tilde => TokenKind::Tilde,
+        Token::BinOp(kind) | Token::BinOpEq(kind) => match kind {
+            BinOpToken::Plus => TokenKind::Plus,
+            BinOpToken::Minus => TokenKind::Minus,
+            BinOpToken::Star => TokenKind::Star,
+            BinOpToken::Slash => TokenKind::Slash,
+            BinOpToken::Percent => TokenKind::Percent,
+            BinOpToken::Caret => TokenKind::Caret,
+            BinOpToken::And => TokenKind::And,
+            BinOpToken::Or => TokenKind::Or,
+            BinOpToken::Shl => TokenKind::Shl,
+            BinOpToken::Shr => TokenKind::Shr,
+        },
+        Token::At => TokenKind::At,
+        Token::Dot => TokenKind::Dot,
+        Token::DotDot => TokenKind::DotDot,
+        Token::DotDotDot => TokenKind::DotDotDot,
+        Token::Comma => TokenKind::Comma,
+        Token::Semi => TokenKind::Semi,
+        Token::Colon => TokenKind::Colon,
+        Token::ModSep => TokenKind::ModSep,
+        Token::RArrow => TokenKind::RArrow,
+        Token::LArrow => TokenKind::LArrow,
+        Token::FatArrow => TokenKind::FatArrow,
+        Token::Pound => TokenKind::Pound,
+        Token::Dollar => TokenKind::Dollar,
+        Token::Question => TokenKind::Question,
+        Token::OpenDelim(kind) => match kind {
+            DelimToken::Paren => TokenKind::OpenParen,
+            DelimToken::Bracket => TokenKind::OpenBracket,
+            DelimToken::Brace => TokenKind::OpenBrace
+        },
+        Token::CloseDelim(kind) => match kind {
+            DelimToken::Paren => TokenKind::CloseParen,
+            DelimToken::Bracket => TokenKind::CloseBracket,
+            DelimToken::Brace => TokenKind::CloseBrace
+        },
+        Token::Literal(kind, _) => match kind {
+            Lit::Byte(_) => TokenKind::ByteLiteral,
+            Lit::Char(_) => TokenKind::CharLiteral,
+            Lit::Integer(_) => TokenKind::IntegerLiteral,
+            Lit::Float(_) => TokenKind::FloatLiteral,
+            Lit::Str_(_) => TokenKind::StrLiteral,
+            Lit::StrRaw(_, _) => TokenKind::StrRawLiteral,
+            Lit::Binary(_) => TokenKind::BinaryLiteral,
+            Lit::BinaryRaw(_, _) => TokenKind::BinaryRawLiteral,
+        },
+        Token::Ident(_, _) => TokenKind::Ident,
+        Token::Underscore => TokenKind::Underscore,
+        Token::Lifetime(_) => TokenKind::Lifetime,
+        Token::Interpolated(_) => TokenKind::Interpolated,
+        Token::DocComment(_) => TokenKind::DocComment,
+        Token::MatchNt(_, _, _, _) => TokenKind::MatchNt,
+        Token::SubstNt(_, _) => TokenKind::SubstNt,
+        Token::SpecialVarNt(_) => TokenKind::SpecialVarNt,
+        Token::Whitespace => TokenKind::Whitespace,
+        Token::Comment => TokenKind::Comment,
+        Token::Shebang(_) => TokenKind::Shebang,
+        Token::Eof => TokenKind::Eof,
     }
 }
 

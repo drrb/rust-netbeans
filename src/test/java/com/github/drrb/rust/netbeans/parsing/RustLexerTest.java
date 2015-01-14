@@ -21,7 +21,6 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import static com.github.drrb.rust.netbeans.parsing.RustToken.Type.*;
 import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
 import org.junit.After;
 
 public class RustLexerTest {
@@ -59,19 +58,19 @@ public class RustLexerTest {
         assertThat(lexer.nextToken(), isToken(IDENT).from(1, 0).to(1, 2));
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 2).to(1, 3));
         assertThat(lexer.nextToken(), isToken(IDENT).from(1, 3).to(1, 7));
-        assertThat(lexer.nextToken(), isToken(OPEN_DELIM).from(1, 7).to(1, 8));
-        assertThat(lexer.nextToken(), isToken(CLOSE_DELIM).from(1, 8).to(1, 9));
+        assertThat(lexer.nextToken(), isToken(OPEN_PAREN).from(1, 7).to(1, 8));
+        assertThat(lexer.nextToken(), isToken(CLOSE_PAREN).from(1, 8).to(1, 9));
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 9).to(1, 10));
-        assertThat(lexer.nextToken(), isToken(OPEN_DELIM).from(1, 10).to(1, 11));
+        assertThat(lexer.nextToken(), isToken(OPEN_BRACE).from(1, 10).to(1, 11));
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 11).to(2, 2));
         assertThat(lexer.nextToken(), isToken(IDENT).from(2, 2).to(2, 9));
         assertThat(lexer.nextToken(), isToken(NOT).from(2, 9).to(2, 10));
-        assertThat(lexer.nextToken(), isToken(OPEN_DELIM).from(2, 10).to(2, 11));
-        assertThat(lexer.nextToken(), isToken(LITERAL).from(2, 11).to(2, 16));
-        assertThat(lexer.nextToken(), isToken(CLOSE_DELIM).from(2, 16).to(2, 17));
+        assertThat(lexer.nextToken(), isToken(OPEN_PAREN).from(2, 10).to(2, 11));
+        assertThat(lexer.nextToken(), isToken(STR_LITERAL).from(2, 11).to(2, 16));
+        assertThat(lexer.nextToken(), isToken(CLOSE_PAREN).from(2, 16).to(2, 17));
         assertThat(lexer.nextToken(), isToken(SEMI).from(2, 17).to(2, 18));
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(2, 18).to(3, 0));
-        assertThat(lexer.nextToken(), isToken(CLOSE_DELIM).from(3, 0).to(3, 1));
+        assertThat(lexer.nextToken(), isToken(CLOSE_BRACE).from(3, 0).to(3, 1));
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(3, 1).to(4, 1));
         assertThat(lexer.nextToken(), isToken(EOF).from(3, 1).to(4, 1));
     }

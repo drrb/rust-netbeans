@@ -26,48 +26,84 @@ import java.util.List;
 public class RustToken extends Structure {
 
     public static class ByValue extends RustToken implements Structure.ByValue {
+
+        boolean isEof() {
+            return getType() == Type.EOF;
+        }
     }
 
     public enum Type {
-
-        IDENT("Ident"),
-        OPEN_DELIM("OpenDelim"),
-        CLOSE_DELIM("CloseDelim"),
-        WHITESPACE("Whitespace"),
-        NOT("Not"),
-        LITERAL("Literal"),
-        SEMI("Semi"),
-        EOF("Eof");
-
-        private static Type parse(String representation) {
-            representation = representation.replaceFirst("\\(.*$", "");
-            for (Type type : values()) {
-                if (type.representation.equals(representation)) {
-                    return type;
-                }
-            }
-            throw new IllegalArgumentException("No enum type found for '" + representation + "'");
-        }
-
-        private final String representation;
-
-        private Type(String representation) {
-            this.representation = representation;
-        }
+        EQ,
+        LT,
+        LE,
+        EQ_EQ,
+        NE,
+        GE,
+        GT,
+        AND_AND,
+        OR_OR,
+        NOT,
+        TILDE,
+        AT,
+        DOT,
+        DOT_DOT,
+        DOT_DOT_DOT,
+        COMMA,
+        SEMI,
+        COLON,
+        MOD_SEP,
+        R_ARROW,
+        L_ARROW,
+        FAT_ARROW,
+        POUND,
+        DOLLAR,
+        QUESTION,
+        IDENT,
+        UNDERSCORE,
+        LIFETIME,
+        INTERPOLATED,
+        DOC_COMMENT,
+        MATCH_NT,
+        SUBST_NT,
+        SPECIAL_VAR_NT,
+        WHITESPACE,
+        COMMENT,
+        SHEBANG,
+        EOF,
+        PLUS,
+        MINUS,
+        STAR,
+        SLASH,
+        PERCENT,
+        CARET,
+        AND,
+        OR,
+        SHL,
+        SHR,
+        OPEN_PAREN,
+        OPEN_BRACKET,
+        OPEN_BRACE,
+        CLOSE_PAREN,
+        CLOSE_BRACKET,
+        CLOSE_BRACE,
+        BYTE_LITERAL,
+        CHAR_LITERAL,
+        INTEGER_LITERAL,
+        FLOAT_LITERAL,
+        STR_LITERAL,
+        STR_RAW_LITERAL,
+        BINARY_LITERAL,
+        BINARY_RAW_LITERAL;
     }
 
     public int startLine;
     public int startCol;
     public int endLine;
     public int endCol;
-    public String type;
-
-    public boolean isEof() {
-        return type.equals("Eof");
-    }
+    public int type;
 
     public Type getType() {
-        return Type.parse(type);
+        return Type.values()[type];
     }
 
     @Override
@@ -75,4 +111,8 @@ public class RustToken extends Structure {
         return Arrays.asList("startLine", "startCol", "endLine", "endCol", "type");
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s: %s,%s-%s,%s%n%s", getType(), startLine, startCol, endLine, endCol, super.toString(true));
+    }
 }
