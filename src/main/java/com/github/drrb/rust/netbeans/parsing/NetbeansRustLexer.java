@@ -16,32 +16,54 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import java.io.Reader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerInput;
 import org.netbeans.spi.lexer.LexerRestartInfo;
 
 public class NetbeansRustLexer implements Lexer<RustTokenId> {
-    private final RustLexer lexer;
+    private static final Logger LOGGER = Logger.getLogger(NetbeansRustLexer.class.getName());
     private final LexerRestartInfo<RustTokenId> info;
+    private RustLexer lexer;
 
     public NetbeansRustLexer(LexerRestartInfo<RustTokenId> info) {
         this.info = info;
-        LexerInput input = info.input();
-        reading: while(input.read() != LexerInput.EOF) {
-            continue reading;
-        }
-        String source = input.readText().toString();
-        this.lexer = new RustLexer(source);
     }
 
     @Override
     public Token<RustTokenId> nextToken() {
+        ensureLexerCreated();
         RustToken.ByValue token = lexer.nextToken();
-        if (token.getType() != RustTokenId.EOF) {
+        LOGGER.log(Level.INFO, "Next token = {0}", token);
+        if (token.getType() == RustTokenId.EOF) {
+            return null;
+        } else {
+            LOGGER.log(Level.INFO, "Reading {0} tokens", token.length());
+            for (int i = 0; i < token.length(); i++) {
+                info.input().read();
+                LOGGER.info("  - Read so far: <" + info.input().readText() + ">");
+            }
+            LOGGER.info("Claiming that " + token.getType() + " is <" + info.input().readText() + "> and has length " + info.input().readLength());
             return info.tokenFactory().createToken(token.getType());
         }
-        return null;
+    }
+
+    private void ensureLexerCreated() {
+        if (lexer != null) return;
+        LexerInput input = info.input();
+        LOGGER.info("About to start reading");
+        reading: while(input.read() != LexerInput.EOF) {
+            continue reading;
+        }
+        String source = input.readText().toString();
+        System.out.println("read " + source.length() + " characters");
+        System.out.println("backing up " + input.readLengthEOF() + " characters");
+        input.backup(input.readLengthEOF());
+        LOGGER.info("read source: " + source);
+        this.lexer = RustLexer.forString(source);
     }
 
     @Override
@@ -52,7 +74,7 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
 
     @Override
     public void release() {
-        //Tutorial left this blank
+        lexer.release();
     }
 
 }

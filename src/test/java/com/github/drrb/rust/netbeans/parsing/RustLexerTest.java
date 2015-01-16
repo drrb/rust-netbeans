@@ -25,7 +25,7 @@ import org.junit.After;
 
 public class RustLexerTest {
     private RustLexer lexer;
-    
+
     @After
     public void cleanUpLexer() {
         lexer.release();
@@ -34,17 +34,22 @@ public class RustLexerTest {
     @Test
     public void shouldTokenizeWhitespace() {
         String input = "  \t ";
-        lexer = new RustLexer(input);
+        lexer = RustLexer.forString(input);
 
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 0).to(1, 5));
         assertThat(lexer.nextToken(), isToken(EOF).from(1, 0).to(1, 5));
     }
-    
+
     @Test
     public void shouldCopeWithBadSource() throws Exception {
-        lexer = new RustLexer("fn main() å\n");
-        while (!lexer.nextToken().isEof()) {   
-        }
+        lexer = RustLexer.forString("fn main() å\n");
+        exhaustLexer();
+    }
+
+    @Test
+    public void shouldCopeWithEmptyString() throws Exception {
+        lexer = RustLexer.forString("");
+        exhaustLexer();
     }
 
     @Test
@@ -54,7 +59,7 @@ public class RustLexerTest {
         source.append("  println!(\"hi!\");\n");
         source.append("}\n");
         source.append("\n");
-        lexer = new RustLexer(source.toString());
+        lexer = RustLexer.forString(source.toString());
         assertThat(lexer.nextToken(), isToken(IDENT).from(1, 0).to(1, 2));
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 2).to(1, 3));
         assertThat(lexer.nextToken(), isToken(IDENT).from(1, 3).to(1, 7));
@@ -73,6 +78,10 @@ public class RustLexerTest {
         assertThat(lexer.nextToken(), isToken(CLOSE_BRACE).from(3, 0).to(3, 1));
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(3, 1).to(4, 1));
         assertThat(lexer.nextToken(), isToken(EOF).from(3, 1).to(4, 1));
+    }
+
+    private void exhaustLexer() {
+        while (!lexer.nextToken().isEof()) { }
     }
 
     private static RustTokenMatcher.Builder isToken(RustTokenId type) {

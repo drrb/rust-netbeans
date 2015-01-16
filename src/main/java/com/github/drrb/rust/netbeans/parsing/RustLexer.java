@@ -20,20 +20,40 @@ package com.github.drrb.rust.netbeans.parsing;
  *
  */
 public class RustLexer {
+    private static final RustLexer NULL_LEXER = new RustLexer((NativeRustLexer) null) {
+        @Override public void release() {}
+
+        @Override
+        public RustToken.ByValue nextToken() {
+            RustToken.ByValue token = new RustToken.ByValue();
+            token.type = RustTokenId.EOF.ordinal();
+            return token;
+        }
+
+    };
+
+    public static RustLexer forString(String input) {
+        if (input.isEmpty()) {
+            return NULL_LEXER;
+        } else {
+            return new RustLexer(input);
+        }
+    }
+
     private final NativeRustLexer peer;
 
     public RustLexer(String input) {
         this(RustNative.INSTANCE.createLexer(input));
     }
-    
+
     public RustLexer(NativeRustLexer peer) {
         this.peer = peer;
     }
-  
+
     public RustToken.ByValue nextToken() {
         return RustNative.INSTANCE.getNextToken(peer);
     }
-    
+
     public void release() {
         RustNative.INSTANCE.destroyLexer(peer);
     }

@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans.parsing;
 
 import com.sun.jna.Structure;
 import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.List;
 
 /**
@@ -34,21 +35,29 @@ public class RustToken extends Structure {
 
     public int startLine;
     public int startCol;
+    public int startByte;
+    public int startChar;
     public int endLine;
     public int endCol;
+    public int endByte;
+    public int endChar;
     public int type;
 
     public RustTokenId getType() {
         return RustTokenId.values()[type];
     }
 
+    public int length() {
+        return endChar - startChar;
+    }
+
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("startLine", "startCol", "endLine", "endCol", "type");
+        return asList("startLine", "startCol", "startByte", "startChar", "endLine", "endCol", "endByte", "endChar", "type");
     }
 
     @Override
     public String toString() {
-        return String.format("%s: %s,%s-%s,%s%n%s", getType(), startLine, startCol, endLine, endCol, super.toString(true));
+        return String.format("%s: %s,%s-%s,%s (%s chars)", getType(), startLine, startCol, endLine, endCol, length());//, super.toString(true));
     }
 }
