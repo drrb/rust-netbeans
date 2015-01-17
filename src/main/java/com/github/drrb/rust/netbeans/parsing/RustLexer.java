@@ -16,6 +16,8 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  *
  */
@@ -51,7 +53,14 @@ public class RustLexer {
     }
 
     public RustToken.ByValue nextToken() {
-        return RustNative.INSTANCE.getNextToken(peer);
+        final AtomicReference<RustToken.ByValue> tokenHolder = new AtomicReference<>();
+        RustNative.INSTANCE.getNextToken(peer, new RustNative.TokenCallback() {
+            @Override
+            public void tokenRead(RustToken.ByValue token) {
+                tokenHolder.set(token);
+            }
+        });
+        return tokenHolder.get();
     }
 
     public void release() {

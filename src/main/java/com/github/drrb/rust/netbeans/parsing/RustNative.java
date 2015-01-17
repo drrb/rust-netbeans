@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
@@ -25,10 +26,14 @@ public interface RustNative extends Library {
     String JNA_LIBRARY_NAME = "javarustbridge";
     NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(JNA_LIBRARY_NAME);
     RustNative INSTANCE = (RustNative) Native.loadLibrary(JNA_LIBRARY_NAME, RustNative.class);
-    
+
     NativeRustLexer createLexer(String input);
 
-    RustToken.ByValue getNextToken(NativeRustLexer lexer);
+    void getNextToken(NativeRustLexer lexer, TokenCallback callback);
 
     void destroyLexer(NativeRustLexer box);
+
+    interface TokenCallback extends Callback {
+        void tokenRead(RustToken.ByValue token);
+    }
 }

@@ -20,6 +20,7 @@ import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerInput;
 import org.netbeans.spi.lexer.LexerRestartInfo;
+import org.netbeans.spi.lexer.TokenFactory;
 
 public class NetbeansRustLexer implements Lexer<RustTokenId> {
 
@@ -34,7 +35,10 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
     public Token<RustTokenId> nextToken() {
         ensureLexerCreated();
         RustToken.ByValue token = lexer.nextToken();
-        if (token.getType() == RustTokenId.EOF) {
+        if (token == null) {
+            while(readOneCharacter() != LexerInput.EOF) {}
+            return createToken(RustTokenId.GARBAGE);
+        } else if (token.getType() == RustTokenId.EOF) {
             return null;
         } else {
             for (int i = 0; i < token.length(); i++) {
@@ -45,16 +49,13 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
     }
 
     private void ensureLexerCreated() {
-        if (lexer != null) {
-            return;
-        }
+        if (lexer != null) return;
         String source = readWholeSource();
         lexer = RustLexer.forString(source);
     }
 
     private String readWholeSource() {
-        reading:
-        while (readOneCharacter() != LexerInput.EOF) {
+        reading: while (readOneCharacter() != LexerInput.EOF) {
             continue reading;
         }
         String source = charactersReadSoFar();

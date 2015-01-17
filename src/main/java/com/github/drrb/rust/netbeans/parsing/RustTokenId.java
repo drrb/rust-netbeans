@@ -80,7 +80,8 @@ public enum RustTokenId implements TokenId {
     STR_LITERAL(TokenCategory.STRING),
     STR_RAW_LITERAL(TokenCategory.STRING),
     BINARY_LITERAL(TokenCategory.NUMBER),
-    BINARY_RAW_LITERAL(TokenCategory.NUMBER);
+    BINARY_RAW_LITERAL(TokenCategory.NUMBER),
+    GARBAGE(TokenCategory.COMMENT);
 
     private static final Language<RustTokenId> LANGUAGE = new RustLanguageHierarchy().language();
 

@@ -24,6 +24,7 @@ use libc::c_int;
 use std::ffi::CString;
 use std::ffi;
 use std::mem;
+use std::rt::unwind;
 use std::str;
 use syntax::codemap::BytePos;
 use syntax::codemap::CharPos;
@@ -254,8 +255,12 @@ pub extern fn createLexer<'a>(source: *const c_char) -> Box<RustLexer<'a>> {
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern fn getNextToken(lexer: &mut RustLexer) -> RustToken {
-    lexer.next_token()
+pub extern fn getNextToken(lexer: &mut RustLexer, callback: extern "C" fn (RustToken)) {
+    unsafe {
+        unwind::try(|| {
+            callback(lexer.next_token());
+        });
+    }
 }
 
 #[no_mangle]

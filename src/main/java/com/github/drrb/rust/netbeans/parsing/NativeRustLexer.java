@@ -27,10 +27,6 @@ import java.util.List;
 public class NativeRustLexer extends Structure {
 
     public static class ByReference extends NativeRustLexer implements Structure.ByReference {
-
-        public RustToken.ByValue getNextToken() {
-            return RustNative.INSTANCE.getNextToken(this);
-        }
     }
 
     public Pointer spanHandler;
