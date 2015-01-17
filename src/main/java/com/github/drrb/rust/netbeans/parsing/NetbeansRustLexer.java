@@ -16,16 +16,13 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import java.io.Reader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerInput;
 import org.netbeans.spi.lexer.LexerRestartInfo;
 
 public class NetbeansRustLexer implements Lexer<RustTokenId> {
-    private static final Logger LOGGER = Logger.getLogger(NetbeansRustLexer.class.getName());
+
     private final LexerRestartInfo<RustTokenId> info;
     private RustLexer lexer;
 
@@ -37,33 +34,52 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
     public Token<RustTokenId> nextToken() {
         ensureLexerCreated();
         RustToken.ByValue token = lexer.nextToken();
-        LOGGER.log(Level.INFO, "Next token = {0}", token);
         if (token.getType() == RustTokenId.EOF) {
             return null;
         } else {
-            LOGGER.log(Level.INFO, "Reading {0} tokens", token.length());
             for (int i = 0; i < token.length(); i++) {
-                info.input().read();
-                LOGGER.info("  - Read so far: <" + info.input().readText() + ">");
+                readOneCharacter();
             }
-            LOGGER.info("Claiming that " + token.getType() + " is <" + info.input().readText() + "> and has length " + info.input().readLength());
-            return info.tokenFactory().createToken(token.getType());
+            return createToken(token.getType());
         }
     }
 
     private void ensureLexerCreated() {
-        if (lexer != null) return;
-        LexerInput input = info.input();
-        LOGGER.info("About to start reading");
-        reading: while(input.read() != LexerInput.EOF) {
+        if (lexer != null) {
+            return;
+        }
+        String source = readWholeSource();
+        lexer = RustLexer.forString(source);
+    }
+
+    private String readWholeSource() {
+        reading:
+        while (readOneCharacter() != LexerInput.EOF) {
             continue reading;
         }
-        String source = input.readText().toString();
-        System.out.println("read " + source.length() + " characters");
-        System.out.println("backing up " + input.readLengthEOF() + " characters");
-        input.backup(input.readLengthEOF());
-        LOGGER.info("read source: " + source);
-        this.lexer = RustLexer.forString(source);
+        String source = charactersReadSoFar();
+        backUp(charsReadThisToken());
+        return source;
+    }
+
+    protected void backUp(int length) {
+        info.input().backup(length);
+    }
+
+    protected int charsReadThisToken() {
+        return info.input().readLengthEOF();
+    }
+
+    protected String charactersReadSoFar() {
+        return info.input().readText().toString();
+    }
+
+    protected int readOneCharacter() {
+        return info.input().read();
+    }
+
+    protected Token<RustTokenId> createToken(RustTokenId tokenType) {
+        return info.tokenFactory().createToken(tokenType);
     }
 
     @Override
