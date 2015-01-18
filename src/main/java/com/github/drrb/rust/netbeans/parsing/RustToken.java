@@ -17,7 +17,6 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import com.sun.jna.Structure;
-import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.List;
 
@@ -27,10 +26,6 @@ import java.util.List;
 public class RustToken extends Structure {
 
     public static class ByValue extends RustToken implements Structure.ByValue {
-
-        boolean isEof() {
-            return getType() == RustTokenId.EOF;
-        }
     }
 
     public int startLine;
@@ -42,6 +37,10 @@ public class RustToken extends Structure {
     public int endByte;
     public int endChar;
     public int type;
+
+    boolean isEof() {
+        return getType() == RustTokenId.EOF;
+    }
 
     public RustTokenId getType() {
         return RustTokenId.values()[type];

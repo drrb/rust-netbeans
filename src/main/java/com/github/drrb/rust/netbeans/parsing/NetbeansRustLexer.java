@@ -33,9 +33,9 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
     @Override
     public Token<RustTokenId> nextToken() {
         ensureLexerCreated();
-        RustToken.ByValue token = lexer.nextToken();
+        RustToken token = lexer.nextToken();
         if (token == null) {
-            while(readOneCharacter() != LexerInput.EOF) {}
+            readWholeSource();
             return createToken(RustTokenId.GARBAGE);
         } else if (token.getType() == RustTokenId.EOF) {
             return null;
@@ -50,6 +50,7 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
     private void ensureLexerCreated() {
         if (lexer != null) return;
         String source = readWholeSource();
+        backUp(charsReadThisToken());
         lexer = RustLexer.forString(source);
     }
 
@@ -57,9 +58,7 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
         reading: while (readOneCharacter() != LexerInput.EOF) {
             continue reading;
         }
-        String source = charactersReadSoFar();
-        backUp(charsReadThisToken());
-        return source;
+        return charactersReadSoFar();
     }
 
     protected void backUp(int length) {

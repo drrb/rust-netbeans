@@ -52,8 +52,8 @@ public class RustLexer {
         this.peer = peer;
     }
 
-    public RustToken.ByValue nextToken() {
-        AtomicReference<RustToken.ByValue> tokenHolder = new AtomicReference<>();
+    public RustToken nextToken() {
+        AtomicReference<RustToken> tokenHolder = new AtomicReference<>();
         RustNative.INSTANCE.getNextToken(peer, tokenHolder::set);
         return tokenHolder.get();
     }
