@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.keypress;
 
+import com.github.drrb.rust.netbeans.RustDocument;
 import static org.hamcrest.core.Is.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -58,6 +59,17 @@ public class RustBracketCompleterTest {
         when(context.getText()).thenReturn("(");
         interceptor.insert(context);
         verify(context).setText("()", 1);
+    }
+
+    @Test
+    public void shouldOverwriteClosingBracketIfItAlreadyExists() throws Exception {
+        MutableContext context = mock(MutableContext.class);
+        when(context.getText()).thenReturn(")");
+        when(context.getOffset()).thenReturn(2);
+        RustDocument document = RustDocument.containing("())");
+        when(context.getDocument()).thenReturn(document);
+        interceptor.insert(context);
+        assertThat(document.getText(0, document.getLength()), is("()"));
     }
 
     @Test

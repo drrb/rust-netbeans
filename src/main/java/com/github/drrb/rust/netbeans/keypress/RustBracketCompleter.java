@@ -34,8 +34,19 @@ public class RustBracketCompleter implements TypedTextInterceptor {
 
     @Override
     public void insert(MutableContext context) throws BadLocationException {
-        if (context.getText().equals("(")) {
-            context.setText("()", 1);
+        char typedCharacter = context.getText().charAt(0);
+        switch (typedCharacter) {
+            case '(': {
+                context.setText("()", 1);
+                break;
+            }
+            case ')': {
+                char nextCharacter = context.getDocument().getText(context.getOffset(), 1).charAt(0);
+                if (nextCharacter == ')') {
+                    context.getDocument().remove(context.getOffset(), 1);
+                }
+                break;
+            }
         }
     }
 
