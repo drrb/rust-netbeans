@@ -60,6 +60,16 @@ pub struct RustToken {
 }
 
 impl<'a> RustLexer<'a> {
+    fn new<'n>(file_name: String, source: String) -> RustLexer<'n> {
+        let sh: &SpanHandler = unsafe { mem::transmute(Box::new(diagnostic::mk_span_handler(diagnostic::default_handler(Auto, None), CodeMap::new()))) };
+        let fm = sh.cm.new_filemap(file_name, source);
+
+        RustLexer {
+            sh: unsafe { mem::transmute(sh) },
+            lexer: Box::new(StringReader::new(sh, fm))
+        }
+    }
+
     fn next_token(&mut self) -> RustToken {
         let token_and_span = self.lexer.next_token();
         let span = token_and_span.sp;
@@ -243,14 +253,7 @@ fn token_type(token: Token) -> TokenKind {
 pub extern fn createLexer<'a>(source: *const c_char) -> Box<RustLexer<'a>> {
     let file_name = "<file in netbeans>".to_string();
     let source = to_string(&source);
-
-    let sh: &SpanHandler = unsafe { mem::transmute(Box::new(diagnostic::mk_span_handler(diagnostic::default_handler(Auto, None), CodeMap::new()))) };
-    let fm = sh.cm.new_filemap(file_name, source);
-
-    Box::new(RustLexer {
-        sh: unsafe { mem::transmute(sh) },
-        lexer: Box::new(StringReader::new(sh, fm))
-    })
+    Box::new(RustLexer::new(file_name, source))
 }
 
 #[no_mangle]
