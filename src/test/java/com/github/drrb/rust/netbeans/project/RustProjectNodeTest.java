@@ -67,7 +67,7 @@ public class RustProjectNodeTest {
 
     @Test
     public void shouldDisplayProjectIcon() {
-        assertThat(projectNode.getIcon(BeanInfo.ICON_COLOR_16x16), is(Image.class));
+        assertThat(projectNode.getIcon(BeanInfo.ICON_COLOR_16x16), isA(Image.class));
     }
 
     @Test

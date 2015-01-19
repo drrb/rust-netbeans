@@ -41,7 +41,7 @@ public class RustProjectIntegrationTest extends JellyTestCase {
         ProjectsTabOperator projectsTabOperator = new ProjectsTabOperator();
         ProjectRootNode projectRootNode = projectsTabOperator.getProjectRootNode("simplerustproject");
 
-        assertEquals(projectRootNode.getText(), "simplerustproject");
+        assertEquals(projectRootNode.getText(), "simple-rust-project");
         assertArrayEquals(projectRootNode.getChildren(), new String[]{"main.rs"});
     }
 

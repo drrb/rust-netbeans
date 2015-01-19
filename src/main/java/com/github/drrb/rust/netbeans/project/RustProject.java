@@ -16,7 +16,12 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import com.moandjiezana.toml.Toml;
 import java.beans.PropertyChangeListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
@@ -41,6 +46,7 @@ import org.openide.util.lookup.Lookups;
  */
 public class RustProject implements Project {
 
+    private static final Logger LOGGER = Logger.getLogger(RustProject.class.getName());
     public static final String TYPE = "com-github-drrb-rust-netbeans-project";
     // Has things in it that are registered as @ProjectServiceProviders (e.g. Sources implementations)
     private static final String PROJECT_LOOKUP_NAME = String.format("Projects/%s/Lookup", TYPE);
@@ -84,7 +90,15 @@ public class RustProject implements Project {
 
         @Override
         public String getDisplayName() {
-            return getName();
+            FileObject cargoFile = projectDirectory.getFileObject("Cargo.toml");
+            if (cargoFile == null) return getName();
+            try {
+                Toml cargoConf = new Toml().parse(cargoFile.asText("UTF-8"));
+                return cargoConf.getTable("package").getString("name");
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Failed to load project name from Cargo config: {}", ex);
+                return getName();
+            }
         }
 
         @Override

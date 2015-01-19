@@ -84,10 +84,19 @@ public class RustProjectTest {
     }
 
     @Test
-    public void shouldDisplayTheProjectName() {
+    public void shouldDisplayTheProjectNameFromTheCargoConfig() {
         ProjectInformation info = ProjectUtils.getInformation(project);
 
-        assertThat(info.getDisplayName(), is("testrustproject"));
+        assertThat(info.getDisplayName(), is("Test Rust Project"));
+    }
+
+    @Test
+    public void shouldFallBackToDirNameIfNoPackageNameInConfig() {
+        projectDirectory = FileUtil.toFileObject(getData("RustProjectTest/testrustproject-nocargo"));
+        project = new RustProject(projectDirectory, projectState);
+        ProjectInformation info = ProjectUtils.getInformation(project);
+
+        assertThat(info.getDisplayName(), is("testrustproject-nocargo"));
     }
 
     @Test
@@ -102,7 +111,7 @@ public class RustProjectTest {
     public void shouldHaveLogicalViewProvider() throws Exception {
         LogicalViewProvider logicalViewProvider = project.getLookup().lookup(LogicalViewProvider.class);
         Node projectNode = logicalViewProvider.createLogicalView();
-        assertThat(projectNode.getDisplayName(), is("testrustproject"));
+        assertThat(projectNode.getDisplayName(), is("Test Rust Project"));
 
         assertThat(projectNode, hasChildren("Sources"));
     }

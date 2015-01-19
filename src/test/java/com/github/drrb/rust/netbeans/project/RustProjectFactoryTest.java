@@ -53,44 +53,8 @@ public class RustProjectFactoryTest {
     }
 
     @Test
-    public void shouldIdentifyAProjectWithAMainFile() {
-        when(projectFolder.getFileObject("main.rs")).thenReturn(aFile());
-
-        boolean projectDetected = factory.isProject(projectFolder);
-
-        assertThat(projectDetected, is(true));
-    }
-
-    @Test
-    public void shouldIdentifyAProjectWithALibFile() {
-        when(projectFolder.getFileObject("lib.rs")).thenReturn(aFile());
-
-        boolean projectDetected = factory.isProject(projectFolder);
-
-        assertThat(projectDetected, is(true));
-    }
-
-    @Test
-    public void shouldIdentifyAProjectWithATestFile() {
-        when(projectFolder.getFileObject("test.rs")).thenReturn(aFile());
-
-        boolean projectDetected = factory.isProject(projectFolder);
-
-        assertThat(projectDetected, is(true));
-    }
-
-    @Test
-    public void shouldIdentifyAProjectWithABenchFile() {
-        when(projectFolder.getFileObject("bench.rs")).thenReturn(aFile());
-
-        boolean projectDetected = factory.isProject(projectFolder);
-
-        assertThat(projectDetected, is(true));
-    }
-
-    @Test
-    public void shouldIdentifyAProjectWithAPackageScript() {
-        when(projectFolder.getFileObject("pkg.rs")).thenReturn(aFile());
+    public void shouldIdentifyAProjectWithACargoFile() {
+        when(projectFolder.getFileObject("Cargo.toml")).thenReturn(aFile());
 
         boolean projectDetected = factory.isProject(projectFolder);
 
@@ -114,7 +78,7 @@ public class RustProjectFactoryTest {
 
     @Test
     public void shouldReturnAnIconWhenDirectoryIsProject() {
-        when(projectFolder.getFileObject("main.rs")).thenReturn(aFile());
+        when(projectFolder.getFileObject("Cargo.toml")).thenReturn(aFile());
 
         ProjectManager.Result result = factory.isProject2(projectFolder);
 
@@ -134,7 +98,7 @@ public class RustProjectFactoryTest {
 
     private FileObject aProject() {
         FileObject folder = mock(FileObject.class);
-        when(folder.getFileObject("main.rs")).thenReturn(aFile());
+        when(folder.getFileObject("Cargo.toml")).thenReturn(aFile());
         return folder;
     }
 }

@@ -37,11 +37,7 @@ public class RustProjectFactory implements ProjectFactory2 {
 
     @Override
     public boolean isProject(FileObject projectDirectory) {
-        return projectDirectory.getFileObject("main.rs") != null
-                || projectDirectory.getFileObject("lib.rs") != null
-                || projectDirectory.getFileObject("pkg.rs") != null
-                || projectDirectory.getFileObject("test.rs") != null
-                || projectDirectory.getFileObject("bench.rs") != null;
+        return projectDirectory.getFileObject("Cargo.toml") != null;
     }
 
     @Override
