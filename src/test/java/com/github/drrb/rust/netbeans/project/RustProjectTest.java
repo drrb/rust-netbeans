@@ -17,20 +17,19 @@
 package com.github.drrb.rust.netbeans.project;
 
 import static com.github.drrb.rust.netbeans.test.TestData.getData;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
-import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.netbeans.api.project.Project;
@@ -113,34 +112,36 @@ public class RustProjectTest {
         Node projectNode = logicalViewProvider.createLogicalView();
         assertThat(projectNode.getDisplayName(), is("Test Rust Project"));
 
-        assertThat(projectNode, hasChildren("Sources"));
+        assertThat(projectNode, hasChildren("Sources", "Cargo.toml"));
     }
 
     private Matcher<Node> hasChildren(String... children) {
         return new HasChildren(children);
     }
 
-    private static class HasChildren extends TypeSafeMatcher<Node> {
+    private static class HasChildren extends TypeSafeDiagnosingMatcher<Node> {
 
-        private final String[] children;
+        private final String[] expectedChildNames;
 
-        HasChildren(String[] children) {
-            this.children = children.clone();
+        HasChildren(String[] expectedChildNames) {
+            this.expectedChildNames = expectedChildNames.clone();
         }
 
         @Override
-        public boolean matchesSafely(Node node) {
-            Node[] childNodes = node.getChildren().getNodes(true); // 'true' loads the children if they're lazily loading (otherwise they're displayed as "Please Wait..."
-            List<String> names = new ArrayList<>(childNodes.length);
-            for (Node child : childNodes) {
-                names.add(child.getDisplayName());
-            }
-            return names.equals(Arrays.asList(children));
+        protected boolean matchesSafely(Node node, Description mismatchDescription) {
+            Node[] actualChildren = node.getChildren().getNodes(true); // 'true' loads the children if they're lazily loading (otherwise they're displayed as "Please Wait..."
+            List<String> actualChildNames = asList(actualChildren).stream()
+                                                .map(Node::getDisplayName)
+                                                .collect(toList());
+            mismatchDescription.appendText("got node with children: ")
+                                .appendValueList("<", ", ", ">", actualChildNames);
+            return actualChildNames.equals(asList(expectedChildNames));
         }
 
         @Override
         public void describeTo(Description description) {
-            description.appendText("node with children: ").appendValueList("<", ", ", ">", children);
+            description.appendText("node with children: ")
+                        .appendValueList("<", ", ", ">", expectedChildNames);
         }
     }
 }

@@ -18,7 +18,6 @@ package com.github.drrb.rust.netbeans.project;
 
 import com.moandjiezana.toml.Toml;
 import java.beans.PropertyChangeListener;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,7 +94,7 @@ public class RustProject implements Project {
             try {
                 Toml cargoConf = new Toml().parse(cargoFile.asText("UTF-8"));
                 return cargoConf.getTable("package").getString("name");
-            } catch (Exception ex) {
+            } catch (IOException | IllegalStateException ex) {
                 LOGGER.log(Level.WARNING, "Failed to load project name from Cargo config: {}", ex);
                 return getName();
             }
