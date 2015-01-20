@@ -1,9 +1,5 @@
 This project depends on the following libraries (including test and runtime dependencies)
 
-An ANTLR grammar for Rust
-URL: https://github.com/jbclements/rust-antlr
-License: TODO
-
   abego TreeLayout Core under BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)
   ANTLR 3 Runtime under BSD licence
   ANTLR 4 Runtime under The BSD License
