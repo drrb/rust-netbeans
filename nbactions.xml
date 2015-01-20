@@ -27,8 +27,5 @@
         <properties>
             <skipTests>true</skipTests>
         </properties>
-        <activatedProfiles>
-            <activatedProfile>generate-parser</activatedProfile>
-        </activatedProfiles>
     </action>
 </actions>
