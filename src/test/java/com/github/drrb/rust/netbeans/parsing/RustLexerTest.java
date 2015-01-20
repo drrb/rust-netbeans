@@ -60,7 +60,7 @@ public class RustLexerTest {
         source.append("}\n");
         source.append("\n");
         lexer = RustLexer.forString(source.toString());
-        assertThat(lexer.nextToken(), isToken(IDENT).from(1, 0).to(1, 2));
+        assertThat(lexer.nextToken(), isToken(FN).from(1, 0).to(1, 2));
         assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 2).to(1, 3));
         assertThat(lexer.nextToken(), isToken(IDENT).from(1, 3).to(1, 7));
         assertThat(lexer.nextToken(), isToken(OPEN_PAREN).from(1, 7).to(1, 8));

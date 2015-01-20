@@ -49,7 +49,7 @@ public class NetbeansRustLexerTest {
     @Test
     public void shouldParseSource() {
         lexer = new TestableNetbeansRustLexer("fn main() { }");
-        assertThat(lexer.nextToken(), isToken(IDENT, 0, "fn"));
+        assertThat(lexer.nextToken(), isToken(FN, 0, "fn"));
         assertThat(lexer.nextToken(), isToken(WHITESPACE, 2, " "));
         assertThat(lexer.nextToken(), isToken(IDENT, 3, "main"));
         assertThat(lexer.nextToken(), isToken(OPEN_PAREN, 7, "("));

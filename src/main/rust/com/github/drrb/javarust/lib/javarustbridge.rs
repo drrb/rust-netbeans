@@ -38,6 +38,7 @@ use syntax::parse::token::BinOpToken;
 use syntax::parse::token::DelimToken;
 use syntax::parse::token::Lit;
 use syntax::parse::token::Token;
+use syntax::parse::token::keywords;
 
 
 #[repr(C)]
@@ -172,6 +173,45 @@ pub enum TokenKind {
     StrRawLiteral,
     BinaryLiteral,
     BinaryRawLiteral,
+
+    //Ident (keywords)
+    As,
+    Break,
+    Crate,
+    Else,
+    Enum,
+    Extern,
+    False,
+    Fn,
+    For,
+    If,
+    Impl,
+    In,
+    Let,
+    Loop,
+    Match,
+    Mod,
+    Move,
+    Mut,
+    Pub,
+    Ref,
+    Return,
+    Static,
+    Self,
+    Struct,
+    Super,
+    True,
+    Trait,
+    Type,
+    Unsafe,
+    Use,
+    Virtual,
+    While,
+    Continue,
+    Proc,
+    Box,
+    Const,
+    Where,
 }
 
 fn token_type(token: Token) -> TokenKind {
@@ -233,7 +273,85 @@ fn token_type(token: Token) -> TokenKind {
             Lit::Binary(_) => TokenKind::BinaryLiteral,
             Lit::BinaryRaw(_, _) => TokenKind::BinaryRawLiteral,
         },
-        Token::Ident(_, _) => TokenKind::Ident,
+        Token::Ident(name, _) => {
+            if token.is_keyword(keywords::As) {
+                TokenKind::As
+            } else if token.is_keyword(keywords::Break) {
+                TokenKind::Break
+            } else if token.is_keyword(keywords::Crate) {
+                TokenKind::Crate
+            } else if token.is_keyword(keywords::Else) {
+                TokenKind::Else
+            } else if token.is_keyword(keywords::Enum) {
+                TokenKind::Enum
+            } else if token.is_keyword(keywords::Extern) {
+                TokenKind::Extern
+            } else if token.is_keyword(keywords::False) {
+                TokenKind::False
+            } else if token.is_keyword(keywords::Fn) {
+                TokenKind::Fn
+            } else if token.is_keyword(keywords::For) {
+                TokenKind::For
+            } else if token.is_keyword(keywords::If) {
+                TokenKind::If
+            } else if token.is_keyword(keywords::Impl) {
+                TokenKind::Impl
+            } else if token.is_keyword(keywords::In) {
+                TokenKind::In
+            } else if token.is_keyword(keywords::Let) {
+                TokenKind::Let
+            } else if token.is_keyword(keywords::Loop) {
+                TokenKind::Loop
+            } else if token.is_keyword(keywords::Match) {
+                TokenKind::Match
+            } else if token.is_keyword(keywords::Mod) {
+                TokenKind::Mod
+            } else if token.is_keyword(keywords::Move) {
+                TokenKind::Move
+            } else if token.is_keyword(keywords::Mut) {
+                TokenKind::Mut
+            } else if token.is_keyword(keywords::Pub) {
+                TokenKind::Pub
+            } else if token.is_keyword(keywords::Ref) {
+                TokenKind::Ref
+            } else if token.is_keyword(keywords::Return) {
+                TokenKind::Return
+            } else if token.is_keyword(keywords::Static) {
+                TokenKind::Static
+            } else if token.is_keyword(keywords::Self) {
+                TokenKind::Self
+            } else if token.is_keyword(keywords::Struct) {
+                TokenKind::Struct
+            } else if token.is_keyword(keywords::Super) {
+                TokenKind::Super
+            } else if token.is_keyword(keywords::True) {
+                TokenKind::True
+            } else if token.is_keyword(keywords::Trait) {
+                TokenKind::Trait
+            } else if token.is_keyword(keywords::Type) {
+                TokenKind::Type
+            } else if token.is_keyword(keywords::Unsafe) {
+                TokenKind::Unsafe
+            } else if token.is_keyword(keywords::Use) {
+                TokenKind::Use
+            } else if token.is_keyword(keywords::Virtual) {
+                TokenKind::Virtual
+            } else if token.is_keyword(keywords::While) {
+                TokenKind::While
+            } else if token.is_keyword(keywords::Continue) {
+                TokenKind::Continue
+            } else if token.is_keyword(keywords::Proc) {
+                TokenKind::Proc
+            } else if token.is_keyword(keywords::Box) {
+                TokenKind::Box
+            } else if token.is_keyword(keywords::Const) {
+                TokenKind::Const
+            } else if token.is_keyword(keywords::Where) {
+                TokenKind::Where
+            } else {
+                TokenKind::Ident
+            }
+        },
         Token::Underscore => TokenKind::Underscore,
         Token::Lifetime(_) => TokenKind::Lifetime,
         Token::Interpolated(_) => TokenKind::Interpolated,
