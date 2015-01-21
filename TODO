@@ -1,27 +1,30 @@
-
-
 features:
     editor:
+        - Syntax highlighting
+        - Error highlighting
+        - Cargo.toml highlighting
         - Code completion
         - Documentation in code completion
         - MD highlighting for doc comments
         - Go to declaration
         - Instant rename
     run:
-        - Run tests
+        - Save on run
+        - Console output
         - Compile and run
-        - Rustpkg stuff
-	- Debugger http://netbeans.dzone.com/how-reuse-netbeans-debugger
+        - Debugger (http://netbeans.dzone.com/how-reuse-netbeans-debugger)
     project:
         - 'New Rust project'
-        - Logical Rustpgk view
         - Icons (ask for help)
         - Icon badging (e.g. play arrow for main class)
-        - Project customizer: https://platform.netbeans.org/tutorials/nbm-projecttype.html#projectcustomizer
+        - Project customizer (https://platform.netbeans.org/tutorials/nbm-projecttype.html#projectcustomizer)
+    settings:
+        - cargo path
+        - rustc path
+        - Source path
 
 development:
     testing:
         - Functional tests on Travis: http://about.travis-ci.org/docs/user/gui-and-headless-browsers
     release:
-        - Add repository to Maven
-        - How do we distribute a NetBeans plugin
+        - How do we distribute a NetBeans plugin?
