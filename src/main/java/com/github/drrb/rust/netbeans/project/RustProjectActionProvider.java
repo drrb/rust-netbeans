@@ -16,15 +16,12 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
-import java.io.File;
-import java.io.IOException;
 import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.netbeans.spi.project.ActionProvider;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 public class RustProjectActionProvider implements ActionProvider {
@@ -39,10 +36,15 @@ public class RustProjectActionProvider implements ActionProvider {
         commands.put(COMMAND_TEST, asList("test"));
         COMMANDS = Collections.unmodifiableMap(commands);
     }
-    private final RustProject project;
+
+    private final Cargo cargo;
 
     public RustProjectActionProvider(RustProject project) {
-        this.project = project;
+        this(new Cargo(project));
+    }
+
+    RustProjectActionProvider(Cargo cargo) {
+        this.cargo = cargo;
     }
 
     @Override
@@ -52,41 +54,16 @@ public class RustProjectActionProvider implements ActionProvider {
 
     @Override
     public void invokeAction(String action, Lookup context) throws IllegalArgumentException {
-        System.out.format("Running command %s...%n", action);
-        switch(action) {
+        switch (action) {
             case COMMAND_BUILD:
             case COMMAND_CLEAN:
             case COMMAND_TEST:
-                cargo(action);
+                cargo.run(action);
                 break;
             case COMMAND_REBUILD:
-                cargo("clean", "build");
+                cargo.run("clean");
+                cargo.run("build");
         }
-    }
-
-    private void cargo(String... commands) {
-        for (String command : commands) {
-            cargoRun(command);
-        }
-    }
-
-    private void cargoRun(String cargoCommand) {
-        try {
-            Process process = new ProcessBuilder()
-                    .command("/bin/sh", "-lc", "cargo " + cargoCommand + " --verbose")
-                    .directory(projectDir())
-                    .inheritIO()
-                    .start();
-            process.waitFor();
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (InterruptedException ex) {
-            System.out.println("Cargo interrupted. Cleaning up...");
-        }
-    }
-
-    private File projectDir() {
-        return new File(project.getProjectDirectory().getPath());
     }
 
     @Override

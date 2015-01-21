@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans.project;
 
 import com.moandjiezana.toml.Toml;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +63,10 @@ public class RustProject implements Project {
     @Override
     public FileObject getProjectDirectory() {
         return projectDirectory;
+    }
+
+    public File dir() {
+        return new File(projectDirectory.getPath());
     }
 
     @Override
