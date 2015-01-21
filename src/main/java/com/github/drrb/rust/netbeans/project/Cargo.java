@@ -33,7 +33,7 @@ public class Cargo {
     public void run(String command) {
         try {
             Process process = new ProcessBuilder()
-                    .command("/bin/sh", "-lc", "cargo " + command + " --verbose")
+                    .command("/bin/bash", "-lc", "cargo " + command + " --verbose")
                     .directory(project.dir())
                     .inheritIO()
                     .start();
