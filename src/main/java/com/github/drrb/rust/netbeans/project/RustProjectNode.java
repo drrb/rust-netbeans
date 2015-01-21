@@ -60,11 +60,6 @@ public class RustProjectNode extends FilterNode {
 
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[]{
-            CommonProjectActions.newFileAction(),
-            CommonProjectActions.copyProjectAction(),
-            CommonProjectActions.deleteProjectAction(),
-            CommonProjectActions.closeProjectAction()
-        };
+        return CommonProjectActions.forType(RustProject.TYPE);
     }
 }

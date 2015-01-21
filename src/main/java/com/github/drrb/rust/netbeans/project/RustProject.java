@@ -70,7 +70,7 @@ public class RustProject implements Project {
                 this, // So people can cast it without casting it, you know?
                 new Info(),
                 new LogicalView(),
-                new RustProjectActionProvider(),
+                new RustProjectActionProvider(this),
                 LookupProviderSupport.createSourcesMerger(), // Gets implementations of Sources from named lookup below
                 //TODO: saw this in Maven project. What does it do?
                 //ProjectClassPathModifier.extenderForModifier(this), // Gets implementations of ProjectClassPathModifierImplementation from the named lookup below

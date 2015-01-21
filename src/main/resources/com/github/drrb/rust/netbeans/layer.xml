@@ -48,8 +48,67 @@
         </folder>
     </folder>
 
-<!-- Required for Navigator panel? (Delete if not needed) -->
-<!--    <folder name="Navigator">
+    <folder name="Projects">
+        <folder name="com-github-drrb-rust-netbeans-project">
+            <folder name="Nodes"/>
+            <folder name="Actions">
+                <file name="org-netbeans-modules-project-ui-NewFile$WithSubMenu.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-NewFile$WithSubMenu.instance"/>
+                    <attr name="position" intvalue="100"/>
+                </file>
+                <file name="sep-1.instance">
+                    <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                    <attr name="position" intvalue="200"/>
+                </file>
+                <file name="org-netbeans-modules-project-ui-BuildProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-BuildProject.instance"/>
+                    <attr name="position" intvalue="300"/>
+                </file>
+                <file name="org-netbeans-modules-project-ui-RebuildProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-RebuildProject.instance"/>
+                    <attr name="position" intvalue="400"/>
+                </file>
+                <file name="org-netbeans-modules-project-ui-CleanProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-CleanProject.instance"/>
+                    <attr name="position" intvalue="600"/>
+                </file>
+                <file name="sep-2.instance">
+                    <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                    <attr name="position" intvalue="800"/>
+                </file>
+                <file name="org-netbeans-modules-project-ui-RunProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-RunProject.instance"/>
+                    <attr name="position" intvalue="900"/>
+                </file>
+                <!--
+                <file name="org-netbeans-modules-debugger-ui-actions-DebugProjectAction.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Debug/org-netbeans-modules-debugger-ui-actions-DebugProjectAction.instance"/>
+                    <attr name="position" intvalue="1000"/>
+                </file>
+                <file name="org-netbeans-modules-profiler-actions-ProfileProjectActionPopup.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Profile/org-netbeans-modules-profiler-actions-ProfileProjectPopup.instance"/>
+                    <attr name="position" intvalue="1100"/>
+                </file>
+                -->
+                <file name="org-netbeans-modules-project-ui-TestProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-TestProject.instance"/>
+                    <attr name="position" intvalue="1200"/>
+                </file>
+                <file name="sep-3.instance">
+                    <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                    <attr name="position" intvalue="1300"/>
+                </file>
+                <file name="org-netbeans-modules-project-ui-SetMainProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-SetMainProject.instance"/>
+                    <attr name="position" intvalue="1500"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+
+
+    <!-- Required for Navigator panel? (Delete if not needed) -->
+    <!--    <folder name="Navigator">
         <folder name="Panels">
             <folder name="text">
                 <folder name="x-rust-source">
