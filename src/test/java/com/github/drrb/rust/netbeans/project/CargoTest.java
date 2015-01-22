@@ -16,31 +16,33 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.joining;
+import java.io.File;
+import org.junit.Test;
+import org.junit.Before;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  *
  */
-public class Cargo {
+public class CargoTest {
+    private Cargo cargo;
+    private Shell shell;
+    private RustProject project;
 
-    private final Shell shell;
-    private final RustProject project;
-
-    public Cargo(RustProject project) {
-        this(new Shell(), project);
+    @Before
+    public void setUp() {
+        project = mock(RustProject.class);
+        shell = mock(Shell.class);
+        cargo = new Cargo(shell, project);
     }
 
-    Cargo(Shell shell, RustProject project) {
-        this.shell = shell;
-        this.project = project;
-    }
-
-    public void run(String... commands) {
-        String commandLine = stream(commands)
-                .map((command) -> "cargo " + command + " --verbose")
-                .collect(joining(" && "));
-        shell.run(commandLine, project.dir());
+    @Test
+    public void shouldRunCargoCommandsInShell() {
+        when(project.dir()).thenReturn(new File("/tmp/myproject"));
+        cargo.run("clean", "build");
+        verify(shell).run("cargo clean --verbose && cargo build --verbose", new File("/tmp/myproject"));
     }
 
 }

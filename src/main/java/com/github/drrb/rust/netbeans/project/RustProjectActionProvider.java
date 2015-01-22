@@ -55,14 +55,13 @@ public class RustProjectActionProvider implements ActionProvider {
     @Override
     public void invokeAction(String action, Lookup context) throws IllegalArgumentException {
         switch (action) {
-            case COMMAND_BUILD:
             case COMMAND_CLEAN:
+            case COMMAND_BUILD:
             case COMMAND_TEST:
                 cargo.run(action);
                 break;
             case COMMAND_REBUILD:
-                cargo.run("clean");
-                cargo.run("build");
+                cargo.run("clean", "build");
         }
     }
 

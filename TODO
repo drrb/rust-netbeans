@@ -9,7 +9,6 @@ features:
         - Go to declaration
         - Instant rename
     run:
-        - Save on run
         - Console output
         - Compile and run
         - Debugger (http://netbeans.dzone.com/how-reuse-netbeans-debugger)
