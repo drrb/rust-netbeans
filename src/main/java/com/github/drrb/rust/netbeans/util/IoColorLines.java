@@ -14,33 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.util;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.joining;
+import java.io.IOException;
+import org.openide.util.Exceptions;
+import org.openide.windows.IOColorLines;
+import org.openide.windows.IOColors;
+import org.openide.windows.InputOutput;
 
 /**
  *
  */
-public class Cargo {
+public class IoColorLines {
 
-    private final Shell shell;
-    private final RustProject project;
-
-    public Cargo(RustProject project) {
-        this(new Shell("Cargo"), project);
+    public static void printDebug(InputOutput io, CharSequence text) {
+        if (IOColorLines.isSupported(io)) {
+            try {
+                IOColorLines.println(io, text, IOColors.getColor(io, IOColors.OutputType.LOG_DEBUG));
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        } else {
+            io.getOut().println(text);
+        }
     }
-
-    Cargo(Shell shell, RustProject project) {
-        this.shell = shell;
-        this.project = project;
-    }
-
-    public void run(String... commands) {
-        String commandLine = stream(commands)
-                .map((command) -> "cargo " + command + " --verbose")
-                .collect(joining(" && "));
-        shell.run(commandLine, project.dir());
-    }
-
 }
