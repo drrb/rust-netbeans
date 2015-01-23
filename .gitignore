@@ -1,9 +1,7 @@
 /target/
-.no-generate-parser
-.antlr-grammar-location
 .not-ci
 .idea
 *.iml
 *.swp
-/src/main/antlr4/
 /hs_err*.log
+/etc
