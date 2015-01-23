@@ -9,18 +9,21 @@ features:
         - Go to declaration
         - Instant rename
     run:
-        - Console output
-        - Compile and run
+        - Popup on success/failure
+        - Run
         - Debugger (http://netbeans.dzone.com/how-reuse-netbeans-debugger)
     project:
         - 'New Rust project'
         - Icons (ask for help)
-        - Icon badging (e.g. play arrow for main class)
+        - Icon badging (e.g. play arrow for executable source)
         - Project customizer (https://platform.netbeans.org/tutorials/nbm-projecttype.html#projectcustomizer)
     settings:
         - cargo path
         - rustc path
         - Source path
+    cross_platform:
+        - Support building plugin on Windows
+        - Support Cargo on Windows
 
 development:
     testing:
