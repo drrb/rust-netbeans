@@ -33,7 +33,19 @@ public interface RustNative extends Library {
 
     void destroyLexer(NativeRustLexer box);
 
+    void parse(String fileName, String source, AstCallback resultCallback, ParseErrorCallback errorCallback);
+
+    void destroyAst(RustAst box);
+
     interface TokenCallback extends Callback {
         void tokenRead(RustToken.ByValue token);
+    }
+
+    interface AstCallback extends Callback {
+        void sourceParsed(RustAst ast);
+    }
+
+    interface ParseErrorCallback extends Callback {
+        void errorFound(String error);
     }
 }

@@ -16,12 +16,14 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import java.util.Collections;
 import java.util.Set;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
+import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.indexing.PathRecognizerRegistration;
 import org.openide.util.NbBundle;
 
@@ -61,6 +63,11 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public Language<RustTokenId> getLexerLanguage() {
         return RustTokenId.language();
+    }
+
+    @Override
+    public Parser getParser() {
+        return new NetbeansRustParser();
     }
 
     //TODO: are these required? Is the annotation enough?
