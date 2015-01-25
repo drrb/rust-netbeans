@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.RustDocument;
+import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.RustParseMessage;
 import static com.github.drrb.rust.netbeans.parsing.RustParseMessage.Level.FATAL;
@@ -41,14 +42,14 @@ public class RustSyntaxErrorHighlighterTest {
 
     @Test
     public void shouldExtractErrorForHighlighting() throws Exception {
-        StringBuilder function = new StringBuilder();
+        RustSourceSnapshot function = new RustSourceSnapshot();
         function.append("fn greet(name: String) {\n");
         function.append("    xxx io::println(fmt!(\"Hello, %?\", name));\n");
         function.append("}\n");
         RustParseMessage syntaxError = new RustParseMessage(FATAL, 2, 8, 2, 10, "bad syntax!");
         RustParser.Result result = new RustParser.Result(null, asList(syntaxError));
 
-        RustDocument document = RustDocument.containing(function);
+        RustDocument document = function.getDocument();
         Snapshot snapshot = snapshotOf(document);
         RustSyntaxErrorHighlighter.Factory factory = new RustSyntaxErrorHighlighter.Factory();
         Collection<? extends SchedulerTask> tasks = factory.create(snapshot);
