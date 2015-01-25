@@ -50,7 +50,6 @@
 
     <folder name="Projects">
         <folder name="com-github-drrb-rust-netbeans-project">
-            <folder name="Nodes"/>
             <folder name="Actions">
                 <file name="org-netbeans-modules-project-ui-NewFile$WithSubMenu.shadow">
                     <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-NewFile$WithSubMenu.instance"/>
