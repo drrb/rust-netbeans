@@ -18,62 +18,60 @@ package com.github.drrb.rust.netbeans.project;
 
 import java.awt.Image;
 import java.beans.BeanInfo;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.file.Files;
 import javax.swing.Action;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
 import static org.hamcrest.Matchers.*;
-import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.junit.NbTestCase;
+import static org.netbeans.spi.project.ui.support.CommonProjectActions.closeProjectAction;
+import org.openide.filesystems.FileUtil;
+import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
+import org.openide.util.UtilitiesTest.NamedServicesProviderImpl;
 import org.openide.util.lookup.Lookups;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.openide.util.test.MockLookup;
 
 /**
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Node.class)
-public class RustProjectNodeTest {
+public class RustProjectNodeTest extends NbTestCase {
 
-    @Mock
-    Node projectDirectoryNode;
-    @Mock
-    RustProject project;
-    @Mock
-    ProjectInformation projectInfo;
     private RustProjectNode projectNode;
+    private NamedServicesProviderImpl namedServicesProvider;
 
-    @Before
-    public void setUp() throws Exception {
-        when(projectDirectoryNode.getChildren()).thenReturn(mock(Children.class));
-        when(projectDirectoryNode.getLookup()).thenReturn(mock(Lookup.class));
-        when(project.getLookup()).thenReturn(Lookups.fixed(projectInfo));
-        projectNode = new RustProjectNode(projectDirectoryNode, project);
+    public RustProjectNodeTest(String name) {
+        super(name);
     }
 
-    @Test
-    public void shouldDisplayProjectNodeWithDisplayName() {
-        when(projectInfo.getDisplayName()).thenReturn("my rust project");
+    @Override
+    public void setUp() throws Exception {
+        clearWorkDir();
+        namedServicesProvider = new NamedServicesProviderImpl();
+        MockLookup.setInstances(namedServicesProvider);
+        RustProject rustProject = new RustProject(FileUtil.toFileObject(getWorkDir()), null);
+        projectNode = new RustProjectNode(new AbstractNode(Children.LEAF, Lookup.EMPTY), rustProject);
+    }
+
+    public void testDisplaysProjectNodeWithDisplayName() throws Exception {
+        Files.write(getWorkDir().toPath().resolve("Cargo.toml"), "[package]\nname = \"my rust project\"\n".getBytes(UTF_8));
 
         assertThat(projectNode.getDisplayName(), is("my rust project"));
     }
 
-    @Test
-    public void shouldDisplayProjectIcon() {
+    public void testDisplaysProjectIcon() {
         assertThat(projectNode.getIcon(BeanInfo.ICON_COLOR_16x16), isA(Image.class));
     }
 
-    @Test
-    public void shouldHaveActions() {
+    public void testHasActionsRegisteredInLayer() {
+        Action closeProjectAction = closeProjectAction();
+        namedServicesProvider.addNamedLookup("Projects/com-github-drrb-rust-netbeans-project/Actions", Lookups.singleton(closeProjectAction));
+
         Action[] actions = projectNode.getActions(true);
 
-        assertThat(actions.length, is(not(0)));
+        assertThat(actions, is(arrayContaining(closeProjectAction)));
     }
 }

@@ -21,8 +21,6 @@ import com.github.drrb.rust.netbeans.util.Pipe;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import static java.util.Arrays.asList;
-import java.util.List;
 import javax.swing.AbstractAction;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
