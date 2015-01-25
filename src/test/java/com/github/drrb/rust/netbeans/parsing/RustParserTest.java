@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import java.util.List;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -50,7 +51,7 @@ public class RustParserTest {
         result = parser.parse("test.rs", "fn main() {}");
         assertTrue(result.isSuccess());
         assertThat(result.getAst(), not(nullValue()));
-        assertThat(result.getParseErrors(), is(empty()));
+        assertThat(result.getParseMessages(), is(empty()));
     }
 
     @Test
@@ -58,7 +59,7 @@ public class RustParserTest {
         result = parser.parse("test.rs", "fn main() { 1 2 }");
         assertFalse(result.isSuccess());
         assertThat(result.getAst(), is(nullValue()));
-        assertThat(result.getParseErrors(), not(empty()));
+        assertThat(result.getParseMessages(), not(empty()));
     }
 
     @Test
@@ -66,6 +67,13 @@ public class RustParserTest {
         result = parser.parse("test.rs", "fn main() {");
         assertFalse(result.isSuccess());
         assertThat(result.getAst(), is(nullValue()));
-        assertThat(result.getParseErrors(), not(empty()));
+
+        RustParseMessage firstMessage = result.getParseMessages().get(0);
+        assertThat(firstMessage.getLevel(), is(RustParseMessage.Level.HELP));
+        assertThat(firstMessage.getStartLine(), is(1));
+        assertThat(firstMessage.getStartCol(), is(10));
+        assertThat(firstMessage.getEndLine(), is(1));
+        assertThat(firstMessage.getEndCol(), is(11));
+        assertThat(firstMessage.getMessage(), is("did you mean to close this delimiter?"));
     }
 }

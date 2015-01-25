@@ -67,31 +67,6 @@ public class NetbeansRustParser extends Parser {
     public void removeChangeListener(ChangeListener changeListener) {
     }
 
-    public static class SyntaxError {
-
-        private final int line;
-        private final int column;
-        private final String message;
-
-        public SyntaxError(int line, int column, String message) {
-            this.line = line;
-            this.column = column;
-            this.message = message;
-        }
-
-        public int getLine() {
-            return line;
-        }
-
-        public int getColumn() {
-            return column;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-    }
-
     public static class NetbeansRustParserResult extends ParserResult {
 
         private final RustParser.Result result;
@@ -102,17 +77,13 @@ public class NetbeansRustParser extends Parser {
             this.result = result;
         }
 
-        public List<SyntaxError> getSyntaxErrors() {
-            return Collections.emptyList();
-        }
-
-        public RustAst getAst() throws ParseException {
+        public RustParser.Result getResult() throws ParseException {
             //TODO: is this what we should be doing to ensure people don't
             // access a released AST?
             if (!valid.get()) {
                 throw new ParseException();
             }
-            return result.getAst();
+            return result;
         }
 
         @Override

@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import java.util.Collections;
 import static java.util.Collections.emptyList;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,9 +29,9 @@ public class RustParser {
 
     Result parse(String fileName, String source) {
         AtomicReference<RustAst> astHolder = new AtomicReference<>();
-        List<String> parseErrors = new LinkedList<>();
-        RustNative.INSTANCE.parse(fileName, source, astHolder::set, parseErrors::add);
-        return new Result(astHolder.get(), parseErrors);
+        List<RustParseMessage> parseMessages = new LinkedList<>();
+        RustNative.INSTANCE.parse(fileName, source, astHolder::set, parseMessages::add);
+        return new Result(astHolder.get(), parseMessages);
     }
 
     public static class Result {
@@ -38,11 +39,11 @@ public class RustParser {
         public static final Result NONE = new Result(null, emptyList());
 
         private final RustAst ast;
-        private final List<String> parseErrors;
+        private final List<RustParseMessage> parseErrors;
 
-        private Result(RustAst ast, List<String> parseErrors) {
+        private Result(RustAst ast, List<RustParseMessage> parseErrors) {
             this.ast = ast;
-            this.parseErrors = parseErrors;
+            this.parseErrors = Collections.unmodifiableList(parseErrors);
         }
 
         public boolean isSuccess() {
@@ -53,7 +54,7 @@ public class RustParser {
             return ast;
         }
 
-        public List<String> getParseErrors() {
+        public List<RustParseMessage> getParseMessages() {
             return parseErrors;
         }
 

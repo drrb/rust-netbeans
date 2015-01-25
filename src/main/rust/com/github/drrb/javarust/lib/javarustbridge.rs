@@ -405,12 +405,45 @@ pub extern fn destroyLexer(lexer: Box<RustLexer>) {
     //Do nothing: lexer will be released
 }
 
+#[repr(C)]
+pub struct ParseMessage {
+    level: ParseMessageLevel,
+    start_line: c_int,
+    start_col: c_int,
+    end_line: c_int,
+    end_col: c_int,
+    message: *const c_char,
+}
+
+#[repr(C)]
+pub enum ParseMessageLevel {
+    Bug,
+    Fatal,
+    Error,
+    Warning,
+    Note,
+    Help,
+}
+
+impl ParseMessageLevel {
+    fn from_emitted(level: Level) -> ParseMessageLevel {
+        match level {
+            Level::Bug => ParseMessageLevel::Bug,
+            Level::Fatal => ParseMessageLevel::Fatal,
+            Level::Error => ParseMessageLevel::Error,
+            Level::Warning => ParseMessageLevel::Warning,
+            Level::Note => ParseMessageLevel::Note,
+            Level::Help => ParseMessageLevel::Help,
+        }
+    }
+}
+
 struct MessageCollector {
-    collect: extern "C" fn (*const c_char)
+    collect: extern "C" fn (ParseMessage)
 }
 
 impl MessageCollector {
-    fn new(collect: extern "C" fn (*const c_char)) -> MessageCollector {
+    fn new(collect: extern "C" fn (ParseMessage)) -> MessageCollector {
         MessageCollector {
             collect: collect
         }
@@ -419,13 +452,40 @@ impl MessageCollector {
 
 impl Emitter for MessageCollector {
     fn emit(&mut self, cmsp: Option<(&CodeMap, Span)>, msg: &str, code: Option<&str>, lvl: Level) {
-        let collect = self.collect;
-        collect(to_ptr(msg.to_string()));
+        match cmsp {
+            Some((codemap, span)) => {
+                let lo_loc = codemap.lookup_char_pos(span.lo);
+                let lo_line = lo_loc.line;
+                let CharPos(lo_col) = lo_loc.col;
+                let hi_loc = codemap.lookup_char_pos(span.hi);
+                let hi_line = hi_loc.line;
+                let CharPos(hi_col) = hi_loc.col;
+                let collect = self.collect;
+                collect(ParseMessage {
+                    level: ParseMessageLevel::from_emitted(lvl),
+                    start_line: lo_line as c_int,
+                    start_col: lo_col as c_int,
+                    end_line: hi_line as c_int,
+                    end_col: hi_col as c_int,
+                    message: to_ptr(msg.to_string()),
+                });
+            },
+            None => {
+                // TODO: collect even if there's no location?
+            }
+        }
     }
 
     fn custom_emit(&mut self, cm: &CodeMap, sp: RenderSpan, msg: &str, lvl: Level) {
         let collect = self.collect;
-        collect(to_ptr(msg.to_string()));
+        collect(ParseMessage {
+            level: ParseMessageLevel::from_emitted(lvl),
+            start_line: 0 as c_int,
+            start_col: 0 as c_int,
+            end_line: 0 as c_int,
+            end_col: 0 as c_int,
+            message: to_ptr(msg.to_string()),
+        });
     }
 }
 
@@ -434,7 +494,7 @@ pub extern fn parse(
     file_name: *const c_char,
     source: *const c_char,
     result_callback: extern "C" fn (Box<Ast>),
-    error_callback: extern "C" fn (*const c_char),
+    error_callback: extern "C" fn (ParseMessage),
 ) {
     unsafe {
         unwind::try(|| {
