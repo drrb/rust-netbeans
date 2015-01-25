@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.util.Collections;
 import static java.util.Collections.emptyList;
 import java.util.LinkedList;
@@ -41,7 +42,8 @@ public class RustParser {
         private final RustAst ast;
         private final List<RustParseMessage> parseErrors;
 
-        private Result(RustAst ast, List<RustParseMessage> parseErrors) {
+        @VisibleForTesting
+        public Result(RustAst ast, List<RustParseMessage> parseErrors) {
             this.ast = ast;
             this.parseErrors = Collections.unmodifiableList(parseErrors);
         }

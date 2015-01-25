@@ -44,6 +44,18 @@ public class RustParseMessage extends Structure {
     public int endCol;
     public String message;
 
+    public RustParseMessage() {
+    }
+
+    public RustParseMessage(Level level, int startLine, int startCol, int endLine, int endCol, String message) {
+        this.level = level.ordinal();
+        this.startLine = startLine;
+        this.startCol = startCol;
+        this.endLine = endLine;
+        this.endCol = endCol;
+        this.message = message;
+    }
+
     public Level getLevel() {
         return Level.values()[level];
     }
