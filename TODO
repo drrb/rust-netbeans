@@ -1,7 +1,7 @@
 features:
     editor:
         - Syntax highlighting
-        - Error highlighting
+        - Error highlighting (more than just syntax errors. E.g. lifetimes)
         - Cargo.toml highlighting
         - Code completion
         - Documentation in code completion
