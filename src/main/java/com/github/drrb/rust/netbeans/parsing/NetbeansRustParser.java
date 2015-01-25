@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,9 +50,14 @@ public class NetbeansRustParser extends Parser {
     }
 
     private RustParser.Result parse(Snapshot snapshot) {
-        String fileName = snapshot.getSource().getFileObject().getNameExt();
+        String fileName = getFileName(snapshot);
         String source = snapshot.getText().toString();
         return rustParser.parse(fileName, source);
+    }
+    
+    @VisibleForTesting
+    protected String getFileName(Snapshot snapshot) {
+        return snapshot.getSource().getFileObject().getNameExt();
     }
 
     @Override

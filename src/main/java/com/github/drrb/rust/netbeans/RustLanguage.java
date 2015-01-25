@@ -16,11 +16,13 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import com.github.drrb.rust.netbeans.formatting.RustFormatter;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import java.util.Collections;
 import java.util.Set;
 import org.netbeans.api.lexer.Language;
+import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
@@ -68,6 +70,16 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public Parser getParser() {
         return new NetbeansRustParser();
+    }
+
+    @Override
+    public boolean hasFormatter() {
+        return true;
+    }
+
+    @Override
+    public Formatter getFormatter() {
+        return new RustFormatter();
     }
 
     //TODO: are these required? Is the annotation enough?
