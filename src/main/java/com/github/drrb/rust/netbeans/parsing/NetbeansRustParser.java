@@ -18,7 +18,7 @@ package com.github.drrb.rust.netbeans.parsing;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.event.ChangeListener;
 import org.netbeans.modules.csl.api.Error;
 import org.netbeans.modules.csl.spi.ParserResult;
@@ -33,55 +33,30 @@ import org.netbeans.modules.parsing.spi.SourceModificationEvent;
  */
 public class NetbeansRustParser extends Parser {
 
-    private final AtomicInteger timesUsed = new AtomicInteger();
-
-    private Snapshot snapshot;
+    private final RustParser rustParser = new RustParser();
     private RustParser.Result result = RustParser.Result.NONE;
-//    private List<SyntaxError> syntaxErrors;
-//    private RustParser.ProgContext ast;
+    private Snapshot snapshot;
 
     @Override
     public void parse(final Snapshot snapshot, Task task, SourceModificationEvent event) {
-        //TODO: if we get segfautlts, it's probably to do with this.
+        //TODO: if we get segfaults, it's probably to do with this.
         // we should probably make sure we don't try to access the AST from
         // a stale (invalidated) result because the AST will have been freed.
         // (assuming that's actually what ParserResult.invalidate() actually means)
         this.result.destroy();
-        System.out.println("Times parser used = " + timesUsed.incrementAndGet());
         this.snapshot = snapshot;
-        String fileName = snapshot.getSource().getFileObject().getNameExt();
+        this.result = parse(snapshot);
+    }
 
-        result = new RustParser().parse(fileName, snapshot.getText().toString());
-//        this.parser = createParser(snapshot);
-//        this.syntaxErrors = new LinkedList<>();
-//        this.parser.addErrorListener(new BaseErrorListener() {
-//            @Override
-//            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String message, RecognitionException e) {
-//                syntaxErrors.add(new SyntaxError(line, charPositionInLine, message));
-//            }
-//        });
-//        try {
-//            ast = parser.prog();
-//        } catch (Exception ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
+    private RustParser.Result parse(Snapshot snapshot) {
+        String fileName = snapshot.getSource().getFileObject().getNameExt();
+        String source = snapshot.getText().toString();
+        return rustParser.parse(fileName, source);
     }
 
     @Override
-    public ParserResult getResult(Task task) throws ParseException {
-        return new ParserResult(snapshot) {
-
-            @Override
-            public List<? extends Error> getDiagnostics() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            protected void invalidate() {
-            }
-        };
-        //public NetbeansRustParserResult getResult(Task task) throws ParseException {
-        //return new NetbeansRustParserResult(snapshot, parser, ast, syntaxErrors);
+    public NetbeansRustParserResult getResult(Task task) throws ParseException {
+        return new NetbeansRustParserResult(snapshot, result);
     }
 
     @Override
@@ -92,21 +67,15 @@ public class NetbeansRustParser extends Parser {
     public void removeChangeListener(ChangeListener changeListener) {
     }
 
-//    private static RustParser createParser(Snapshot snapshot) {
-//        CharStream input = new ANTLRInputStream(snapshot.getText().toString());
-//        Lexer lexer = new RustLexer(input);
-//        CommonTokenStream tokens = new CommonTokenStream(lexer);
-//        return new RustParser(tokens);
-//    }
     public static class SyntaxError {
 
         private final int line;
-        private final int charPositionInLine;
+        private final int column;
         private final String message;
 
-        public SyntaxError(int line, int charPositionInLine, String message) {
+        public SyntaxError(int line, int column, String message) {
             this.line = line;
-            this.charPositionInLine = charPositionInLine;
+            this.column = column;
             this.message = message;
         }
 
@@ -114,8 +83,8 @@ public class NetbeansRustParser extends Parser {
             return line;
         }
 
-        public int getCharPositionInLine() {
-            return charPositionInLine;
+        public int getColumn() {
+            return column;
         }
 
         public String getMessage() {
@@ -123,47 +92,42 @@ public class NetbeansRustParser extends Parser {
         }
     }
 
-//    public static class NetbeansRustParserResult extends ParserResult {
-//        private final RustParser parser;
-//        private final List<SyntaxError> syntaxErrors;
-//        private final AtomicBoolean valid = new AtomicBoolean(true);
-//        private final RustParser.ProgContext ast;
-//
-//        public NetbeansRustParserResult(Snapshot snapshot, RustParser parser, RustParser.ProgContext ast, List<SyntaxError> syntaxErrors) {
-//            super(snapshot);
-//            this.parser = parser;
-//            this.ast = ast;
-//            this.syntaxErrors = new ArrayList<>(syntaxErrors);
-//        }
-//
-//        public RustParser getRustParser() throws ParseException {
-//            if (!valid.get()) {
-//                throw new ParseException();
-//            }
-//            return parser;
-//        }
-//
-//        public List<SyntaxError> getSyntaxErrors() {
-//            return Collections.unmodifiableList(syntaxErrors);
-//        }
-//
-//        public RustParser.ProgContext getAst() {
-//            return ast;
-//        }
-//
-//        @Override
-//        protected void invalidate() {
-//            valid.set(false);
-//        }
-//
-//        @Override
-//        public List<? extends Error> getDiagnostics() {
-//            //TODO: why do we need this?
-//            return Collections.emptyList();
-//        }
+    public static class NetbeansRustParserResult extends ParserResult {
+
+        private final RustParser.Result result;
+        private final AtomicBoolean valid = new AtomicBoolean(true);
+
+        public NetbeansRustParserResult(Snapshot snapshot, RustParser.Result result) {
+            super(snapshot);
+            this.result = result;
+        }
+
+        public List<SyntaxError> getSyntaxErrors() {
+            return Collections.emptyList();
+        }
+
+        public RustAst getAst() throws ParseException {
+            //TODO: is this what we should be doing to ensure people don't
+            // access a released AST?
+            if (!valid.get()) {
+                throw new ParseException();
+            }
+            return result.getAst();
+        }
+
+        @Override
+        protected void invalidate() {
+            valid.set(false);
+        }
+
+        @Override
+        public List<? extends Error> getDiagnostics() {
+            //TODO: why do we need this?
+            return Collections.emptyList();
+        }
 //
 //        public RustSourceIndex getIndex() {
 //            return getAst().accept(new IndexingVisitor());
 //        }
-//    }
+    }
 }
