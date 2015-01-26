@@ -6,28 +6,38 @@ This is a NetBeans plugin that adds support for [Rust](http://www.rust-lang.org)
 
 ## Requirements
 
-Needs NetBeans 7.4.x or above, and as such needs Java 7+
+* NetBeans 8.x or above
+* Java 8
+* OSX (probably also works on Linux, may work on Windows with hacks)
+* Rust 1.0 installed by rustup (currently developing against post-1.0-alpha nightlies)
+* Cargo (somewhere on the path)
 
 ## Features
 
 So far, it includes
 
-* basic project view
-* basic syntax highlighting
-* basic error highlighting
-* basic code completion
-* code folding
-* basic file overview
-* basic auto-indentation
-* basic auto-formatting
-* basic occurrence matching
-* basic variable renaming
-* brace matching
-* comment toggling
+* Cargo project support:
+** Project view
+** clean/build from UI
+* Highlighting:
+** basic syntax highlighting
+** parse error highlighting
+* Editing:
+** brace matching
+** comment toggling
+* Formatting:
+** basic auto-indentation
+** basic auto-formatting
+* Coming Soon:
+** basic code completion
+** code folding
+** basic file overview
+** basic occurrence matching
+** basic variable renaming
 
 ## Installing
 
-First, clone and build the pluging.
+First, clone and build the plugin.
 
 ```console
 git clone https://github.com/drrb/rust-netbeans.git
@@ -35,16 +45,6 @@ mvn package
 ```
 
 You can then install the plugin from NetBeans (the plugin will have been packaged at `target/rust-netbeans-1.0.0-SNAPSHOT.nbm`).
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Make your changes, and add tests for them
-4. Test your changes (`mvn test`)
-5. Commit your changes (`git commit -am 'Add some feature'`)
-6. Push to the branch (`git push origin my-new-feature`)
-7. Create new Pull Request
 
 ## License
 
