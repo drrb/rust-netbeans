@@ -49,7 +49,11 @@ public class RustParser {
         }
 
         public boolean isSuccess() {
-            return ast != null;
+            return !isFailure();
+        }
+
+        public boolean isFailure() {
+            return ast == null;
         }
 
         public RustAst getAst() {

@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import com.github.drrb.rust.netbeans.bridge.RustHighlight;
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -37,6 +38,8 @@ public interface RustNative extends Library {
 
     void destroyAst(RustAst box);
 
+    void getHighlights(RustAst ast, HighlightCallback callback);
+
     interface TokenCallback extends Callback {
         void tokenRead(RustToken.ByValue token);
     }
@@ -47,5 +50,9 @@ public interface RustNative extends Library {
 
     interface ParseMessageCallback extends Callback {
         void errorFound(RustParseMessage.ByValue message);
+    }
+
+    interface HighlightCallback extends Callback {
+        void errorFound(RustHighlight.ByValue highlight);
     }
 }

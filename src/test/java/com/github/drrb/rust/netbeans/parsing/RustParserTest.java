@@ -16,7 +16,6 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import java.util.List;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;

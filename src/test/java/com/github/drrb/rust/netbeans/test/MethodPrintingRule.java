@@ -14,23 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.test;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import java.util.Arrays;
-import java.util.List;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 /**
  *
+ *
  */
-public class RustAst extends Structure {
-
-    public Pointer parseSession;
-    public Pointer crate;
+public class MethodPrintingRule extends TestWatcher {
 
     @Override
-    protected List getFieldOrder() {
-        return Arrays.asList("parseSession", "crate");
+    protected void starting(Description description) {
+        System.err.println("Starting " + description);
     }
+
 }

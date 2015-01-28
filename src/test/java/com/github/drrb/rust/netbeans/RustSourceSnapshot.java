@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
+import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.editor.indent.spi.IndentContextFactory;
 
 /**
@@ -39,6 +40,12 @@ public class RustSourceSnapshot implements CharSequence {
     public RustSourceSnapshot append(String string) {
         source.append(string);
         return this;
+    }
+
+    public OffsetRange spanOf(CharSequence snippet) {
+        int start = source.toString().indexOf(snippet.toString());
+        int end = start + snippet.length();
+        return new OffsetRange(start, end);
     }
 
     public NetbeansRustParser.NetbeansRustParserResult parse() {

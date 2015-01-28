@@ -30,10 +30,12 @@ use std::mem;
 use std::rt::unwind;
 use std::str;
 use syntax::ast::Crate;
+use syntax::ast;
 use syntax::codemap::BytePos;
 use syntax::codemap::CharPos;
 use syntax::codemap::CodeMap;
 use syntax::codemap::Span;
+use syntax::codemap;
 use syntax::diagnostic::Auto;
 use syntax::diagnostic::Emitter;
 use syntax::diagnostic::Level;
@@ -47,7 +49,12 @@ use syntax::parse::token::DelimToken;
 use syntax::parse::token::Lit;
 use syntax::parse::token::Token;
 use syntax::parse::token::keywords;
+use syntax::parse::ParseSess;
 use syntax::parse;
+use syntax::visit::FnKind::FkItemFn;
+use syntax::visit::FnKind::FkMethod;
+use syntax::visit::Visitor;
+use syntax::visit;
 
 #[repr(C)]
 pub struct RustLexer<'a> {
@@ -70,6 +77,7 @@ pub struct RustToken {
 
 #[repr(C)]
 pub struct Ast {
+    parse_session: Box<ParseSess>,
     krate: Box<Crate>
 }
 
@@ -502,20 +510,128 @@ pub extern fn parse(
             let handler = diagnostic::mk_handler(message_collector);
             let span_handler = diagnostic::mk_span_handler(handler, CodeMap::new());
             let sess = parse::new_parse_sess_special_handler(span_handler);
-            let cfg = vec!();
-            let mut parser = parse::new_parser_from_source_str(
-                &sess,
-                cfg,
-                to_string(&file_name),
-                to_string(&source),
-            );
-            //TODO: is this needed?
-            //parser.quote_depth += 1u;
-            let krate = Box::new(parser.parse_crate_mod());
-            let ast = Box::new(Ast { krate: krate });
+            let krate = {
+                let cfg = vec!();
+                let mut parser = parse::new_parser_from_source_str(
+                    &sess,
+                    cfg,
+                    to_string(&file_name),
+                    to_string(&source),
+                );
+                //TODO: is this needed?
+                //parser.quote_depth += 1u;
+                parser.parse_crate_mod()
+            };
+            let ast = Box::new(Ast { parse_session: Box::new(sess), krate: Box::new(krate) });
             result_callback(ast);
         });
     }
+}
+
+#[repr(C)]
+pub enum HighlightKind {
+    EnumConstant,
+    EnumType,
+    Function,
+    Method,
+    Struct,
+}
+
+#[repr(C)]
+pub struct Highlight {
+    start_line: c_int,
+    start_col: c_int,
+    start_byte: c_int,
+    start_char: c_int,
+    end_line: c_int,
+    end_col: c_int,
+    end_byte: c_int,
+    end_char: c_int,
+    kind: HighlightKind,
+}
+
+struct HighlightVisitor<'a> {
+    codemap: &'a CodeMap,
+    report_highlight: extern "C" fn (Highlight),
+}
+
+impl <'a> HighlightVisitor<'a> {
+    fn report_new_highlight(&mut self, kind: HighlightKind, span: Span) {
+        let lo_loc = self.codemap.lookup_char_pos(span.lo);
+        let lo_line = lo_loc.line;
+        let CharPos(lo_col) = lo_loc.col;
+        let BytePos(lo_byte) = span.lo;
+        let CharPos(lo_char) = self.codemap.bytepos_to_file_charpos(span.lo);
+        let hi_loc = self.codemap.lookup_char_pos(span.hi);
+        let hi_line = hi_loc.line;
+        let CharPos(hi_col) = hi_loc.col;
+        let BytePos(hi_byte) = span.hi;
+        let CharPos(hi_char) = self.codemap.bytepos_to_file_charpos(span.hi);
+        let report_highlight = self.report_highlight;
+        report_highlight(Highlight {
+            start_line: lo_line as c_int,
+            start_col: lo_col as c_int,
+            start_byte: lo_byte as c_int,
+            start_char: lo_char as c_int,
+            end_line: hi_line as c_int,
+            end_col: hi_col as c_int,
+            end_byte: hi_byte as c_int,
+            end_char: hi_char as c_int,
+            kind: HighlightKind::Function,
+        });
+    }
+}
+
+struct NameLocatingVisitor {
+    found: bool,
+    //span: Span,
+}
+
+impl<'v,'a> Visitor<'v> for HighlightVisitor<'a> {
+
+    #[allow(unused_variables)]
+    fn visit_fn(&mut self, a: visit::FnKind<'v>, b: &'v ast::FnDecl, c: &'v ast::Block, d: Span, id: ast::NodeId) {
+        match a {
+            FkItemFn(ident, _, _, _) => {
+                let source = self.codemap.span_to_snippet(d).expect(format!("Couldn't get snippet for {}", self.codemap.span_to_string(d).as_slice()).as_slice());
+                println!("Function source:\n'{}'", source);
+                println!("Function span:\n'{}'", self.codemap.span_to_string(d));
+                let sh = diagnostic::mk_span_handler(diagnostic::default_handler(Auto, None), CodeMap::new());
+                let fm = sh.cm.new_filemap("myfunction".to_string(), source);
+                let mut lexer = StringReader::new(&sh, fm);
+                //TODO: handle functions that are unsafe, extern, etc
+                lexer.next_token(); //fn
+                lexer.next_token(); //whitespace
+                let name_token = lexer.next_token();
+                println!("Function name span:\n'{}'", sh.cm.span_to_string(name_token.sp));
+                let name_token_lo = d.lo + name_token.sp.lo; //TODO: why - 1?
+                let name_token_hi = d.lo + name_token.sp.hi;
+                let name_token_abs_span = codemap::mk_sp(name_token_lo, name_token_hi);
+                println!("Function name abs span:\n'{}'", self.codemap.span_to_string(name_token_abs_span));
+                self.report_new_highlight(HighlightKind::Function, name_token_abs_span);
+            },
+            FkMethod(ident, _, _) =>  {
+                self.report_new_highlight(HighlightKind::Method, d);
+            },
+            _ => {}
+        }
+        visit::walk_fn(self, a, b, c, d);
+    }
+
+    #[allow(unused_variables)]
+    fn visit_mac(&mut self, _macro: &'v ast::Mac) {
+        // Ignore macros (the default implementation of visit_mac panics)
+    }
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern fn getHighlights(
+    ast: &Ast,
+    callback: extern "C" fn (Highlight),
+) {
+    let mut visitor = HighlightVisitor { codemap: &ast.parse_session.span_diagnostic.cm, report_highlight: callback };
+    visit::walk_crate(&mut visitor, &*ast.krate);
 }
 
 #[no_mangle]
