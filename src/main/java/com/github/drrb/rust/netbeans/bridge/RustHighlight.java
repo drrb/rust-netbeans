@@ -33,8 +33,9 @@ public class RustHighlight extends Structure {
     }
 
     public enum Kind {
-        ENUM_CONSTANT(ColoringAttributes.ENUM),
         ENUM_TYPE(ColoringAttributes.CLASS_SET),
+        ENUM_VARIANT(ColoringAttributes.ENUM),
+        FIELD(ColoringAttributes.FIELD_SET),
         FUNCTION(ColoringAttributes.STATIC, ColoringAttributes.METHOD),
         METHOD(ColoringAttributes.METHOD_SET),
         STRUCT(ColoringAttributes.CLASS_SET),

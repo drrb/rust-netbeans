@@ -20,8 +20,9 @@ use syntax::visit;
 
 #[repr(C)]
 pub enum HighlightKind {
-    EnumConstant,
     EnumType,
+    EnumVariant,
+    Field,
     Function,
     Method,
     Struct,
@@ -133,6 +134,18 @@ impl<'v,'a> Visitor<'v> for HighlightVisitor<'a> {
             _ => {}
         }
         visit::walk_trait_item(self, trait_item)
+    }
+
+    fn visit_struct_field(&mut self, struct_field: &'v ast::StructField) {
+        let name_span = self.find_embedded_token(TokenKind::Ident, struct_field.span);
+        self.report_new_highlight(HighlightKind::Field, name_span);
+        visit::walk_struct_field(self, struct_field)
+    }
+
+    fn visit_variant(&mut self, variant: &'v ast::Variant, generics: &'v ast::Generics) {
+        let name_span = self.find_embedded_token(TokenKind::Ident, variant.span);
+        self.report_new_highlight(HighlightKind::EnumVariant, name_span);
+        visit::walk_variant(self, variant, generics)
     }
 
     fn visit_fn(&mut self, fn_kind: visit::FnKind<'v>, fn_decl: &'v ast::FnDecl, fn_block: &'v ast::Block, fn_span: Span, _: ast::NodeId) {

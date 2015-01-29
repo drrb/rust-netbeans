@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013 drrb
+ * Copyright (C) 2015 drrb
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -79,10 +79,10 @@ public class RustSemanticAnalyzerTest {
         source.append("  Black");
         source.append("}");
         assertThat(source, hasSpan("Color").withHighlights(CLASS));
-//        assertThat(source, hasSpan("Red").withHighlights(ENUM));
-//        assertThat(source, hasSpan("Green").withHighlights(ENUM));
-//        assertThat(source, hasSpan("Blue").withHighlights(ENUM));
-//        assertThat(source, hasSpan("Black").withHighlights(ENUM));
+        assertThat(source, hasSpan("Red").withHighlights(ENUM));
+        assertThat(source, hasSpan("Green").withHighlights(ENUM));
+        assertThat(source, hasSpan("Blue").withHighlights(ENUM));
+        assertThat(source, hasSpan("Black").withHighlights(ENUM));
     }
 
     @Test
@@ -93,8 +93,8 @@ public class RustSemanticAnalyzerTest {
         source.appendln("    y: float");
         source.appendln("}");
         assertThat(source, hasSpan("Point").withHighlights(CLASS));
-//        assertThat(source, hasSpan("x").withHighlights(FIELD));
-//        assertThat(source, hasSpan("y").withHighlights(FIELD));
+        assertThat(source, hasSpan("x").withHighlights(FIELD));
+        assertThat(source, hasSpan("y").withHighlights(FIELD));
     }
 
     @Test
