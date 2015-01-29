@@ -19,20 +19,19 @@ package com.github.drrb.rust.netbeans.highlighting;
 import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.test.MethodPrintingRule;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumSet;
+import static java.util.Collections.emptyList;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import static org.netbeans.modules.csl.api.ColoringAttributes.*;
@@ -46,7 +45,7 @@ public class RustSemanticAnalyzerTest {
     @Rule
     public final MethodPrintingRule methodPrinter = new MethodPrintingRule();
     private RustSemanticAnalyzer semanticAnalyzer;
-    private Collection<NetbeansRustParserResult> parseResults = new LinkedList<>();
+    private final Collection<NetbeansRustParserResult> parseResults = new LinkedList<>();
 
     @Before
     public void setUp() {
@@ -67,149 +66,190 @@ public class RustSemanticAnalyzerTest {
         source.appendln("fn main() {");
         source.appendln("  return 1");
         source.appendln("}");
-        assertThat(analyzed(source), hasHighlight(source.spanOf("main"), METHOD, STATIC));
+        assertThat(source, hasSpan("main").withHighlights(METHOD, STATIC));
     }
 
     @Test
     public void shouldFindEnumWithConstants() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("enum Color {\n");
-        source.append("  Red,\n");
-        source.append("  Green,\n");
-        source.append("  Blue,\n");
-        source.append("  Black\n");
-        source.append("}\n");
-        assertThat(analyzed(source), hasHighlight(5, 10, CLASS));
-        assertThat(analyzed(source), hasHighlight(15, 18, ENUM));
-        assertThat(analyzed(source), hasHighlight(22, 27, ENUM));
-        assertThat(analyzed(source), hasHighlight(31, 35, ENUM));
-        assertThat(analyzed(source), hasHighlight(39, 44, ENUM));
+        source.append("enum Color {");
+        source.append("  Red,");
+        source.append("  Green,");
+        source.append("  Blue,");
+        source.append("  Black");
+        source.append("}");
+        assertThat(source, hasSpan("Color").withHighlights(CLASS));
+//        assertThat(source, hasSpan("Red").withHighlights(ENUM));
+//        assertThat(source, hasSpan("Green").withHighlights(ENUM));
+//        assertThat(source, hasSpan("Blue").withHighlights(ENUM));
+//        assertThat(source, hasSpan("Black").withHighlights(ENUM));
     }
 
     @Test
     public void shouldFindStructAndFields() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("struct Point {\n");
-        source.append("    x: float,\n");
-        source.append("    y: float\n");
-        source.append("}\n");
-        assertThat(analyzed(source), hasHighlight(7, 12, CLASS));
-        assertThat(analyzed(source), hasHighlight(19, 20, FIELD));
-        assertThat(analyzed(source), hasHighlight(33, 34, FIELD));
+        source.appendln("struct Point {");
+        source.appendln("    x: float,");
+        source.appendln("    y: float");
+        source.appendln("}");
+        assertThat(source, hasSpan("Point").withHighlights(CLASS));
+//        assertThat(source, hasSpan("x").withHighlights(FIELD));
+//        assertThat(source, hasSpan("y").withHighlights(FIELD));
     }
 
     @Test
     public void shouldFindTrait() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("trait Printable {\n");
-        source.append("    fn print(&self);\n");
-        source.append("}\n");
-        assertThat(analyzed(source), hasHighlight(6, 15, CLASS));
-        assertThat(analyzed(source), hasHighlight(25, 30, METHOD));
+        source.appendln("trait Printable {");
+        source.appendln("    fn print(&self) { println(fmt!(\"%d\", *self)) }");
+        source.appendln("    fn implement_me(&self);");
+        source.appendln("}");
+        assertThat(source, hasSpan("Printable").withHighlights(INTERFACE));
+        assertThat(source, hasSpan("print").withHighlights(METHOD));
+        assertThat(source, hasSpan("implement_me").withHighlights(METHOD));
     }
 
     @Test
     public void shouldFindTraitImplWithMethods() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("impl Printable for int {\n");
-        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
-        source.append("}\n");
-//        assertThat(analyzed(source), hasHighlight(5, 14, CLASS));
-        assertThat(analyzed(source), hasHighlight(32, 37, METHOD));
+        source.appendln("impl Printable for int {");
+        source.appendln("    fn print(&self) { println(fmt!(\"%d\", *self)) }");
+        source.appendln("}");
+        assertThat(source, hasSpan("Printable").withHighlights(CLASS));
+        assertThat(source, hasSpan("print").withHighlights(METHOD));
     }
 
     @Test
     public void shouldFindImplWithMethods() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("impl Printable {\n");
-        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
-        source.append("}\n");
-//        assertThat(analyzed(source), hasHighlight(5, 14, CLASS));
-        assertThat(analyzed(source), hasHighlight(24, 29, METHOD));
+        source.appendln("impl Printable {");
+        source.appendln("    fn print(&self) { println(fmt!(\"%d\", *self)) }");
+        source.appendln("}");
+        assertThat(source, hasSpan("Printable").withHighlights(CLASS));
+        assertThat(source, hasSpan("print").withHighlights(METHOD));
     }
 
     @Test
     public void shouldNotFindTypesInMethod() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("impl Point {\n");
-        source.append("    fn transpose(&self, x: float, y: float) -> Point {\n");
-        source.append("        let new_x_value = self.x + x;\n");
-        source.append("        let new_y_value = self.y + y;\n");
-        source.append("        Point{ x: new_x_value, y: new_y_value }\n");
-        source.append("    }\n");
-        source.append("}");
-        assertThat(analyzed(source), not(hasHighlight(40, 45)));
-        assertThat(analyzed(source), not(hasHighlight(50, 55)));
-        assertThat(analyzed(source), not(hasHighlight(60, 65)));
+        source.appendln("impl Point {");
+        source.appendln("    fn transpose(&self, x: float, y: float) -> Point {");
+        source.appendln("        let new_x_value = self.x + x;");
+        source.appendln("        let new_y_value = self.y + y;");
+        source.appendln("        Point{ x: new_x_value, y: new_y_value }");
+        source.appendln("    }");
+        source.appendln("}");
+
+        assertThat(source, hasSpan("float").withNoHighlights());
     }
 
     @Test
     public void shouldNotFindIdentifiersInMethodsWhenImplentingStructs() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("impl Printable {\n");
-        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
-        source.append("}\n");
-        assertThat(analyzed(source), not(hasHighlight(39, 46)));
+        source.appendln("impl Printable {");
+        source.appendln("    fn print(&self) { println(fmt!(\"%d\", *self)) }");
+        source.appendln("}");
+
+        assertThat(source, hasSpan("println").withNoHighlights());
     }
 
     @Test
     public void shouldNotFindIdentifiersInMethodsWhenImplementingTraits() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("impl Printable for int {\n");
-        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
-        source.append("}\n");
-        assertThat(analyzed(source), not(hasHighlight(47, 54)));
+        source.appendln("impl Printable for int {");
+        source.appendln("    fn print(&self) { println(fmt!(\"%d\", *self)) }");
+        source.appendln("}");
+
+        assertThat(source, hasSpan("println").withNoHighlights());
     }
 
     @Test
     public void shouldNotFindClassesBeingImplementedForTraits() {
         RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("impl Printable for int {\n");
-        source.append("    fn print(&self) { println(fmt!(\"%d\", *self)) }\n");
-        source.append("}\n");
-        assertThat(analyzed(source), not(hasHighlight(19, 22)));
+        source.appendln("impl Renderable for int {");
+        source.appendln("    fn print(&self) { println(fmt!(\"%d\", *self)) }");
+        source.appendln("}");
+
+        assertThat(source, hasSpan("int").withNoHighlights());
     }
 
     @Test
     public void shouldNotDieWhenIdentifierNotTypedYet() {
-        RustSourceSnapshot source = new RustSourceSnapshot();
-        source.append("struct ");
-        analyzed(source); // Shouldn't die
-    }
-
-    private Matcher<Map<OffsetRange, Set<ColoringAttributes>>> hasHighlight(final int start, final int end, final ColoringAttributes... coloringAttributes) {
-        return hasHighlight(new OffsetRange(start, end), coloringAttributes);
-    }
-
-    private Matcher<Map<OffsetRange, Set<ColoringAttributes>>> hasHighlight(final OffsetRange expectedOffsetRange, final ColoringAttributes... expectedColors) {
-        return new TypeSafeMatcher<Map<OffsetRange, Set<ColoringAttributes>>>() {
-            @Override
-            public boolean matchesSafely(Map<OffsetRange, Set<ColoringAttributes>> colors) {
-                if (colors.containsKey(expectedOffsetRange)) {
-                    if (expectedColors.length == 0) {
-                        return true;
-                    } else {
-                        return colors.get(expectedOffsetRange).equals(EnumSet.copyOf(Arrays.asList(expectedColors)));
-                    }
-                } else {
-                    return false;
-                }
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("highlights containing section at ")
-                        .appendValue(expectedOffsetRange)
-                        .appendText(" with attributes ")
-                        .appendValueList("<", ",", ">", expectedColors);
-            }
-        };
-    }
-
-    private Map<OffsetRange, Set<ColoringAttributes>> analyzed(RustSourceSnapshot source) {
-        NetbeansRustParserResult parseResult = source.parse();
+        NetbeansRustParserResult parseResult = new RustSourceSnapshot()
+                .append("struct ")
+                .parseExpectingFailure();
         parseResults.add(parseResult);
-        semanticAnalyzer.run(parseResult, null);
-        return semanticAnalyzer.getHighlights();
+        semanticAnalyzer.run(parseResult, null); // Shouldn't die
+    }
+
+    private HighlightMatcher.Builder hasSpan(String snippet) {
+        return new HighlightMatcher.Builder(snippet);
+    }
+
+    public static class HighlightMatcher extends TypeSafeDiagnosingMatcher<RustSourceSnapshot> {
+
+        public static class Builder {
+
+            private final String expectedSnippet;
+
+            private Builder(String expectedSnippet) {
+                this.expectedSnippet = expectedSnippet;
+            }
+
+            public HighlightMatcher withAnyHighlights() {
+                return withHighlights(anything());
+            }
+
+            public HighlightMatcher withNoHighlights() {
+                return withHighlights(emptyIterable());
+            }
+
+            public HighlightMatcher withHighlights(ColoringAttributes... colors) {
+                return withHighlights(containsInAnyOrder((Object[]) colors));
+            }
+
+            public HighlightMatcher withHighlights(Matcher<? super Iterable<? extends ColoringAttributes>> expectedHighlights) {
+                return new HighlightMatcher(expectedSnippet, expectedHighlights);
+            }
+        }
+
+        private final String expectedSnippet;
+        private final Matcher<? super Iterable<? extends ColoringAttributes>> expectedHighlights;
+
+        private HighlightMatcher(String expectedSnippet, Matcher<? super Iterable<? extends ColoringAttributes>> expectedHighlights) {
+            this.expectedSnippet = expectedSnippet;
+            this.expectedHighlights = expectedHighlights;
+        }
+
+        @Override
+        protected boolean matchesSafely(RustSourceSnapshot actualSnapshot, Description mismatchDescription) {
+            OffsetRange expectedOffsetRange = actualSnapshot.spanOf(expectedSnippet);
+            NetbeansRustParserResult parseResult = actualSnapshot.parse();
+            RustSemanticAnalyzer rustSemanticAnalyzer = new RustSemanticAnalyzer();
+            rustSemanticAnalyzer.run(parseResult, null);
+            Map<OffsetRange, Set<ColoringAttributes>> highlights = rustSemanticAnalyzer.getHighlights();
+            mismatchDescription.appendText("got highlights ");
+            for (Map.Entry<OffsetRange, Set<ColoringAttributes>> highlight : highlights.entrySet()) {
+                OffsetRange span = highlight.getKey();
+                Set<ColoringAttributes> colors = highlight.getValue();
+                mismatchDescription.appendValue(span);
+                mismatchDescription.appendText(" (").appendValue(actualSnapshot.snippetAt(span)).appendText("): ");
+                mismatchDescription.appendValue(colors);
+                mismatchDescription.appendText("\n");
+            }
+            if (highlights.containsKey(expectedOffsetRange)) {
+                return expectedHighlights.matches(highlights.get(expectedOffsetRange));
+            } else {
+                return expectedHighlights.matches(emptyList());
+            }
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("highlights containing snippet ")
+                    .appendValue(expectedSnippet)
+                    .appendText(" with attributes ")
+                    .appendDescriptionOf(expectedHighlights);
+        }
     }
 }

@@ -17,9 +17,14 @@
 package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
+import com.github.drrb.rust.netbeans.parsing.RustParseMessage;
+import java.util.List;
+import static java.util.stream.Collectors.joining;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.editor.indent.spi.IndentContextFactory;
+import org.netbeans.modules.parsing.spi.ParseException;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -48,8 +53,31 @@ public class RustSourceSnapshot implements CharSequence {
         return new OffsetRange(start, end);
     }
 
+    public String snippetAt(OffsetRange span) {
+        return subSequence(span.getStart(), span.getEnd()).toString();
+    }
+
     public NetbeansRustParser.NetbeansRustParserResult parse() {
-        return TestParsing.parse(source);
+        return parse(true);
+    }
+
+    public NetbeansRustParser.NetbeansRustParserResult parseExpectingFailure() {
+        return parse(false);
+    }
+
+    public NetbeansRustParser.NetbeansRustParserResult parse(boolean dieOnParseFailure) {
+        NetbeansRustParser.NetbeansRustParserResult parse = TestParsing.parse(source);
+        try {
+            if (dieOnParseFailure && parse.getResult().isFailure()) {
+                System.out.println("Rust compilation failed in test:");
+                List<RustParseMessage> parseMessages = parse.getResult().getParseMessages();
+                String errors = parseMessages.stream().map(RustParseMessage::toString).collect(joining("\n"));
+                throw new RuntimeException("Rust compilation failed in test:\n" + errors);
+            }
+        } catch (ParseException ex) {
+            throw new RuntimeException(ex);
+        }
+        return parse;
     }
 
     @Override

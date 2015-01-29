@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
@@ -38,16 +37,13 @@ import org.openide.util.Exceptions;
  */
 public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserResult> {
 
-    private final AtomicBoolean cancelled = new AtomicBoolean();
-    private final AtomicInteger timesUsed = new AtomicInteger();
     private final Map<OffsetRange, Set<ColoringAttributes>> highlights = new HashMap<>();
+    private final AtomicBoolean cancelled = new AtomicBoolean();
 
     @Override
     public void run(NetbeansRustParserResult result, SchedulerEvent event) {
-        //TODO: Are these needed? Is this class disposable?
         highlights.clear();
         cancelled.set(false);
-        System.out.println("Times semantic analyzer used = " + timesUsed.incrementAndGet());
 
         com.github.drrb.rust.netbeans.bridge.RustSemanticAnalyzer analyzer = new com.github.drrb.rust.netbeans.bridge.RustSemanticAnalyzer();
         try {

@@ -1,6 +1,8 @@
 use lexer::TokenKind;
 use libc::c_int;
 use syntax::ast::Crate;
+use syntax::ast::Item_;
+use syntax::ast::TraitItem;
 use syntax::ast;
 use syntax::codemap::BytePos;
 use syntax::codemap::CharPos;
@@ -12,8 +14,7 @@ use syntax::diagnostic;
 use syntax::parse::token::Token;
 use syntax::parse::lexer::Reader;
 use syntax::parse::lexer::StringReader;
-use syntax::visit::FnKind::FkItemFn;
-use syntax::visit::FnKind::FkMethod;
+use syntax::visit::FnKind;
 use syntax::visit::Visitor;
 use syntax::visit;
 
@@ -24,6 +25,7 @@ pub enum HighlightKind {
     Function,
     Method,
     Struct,
+    Trait,
 }
 
 #[repr(C)]
@@ -99,21 +101,53 @@ impl <'a> HighlightVisitor<'a> {
 }
 
 impl<'v,'a> Visitor<'v> for HighlightVisitor<'a> {
+    fn visit_item(&mut self, item: &'v ast::Item) {
+        match item.node {
+            Item_::ItemEnum(_, _) => {
+                let name_span = self.find_embedded_token(TokenKind::Ident, item.span);
+                self.report_new_highlight(HighlightKind::EnumType, name_span);
+            }
+            Item_::ItemImpl(_, _, _, _, _, _) | Item_::ItemStruct(_, _) => {
+                let name_span = self.find_embedded_token(TokenKind::Ident, item.span);
+                self.report_new_highlight(HighlightKind::Struct, name_span);
+            }
+            Item_::ItemTrait(_, _, _, _) => {
+                let name_span = self.find_embedded_token(TokenKind::Ident, item.span);
+                self.report_new_highlight(HighlightKind::Trait, name_span);
+            }
+            _ => {}
+        }
+        visit::walk_item(self, item)
+    }
 
-    #[allow(unused_variables)]
-    fn visit_fn(&mut self, a: visit::FnKind<'v>, b: &'v ast::FnDecl, c: &'v ast::Block, d: Span, id: ast::NodeId) {
-        match a {
-            FkItemFn(_, _, _, _) => {
-                let name_span = self.find_embedded_token(TokenKind::Ident, d);
+    fn visit_trait_item(&mut self, trait_item: &'v ast::TraitItem) {
+        match *trait_item {
+            TraitItem::RequiredMethod(ref method) => {
+                let name_span = self.find_embedded_token(TokenKind::Ident, method.span);
+                self.report_new_highlight(HighlightKind::Method, name_span);
+            }
+            TraitItem::ProvidedMethod(ref method) => {
+                let name_span = self.find_embedded_token(TokenKind::Ident, method.span);
+                self.report_new_highlight(HighlightKind::Method, name_span);
+            }
+            _ => {}
+        }
+        visit::walk_trait_item(self, trait_item)
+    }
+
+    fn visit_fn(&mut self, fn_kind: visit::FnKind<'v>, fn_decl: &'v ast::FnDecl, fn_block: &'v ast::Block, fn_span: Span, _: ast::NodeId) {
+        match fn_kind {
+            FnKind::FkItemFn(_, _, _, _) => {
+                let name_span = self.find_embedded_token(TokenKind::Ident, fn_span);
                 self.report_new_highlight(HighlightKind::Function, name_span);
             },
-            FkMethod(_, _, _) =>  {
-                let name_span = self.find_embedded_token(TokenKind::Ident, d);
+            FnKind::FkMethod(_, _, _) =>  {
+                let name_span = self.find_embedded_token(TokenKind::Ident, fn_span);
                 self.report_new_highlight(HighlightKind::Method, name_span);
             },
             _ => {}
         }
-        visit::walk_fn(self, a, b, c, d);
+        visit::walk_fn(self, fn_kind, fn_decl, fn_block, fn_span);
     }
 
     #[allow(unused_variables)]

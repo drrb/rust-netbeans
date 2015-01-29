@@ -37,7 +37,8 @@ public class RustHighlight extends Structure {
         ENUM_TYPE(ColoringAttributes.CLASS_SET),
         FUNCTION(ColoringAttributes.STATIC, ColoringAttributes.METHOD),
         METHOD(ColoringAttributes.METHOD_SET),
-        STRUCT(ColoringAttributes.CLASS_SET);
+        STRUCT(ColoringAttributes.CLASS_SET),
+        TRAIT(ColoringAttributes.INTERFACE);
 
         private final Set<ColoringAttributes> colors;
 
