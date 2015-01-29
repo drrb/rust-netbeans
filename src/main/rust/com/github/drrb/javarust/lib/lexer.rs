@@ -34,6 +34,7 @@ pub struct RustToken {
 }
 
 #[repr(C)]
+#[derive(PartialEq)]
 pub enum TokenKind {
     Eq,
     Lt,
@@ -149,7 +150,7 @@ pub enum TokenKind {
 }
 
 impl TokenKind {
-    fn for_token(token: Token) -> TokenKind {
+    pub fn for_token(token: Token) -> TokenKind {
         match token {
             Token::Eq => TokenKind::Eq,
             Token::Lt => TokenKind::Lt,

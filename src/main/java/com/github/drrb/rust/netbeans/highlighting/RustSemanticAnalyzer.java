@@ -18,28 +18,19 @@ package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.bridge.RustHighlight;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.parsing.RustParser;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.swing.text.Document;
-import javax.swing.text.StyledDocument;
 import org.netbeans.modules.csl.api.ColoringAttributes;
-import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.Scheduler;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
-import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
 
 /**
@@ -49,23 +40,19 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
 
     private final AtomicBoolean cancelled = new AtomicBoolean();
     private final AtomicInteger timesUsed = new AtomicInteger();
-    private final Collection<Highlight> highlights = new LinkedList<>();
+    private final Map<OffsetRange, Set<ColoringAttributes>> highlights = new HashMap<>();
 
     @Override
     public void run(NetbeansRustParserResult result, SchedulerEvent event) {
         //TODO: Are these needed? Is this class disposable?
         highlights.clear();
         cancelled.set(false);
+        System.out.println("Times semantic analyzer used = " + timesUsed.incrementAndGet());
 
-        List<Highlight> collectedHighlights = new ArrayList<>();
         com.github.drrb.rust.netbeans.bridge.RustSemanticAnalyzer analyzer = new com.github.drrb.rust.netbeans.bridge.RustSemanticAnalyzer();
         try {
             List<RustHighlight> rawHighlights = analyzer.getHighlights(result.getResult());
-            for (RustHighlight highlight : rawHighlights) {
-                //TODO: do the char offsets from Rust work, or do we need lines/cols?
-                highlights.add(new Highlight(highlight.startChar, highlight.endChar - 1, highlight.getKind().colors()));
-            }
-            highlights.addAll(collectedHighlights);
+            highlights.putAll(mapHighlights(rawHighlights));
         } catch (ParseException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -73,7 +60,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
 
     @Override
     public Map<OffsetRange, Set<ColoringAttributes>> getHighlights() {
-        return mapHighlights(highlights);
+        return new HashMap<>(highlights);
     }
 
     @Override
@@ -91,108 +78,11 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
         cancelled.set(true);
     }
 
-    private Map<OffsetRange, Set<ColoringAttributes>> mapHighlights(Collection<Highlight> highlights) {
+    private Map<OffsetRange, Set<ColoringAttributes>> mapHighlights(Collection<RustHighlight> highlights) {
         Map<OffsetRange, Set<ColoringAttributes>> highlightsMap = new HashMap<>(highlights.size());
-        for (Highlight highlight : highlights) {
-            highlightsMap.put(highlight.offsetRange, highlight.coloringAttributes);
+        for (RustHighlight highlight : highlights) {
+            highlightsMap.put(new OffsetRange(highlight.startChar, highlight.endChar), highlight.getKind().colors());
         }
         return highlightsMap;
     }
-
-    private static class Highlight {
-
-        final OffsetRange offsetRange;
-        final Set<ColoringAttributes> coloringAttributes;
-
-        Highlight(int start, int stop, Set<ColoringAttributes> coloringAttributes) {
-            this.coloringAttributes = coloringAttributes;
-            this.offsetRange = new OffsetRange(start, stop + 1);
-        }
-    }
-
-//    private class HighlightCollectingVisitor extends CollectingVisitor<Highlight> {
-//
-//        private List<Highlight> highlight(ParserRuleContext identifier, ColoringAttributes firstColoringAttribute, ColoringAttributes... otherColoringAttributes) {
-//            LinkedList<Highlight> highlightList = new LinkedList<>();
-//            if (identifier != null) {
-//                return new LinkedList<>(Collections.singletonList(new Highlight(identifier, EnumSet.of(firstColoringAttribute, otherColoringAttributes))));
-//            }
-//            return highlightList;
-//        }
-//
-//        @Override
-//        public List<Highlight> visitItem_fn_decl(RustParser.Item_fn_declContext ctx) {
-//            return highlight(ctx.ident(), METHOD);
-//        }
-//
-//        @Override
-//        public List<Highlight> visitEnum_decl(RustParser.Enum_declContext ctx) {
-//            return aggregateResult(highlight(ctx.ident(), CLASS), visitChildren(ctx));
-//        }
-//
-//        @Override
-//        public List<Highlight> visitEnum_variant_decl(RustParser.Enum_variant_declContext ctx) {
-//            return highlight(ctx.ident(), ENUM);
-//        }
-//
-//        @Override
-//        public List<Highlight> visitStruct_decl(RustParser.Struct_declContext ctx) {
-//            return aggregateResult(highlight(ctx.ident(), CLASS), visitChildren(ctx));
-//        }
-//
-//        @Override
-//        public List<Highlight> visitStruct_field(RustParser.Struct_fieldContext ctx) {
-//            return highlight(ctx.ident(), FIELD);
-//        }
-//
-//        @Override
-//        public List<Highlight> visitTrait_decl(RustParser.Trait_declContext ctx) {
-//            return aggregateResult(highlight(ctx.ident(), CLASS), visitChildren(ctx));
-//        }
-//
-//        @Override
-//        public List<Highlight> visitTrait_method(RustParser.Trait_methodContext ctx) {
-//            return highlight(ctx.ident(), METHOD);
-//        }
-//
-//        @Override
-//        public List<Highlight> visitImpl(RustParser.ImplContext ctx) {
-//            List<Highlight> implNameHighlight = ctx.ty().accept(new CollectingVisitor<Highlight>() {
-//                @Override
-//                public List<Highlight> visitNon_global_path(RustParser.Non_global_pathContext ctx) {
-//                    List<Highlight> highlights = new LinkedList<>();
-//                    for (RustParser.IdentContext identifier : ctx.ident()) {
-//                        highlights.add(new Highlight(identifier, CLASS_SET));
-//                    }
-//                    return highlights;
-//                }
-//            });
-//            return aggregateResult(implNameHighlight, visitChildren(ctx));
-//        }
-//
-//        @Override
-//        public List<Highlight> visitImpl_trait_for_type(RustParser.Impl_trait_for_typeContext ctx) {
-//            List<Highlight> implNameHighlight = ctx.accept(new CollectingVisitor<Highlight>() {
-//                @Override
-//                public List<Highlight> visitTrait(RustParser.TraitContext ctx) {
-//                    return ctx.accept(new CollectingVisitor<Highlight>() {
-//                        @Override
-//                        public List<Highlight> visitNon_global_path(RustParser.Non_global_pathContext ctx) {
-//                            List<Highlight> highlights = new LinkedList<>();
-//                            for (RustParser.IdentContext identifier : ctx.ident()) {
-//                                highlights.add(new Highlight(identifier, CLASS_SET));
-//                            }
-//                            return highlights;
-//                        }
-//                    });
-//                }
-//            });
-//            return aggregateResult(implNameHighlight, visitChildren(ctx));
-//        }
-//
-//        @Override
-//        public List<Highlight> visitImpl_method(RustParser.Impl_methodContext ctx) {
-//            return aggregateResult(highlight(ctx.ident(), METHOD), visitChildren(ctx));
-//        }
-//    }
 }

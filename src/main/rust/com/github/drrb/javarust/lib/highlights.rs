@@ -1,3 +1,4 @@
+use lexer::TokenKind;
 use libc::c_int;
 use syntax::ast::Crate;
 use syntax::ast;
@@ -8,6 +9,7 @@ use syntax::codemap::Span;
 use syntax::codemap;
 use syntax::diagnostic::Auto;
 use syntax::diagnostic;
+use syntax::parse::token::Token;
 use syntax::parse::lexer::Reader;
 use syntax::parse::lexer::StringReader;
 use syntax::visit::FnKind::FkItemFn;
@@ -72,8 +74,27 @@ impl <'a> HighlightVisitor<'a> {
             end_col: hi_col as c_int,
             end_byte: hi_byte as c_int,
             end_char: hi_char as c_int,
-            kind: HighlightKind::Function,
+            kind: kind,
         });
+    }
+
+    fn find_embedded_token(&self, kind: TokenKind, span: Span) -> Span {
+        let source = self.codemap.span_to_snippet(span).expect(format!("Couldn't get snippet for {}", self.codemap.span_to_string(span).as_slice()).as_slice());
+        let sh = diagnostic::mk_span_handler(diagnostic::default_handler(Auto, None), CodeMap::new());
+        let fm = sh.cm.new_filemap("myfunction".to_string(), source);
+        let mut lexer = StringReader::new(&sh, fm);
+        ////TODO: handle functions that are unsafe, extern, etc
+        //lexer.next_token(); //fn
+        //lexer.next_token(); //whitespace
+        //let target_token = lexer.next_token();
+        ////TODO: how to do this??
+        let mut target_token = lexer.next_token();
+        while TokenKind::for_token(target_token.tok) != kind {
+            target_token = lexer.next_token();
+        }
+        let target_token_lo = span.lo + target_token.sp.lo;
+        let target_token_hi = span.lo + target_token.sp.hi;
+        codemap::mk_sp(target_token_lo, target_token_hi)
     }
 }
 
@@ -82,22 +103,13 @@ impl<'v,'a> Visitor<'v> for HighlightVisitor<'a> {
     #[allow(unused_variables)]
     fn visit_fn(&mut self, a: visit::FnKind<'v>, b: &'v ast::FnDecl, c: &'v ast::Block, d: Span, id: ast::NodeId) {
         match a {
-            FkItemFn(ident, _, _, _) => {
-                let source = self.codemap.span_to_snippet(d).expect(format!("Couldn't get snippet for {}", self.codemap.span_to_string(d).as_slice()).as_slice());
-                let sh = diagnostic::mk_span_handler(diagnostic::default_handler(Auto, None), CodeMap::new());
-                let fm = sh.cm.new_filemap("myfunction".to_string(), source);
-                let mut lexer = StringReader::new(&sh, fm);
-                //TODO: handle functions that are unsafe, extern, etc
-                lexer.next_token(); //fn
-                lexer.next_token(); //whitespace
-                let name_token = lexer.next_token();
-                let name_token_lo = d.lo + name_token.sp.lo; //TODO: why - 1?
-                let name_token_hi = d.lo + name_token.sp.hi;
-                let name_token_abs_span = codemap::mk_sp(name_token_lo, name_token_hi);
-                self.report_new_highlight(HighlightKind::Function, name_token_abs_span);
+            FkItemFn(_, _, _, _) => {
+                let name_span = self.find_embedded_token(TokenKind::Ident, d);
+                self.report_new_highlight(HighlightKind::Function, name_span);
             },
-            FkMethod(ident, _, _) =>  {
-                self.report_new_highlight(HighlightKind::Method, d);
+            FkMethod(_, _, _) =>  {
+                let name_span = self.find_embedded_token(TokenKind::Ident, d);
+                self.report_new_highlight(HighlightKind::Method, name_span);
             },
             _ => {}
         }

@@ -55,8 +55,19 @@ rust_source_files() {
 }
 
 is_crate_file() {
-    local rust_source_file=$1
-    grep -E '#!\[crate_type.*\]' "$rust_source_file" > /dev/null
+    if [ $# == 1 ]
+    then
+        local rust_source_file=$1
+        grep -E '#!\[crate_type.*\]' "$rust_source_file" > /dev/null
+    else
+        while read rust_source_file
+        do
+            if grep -E '#!\[crate_type.*\]' "$rust_source_file" > /dev/null
+            then
+                echo "$rust_source_file"
+            fi
+        done
+    fi
 }
 
 output_file_for() {
@@ -83,19 +94,22 @@ compile() {
 cd "$BASE_DIR"
 rust_source_files | while read source_file
 do
-    if is_crate_file "$source_file"
+    if has_changed_since_last_compile "$source_file"
     then
-        output_file_name=lib`basename $source_file | sed -E 's/\.rs$/.'$LIBRARY_SUFFIX'/'`
-        output_file=$OUTPUT_DIR/$output_file_name
-
-        if has_changed_since_last_compile "$source_file"
+        if is_crate_file "$source_file"
         then
-            echo "Compiling '$source_file': changes detected"
+            echo "Changes detected in '$source_file'. Compiling it..."
             compile "$source_file"
         else
-            echo "Not compiling '$source_file': compiled version is up to date"
+            echo "Changes detected in '$source_file'. Not a crate, so compiling all crates..."
+            rust_source_files | is_crate_file | while read crate_file
+            do
+                echo "Compiling $crate_file"
+                compile "$crate_file"
+            done
+            exit
         fi
     else
-        echo "Not compiling '$source_file' because it's not a crate"
+        echo "Not compiling '$source_file': compiled version is up to date"
     fi
 done
