@@ -1,3 +1,6 @@
+pipeline:
+    - Fix syntax highlighting
+    - Add error highlighting from later compilation stages
 features:
     editor:
         - Syntax highlighting
