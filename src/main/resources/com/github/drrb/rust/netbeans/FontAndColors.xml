@@ -33,11 +33,14 @@
     <fontcolor name="whitespace" default="whitespace"/>
 
     <!-- CSL semantic highlighting -->
-    <fontcolor name="mod-method" foreColor="000000" >
+    <fontcolor name="mod-method">
         <font style="bold" />
     </fontcolor>
     <fontcolor name="mod-class" >
         <font style="bold" />
+    </fontcolor>
+    <fontcolor name="mod-interface">
+        <font style="bold italic" />
     </fontcolor>
     <fontcolor name="mod-enum" foreColor="009900">
         <font style="italic" />
