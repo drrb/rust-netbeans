@@ -305,7 +305,7 @@ impl TokenKind {
 
 impl<'a> RustLexer<'a> {
     pub fn new<'n>(file_name: String, source: String) -> RustLexer<'n> {
-        let sh: &SpanHandler = unsafe { mem::transmute(Box::new(diagnostic::mk_span_handler(diagnostic::default_handler(Auto, None), CodeMap::new()))) };
+        let sh: &SpanHandler = unsafe { mem::transmute(Box::new(diagnostic::mk_span_handler(diagnostic::default_handler(Auto, None, true), CodeMap::new()))) };
         let fm = sh.cm.new_filemap(file_name, source);
 
         RustLexer {

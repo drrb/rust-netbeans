@@ -49,7 +49,7 @@ pub fn parse(
     source: String,
     message_collector: MessageCollector,
 ) -> Ast {
-    let handler = diagnostic::mk_handler(Box::new(message_collector));
+    let handler = diagnostic::mk_handler(true, Box::new(message_collector));
     let span_handler = diagnostic::mk_span_handler(handler, CodeMap::new());
     let sess = parse::new_parse_sess_special_handler(span_handler);
     let krate = {
