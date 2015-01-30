@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# Copyright (C) 2015 drrb
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
+#
+# Runs the the plugin in the latest version of NetBeans 8 that you have installed.
+# Assumes you are running OSX, and have NetBeans installed in the usual place
+#
+
+set -e
+set -u
+set -o pipefail
+
+netbeans_installation() {
+    local latest_basedir=`find "/Applications/NetBeans" -type d -name 'NetBeans 8*.app' | sort | tail -n 1`
+    if ! [ -d "$latest_basedir" ]
+    then
+        echo "Couldn't find a version of NetBeans 8 in /Applications/NetBeans" >&2
+        exit 1
+    fi
+    echo ${latest_basedir}/Contents/Resources/NetBeans
+}
+
+NETBEANS_INSTALLATION=`netbeans_installation`
+mvn nbm:cluster nbm:run-ide -DskipTests -Dnetbeans.installation="$NETBEANS_INSTALLATION"
