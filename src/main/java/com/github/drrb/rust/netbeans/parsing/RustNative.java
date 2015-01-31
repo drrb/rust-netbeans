@@ -40,6 +40,8 @@ public interface RustNative extends Library {
 
     void getHighlights(RustAst ast, HighlightCallback callback);
 
+    int compile(String path, String outputDir);
+
     interface TokenCallback extends Callback {
         void tokenRead(RustToken.ByValue token);
     }

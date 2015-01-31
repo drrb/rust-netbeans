@@ -7,7 +7,6 @@ use syntax::codemap::CharPos;
 use syntax::codemap::CodeMap;
 use syntax::codemap::Span;
 use syntax::diagnostic::Emitter;
-use syntax::diagnostic::Handler;
 use syntax::diagnostic::Level;
 use syntax::diagnostic::RenderSpan;
 use syntax::diagnostic;
@@ -76,7 +75,7 @@ impl MessageCollector {
 }
 
 impl Emitter for MessageCollector {
-    fn emit(&mut self, cmsp: Option<(&CodeMap, Span)>, msg: &str, code: Option<&str>, lvl: Level) {
+    fn emit(&mut self, cmsp: Option<(&CodeMap, Span)>, msg: &str, _: Option<&str>, lvl: Level) {
         match cmsp {
             Some((codemap, span)) => {
                 let lo_loc = codemap.lookup_char_pos(span.lo);
@@ -101,7 +100,7 @@ impl Emitter for MessageCollector {
         }
     }
 
-    fn custom_emit(&mut self, cm: &CodeMap, sp: RenderSpan, msg: &str, lvl: Level) {
+    fn custom_emit(&mut self, _: &CodeMap, _: RenderSpan, msg: &str, lvl: Level) {
         let collect = self.collect;
         collect(ParseMessage {
             level: ParseMessageLevel::from_emitted(lvl),

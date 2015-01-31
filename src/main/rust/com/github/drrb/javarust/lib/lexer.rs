@@ -209,7 +209,7 @@ impl TokenKind {
                 Lit::Binary(_) => TokenKind::BinaryLiteral,
                 Lit::BinaryRaw(_, _) => TokenKind::BinaryRawLiteral,
             },
-            Token::Ident(name, _) => {
+            Token::Ident(_, _) => {
                 if token.is_keyword(keywords::As) {
                     TokenKind::As
                 } else if token.is_keyword(keywords::Break) {

@@ -15,13 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #![crate_type = "dylib"]
+#![feature(collections)]
+#![feature(core)]
+#![feature(libc)]
+#![feature(path)]
+#![feature(rustc_private)]
+#![feature(std_misc)]
 
 extern crate libc;
 extern crate syntax;
+extern crate rustc;
+extern crate rustc_driver;
 
 mod highlights;
 mod lexer;
 mod parser;
+mod compiler;
 
 use highlights::Highlight;
 use highlights::HighlightVisitor;
@@ -32,6 +41,7 @@ use parser::MessageCollector;
 use parser::ParseMessage;
 
 use libc::c_char;
+use libc::c_int;
 use std::ffi::CString;
 use std::ffi;
 use std::mem;
@@ -49,16 +59,21 @@ pub extern fn createLexer<'a>(source: *const c_char) -> Box<RustLexer<'a>> {
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern fn getNextToken(lexer: &mut RustLexer, callback: extern "C" fn (RustToken)) {
-    unsafe {
+    let result = unsafe {
         unwind::try(|| {
             callback(lexer.next_token());
-        });
+        })
+    };
+    //TODO return something from here?
+    match result {
+        Ok(_) => {},
+        Err(_) => {}
     }
 }
 
 #[no_mangle]
-#[allow(non_snake_case,unused_variables)]
-pub extern fn destroyLexer(lexer: Box<RustLexer>) {
+#[allow(non_snake_case)]
+pub extern fn destroyLexer(_: Box<RustLexer>) {
     //Do nothing: lexer will be released
 }
 
@@ -69,18 +84,23 @@ pub extern fn parse(
     result_callback: extern "C" fn (Box<Ast>),
     error_callback: extern "C" fn (ParseMessage),
 ) {
-    unsafe {
+    let result = unsafe {
         unwind::try(|| {
             let message_collector = MessageCollector::new(error_callback);
             let ast = parser::parse(to_string(&file_name), to_string(&source), message_collector);
             result_callback(Box::new(ast));
-        });
+        })
+    };
+    //TODO return something from here?
+    match result {
+        Ok(_) => {},
+        Err(_) => {}
     }
 }
 
 #[no_mangle]
-#[allow(non_snake_case,unused_variables)]
-pub extern fn destroyAst(ast: Box<Ast>) {
+#[allow(non_snake_case)]
+pub extern fn destroyAst(_: Box<Ast>) {
     //Do nothing: ast will be released
 }
 
@@ -94,11 +114,27 @@ pub extern fn getHighlights(
     highlights::get_highlights(&*ast.krate, &mut visitor);
 }
 
+#[no_mangle]
+pub extern fn compile(input_file: *const c_char, output_dir: *const c_char) -> c_int {
+    unsafe {
+        let result = unwind::try(|| {
+            let input_file = to_string(&input_file);
+            let output_dir = to_string(&output_dir);
+            compiler::compile(input_file, output_dir)
+        });
+        match result {
+            Ok(_) => 0,
+            Err(_) => 1
+        }
+    }
+}
+
 fn to_string(pointer: &*const c_char) -> String {
     let slice = unsafe { ffi::c_str_to_bytes(pointer) };
     str::from_utf8(slice).unwrap().to_string()
 }
 
+#[allow(dead_code)]
 fn to_ptr(string: String) -> *const c_char {
     let cs = CString::from_slice(string.as_bytes());
     let ptr = cs.as_ptr();

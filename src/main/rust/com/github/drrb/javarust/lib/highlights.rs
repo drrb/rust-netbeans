@@ -11,7 +11,6 @@ use syntax::codemap::Span;
 use syntax::codemap;
 use syntax::diagnostic::Auto;
 use syntax::diagnostic;
-use syntax::parse::token::Token;
 use syntax::parse::lexer::Reader;
 use syntax::parse::lexer::StringReader;
 use syntax::visit::FnKind;
