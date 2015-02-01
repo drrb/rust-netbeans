@@ -17,14 +17,18 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  */
 public class RustCompiler {
 
-    public void compile(File sourceFile, File targetDir) {
-        RustNative.INSTANCE.compile(sourceFile.getAbsolutePath(), targetDir.getAbsolutePath());
+    public List<RustParseMessage> compile(File sourceFile) {
+        List<RustParseMessage> messages = new LinkedList<>();
+        RustNative.INSTANCE.compile(sourceFile.getAbsolutePath(), messages::add);
+        return messages;
     }
 
 }

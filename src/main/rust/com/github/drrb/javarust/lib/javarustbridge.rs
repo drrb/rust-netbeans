@@ -82,11 +82,11 @@ pub extern fn parse(
     file_name: *const c_char,
     source: *const c_char,
     result_callback: extern "C" fn (Box<Ast>),
-    error_callback: extern "C" fn (ParseMessage),
+    message_callback: extern "C" fn (ParseMessage),
 ) {
     let result = unsafe {
         unwind::try(|| {
-            let message_collector = MessageCollector::new(error_callback);
+            let message_collector = MessageCollector::new(message_callback);
             let ast = parser::parse(to_string(&file_name), to_string(&source), message_collector);
             result_callback(Box::new(ast));
         })
@@ -115,12 +115,15 @@ pub extern fn getHighlights(
 }
 
 #[no_mangle]
-pub extern fn compile(input_file: *const c_char, output_dir: *const c_char) -> c_int {
+pub extern fn compile(
+    input_file: *const c_char,
+    message_callback: extern "C" fn (ParseMessage),
+) -> c_int {
     unsafe {
         let result = unwind::try(|| {
             let input_file = to_string(&input_file);
-            let output_dir = to_string(&output_dir);
-            compiler::compile(input_file, output_dir)
+            let message_collector = MessageCollector::new(message_callback);
+            compiler::compile(input_file, message_collector)
         });
         match result {
             Ok(_) => 0,

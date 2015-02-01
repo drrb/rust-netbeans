@@ -34,13 +34,13 @@ public interface RustNative extends Library {
 
     void destroyLexer(NativeRustLexer box);
 
-    void parse(String fileName, String source, AstCallback resultCallback, ParseMessageCallback errorCallback);
+    void parse(String fileName, String source, AstCallback resultCallback, ParseMessageCallback parseMessageCallback);
 
     void destroyAst(RustAst box);
 
     void getHighlights(RustAst ast, HighlightCallback callback);
 
-    int compile(String path, String outputDir);
+    int compile(String path, ParseMessageCallback parseMessageCallback);
 
     interface TokenCallback extends Callback {
         void tokenRead(RustToken.ByValue token);
