@@ -46,7 +46,11 @@ public class CompileRustBridge {
     private static void compile(Path sourceFile) {
         System.out.format("Compiling crate %s%n", sourceFile);
         try {
-            new ProcessBuilder("rustc", "--out-dir", RUST_OUTPUT_DIR.toString(), sourceFile.toString()).inheritIO().start().waitFor(2, TimeUnit.MINUTES);
+            Process process = new ProcessBuilder("rustc", "--out-dir", RUST_OUTPUT_DIR.toString(), sourceFile.toString()).inheritIO().start();
+            process.waitFor(2, TimeUnit.MINUTES);
+            if (process.exitValue() != 0) {
+                throw new RuntimeException(String.format("rustc exited nonzero (status code = %s)", process.exitValue()));
+            }
             Stream<Path> libraries = Files.find(RUST_OUTPUT_DIR, 1, CompileRustBridge::isDylib);
             libraries.forEach(CompileRustBridge::moveLibIntoClasspath);
         } catch (IOException | InterruptedException ex) {
