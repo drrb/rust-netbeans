@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #![crate_type = "dylib"]
-#![feature(collections)]
 #![feature(core)]
 #![feature(libc)]
 #![feature(path)]
