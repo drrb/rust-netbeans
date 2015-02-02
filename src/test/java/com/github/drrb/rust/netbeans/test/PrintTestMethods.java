@@ -23,7 +23,7 @@ import org.junit.runner.Description;
  *
  *
  */
-public class MethodPrintingRule extends TestWatcher {
+public class PrintTestMethods extends TestWatcher {
 
     @Override
     protected void starting(Description description) {

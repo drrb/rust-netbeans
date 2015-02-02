@@ -18,7 +18,7 @@ package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.test.MethodPrintingRule;
+import com.github.drrb.rust.netbeans.test.PrintTestMethods;
 import java.util.Collection;
 import static java.util.Collections.emptyList;
 import java.util.LinkedList;
@@ -43,7 +43,7 @@ import org.netbeans.modules.csl.api.OffsetRange;
 public class RustSemanticAnalyzerTest {
 
     @Rule
-    public final MethodPrintingRule methodPrinter = new MethodPrintingRule();
+    public final PrintTestMethods methodPrinter = new PrintTestMethods();
     private RustSemanticAnalyzer semanticAnalyzer;
     private final Collection<NetbeansRustParserResult> parseResults = new LinkedList<>();
 

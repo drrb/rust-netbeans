@@ -17,9 +17,11 @@
 package com.github.drrb.rust.netbeans.formatting;
 
 import com.github.drrb.rust.netbeans.RustSourceSnapshot;
+import com.github.drrb.rust.netbeans.test.PrintTestMethods;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
 import org.netbeans.modules.editor.indent.spi.Context;
@@ -29,6 +31,8 @@ import org.netbeans.modules.editor.indent.spi.Context;
  */
 public class RustFormatterTest {
 
+    @Rule
+    public final PrintTestMethods printTestMethods = new PrintTestMethods();
     private Context context;
     private RustFormatter formatter;
     private RustSourceSnapshot source = new RustSourceSnapshot();
