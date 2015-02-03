@@ -50,12 +50,7 @@ public class RustFormatter implements Formatter {
         //    mti.tokenHierarchyControl().setActive(true);
         //}
         //TODO: do we need the write lock the whole time? Looking for the braces just needs a read lock, but it seems like we can't get the write lock when we already have the read lock
-        document.runAtomic(new Runnable() {
-            @Override
-            public void run() {
-                formatter.format();
-            }
-        });
+        document.runAtomic(formatter::format);
     }
 
     @Override
