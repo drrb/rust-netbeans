@@ -1,6 +1,9 @@
 pipeline:
-    - Fix syntax highlighting
     - Add error highlighting from later compilation stages
+    - Fix indentation
+    - Add brace completion
+    - Create/Reuse output windows
+    - Run tests
 features:
     editor:
         - Syntax highlighting
@@ -15,6 +18,7 @@ features:
         - Popup on success/failure
         - Run
         - Debugger (http://netbeans.dzone.com/how-reuse-netbeans-debugger)
+        - Test UI
     project:
         - 'New Rust project'
         - Icons (ask for help)
