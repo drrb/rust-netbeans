@@ -17,23 +17,23 @@ This is a NetBeans plugin that adds support for [Rust](http://www.rust-lang.org)
 So far, it includes
 
 * Cargo project support:
-** Project view
-** clean/build from UI
+    * Project view
+    * clean/build/run/test from UI
 * Highlighting:
-** basic syntax highlighting
-** parse error highlighting
+    * basic syntax highlighting
+    * parse error highlighting
 * Editing:
-** brace matching
-** comment toggling
+    * brace matching
+    * comment toggling
 * Formatting:
-** basic auto-indentation
-** basic auto-formatting
+    * basic auto-indentation
+    * basic auto-formatting
 * Coming Soon:
-** basic code completion
-** code folding
-** basic file overview
-** basic occurrence matching
-** basic variable renaming
+    * basic code completion
+    * code folding
+    * basic file overview
+    * basic occurrence matching
+    * basic variable renaming
 
 ## Installing
 
