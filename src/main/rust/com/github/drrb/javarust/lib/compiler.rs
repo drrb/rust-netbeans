@@ -8,16 +8,17 @@ use rustc_driver::driver;
 use syntax::codemap::CodeMap;
 use syntax::diagnostic;
 
-pub fn compile(input_file: String, message_collector: MessageCollector) {
+pub fn compile(input_path: String, source: String, message_collector: MessageCollector) {
     let output_dir = "/dummy".to_string();
-    println!("Compiling {}...", input_file);
+    println!("Compiling {}...", input_path);
     let mut sopts = config::basic_options();
     sopts.search_paths = SearchPaths::new();
     sopts.search_paths.add_path("/usr/local/lib/rustlib/x86_64-apple-darwin/lib");
     let odir = Some(Path::new(&output_dir));
     let ofile = None;
-    let input = Input::File(Path::new(&input_file));
-    let input_file_path = Some(Path::new(&input_file));
+    let input = Input::File(Path::new(&input_path));
+    let input = Input::Str(source);
+    let input_file_path = Some(Path::new(&input_path));
     let codemap = CodeMap::new();
     let diagnostic_handler = diagnostic::mk_handler(true, Box::new(message_collector));
     let span_diagnostic_handler = diagnostic::mk_span_handler(diagnostic_handler, codemap);

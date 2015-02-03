@@ -39,8 +39,7 @@ public class RustCompilerTest {
     @Test
     public void shouldCompileFile() throws Exception {
         File file = tempFolder.newFile("test.rs");
-        Files.write(file.toPath(), "fn main() { }".getBytes(UTF_8));
-        List<RustParseMessage> messages = new RustCompiler().compile(file);
+        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() { }");
         assertThat(messages, is(empty()));
     }
 
@@ -48,8 +47,7 @@ public class RustCompilerTest {
     public void shouldGiveMessagesOnNonParseCompileErrors() throws Exception {
         File file = tempFolder.newFile("test.rs");
         // main() shouldn't return String, so we expect an error
-        Files.write(file.toPath(), "fn main() -> String { }".getBytes(UTF_8));
-        List<RustParseMessage> messages = new RustCompiler().compile(file);
+        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() -> String { }");
         assertThat(messages, is(iterableWithSize(1)));
     }
 }

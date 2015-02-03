@@ -115,14 +115,16 @@ pub extern fn getHighlights(
 
 #[no_mangle]
 pub extern fn compile(
-    input_file: *const c_char,
+    input_path: *const c_char,
+    input_source: *const c_char,
     message_callback: extern "C" fn (ParseMessage),
 ) -> c_int {
     unsafe {
         let result = unwind::try(|| {
-            let input_file = to_string(&input_file);
+            let input_path = to_string(&input_path);
+            let input_source = to_string(&input_source);
             let message_collector = MessageCollector::new(message_callback);
-            compiler::compile(input_file, message_collector)
+            compiler::compile(input_path, input_source, message_collector)
         });
         match result {
             Ok(_) => 0,

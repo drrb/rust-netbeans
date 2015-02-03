@@ -25,9 +25,9 @@ import java.util.List;
  */
 public class RustCompiler {
 
-    public List<RustParseMessage> compile(File sourceFile) {
+    public List<RustParseMessage> compile(File sourcePath, String source) {
         List<RustParseMessage> messages = new LinkedList<>();
-        RustNative.INSTANCE.compile(sourceFile.getAbsolutePath(), messages::add);
+        RustNative.INSTANCE.compile(sourcePath.getAbsolutePath(), source, messages::add);
         return messages;
     }
 
