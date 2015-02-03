@@ -24,6 +24,7 @@ import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.api.Source;
+import org.openide.filesystems.RustFileObject;
 
 /**
  *
@@ -50,7 +51,8 @@ public class TestParsing {
 
     public static Snapshot snapshotOf(CharSequence input) {
         try {
-            Document document = rustDocumentContaining(input);
+            Document document = RustDocument.containing(input);
+            RustFileObject.forDocument(document);
             Source source = Source.create(document);
             Snapshot snapshot = source.createSnapshot();
             Field tokenHierarchyField = Snapshot.class.getDeclaredField("tokenHierarchy");
@@ -64,10 +66,6 @@ public class TestParsing {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    public static Document rustDocumentContaining(CharSequence input) {
-        return RustDocument.containing(input);
     }
 
     public static TokenHierarchy<CharSequence> rustTokenHierarchyFor(CharSequence input) {

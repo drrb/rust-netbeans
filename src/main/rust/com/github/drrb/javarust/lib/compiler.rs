@@ -16,7 +16,6 @@ pub fn compile(input_path: String, source: String, message_collector: MessageCol
     sopts.search_paths.add_path("/usr/local/lib/rustlib/x86_64-apple-darwin/lib");
     let odir = Some(Path::new(&output_dir));
     let ofile = None;
-    let input = Input::File(Path::new(&input_path));
     let input = Input::Str(source);
     let input_file_path = Some(Path::new(&input_path));
     let codemap = CodeMap::new();

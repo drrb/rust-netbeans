@@ -20,8 +20,12 @@ So far, it includes
     * Project view
     * clean/build/run/test from UI
 * Highlighting:
-    * basic syntax highlighting
-    * parse error highlighting
+    * syntax highlighting
+    * error highlighting for:
+        * syntax errors
+        * lifetime/borrow errors
+        * lint warnings
+        * other compilation errors
 * Editing:
     * brace matching
     * comment toggling

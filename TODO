@@ -1,5 +1,5 @@
 pipeline:
-    - Add error highlighting from later compilation stages
+    - Fix multi-file highlighting (don't compile every file as a crate of type 'bin': maybe pretend everythings a 'dylib'?)
     - Fix indentation
     - Add brace completion
     - Create/Reuse output windows
