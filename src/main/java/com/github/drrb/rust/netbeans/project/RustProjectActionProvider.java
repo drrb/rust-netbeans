@@ -16,24 +16,23 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
-import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.netbeans.spi.project.ActionProvider;
 import org.openide.util.Lookup;
 
 public class RustProjectActionProvider implements ActionProvider {
 
-    private static final Map<String, List<String>> COMMANDS;
+    private static final Map<String, String[]> COMMANDS;
 
     static {
-        Map<String, List<String>> commands = new HashMap<>();
-        commands.put(COMMAND_BUILD, asList("build"));
-        commands.put(COMMAND_CLEAN, asList("clean"));
-        commands.put(COMMAND_REBUILD, asList("clean", "build"));
-        commands.put(COMMAND_TEST, asList("test"));
+        Map<String, String[]> commands = new HashMap<>();
+        commands.put(COMMAND_BUILD, new String[]{"build"});
+        commands.put(COMMAND_CLEAN, new String[]{"clean"});
+        commands.put(COMMAND_REBUILD, new String[]{"clean", "build"});
+        commands.put(COMMAND_RUN, new String[]{"run"});
+        commands.put(COMMAND_TEST, new String[]{"test"});
         COMMANDS = Collections.unmodifiableMap(commands);
     }
 
@@ -54,14 +53,8 @@ public class RustProjectActionProvider implements ActionProvider {
 
     @Override
     public void invokeAction(String action, Lookup context) throws IllegalArgumentException {
-        switch (action) {
-            case COMMAND_CLEAN:
-            case COMMAND_BUILD:
-            case COMMAND_TEST:
-                cargo.run(action);
-                break;
-            case COMMAND_REBUILD:
-                cargo.run("clean", "build");
+        if (COMMANDS.containsKey(action)) {
+            cargo.run(COMMANDS.get(action));
         }
     }
 

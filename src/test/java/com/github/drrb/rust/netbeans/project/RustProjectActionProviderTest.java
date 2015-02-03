@@ -16,14 +16,10 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
-import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import org.netbeans.modules.masterfs.filebasedfs.fileobjects.FileObj;
-import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 
 /**
@@ -47,6 +43,13 @@ public class RustProjectActionProviderTest {
         actionProvider.invokeAction("build", Lookup.EMPTY);
 
         verify(cargo).run("build");
+    }
+
+    @Test
+    public void testRebuild() {
+        actionProvider.invokeAction("rebuild", Lookup.EMPTY);
+
+        verify(cargo).run("clean", "build");
     }
 
 }
