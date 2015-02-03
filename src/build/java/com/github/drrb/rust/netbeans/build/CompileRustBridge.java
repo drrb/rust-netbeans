@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.build;
 
+import java.io.File;
 import java.io.IOException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.nio.file.Files;
@@ -23,12 +24,26 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import static java.util.stream.Collectors.joining;
 import java.util.stream.Stream;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -39,23 +54,46 @@ public class CompileRustBridge {
 
     public static void main(String[] args) throws Exception {
         Paths.get("target", "rust-libs").toFile().mkdirs();
-        System.out.println("Compiling rust code!");
-        crates().forEach(CompileRustBridge::compile);
+        if (changesDetected()) {
+            System.out.println("Changes detected. Compiling all Rust crates!");
+            crates().forEach(CompileRustBridge::compile);
+        } else {
+            System.out.println("No changes detected. Not recompiling Rust crates.");
+        }
+    }
+
+    private static boolean changesDetected() throws IOException {
+        ZonedDateTime lastSourceChange = rustSources().collect(newestChange());
+        ZonedDateTime lastCompilation = compiledRustLibraries().collect(newestChange());
+        return lastSourceChange.isAfter(lastCompilation);
     }
 
     private static void compile(Path sourceFile) {
         System.out.format("Compiling crate %s%n", sourceFile);
         try {
-            Process process = new ProcessBuilder("rustc", "--out-dir", RUST_OUTPUT_DIR.toString(), sourceFile.toString()).inheritIO().start();
+            Process process = rustcProcess(sourceFile).inheritIO().start();
             process.waitFor(2, TimeUnit.MINUTES);
             if (process.exitValue() != 0) {
                 throw new RuntimeException(String.format("rustc exited nonzero (status code = %s)", process.exitValue()));
             }
-            Stream<Path> libraries = Files.find(RUST_OUTPUT_DIR, 1, CompileRustBridge::isDylib);
-            libraries.forEach(CompileRustBridge::moveLibIntoClasspath);
+            compiledRustLibraries().forEach(CompileRustBridge::moveLibIntoClasspath);
         } catch (IOException | InterruptedException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    private static ProcessBuilder rustcProcess(Path crateFile) {
+        List<String> commandParts;
+        List<String> rustcArgs = asList("--out-dir", RUST_OUTPUT_DIR.toString(), crateFile.toString());
+        if (inNetbeans() && new File("/bin/bash").isFile()) {
+            System.out.println("(running rustc via bash because we're in NetBeans)");
+            commandParts = asList("/bin/bash", "-lc", "rustc " + rustcArgs.stream().collect(joining(" ")));
+        } else {
+            commandParts = new LinkedList<>(asList("rustc"));
+            commandParts.addAll(rustcArgs);
+        }
+        System.out.format("Running command: %s%n", commandParts);
+        return new ProcessBuilder(commandParts);
     }
 
     private static void moveLibIntoClasspath(Path library) {
@@ -85,6 +123,21 @@ public class CompileRustBridge {
         return Files.find(Paths.get("src", "main", "rust"), 10, CompileRustBridge::isRustSource);
     }
 
+    private static Stream<Path> compiledRustLibraries() throws IOException {
+        return Files.find(RUST_OUTPUT_DIR, 1, CompileRustBridge::isDylib);
+    }
+
+    private static boolean inNetbeans() {
+        for (Map.Entry<String, String> envVars : System.getenv().entrySet()) {
+            String key = envVars.getKey();
+            String value = envVars.getValue();
+            if (key.matches("JAVA_MAIN_CLASS_\\d+") && value.equals("org.netbeans.Main")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private static boolean isRustSource(Path path, BasicFileAttributes attributes) {
         return attributes.isRegularFile() && path.toString().endsWith(".rs");
     }
@@ -106,6 +159,10 @@ public class CompileRustBridge {
         String pathString = path.toString();
         List<String> dylibExtensions = asList(".dylib", ".so", ".dll");
         return attributes.isRegularFile() && dylibExtensions.stream().anyMatch(pathString::endsWith);
+    }
+    
+    private static NewestChange newestChange() {
+        return new NewestChange();
     }
 
     private enum Os {
@@ -169,5 +226,48 @@ public class CompileRustBridge {
         private static String currentOsString() {
             return System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH);
         }
+    }
+
+    private static class NewestChange implements Collector<Path, List<Path>, ZonedDateTime> {
+
+        private static final ZonedDateTime EPOCH = FileTime.fromMillis(0).toInstant().atZone(ZoneId.systemDefault());
+
+        @Override
+        public Supplier<List<Path>> supplier() {
+            return () -> new LinkedList<>();
+        }
+
+        @Override
+        public BiConsumer<List<Path>, Path> accumulator() {
+            return List::add;
+        }
+
+        @Override
+        public BinaryOperator<List<Path>> combiner() {
+            return (List<Path> t, List<Path> u) -> {
+                t.addAll(u);
+                return t;
+            };
+        }
+
+        @Override
+        public Function<List<Path>, ZonedDateTime> finisher() {
+            return (allPaths) -> allPaths.stream().map(NewestChange::mtime).sorted().findFirst().orElse(EPOCH);
+        }
+
+        private static ZonedDateTime mtime(Path path) {
+            try {
+                return Files.getLastModifiedTime(path).toInstant().atZone(ZoneId.systemDefault());
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+                return EPOCH;
+            }
+        }
+
+        @Override
+        public Set<Characteristics> characteristics() {
+            return EnumSet.of(Characteristics.CONCURRENT, Characteristics.UNORDERED);
+        }
+
     }
 }

@@ -422,7 +422,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <java classname="com.github.drrb.rust.netbeans.build.CompileRustBridge">
+                                <java classname="com.github.drrb.rust.netbeans.build.CompileRustBridge" failonerror="true">
                                     <classpath>
                                         <pathelement path="target/build-classes"/>
                                     </classpath>
