@@ -29,18 +29,15 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
-import java.util.EnumSet;
+import static java.util.Comparator.reverseOrder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
+import static java.util.stream.Collector.Characteristics.CONCURRENT;
+import static java.util.stream.Collector.Characteristics.UNORDERED;
 import static java.util.stream.Collectors.joining;
 import java.util.stream.Stream;
 import org.openide.util.Exceptions;
@@ -50,6 +47,7 @@ import org.openide.util.Exceptions;
  */
 public class CompileRustBridge {
 
+    private static final ZonedDateTime EPOCH = FileTime.fromMillis(0).toInstant().atZone(ZoneId.systemDefault());
     private static final Path RUST_OUTPUT_DIR = Paths.get("target", "rust-libs");
 
     public static void main(String[] args) throws Exception {
@@ -137,7 +135,7 @@ public class CompileRustBridge {
         }
         return false;
     }
-    
+
     private static boolean isRustSource(Path path, BasicFileAttributes attributes) {
         return attributes.isRegularFile() && path.toString().endsWith(".rs");
     }
@@ -160,9 +158,22 @@ public class CompileRustBridge {
         List<String> dylibExtensions = asList(".dylib", ".so", ".dll");
         return attributes.isRegularFile() && dylibExtensions.stream().anyMatch(pathString::endsWith);
     }
-    
-    private static NewestChange newestChange() {
-        return new NewestChange();
+
+    private static Collector<Path, List<Path>, ZonedDateTime> newestChange() {
+        return Collector.of(LinkedList::new,
+                List::add,
+                (t, u) -> { t.addAll(u); return t; },
+                (allPaths) -> allPaths.stream().map(CompileRustBridge::mtime).sorted(reverseOrder()).findFirst().orElse(EPOCH),
+                CONCURRENT, UNORDERED);
+    }
+
+    private static ZonedDateTime mtime(Path path) {
+        try {
+            return Files.getLastModifiedTime(path).toInstant().atZone(ZoneId.systemDefault());
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return EPOCH;
+        }
     }
 
     private enum Os {
@@ -226,48 +237,5 @@ public class CompileRustBridge {
         private static String currentOsString() {
             return System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH);
         }
-    }
-
-    private static class NewestChange implements Collector<Path, List<Path>, ZonedDateTime> {
-
-        private static final ZonedDateTime EPOCH = FileTime.fromMillis(0).toInstant().atZone(ZoneId.systemDefault());
-
-        @Override
-        public Supplier<List<Path>> supplier() {
-            return () -> new LinkedList<>();
-        }
-
-        @Override
-        public BiConsumer<List<Path>, Path> accumulator() {
-            return List::add;
-        }
-
-        @Override
-        public BinaryOperator<List<Path>> combiner() {
-            return (List<Path> t, List<Path> u) -> {
-                t.addAll(u);
-                return t;
-            };
-        }
-
-        @Override
-        public Function<List<Path>, ZonedDateTime> finisher() {
-            return (allPaths) -> allPaths.stream().map(NewestChange::mtime).sorted().findFirst().orElse(EPOCH);
-        }
-
-        private static ZonedDateTime mtime(Path path) {
-            try {
-                return Files.getLastModifiedTime(path).toInstant().atZone(ZoneId.systemDefault());
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-                return EPOCH;
-            }
-        }
-
-        @Override
-        public Set<Characteristics> characteristics() {
-            return EnumSet.of(Characteristics.CONCURRENT, Characteristics.UNORDERED);
-        }
-
     }
 }
