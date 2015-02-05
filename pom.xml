@@ -458,6 +458,21 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
+                            <outputDirectory>${project.build.directory}/data</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/data</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>set-up-functional-test-data</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
                             <outputDirectory>${project.build.directory}/test-data</outputDirectory>
                             <resources>
                                 <resource>

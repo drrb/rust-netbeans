@@ -1,0 +1,6 @@
+struct |>CLASS:User<| {
+  |>FIELD:first_name<|: String,
+  |>FIELD:family_name<|: String,
+  |>FIELD:address<|: String,
+  |>FIELD:phone_num<|: String,
+}
