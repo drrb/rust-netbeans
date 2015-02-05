@@ -1,0 +1,4 @@
+trait |>INTERFACE:Printable<| {
+  fn |>METHOD:print<|(&self) { println(fmt!("%d", *self)) }
+  fn |>METHOD:implement_me<|(&self);
+}

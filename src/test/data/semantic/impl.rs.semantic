@@ -1,0 +1,3 @@
+impl |>CLASS:Printable<| {
+    fn |>METHOD:print<|(&self) { println(fmt!("%d", *self)) }
+}

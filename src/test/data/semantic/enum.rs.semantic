@@ -1,0 +1,6 @@
+enum |>CLASS:Color<| {
+  |>ENUM:Red<|,
+  |>ENUM:Green<|,
+  |>ENUM:Blue<|,
+  |>ENUM:Black<|
+}

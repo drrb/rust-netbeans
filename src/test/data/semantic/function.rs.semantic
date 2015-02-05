@@ -1,0 +1,3 @@
+fn |>METHOD,STATIC:main<|() {
+    do_something();
+}
