@@ -1572,7 +1572,7 @@ public abstract class CslTestBase extends NbTestCase {
         return sb.toString();
     }
 
-    protected void checkSemantic(String relFilePath) throws Exception {
+    public void checkSemantic(String relFilePath) throws Exception {
         checkSemantic(relFilePath, null);
     }
 
