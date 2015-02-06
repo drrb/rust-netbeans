@@ -22,8 +22,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.nio.file.Files;
 import javax.swing.Action;
 import static org.junit.Assert.assertThat;
-import org.junit.Before;
-import org.junit.Test;
 import static org.hamcrest.Matchers.*;
 import org.netbeans.junit.NbTestCase;
 import static org.netbeans.spi.project.ui.support.CommonProjectActions.closeProjectAction;

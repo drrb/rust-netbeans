@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import java.util.logging.Logger;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerInput;
@@ -23,8 +24,10 @@ import org.netbeans.spi.lexer.LexerRestartInfo;
 
 public class NetbeansRustLexer implements Lexer<RustTokenId> {
 
+    private static final Token<RustTokenId> EOF_TOKEN = null;
+
     private final LexerRestartInfo<RustTokenId> info;
-    private RustLexer lexer;
+    private RustLexer lexer = RustLexer.NULL_LEXER;
 
     public NetbeansRustLexer(LexerRestartInfo<RustTokenId> info) {
         this.info = info;
@@ -38,20 +41,25 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
             readWholeSource();
             return createToken(RustTokenId.GARBAGE);
         } else if (token.getType() == RustTokenId.EOF) {
-            return null;
+            return EOF_TOKEN;
         } else {
             for (int i = 0; i < token.length(); i++) {
                 readOneCharacter();
             }
-            return createToken(token.getType());
+            if (info.input().readLength() == 0) {
+                return EOF_TOKEN;
+            } else {
+                return createToken(token.getType());
+            }
         }
     }
 
     private void ensureLexerCreated() {
-        if (lexer != null) return;
-        String source = readWholeSource();
-        backUp(charsReadThisToken());
-        lexer = RustLexer.forString(source);
+        if (lexer == RustLexer.NULL_LEXER) {
+            String source = readWholeSource();
+            backUp(charsReadThisToken());
+            lexer = RustLexer.forString(source);
+        }
     }
 
     private String readWholeSource() {
@@ -83,7 +91,6 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
 
     @Override
     public Object state() {
-        //Tutorial returned null
         return null;
     }
 

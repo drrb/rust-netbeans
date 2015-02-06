@@ -19,14 +19,13 @@ package com.github.drrb.rust.netbeans.formatting;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import static java.lang.Character.isWhitespace;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.editor.indent.spi.Context;
+import org.netbeans.spi.lexer.MutableTextInput;
 import org.openide.util.Exceptions;
 
 /**
@@ -36,26 +35,26 @@ public class RustFormatter implements Formatter {
 
     @Override
     public void reformat(Context context, ParserResult compilationInfo) {
-        Logger.getLogger(RustFormatter.class.getName()).log(Level.WARNING, "reformat: {0} - {1}, caret = {2}", new Object[]{context.startOffset(), context.endOffset(), context.caretOffset()});
         NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
         BaseDocument document = (BaseDocument) context.document();
-        final RustDocumentFormatter formatter = new RustDocumentFormatter(this, parseResult, document, context);
-        //TODO:
-        //In addition to locking, PHP also does
-        //MutableTextInput mti = (MutableTextInput) doc.getProperty(MutableTextInput.class);
-        //try {
-        //    mti.tokenHierarchyControl().setActive(false);
-        //    <format>
-        //} finally {
-        //    mti.tokenHierarchyControl().setActive(true);
-        //}
-        //TODO: do we need the write lock the whole time? Looking for the braces just needs a read lock, but it seems like we can't get the write lock when we already have the read lock
-        document.runAtomic(formatter::format);
+        RustDocumentFormatter formatter = new RustDocumentFormatter(this, parseResult, document, context);
+        document.runAtomic(new Runnable() {
+            @Override
+            public void run() {
+                // Not sure why, but setActive(false)/(true) makes the formatting a lot faster
+                MutableTextInput mti = (MutableTextInput) document.getProperty(MutableTextInput.class);
+                try {
+                    mti.tokenHierarchyControl().setActive(false);
+                    formatter.format();
+                } finally {
+                    mti.tokenHierarchyControl().setActive(true);
+                }
+            }
+        });
     }
 
     @Override
     public void reindent(Context context) {
-        Logger.getLogger(RustFormatter.class.getName()).log(Level.WARNING, "reindent: {0} - {1}, {2}", new Object[]{context.startOffset(), context.endOffset(), context.caretOffset()});
         try {
             int lineStart = context.lineStartOffset(context.startOffset());
             int previousLineEnd = lineStart - 1;

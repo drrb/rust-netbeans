@@ -17,27 +17,24 @@
 package com.github.drrb.rust.netbeans.test;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
+import java.io.File;
+import static java.util.Arrays.stream;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.api.editor.mimelookup.test.MockMimeLookup;
+import org.netbeans.lib.lexer.test.TestLanguageProvider;
 import org.netbeans.modules.csl.api.test.CslTestBase;
-import org.netbeans.modules.csl.core.GsfParserFactory;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
-import org.netbeans.modules.csl.spi.ParserResult;
+import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
 /**
  *
  */
 public class CslTestHelper extends CslTestBase implements TestRule {
-
     public CslTestHelper() {
         super("");
     }
@@ -64,16 +61,18 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        //TODO: why do we have to do this? CslTestBase picks up our generated-layer.xml,
-        // but it doesn't result in the parser factory being available in the MimeLookup.
-        MockMimeLookup.setInstances(MimePath.parse(getPreferredMimeType()), GsfParserFactory.create(FileUtil.getConfigFile("Editors/text/x-rust-source/org-netbeans-modules-csl-core-GsfParserFactory-create.instance")));
-        //TODO: php tests have this, but our tests seem to pass without it. Why?
-        //TestLanguageProvider.register(getPreferredLanguage().getLexerLanguage());
-    }
+        //This makes RustLanguage available to the formatter (at least: it may do other things too)!
+        TestLanguageProvider.register(getPreferredLanguage().getLexerLanguage());
 
-    @Override
-    protected void validateParserResult(@NullAllowed ParserResult result) {
-        assertThat(result, not(nullValue()));
+        //TODO: why do we have to do this? CslTestBase picks up our generated-layer.xml,
+        // but it doesn't result in the parser factory, formatter factory, etc being
+        // available in the MimeLookup.
+        //TODO: maybe get more selective (specify per test what you need with annotations)
+        // so that we know more of what's going on behind the scenes
+        //TODO: might need to recurse into subdirectories (getChidren(true))
+        FileObject[] mimeFiles = FileUtil.getConfigFile("Editors/text/x-rust-source").getChildren();
+        Object[] mimeObjects = stream(mimeFiles).filter(FileObject::isData).map(FileObject::getPath).map(path -> FileUtil.getConfigObject(path, Object.class)).toArray();
+        MockMimeLookup.setInstances(MimePath.parse(getPreferredMimeType()), mimeObjects);
     }
 
     @Override
@@ -84,5 +83,11 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     @Override
     protected String getPreferredMimeType() {
         return RustLanguage.MIME_TYPE;
+    }
+
+    @Override
+    protected File getDataSourceDir() {
+        //TODO: parent implementation gives a warning about 'dump' files. What are they?
+        return getDataDir();
     }
 }

@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  */
 public class RustLexer {
-    private static final RustLexer NULL_LEXER = new RustLexer((NativeRustLexer) null) {
+    public static final RustLexer NULL_LEXER = new RustLexer((NativeRustLexer) null) {
         @Override public void release() {}
 
         @Override

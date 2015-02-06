@@ -2215,12 +2215,13 @@ public abstract class CslTestBase extends NbTestCase {
 //
 //        };
 
-        MockServices.setServices(MockMimeLookup.class);
-        if (indentOnly) {
-            MockMimeLookup.setInstances(MimePath.parse(mimeType), new GsfIndentTaskFactory());
-        } else {
-            MockMimeLookup.setInstances(MimePath.parse(mimeType), new GsfReformatTaskFactory(), new GsfIndentTaskFactory());
-        }
+        //drrb: removed these. We set our own because it seems that you need other things in the lookup for formatting to work
+//        MockServices.setServices(MockMimeLookup.class);
+//        if (indentOnly) {
+//            MockMimeLookup.setInstances(MimePath.parse(mimeType), new GsfIndentTaskFactory());
+//        } else {
+//            MockMimeLookup.setInstances(MimePath.parse(mimeType), new GsfReformatTaskFactory(), new GsfIndentTaskFactory());
+//        }
     }
 
     protected void format(Document document, Formatter formatter, int startPos, int endPos, boolean indentOnly) throws BadLocationException {
@@ -2277,7 +2278,7 @@ public abstract class CslTestBase extends NbTestCase {
     }
 
 
-    protected void reformatFileContents(String file, IndentPrefs preferences) throws Exception {
+    public void reformatFileContents(String file, IndentPrefs preferences) throws Exception {
         FileObject fo = getTestFile(file);
         assertNotNull(fo);
         BaseDocument doc = getDocument(fo);

@@ -23,6 +23,7 @@ import java.util.List;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
 import org.netbeans.api.lexer.Token;
+import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
@@ -51,7 +52,8 @@ public class RustDocumentFormatter {
         final Snapshot snapshot = parseResult.getSnapshot();
         try {
             List<Delimiter> delimiters = new LinkedList<>();
-            TokenSequence<RustTokenId> tokenSequence = snapshot.getTokenHierarchy().tokenSequence(RustTokenId.language());
+            TokenHierarchy<?> tokenHierarchy = snapshot.getTokenHierarchy();
+            TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.language());
             tokenSequence.move(0);
 
             while (tokenSequence.moveNext()) {
