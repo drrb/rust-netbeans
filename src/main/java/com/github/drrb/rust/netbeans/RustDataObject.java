@@ -38,7 +38,8 @@ import org.openide.windows.TopComponent;
 @MIMEResolver.ExtensionRegistration(
         mimeType = RustLanguage.MIME_TYPE,
         displayName = "#LBL_Rust_LOADER",
-        extension = {"rs", "rc"})
+        extension = "rs",
+        position = 20) //Arbitrary, to silence warnings
 @DataObject.Registration(
         mimeType = RustLanguage.MIME_TYPE,
         iconBase = "com/github/drrb/rust/netbeans/rust-icon_16x16.png",
