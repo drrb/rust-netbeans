@@ -64,7 +64,7 @@ public class CompileRustBridge {
         System.out.format("Compiling crate %s%n", sourceFile);
         try {
             Process process = rustcProcess(sourceFile).inheritIO().start();
-            process.waitFor(2, TimeUnit.MINUTES);
+            process.waitFor();
             if (process.exitValue() != 0) {
                 throw new RuntimeException(String.format("rustc exited nonzero (status code = %s)", process.exitValue()));
             }
