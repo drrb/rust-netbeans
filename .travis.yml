@@ -7,9 +7,9 @@ jdk:
     - oraclejdk7
     - openjdk7
 before_install:
-  - yes | sudo add-apt-repository ppa:hansjorg/rust
-  - sudo apt-get update
+    - sudo add-apt-repository --yes ppa:hansjorg/rust
+    - sudo apt-get update
 install:
-  - sudo apt-get install rust-nightly
-  - mvn dependency:go-offline
+    - sudo apt-get install --assume-yes rust-nightly
+    - mvn dependency:go-offline
 script: mvn package
