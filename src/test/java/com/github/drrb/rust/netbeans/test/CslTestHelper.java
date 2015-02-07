@@ -17,18 +17,14 @@
 package com.github.drrb.rust.netbeans.test;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
-import com.google.common.collect.Collections2;
 import java.awt.EventQueue;
 import java.io.File;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
 import javax.swing.JEditorPane;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultEditorKit;
@@ -80,9 +76,9 @@ public class CslTestHelper extends CslTestBase implements TestRule {
                                 public void run() {
                                     try {
                                         base.evaluate();
-                                    } catch(RuntimeException | Error e) {
+                                    } catch (RuntimeException | Error e) {
                                         throw e;
-                                    } catch(Throwable e) {
+                                    } catch (Throwable e) {
                                         throw new RuntimeException(e);
                                     }
                                 }
@@ -147,8 +143,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
     @Override
     protected File getDataSourceDir() {
-        //TODO: parent implementation gives a warning about 'dump' files. What are they?
-        return getDataDir();
+        return new File("src/test/data");
     }
 
     @Override
@@ -196,7 +191,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
         int sourcePos = source.indexOf('^');
         assertNotNull(sourcePos);
-        String sourceWithoutMarker = source.substring(0, sourcePos) + source.substring(sourcePos+1);
+        String sourceWithoutMarker = source.substring(0, sourcePos) + source.substring(sourcePos + 1);
         Formatter formatter = getFormatter(indentPrefs);
 
         JEditorPane ta = getPane(sourceWithoutMarker);
