@@ -16,7 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.bridge.RustHighlight;
+import com.github.drrb.rust.netbeans.rustbridge.RustHighlight;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
         highlights.clear();
         cancelled.set(false);
 
-        com.github.drrb.rust.netbeans.bridge.RustSemanticAnalyzer analyzer = new com.github.drrb.rust.netbeans.bridge.RustSemanticAnalyzer();
+        com.github.drrb.rust.netbeans.rustbridge.RustSemanticAnalyzer analyzer = new com.github.drrb.rust.netbeans.rustbridge.RustSemanticAnalyzer();
         try {
             List<RustHighlight> rawHighlights = analyzer.getHighlights(result.getResult());
             highlights.putAll(mapHighlights(rawHighlights));

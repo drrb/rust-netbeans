@@ -14,26 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.rustbridge;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  *
  */
-public class NativeRustLexer extends Structure {
+public class RustSemanticAnalyzer {
 
-    public static class ByReference extends NativeRustLexer implements Structure.ByReference {
-    }
-
-    public Pointer spanHandler;
-    public Pointer lexer;
-
-    @Override
-    protected List<String> getFieldOrder() {
-        return Arrays.asList("spanHandler", "lexer");
+    public List<RustHighlight> getHighlights(RustParser.Result parseResult) {
+        List<RustHighlight> highlights = new LinkedList<>();
+        //TODO: These checks are clumsy. Should they happen in Rust instead?
+        if (parseResult.isSuccess()) {
+            RustNative.INSTANCE.getHighlights(parseResult.getAst(), highlights::add);
+        }
+        return highlights;
     }
 }

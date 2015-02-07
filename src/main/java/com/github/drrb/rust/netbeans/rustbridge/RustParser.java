@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.rustbridge;
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.Collections;
@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class RustParser {
 
-    Result parse(String fileName, String source) {
+    public Result parse(String fileName, String source) {
         AtomicReference<RustAst> astHolder = new AtomicReference<>();
         List<RustParseMessage> parseMessages = new LinkedList<>();
         RustNative.INSTANCE.parse(fileName, source, astHolder::set, parseMessages::add);

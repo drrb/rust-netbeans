@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.rustbridge;
 
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.sun.jna.Structure;
 import static java.util.Arrays.asList;
 import java.util.List;

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.rustbridge;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -24,13 +24,16 @@ import java.util.List;
 /**
  *
  */
-public class RustAst extends Structure {
+public class NativeRustLexer extends Structure {
 
-    public Pointer parseSession;
-    public Pointer crate;
+    public static class ByReference extends NativeRustLexer implements Structure.ByReference {
+    }
+
+    public Pointer spanHandler;
+    public Pointer lexer;
 
     @Override
-    protected List getFieldOrder() {
-        return Arrays.asList("parseSession", "crate");
+    protected List<String> getFieldOrder() {
+        return Arrays.asList("spanHandler", "lexer");
     }
 }

@@ -18,9 +18,9 @@ package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.parsing.RustCompiler;
-import com.github.drrb.rust.netbeans.parsing.RustParseMessage;
-import static com.github.drrb.rust.netbeans.parsing.RustParseMessage.Level.HELP;
+import com.github.drrb.rust.netbeans.rustbridge.RustCompiler;
+import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
+import static com.github.drrb.rust.netbeans.rustbridge.RustParseMessage.Level.HELP;
 import com.google.common.annotations.VisibleForTesting;
 import java.io.File;
 import java.util.Collection;

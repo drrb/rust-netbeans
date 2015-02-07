@@ -14,24 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.bridge;
+package com.github.drrb.rust.netbeans.rustbridge;
 
-import com.github.drrb.rust.netbeans.parsing.RustNative;
-import com.github.drrb.rust.netbeans.parsing.RustParser;
-import java.util.LinkedList;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  *
  */
-public class RustSemanticAnalyzer {
+public class RustAst extends Structure {
 
-    public List<RustHighlight> getHighlights(RustParser.Result parseResult) {
-        List<RustHighlight> highlights = new LinkedList<>();
-        //TODO: These checks are clumsy. Should they happen in Rust instead?
-        if (parseResult.isSuccess()) {
-            RustNative.INSTANCE.getHighlights(parseResult.getAst(), highlights::add);
-        }
-        return highlights;
+    public Pointer parseSession;
+    public Pointer crate;
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("parseSession", "crate");
     }
 }

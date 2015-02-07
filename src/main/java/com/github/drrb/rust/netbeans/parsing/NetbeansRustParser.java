@@ -16,6 +16,8 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import com.github.drrb.rust.netbeans.rustbridge.RustParser;
+import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.StyledDocument;
 import org.netbeans.modules.csl.api.Error;
-import org.netbeans.modules.csl.api.Severity;
 import org.netbeans.modules.csl.spi.DefaultError;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.Snapshot;

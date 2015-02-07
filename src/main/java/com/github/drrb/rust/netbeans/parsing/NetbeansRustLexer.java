@@ -16,7 +16,8 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import java.util.logging.Logger;
+import com.github.drrb.rust.netbeans.rustbridge.RustToken;
+import com.github.drrb.rust.netbeans.rustbridge.RustLexer;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerInput;

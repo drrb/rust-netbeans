@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.rustbridge;
 
-import com.github.drrb.rust.netbeans.bridge.RustHighlight;
+import com.github.drrb.rust.netbeans.rustbridge.NativeRustLexer;
+import com.github.drrb.rust.netbeans.rustbridge.RustHighlight;
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;

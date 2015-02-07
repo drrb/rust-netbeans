@@ -17,7 +17,7 @@
 package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
-import com.github.drrb.rust.netbeans.parsing.RustParseMessage;
+import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
 import java.util.List;
 import static java.util.stream.Collectors.joining;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
