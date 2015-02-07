@@ -26,24 +26,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import static java.util.Arrays.asList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import static java.util.stream.Collectors.joining;
-import org.openide.util.Exceptions;
 
 /**
  *
  */
 public class CompileRustBridge {
 
-    private static final ZonedDateTime EPOCH = FileTime.fromMillis(0).toInstant().atZone(ZoneId.systemDefault());
+    private static final Date EPOCH = new Date(0);
     private static final Path RUST_OUTPUT_DIR = Paths.get("target", "rust-libs");
 
     public static void main(String[] args) throws Exception {
@@ -59,9 +55,9 @@ public class CompileRustBridge {
     }
 
     private static boolean changesDetected() throws IOException {
-        ZonedDateTime lastSourceChange = newestChange(rustSources());
-        ZonedDateTime lastCompilation = newestChange(compiledRustLibraries());
-        return lastSourceChange.isAfter(lastCompilation);
+        Date lastSourceChange = newestChange(rustSources());
+        Date lastCompilation = newestChange(compiledRustLibraries());
+        return lastSourceChange.getTime() > lastCompilation.getTime();
     }
 
     private static void compile(Path sourceFile) {
@@ -82,13 +78,11 @@ public class CompileRustBridge {
 
     private static ProcessBuilder rustcProcess(Path crateFile) {
         List<String> commandParts;
-        List<String> rustcArgs = asList("--out-dir", RUST_OUTPUT_DIR.toString(), crateFile.toString());
         if (inNetbeans() && new File("/bin/bash").isFile()) {
             System.out.println("(running rustc via bash because we're in NetBeans)");
-            commandParts = asList("/bin/bash", "-lc", "rustc " + rustcArgs.stream().collect(joining(" ")));
+            commandParts = asList("/bin/bash", "-lc", String.format("rustc --out-dir %s %s", RUST_OUTPUT_DIR, crateFile));
         } else {
-            commandParts = new LinkedList<>(asList("rustc"));
-            commandParts.addAll(rustcArgs);
+            commandParts = asList("rustc", "--out-dir", RUST_OUTPUT_DIR.toString(), crateFile.toString());
         }
         System.out.format("Running command: %s%n", commandParts);
         return new ProcessBuilder(commandParts);
@@ -180,22 +174,22 @@ public class CompileRustBridge {
         return attributes.isRegularFile() && dylibExtensions.contains(pathExtension);
     }
 
-    private static ZonedDateTime newestChange(List<Path> paths) {
-        ZonedDateTime lastChange = EPOCH;
+    private static Date newestChange(List<Path> paths) {
+        Date lastChange = EPOCH;
         for (Path path : paths) {
-            ZonedDateTime change = mtime(path);
-            if (change.isAfter(lastChange)) {
+            Date change = mtime(path);
+            if (change.getTime() > lastChange.getTime()) {
                 lastChange = change;
             }
         }
         return lastChange;
     }
 
-    private static ZonedDateTime mtime(Path path) {
+    private static Date mtime(Path path) {
         try {
-            return Files.getLastModifiedTime(path).toInstant().atZone(ZoneId.systemDefault());
+            return new Date(Files.getLastModifiedTime(path).toMillis());
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            ex.printStackTrace();
             return EPOCH;
         }
     }
