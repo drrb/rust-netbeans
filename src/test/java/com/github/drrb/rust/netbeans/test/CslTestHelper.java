@@ -22,7 +22,10 @@ import java.io.File;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import java.util.stream.Stream;
 import javax.swing.JEditorPane;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultEditorKit;
@@ -109,9 +112,16 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         // so that we know more of what's going on behind the scenes
         //TODO: might need to recurse into subdirectories (getChidren(true)), although
         // that seemed to add some files that broke things...
-        FileObject[] mimeFiles = FileUtil.getConfigFile("Editors/text/x-rust-source").getChildren();
-        Object[] mimeObjects = stream(mimeFiles).filter(FileObject::isData).map(FileObject::getPath).map(path -> FileUtil.getConfigObject(path, Object.class)).toArray();
+        Stream<String> mimeRoots = asList("/", "/BracesMatchers").stream();
+        Stream<FileObject> mimeFiles = mimeRoots.map(this::mimeDir).map(FileObject::getChildren).flatMap(Arrays::stream);
+//        FileObject[] mimeFiles = FileUtil.getConfigFile("Editors/text/x-rust-source").getChildren();
+        Stream<String> mimePaths = mimeFiles.filter(FileObject::isData).map(FileObject::getPath);
+        Object[] mimeObjects = mimePaths.map(path -> FileUtil.getConfigObject(path, Object.class)).toArray();
         MockMimeLookup.setInstances(MimePath.parse(getPreferredMimeType()), mimeObjects);
+    }
+
+    private FileObject mimeDir(String path) {
+        return FileUtil.getConfigFile("Editors/" + getPreferredMimeType() + path);
     }
 
     @Override
@@ -144,6 +154,10 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     public <T extends TokenId> TokenSequence<T> tokenize(String text) {
         TokenHierarchy<?> hi = TokenHierarchy.create(text, getPreferredLanguage().getLexerLanguage());
         return hi.tokenSequence(getPreferredLanguage().getLexerLanguage());
+    }
+
+    public void checkBracketsMatch(String sourceWithBracketPointers) throws Exception {
+        super.assertMatches2(sourceWithBracketPointers);
     }
 
     public void reformatFileContents(String file) throws Exception {
