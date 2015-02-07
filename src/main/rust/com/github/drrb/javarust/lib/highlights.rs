@@ -81,7 +81,7 @@ impl <'a> HighlightVisitor<'a> {
     }
 
     fn find_embedded_token(&self, kind: TokenKind, span: Span) -> Span {
-        let source = self.codemap.span_to_snippet(span).expect(format!("Couldn't get snippet for {}", self.codemap.span_to_string(span).as_slice()).as_slice());
+        let source = self.codemap.span_to_snippet(span).unwrap();
         let sh = diagnostic::mk_span_handler(diagnostic::default_handler(Auto, None, true), CodeMap::new());
         let fm = sh.cm.new_filemap("myfunction".to_string(), source);
         let mut lexer = StringReader::new(&sh, fm);
