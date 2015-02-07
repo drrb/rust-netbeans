@@ -1,7 +1,6 @@
 language: java
 
 # From 7.4, NetBeans needs Java 7
-# We've decided to use Java 8
 jdk:
     - oraclejdk8
     - oraclejdk7
@@ -12,4 +11,5 @@ before_install:
 install:
     - sudo apt-get install --assume-yes rust-nightly
     - mvn dependency:go-offline
+    - mvn package -DskipTests
 script: mvn package
