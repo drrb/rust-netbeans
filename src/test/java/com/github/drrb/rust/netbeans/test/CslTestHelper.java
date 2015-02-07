@@ -164,8 +164,13 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         super.reformatFileContents(file, null);
     }
 
+    @Override
     public void checkSemantic(String relFilePath) throws Exception {
         super.checkSemantic(relFilePath);
+    }
+
+    public void checkParseMessages(String relFilePath) throws Exception {
+        super.checkErrors(relFilePath);
     }
 
     //From PHPNetLineIndenterTest

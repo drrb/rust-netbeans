@@ -17,17 +17,23 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.StyledDocument;
 import org.netbeans.modules.csl.api.Error;
+import org.netbeans.modules.csl.api.Severity;
+import org.netbeans.modules.csl.spi.DefaultError;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.api.Task;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.SourceModificationEvent;
+import org.openide.filesystems.FileObject;
+import org.openide.text.NbDocument;
 
 /**
  *
@@ -54,7 +60,7 @@ public class NetbeansRustParser extends Parser {
         String source = snapshot.getText().toString();
         return rustParser.parse(fileName, source);
     }
-    
+
     @VisibleForTesting
     protected String getFileName(Snapshot snapshot) {
         return snapshot.getSource().getFileObject().getNameExt();
@@ -62,7 +68,20 @@ public class NetbeansRustParser extends Parser {
 
     @Override
     public NetbeansRustParserResult getResult(Task task) throws ParseException {
-        return new NetbeansRustParserResult(snapshot, result);
+        return new NetbeansRustParserResult(snapshot, result, getDiagnostics());
+    }
+
+    private List<Error> getDiagnostics() {
+        FileObject file = snapshot.getSource().getFileObject();
+        StyledDocument document = NbDocument.getDocument(file);
+        List<RustParseMessage> parseMessages = result.getParseMessages();
+        List<Error> diagnostics = new ArrayList<>(parseMessages.size());
+        for (RustParseMessage message : parseMessages) {
+            int startOffset = NbDocument.findLineOffset(document, message.getStartLine() - 1) + message.getStartCol();
+            int endOffset = NbDocument.findLineOffset(document, message.getEndLine() - 1) + message.getEndCol();
+            diagnostics.add(new DefaultError("rust.parse.message", message.getMessage(), message.getMessage(), file, startOffset, endOffset, message.getLevel().severity()));
+        }
+        return diagnostics;
     }
 
     @Override
@@ -77,10 +96,12 @@ public class NetbeansRustParser extends Parser {
 
         private final RustParser.Result result;
         private final AtomicBoolean valid = new AtomicBoolean(true);
+        private final List<Error> diagnostics;
 
-        public NetbeansRustParserResult(Snapshot snapshot, RustParser.Result result) {
+        public NetbeansRustParserResult(Snapshot snapshot, RustParser.Result result, List<Error> diagnostics) {
             super(snapshot);
             this.result = result;
+            this.diagnostics = Collections.unmodifiableList(diagnostics);
         }
 
         public RustParser.Result getResult() throws ParseException {
@@ -99,8 +120,7 @@ public class NetbeansRustParser extends Parser {
 
         @Override
         public List<? extends Error> getDiagnostics() {
-            //TODO: why do we need this?
-            return Collections.emptyList();
+            return diagnostics;
         }
 //
 //        public RustSourceIndex getIndex() {

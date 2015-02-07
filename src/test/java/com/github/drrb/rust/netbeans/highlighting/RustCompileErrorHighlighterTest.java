@@ -20,14 +20,10 @@ import com.github.drrb.rust.netbeans.RustSourceSnapshot;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import org.netbeans.modules.parsing.api.Snapshot;
-import org.netbeans.modules.parsing.api.Source;
 import org.netbeans.spi.editor.hints.ErrorDescription;
 import org.netbeans.spi.editor.hints.Severity;
 

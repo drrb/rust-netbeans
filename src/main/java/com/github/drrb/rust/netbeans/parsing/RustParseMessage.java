@@ -19,6 +19,7 @@ package com.github.drrb.rust.netbeans.parsing;
 import com.sun.jna.Structure;
 import static java.util.Arrays.asList;
 import java.util.List;
+import org.netbeans.modules.csl.api.Severity;
 
 /**
  *
@@ -29,12 +30,22 @@ public class RustParseMessage extends Structure {
     }
 
     public enum Level {
-        BUG,
-        FATAL,
-        ERROR,
-        WARNING,
-        NOTE,
-        HELP,
+        BUG(Severity.ERROR),
+        FATAL(Severity.ERROR),
+        ERROR(Severity.ERROR),
+        WARNING(Severity.WARNING),
+        NOTE(Severity.INFO),
+        HELP(Severity.INFO);
+
+        private final Severity severity;
+
+        private Level(Severity severity) {
+            this.severity = severity;
+        }
+
+        public Severity severity() {
+            return severity;
+        }
     }
 
     public int level;
