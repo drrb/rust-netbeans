@@ -17,7 +17,6 @@
 package com.github.drrb.rust.netbeans.rustbridge;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,9 +25,9 @@ import java.util.List;
 public class RustCompiler {
 
     public List<RustParseMessage> compile(File sourcePath, String source) {
-        List<RustParseMessage> messages = new LinkedList<>();
-        RustNative.INSTANCE.compile(sourcePath.getAbsolutePath(), source, messages::add);
-        return messages;
+        RustNative.ParseMessageAccumulator messageAccumulator = new RustNative.ParseMessageAccumulator();
+        RustNative.INSTANCE.compile(sourcePath.getAbsolutePath(), source, messageAccumulator);
+        return messageAccumulator.getMessages();
     }
 
 }

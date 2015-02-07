@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -25,6 +26,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -49,6 +51,16 @@ public class Pipe implements Runnable {
 
     @Override
     public void run() {
-        input.lines().forEach((line) -> output.println(line));
+        try {
+            transferAllLines();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private void transferAllLines() throws IOException {
+        for (String line = input.readLine(); line != null; line = input.readLine()) {
+            output.println(line);
+        }
     }
 }

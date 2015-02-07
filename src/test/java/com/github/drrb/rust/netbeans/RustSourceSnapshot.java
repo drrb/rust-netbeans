@@ -18,13 +18,12 @@ package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
+import com.google.common.base.Joiner;
 import java.util.List;
-import static java.util.stream.Collectors.joining;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.editor.indent.spi.IndentContextFactory;
 import org.netbeans.modules.parsing.spi.ParseException;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -71,7 +70,7 @@ public class RustSourceSnapshot implements CharSequence {
             if (dieOnParseFailure && parse.getResult().isFailure()) {
                 System.out.println("Rust compilation failed in test:");
                 List<RustParseMessage> parseMessages = parse.getResult().getParseMessages();
-                String errors = parseMessages.stream().map(RustParseMessage::toString).collect(joining("\n"));
+                String errors = Joiner.on("\n").join(parseMessages);
                 throw new RuntimeException("Rust compilation failed in test:\n" + errors);
             }
         } catch (ParseException ex) {

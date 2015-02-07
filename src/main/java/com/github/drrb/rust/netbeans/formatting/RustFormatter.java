@@ -36,8 +36,8 @@ public class RustFormatter implements Formatter {
     @Override
     public void reformat(Context context, ParserResult compilationInfo) {
         NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
-        BaseDocument document = (BaseDocument) context.document();
-        RustDocumentFormatter formatter = new RustDocumentFormatter(this, parseResult, document, context);
+        final BaseDocument document = (BaseDocument) context.document();
+        final RustDocumentFormatter formatter = new RustDocumentFormatter(this, parseResult, document, context);
         document.runAtomic(new Runnable() {
             @Override
             public void run() {

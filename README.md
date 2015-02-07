@@ -7,7 +7,7 @@ This is a NetBeans plugin that adds support for [Rust](http://www.rust-lang.org)
 ## Requirements
 
 * NetBeans 8.x or above
-* Java 8
+* Java 7+
 * OSX (probably also works on Linux, may work on Windows with hacks)
 * Rust 1.0 installed by rustup (currently developing against post-1.0-alpha nightlies)
 * Cargo (somewhere on the path)

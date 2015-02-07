@@ -16,8 +16,9 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.joining;
+import com.google.common.base.Joiner;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -37,9 +38,11 @@ public class Cargo {
     }
 
     public void run(String... commands) {
-        String commandLine = stream(commands)
-                .map((command) -> "cargo " + command + " --verbose")
-                .collect(joining(" && "));
+        List<String> cargoCommands = new ArrayList<>(commands.length);
+        for (String command : commands) {
+            cargoCommands.add(String.format("cargo %s --verbose", command));
+        }
+        String commandLine = Joiner.on(" && ").join(cargoCommands);
         shell.run(commandLine, project.dir());
     }
 

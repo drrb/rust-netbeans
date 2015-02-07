@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.test;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
+import com.google.common.collect.Collections2;
 import java.awt.EventQueue;
 import java.io.File;
 import java.lang.annotation.Retention;
@@ -25,6 +26,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.swing.JEditorPane;
 import javax.swing.text.Caret;
@@ -112,16 +115,19 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         // so that we know more of what's going on behind the scenes
         //TODO: might need to recurse into subdirectories (getChidren(true)), although
         // that seemed to add some files that broke things...
-        Stream<String> mimeRoots = asList("/", "/BracesMatchers").stream();
-        Stream<FileObject> mimeFiles = mimeRoots.map(this::mimeDir).map(FileObject::getChildren).flatMap(Arrays::stream);
-//        FileObject[] mimeFiles = FileUtil.getConfigFile("Editors/text/x-rust-source").getChildren();
-        Stream<String> mimePaths = mimeFiles.filter(FileObject::isData).map(FileObject::getPath);
-        Object[] mimeObjects = mimePaths.map(path -> FileUtil.getConfigObject(path, Object.class)).toArray();
-        MockMimeLookup.setInstances(MimePath.parse(getPreferredMimeType()), mimeObjects);
-    }
-
-    private FileObject mimeDir(String path) {
-        return FileUtil.getConfigFile("Editors/" + getPreferredMimeType() + path);
+        List<String> mimeRoots = asList("/", "/BracesMatchers");
+        List<Object> mimeObjects = new LinkedList<>();
+        for (String mimeRoot : mimeRoots) {
+            FileObject mimeDir = FileUtil.getConfigFile("Editors/" + getPreferredMimeType() + mimeRoot);
+            FileObject[] mimeFiles = mimeDir.getChildren();
+            for (FileObject mimeFile : mimeFiles) {
+                if (mimeFile.isData()) {
+                    mimeObjects.add(FileUtil.getConfigObject(mimeFile.getPath(), Object.class));
+                }
+            }
+        }
+        Object[] mimeObjectArray = mimeObjects.toArray();
+        MockMimeLookup.setInstances(MimePath.parse(getPreferredMimeType()), mimeObjectArray);
     }
 
     @Override

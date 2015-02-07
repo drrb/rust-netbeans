@@ -38,7 +38,7 @@ public class RustCompileErrorHighlighterTest {
         function.appendln("    printtheline!(\"Hello, {}\", name);");
         function.appendln("}");
         NetbeansRustParserResult parseResult = function.parse();
-        List<ErrorDescription> errors = new LinkedList<>();
+        final List<ErrorDescription> errors = new LinkedList<>();
         RustCompileErrorHighlighter highlightingTask = new RustCompileErrorHighlighter() {
 
             @Override
@@ -49,7 +49,7 @@ public class RustCompileErrorHighlighterTest {
         };
         highlightingTask.run(parseResult, null);
 
-        assertThat(errors, is(iterableWithSize(1)));
+        assertThat(errors, hasSize(1));
         ErrorDescription error = errors.get(0);
         assertThat(error.getSeverity(), is(Severity.ERROR));
         assertThat(error.getDescription(), is("macro undefined: 'printtheline!'"));

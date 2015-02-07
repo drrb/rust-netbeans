@@ -16,7 +16,6 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,11 +24,11 @@ import java.util.List;
 public class RustSemanticAnalyzer {
 
     public List<RustHighlight> getHighlights(RustParser.Result parseResult) {
-        List<RustHighlight> highlights = new LinkedList<>();
+        RustNative.HighlightAccumulator highlightAccumulator = new RustNative.HighlightAccumulator();
         //TODO: These checks are clumsy. Should they happen in Rust instead?
         if (parseResult.isSuccess()) {
-            RustNative.INSTANCE.getHighlights(parseResult.getAst(), highlights::add);
+            RustNative.INSTANCE.getHighlights(parseResult.getAst(), highlightAccumulator);
         }
-        return highlights;
+        return highlightAccumulator.getHighlights();
     }
 }

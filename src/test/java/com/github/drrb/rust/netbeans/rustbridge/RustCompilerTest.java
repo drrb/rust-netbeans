@@ -20,8 +20,8 @@ import java.io.File;
 import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.iterableWithSize;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -46,6 +46,6 @@ public class RustCompilerTest {
         File file = tempFolder.newFile("test.rs");
         // main() shouldn't return String, so we expect an error
         List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() -> String { }");
-        assertThat(messages, is(iterableWithSize(1)));
+        assertThat(messages, hasSize(1));
     }
 }

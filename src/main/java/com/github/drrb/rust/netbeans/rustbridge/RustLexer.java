@@ -16,10 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
-import com.github.drrb.rust.netbeans.rustbridge.RustNative;
-import com.github.drrb.rust.netbeans.rustbridge.NativeRustLexer;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -56,9 +53,9 @@ public class RustLexer {
     }
 
     public RustToken nextToken() {
-        AtomicReference<RustToken> tokenHolder = new AtomicReference<>();
-        RustNative.INSTANCE.getNextToken(peer, tokenHolder::set);
-        return tokenHolder.get();
+        RustNative.TokenHolder tokenHolder = new RustNative.TokenHolder();
+        RustNative.INSTANCE.getNextToken(peer, tokenHolder);
+        return tokenHolder.getToken();
     }
 
     public void release() {

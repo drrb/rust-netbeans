@@ -2,7 +2,6 @@ pipeline:
     - Use CslTestBase for tests
     - Remove unused test stuff
     - Get tests working on Travis
-    - Java 7 :(
     - rustc/cargo Path config
     - Fix multi-file highlighting (don't compile every file as a crate of type 'bin': maybe pretend everythings a 'dylib'?)
     - Fix indentation

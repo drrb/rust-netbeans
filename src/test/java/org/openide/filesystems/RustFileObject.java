@@ -36,7 +36,7 @@ import org.openide.util.lookup.ProxyLookup;
  */
 public class RustFileObject {
 
-    public static FileObject forDocument(Document doc) {
+    public static FileObject forDocument(final Document doc) {
         try {
             File sourceFile = File.createTempFile("test", ".rs");
             sourceFile.deleteOnExit();

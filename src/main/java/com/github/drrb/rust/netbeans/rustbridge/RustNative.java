@@ -16,12 +16,12 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
-import com.github.drrb.rust.netbeans.rustbridge.NativeRustLexer;
-import com.github.drrb.rust.netbeans.rustbridge.RustHighlight;
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import java.util.LinkedList;
+import java.util.List;
 
 public interface RustNative extends Library {
 
@@ -56,6 +56,57 @@ public interface RustNative extends Library {
     }
 
     interface HighlightCallback extends Callback {
-        void errorFound(RustHighlight.ByValue highlight);
+        void highlightFound(RustHighlight.ByValue highlight);
+    }
+
+    class TokenHolder implements TokenCallback {
+        private RustToken.ByValue token;
+        @Override
+        public void tokenRead(RustToken.ByValue token) {
+            this.token = token;
+        }
+
+        public RustToken getToken() {
+            return token;
+        }
+    }
+
+    class AstHolder implements AstCallback {
+        private RustAst ast;
+
+        @Override
+        public void sourceParsed(RustAst ast) {
+            this.ast = ast;
+        }
+
+        public RustAst getAst() {
+            return ast;
+        }
+    }
+
+    class ParseMessageAccumulator implements ParseMessageCallback {
+        private final List<RustParseMessage> messages = new LinkedList<>();
+
+        @Override
+        public void errorFound(RustParseMessage.ByValue message) {
+            messages.add(message);
+        }
+
+        public List<RustParseMessage> getMessages() {
+            return messages;
+        }
+    }
+
+    class HighlightAccumulator implements HighlightCallback {
+        private final List<RustHighlight> highlights = new LinkedList<>();
+
+        @Override
+        public void highlightFound(RustHighlight.ByValue highlight) {
+            highlights.add(highlight);
+        }
+
+        public List<RustHighlight> getHighlights() {
+            return highlights;
+        }
     }
 }

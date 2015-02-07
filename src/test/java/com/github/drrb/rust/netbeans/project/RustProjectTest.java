@@ -19,6 +19,7 @@ package com.github.drrb.rust.netbeans.project;
 import static com.github.drrb.rust.netbeans.test.TestData.getData;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import java.util.LinkedList;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.hamcrest.Description;
@@ -132,9 +133,10 @@ public class RustProjectTest {
         @Override
         protected boolean matchesSafely(Node node, Description mismatchDescription) {
             Node[] actualChildren = node.getChildren().getNodes(true); // 'true' loads the children if they're lazily loading (otherwise they're displayed as "Please Wait..."
-            List<String> actualChildNames = stream(actualChildren)
-                                                .map(Node::getDisplayName)
-                                                .collect(toList());
+            List<String> actualChildNames = new LinkedList<>();
+            for (Node actualChild : actualChildren) {
+                actualChildNames.add(actualChild.getDisplayName());
+            }
             mismatchDescription.appendText("got node with children: ")
                                 .appendValueList("<", ", ", ">", actualChildNames);
             return actualChildNames.equals(asList(expectedChildNames));

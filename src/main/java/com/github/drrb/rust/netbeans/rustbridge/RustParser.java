@@ -18,10 +18,7 @@ package com.github.drrb.rust.netbeans.rustbridge;
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.Collections;
-import static java.util.Collections.emptyList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -29,15 +26,15 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RustParser {
 
     public Result parse(String fileName, String source) {
-        AtomicReference<RustAst> astHolder = new AtomicReference<>();
-        List<RustParseMessage> parseMessages = new LinkedList<>();
-        RustNative.INSTANCE.parse(fileName, source, astHolder::set, parseMessages::add);
-        return new Result(astHolder.get(), parseMessages);
+        RustNative.AstHolder astHolder = new RustNative.AstHolder();
+        RustNative.ParseMessageAccumulator parseMessageAccumulator = new RustNative.ParseMessageAccumulator();
+        RustNative.INSTANCE.parse(fileName, source, astHolder, parseMessageAccumulator);
+        return new Result(astHolder.getAst(), parseMessageAccumulator.getMessages());
     }
 
     public static class Result {
 
-        public static final Result NONE = new Result(null, emptyList());
+        public static final Result NONE = new Result(null, Collections.<RustParseMessage>emptyList());
 
         private final RustAst ast;
         private final List<RustParseMessage> parseErrors;

@@ -73,7 +73,7 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
             StyledDocument document = NbDocument.getDocument(sourceFileObject);
             List<ErrorDescription> errors = getErrors(messages, document);
             setErrors(document, "rust-compile-errors", errors);
-        } catch (ParseException ex) {
+        } catch (ParseException | BadLocationException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
@@ -98,15 +98,13 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
     public void cancel() {
     }
 
-    protected List<ErrorDescription> getErrors(List<RustParseMessage> messages, StyledDocument document) throws ParseException {
+    protected List<ErrorDescription> getErrors(List<RustParseMessage> messages, StyledDocument document) throws ParseException, BadLocationException {
         List<ErrorDescription> errors = new LinkedList<>();
-        messages.stream().filter((message) -> message.getLevel() != HELP).forEach((message) -> {
-            try {
+        for (RustParseMessage message : messages) {
+            if (message.getLevel() != HELP) {
                 errors.add(toErrorDescription(message, document));
-            } catch (BadLocationException ex) {
-                Exceptions.printStackTrace(ex);
             }
-        });
+        }
         return errors;
     }
 

@@ -19,6 +19,8 @@ package com.github.drrb.rust.netbeans.build;
 import java.io.File;
 import java.io.IOException;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,18 +30,12 @@ import java.nio.file.attribute.FileTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-import static java.util.Comparator.reverseOrder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collector;
-import static java.util.stream.Collector.Characteristics.CONCURRENT;
-import static java.util.stream.Collector.Characteristics.UNORDERED;
 import static java.util.stream.Collectors.joining;
-import java.util.stream.Stream;
 import org.openide.util.Exceptions;
 
 /**
@@ -54,15 +50,17 @@ public class CompileRustBridge {
         Paths.get("target", "rust-libs").toFile().mkdirs();
         if (changesDetected()) {
             System.out.println("Changes detected. Compiling all Rust crates!");
-            crates().forEach(CompileRustBridge::compile);
+            for (Path crate : crates()) {
+                compile(crate);
+            }
         } else {
             System.out.println("No changes detected. Not recompiling Rust crates.");
         }
     }
 
     private static boolean changesDetected() throws IOException {
-        ZonedDateTime lastSourceChange = rustSources().collect(newestChange());
-        ZonedDateTime lastCompilation = compiledRustLibraries().collect(newestChange());
+        ZonedDateTime lastSourceChange = newestChange(rustSources());
+        ZonedDateTime lastCompilation = newestChange(compiledRustLibraries());
         return lastSourceChange.isAfter(lastCompilation);
     }
 
@@ -74,7 +72,9 @@ public class CompileRustBridge {
             if (process.exitValue() != 0) {
                 throw new RuntimeException(String.format("rustc exited nonzero (status code = %s)", process.exitValue()));
             }
-            compiledRustLibraries().forEach(CompileRustBridge::moveLibIntoClasspath);
+            for (Path compiledRustLibrary : compiledRustLibraries()) {
+                moveLibIntoClasspath(compiledRustLibrary);
+            }
         } catch (IOException | InterruptedException ex) {
             throw new RuntimeException(ex);
         }
@@ -113,16 +113,39 @@ public class CompileRustBridge {
         return Os.getCurrent().jnaArchString();
     }
 
-    private static Stream<Path> crates() throws IOException {
-        return rustSources().filter(CompileRustBridge::isCrate);
+    private static List<Path> crates() throws IOException {
+        List<Path> crates = new LinkedList<>();
+        for (Path rustSource : rustSources()) {
+            if (isCrate(rustSource)) {
+                crates.add(rustSource);
+            }
+        }
+        return crates;
     }
 
-    private static Stream<Path> rustSources() throws IOException {
-        return Files.find(Paths.get("src", "main", "rust"), 10, CompileRustBridge::isRustSource);
+    private static List<Path> rustSources() throws IOException {
+        return findFiles(Paths.get("src", "main", "rust"), new FileFinder() {
+
+            @Override
+            protected boolean accept(Path file, BasicFileAttributes attrs) {
+                return isRustSource(file, attrs);
+            }
+        });
     }
 
-    private static Stream<Path> compiledRustLibraries() throws IOException {
-        return Files.find(RUST_OUTPUT_DIR, 1, CompileRustBridge::isDylib);
+    private static List<Path> compiledRustLibraries() throws IOException {
+        return findFiles(RUST_OUTPUT_DIR, new FileFinder() {
+
+            @Override
+            protected boolean accept(Path file, BasicFileAttributes attrs) {
+                return isDylib(file, attrs);
+            }
+        });
+    }
+
+    private static List<Path> findFiles(Path startPath, FileFinder finder) throws IOException {
+        Files.walkFileTree(startPath, finder);
+        return finder.getFound();
     }
 
     private static boolean inNetbeans() {
@@ -142,12 +165,9 @@ public class CompileRustBridge {
 
     private static boolean isCrate(Path path) {
         try {
-            if (path.toFile().isFile() && path.toString().endsWith(".rs")) {
-                List<String> lines = Files.readAllLines(path, UTF_8);
-                return lines.stream().anyMatch((line) -> line.matches(".*#!\\[crate_type.*\\].*"));
-            } else {
-                return false;
-            }
+            return path.toFile().isFile()
+                    && path.toString().endsWith(".rs")
+                    && new String(Files.readAllBytes(path), UTF_8).contains("#![crate_type");
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -155,16 +175,20 @@ public class CompileRustBridge {
 
     private static boolean isDylib(Path path, BasicFileAttributes attributes) {
         String pathString = path.toString();
+        String pathExtension = pathString.substring(pathString.lastIndexOf("."));
         List<String> dylibExtensions = asList(".dylib", ".so", ".dll");
-        return attributes.isRegularFile() && dylibExtensions.stream().anyMatch(pathString::endsWith);
+        return attributes.isRegularFile() && dylibExtensions.contains(pathExtension);
     }
 
-    private static Collector<Path, List<Path>, ZonedDateTime> newestChange() {
-        return Collector.of(LinkedList::new,
-                List::add,
-                (t, u) -> { t.addAll(u); return t; },
-                (allPaths) -> allPaths.stream().map(CompileRustBridge::mtime).sorted(reverseOrder()).findFirst().orElse(EPOCH),
-                CONCURRENT, UNORDERED);
+    private static ZonedDateTime newestChange(List<Path> paths) {
+        ZonedDateTime lastChange = EPOCH;
+        for (Path path : paths) {
+            ZonedDateTime change = mtime(path);
+            if (change.isAfter(lastChange)) {
+                lastChange = change;
+            }
+        }
+        return lastChange;
     }
 
     private static ZonedDateTime mtime(Path path) {
@@ -227,7 +251,12 @@ public class CompileRustBridge {
         }
 
         public boolean isCurrent() {
-            return stream(substrings).anyMatch((substring) -> currentOsString().contains(substring));
+            for (String substring : substrings) {
+                if (currentOsString().contains(substring)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static boolean currentIs64Bit() {
@@ -237,5 +266,38 @@ public class CompileRustBridge {
         private static String currentOsString() {
             return System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH);
         }
+    }
+
+    private static abstract class FileFinder implements FileVisitor<Path> {
+        private final List<Path> found = new LinkedList<>();
+
+        public List<Path> getFound() {
+            return found;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            if (accept(file, attrs)) {
+                found.add(file);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            return FileVisitResult.CONTINUE;
+        }
+
+        protected abstract boolean accept(Path file, BasicFileAttributes attrs);
     }
 }
