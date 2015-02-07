@@ -86,7 +86,7 @@ public class Shell {
                 EXECUTOR.post(Pipe.between(io.getIn(), process.getOutputStream()));
                 process.waitFor();
             } catch (InterruptedException ex) {
-                process.destroyForcibly();
+                process.destroy();
             } finally {
                 progressHandle.finish();
             }
