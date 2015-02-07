@@ -137,11 +137,6 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import junit.framework.Assert;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.api.editor.mimelookup.MimeLookup;
 import org.netbeans.api.editor.mimelookup.MimePath;
@@ -421,7 +416,7 @@ public abstract class CslTestBase extends NbTestCase {
      *   loaded from the specified file.
      */
     protected Source getTestSource(FileObject f) {
-        Document doc = GsfUtilitiesHack.getDocument(f, true);
+        Document doc = GsfUtilities.getDocument(f, true);
         return Source.create(doc);
     }
 
@@ -1505,7 +1500,7 @@ public abstract class CslTestBase extends NbTestCase {
                     highlights = Collections.emptyMap();
                 }
 
-                Document doc = GsfUtilitiesHack.getDocument(pr.getSnapshot().getSource().getFileObject(), true);
+                Document doc = GsfUtilities.getDocument(pr.getSnapshot().getSource().getFileObject(), true);
                 checkNoOverlaps(highlights.keySet(), doc);
 
                 String annotatedSource = annotateSemanticResults(doc, highlights);
@@ -1572,7 +1567,7 @@ public abstract class CslTestBase extends NbTestCase {
         return sb.toString();
     }
 
-    public void checkSemantic(String relFilePath) throws Exception {
+    protected void checkSemantic(String relFilePath) throws Exception {
         checkSemantic(relFilePath, null);
     }
 
@@ -2215,13 +2210,12 @@ public abstract class CslTestBase extends NbTestCase {
 //
 //        };
 
-        //drrb: removed these. We set our own because it seems that you need other things in the lookup for formatting to work
-//        MockServices.setServices(MockMimeLookup.class);
-//        if (indentOnly) {
-//            MockMimeLookup.setInstances(MimePath.parse(mimeType), new GsfIndentTaskFactory());
-//        } else {
-//            MockMimeLookup.setInstances(MimePath.parse(mimeType), new GsfReformatTaskFactory(), new GsfIndentTaskFactory());
-//        }
+        MockServices.setServices(MockMimeLookup.class);
+        if (indentOnly) {
+            MockMimeLookup.setInstances(MimePath.parse(mimeType), new GsfIndentTaskFactory());
+        } else {
+            MockMimeLookup.setInstances(MimePath.parse(mimeType), new GsfReformatTaskFactory(), new GsfIndentTaskFactory());
+        }
     }
 
     protected void format(Document document, Formatter formatter, int startPos, int endPos, boolean indentOnly) throws BadLocationException {
@@ -2278,7 +2272,7 @@ public abstract class CslTestBase extends NbTestCase {
     }
 
 
-    public void reformatFileContents(String file, IndentPrefs preferences) throws Exception {
+    protected void reformatFileContents(String file, IndentPrefs preferences) throws Exception {
         FileObject fo = getTestFile(file);
         assertNotNull(fo);
         BaseDocument doc = getDocument(fo);
