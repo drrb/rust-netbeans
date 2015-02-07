@@ -4,6 +4,10 @@ This is a NetBeans plugin that adds support for [Rust](http://www.rust-lang.org)
 
 [![Build Status](https://travis-ci.org/drrb/rust-netbeans.png?branch=master)](https://travis-ci.org/drrb/rust-netbeans)
 
+**NOTE:** This plugin has recently undergone significant design changes.
+Consequently, some features have been removed and will be gradually added back
+in.
+
 ## Requirements
 
 * NetBeans 8.x or above
