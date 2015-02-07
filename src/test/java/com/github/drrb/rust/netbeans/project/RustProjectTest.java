@@ -18,10 +18,8 @@ package com.github.drrb.rust.netbeans.project;
 
 import static com.github.drrb.rust.netbeans.test.TestData.getData;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
 import java.util.LinkedList;
 import java.util.List;
-import static java.util.stream.Collectors.toList;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import static org.hamcrest.MatcherAssert.assertThat;
