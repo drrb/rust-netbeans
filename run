@@ -36,4 +36,4 @@ netbeans_installation() {
 }
 
 NETBEANS_INSTALLATION=`netbeans_installation`
-mvn nbm:cluster nbm:run-ide -DskipTests -Dnetbeans.installation="$NETBEANS_INSTALLATION"
+mvn package nbm:cluster nbm:run-ide -DskipTests -Dnetbeans.installation="$NETBEANS_INSTALLATION"
