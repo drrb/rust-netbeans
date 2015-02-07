@@ -451,25 +451,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
-
                 <executions>
                     <execution>
                         <id>set-up-unit-test-data</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/data</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/data</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>set-up-functional-test-data</id>
                         <phase>process-test-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>

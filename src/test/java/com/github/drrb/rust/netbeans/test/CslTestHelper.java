@@ -125,6 +125,11 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     }
 
     @Override
+    public File getDataDir() {
+        return new File(super.getDataDir().getParentFile(), "test-data");
+    }
+
+    @Override
     protected DefaultLanguageConfig getPreferredLanguage() {
         return new RustLanguage();
     }
