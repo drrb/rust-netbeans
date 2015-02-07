@@ -5,3 +5,5 @@
 *.swp
 /hs_err*.log
 /etc
+/.vagrant
+Vagrantfile
