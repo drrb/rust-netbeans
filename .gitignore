@@ -1,5 +1,6 @@
 /target/
 .not-ci
+.headless
 .idea
 *.iml
 *.swp
