@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans.formatting;
 
 import com.github.drrb.rust.netbeans.test.CslTestHelper;
 import com.github.drrb.rust.netbeans.test.CslTestHelper.RunInEventQueueThread;
+import com.github.drrb.rust.netbeans.test.PrintTestMethods;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -28,6 +29,8 @@ public class RustFormatterTest {
 
     @Rule
     public final CslTestHelper csl = new CslTestHelper();
+    @Rule
+    public final PrintTestMethods printTestMethods = new PrintTestMethods();
 
     @Test
     public void shouldFormatFunction() throws Exception {
@@ -48,13 +51,19 @@ public class RustFormatterTest {
     @Test
     @RunInEventQueueThread
     public void shouldIndentFurtherAfterBrace() throws Exception {
-        csl.testIndentInFile("indent/after_brace.rs");
+        csl.testIndentInFile("indent/into_existing_function.rs");
     }
 
     @Test
     @RunInEventQueueThread
     public void shouldIgnoreWhitespaceAfterBrace() throws Exception {
         csl.testIndentInFile("indent/ignore_trailing_whitespace.rs");
+    }
+
+    @Test
+    @RunInEventQueueThread
+    public void shouldInsertWhenInsertingBreakAfterBrace() throws Exception {
+        csl.testIndentInFile("indent/after_brace.rs");
     }
 
 }

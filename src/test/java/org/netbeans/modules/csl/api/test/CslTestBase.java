@@ -662,8 +662,9 @@ public abstract class CslTestBase extends NbTestCase {
             }
         }
 
-        String expectedTrimmed = expected.trim();
-        String actualTrimmed = description.trim();
+        //drrb: don't trim. It removes the leading whitespace.
+        String expectedTrimmed = expected.replaceFirst("\n+\\Z", ""); //expected.trim();
+        String actualTrimmed = description.replaceFirst("\n+\\Z", ""); //description.trim();
 
         if (expectedTrimmed.equals(actualTrimmed)) {
             return; // Actual and expected content are equals --> Test passed
