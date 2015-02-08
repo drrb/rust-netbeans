@@ -32,12 +32,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  *
  */
-public class CompileRustBridge {
+public class CompileRustCrates {
 
     private static final Date EPOCH = new Date(0);
     private static final Path RUST_OUTPUT_DIR = Paths.get("target", "rust-libs");
@@ -185,6 +184,7 @@ public class CompileRustBridge {
         return lastChange;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     private static Date mtime(Path path) {
         try {
             return new Date(Files.getLastModifiedTime(path).toMillis());
