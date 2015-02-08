@@ -35,20 +35,6 @@ import org.netbeans.modules.csl.api.StructureItem;
  */
 public class Matchers extends org.hamcrest.Matchers {
 
-    public static Matcher<Collection<? extends Object>> hasSize(final int expectedSize) {
-        return new TypeSafeMatcher<Collection<? extends Object>>() {
-            @Override
-            public boolean matchesSafely(Collection<? extends Object> item) {
-                return item.size() == expectedSize;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Collection of size ").appendValue(expectedSize);
-            }
-        };
-    }
-
     public static Matcher<String> matchesRegex(final String regex) {
         return new TypeSafeMatcher<String>() {
             @Override
@@ -59,24 +45,6 @@ public class Matchers extends org.hamcrest.Matchers {
             @Override
             public void describeTo(Description description) {
                 description.appendText("string matching regex ").appendValue(regex);
-            }
-        };
-    }
-
-    public static Matcher<Iterable<? extends Object>> empty() {
-        return new TypeSafeMatcher<Iterable<? extends Object>>() {
-            @Override
-            public boolean matchesSafely(Iterable<? extends Object> item) {
-                int elements = 0;
-                for (Object element : item) {
-                    elements++;
-                }
-                return elements == 0;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Empty collection");
             }
         };
     }

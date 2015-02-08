@@ -207,6 +207,7 @@ import org.openide.util.test.MockLookup;
 /**
  * @author Tor Norbye
  */
+@SuppressWarnings({"unchecked", "deprecation"})
 public abstract class CslTestBase extends NbTestCase {
 
     public CslTestBase(String testName) {

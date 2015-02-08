@@ -157,6 +157,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends TokenId> TokenSequence<T> tokenize(String text) {
         TokenHierarchy<?> hi = TokenHierarchy.create(text, getPreferredLanguage().getLexerLanguage());
         return hi.tokenSequence(getPreferredLanguage().getLexerLanguage());

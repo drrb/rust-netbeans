@@ -27,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.any;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.parsing.spi.indexing.support.IndexResult;
@@ -42,6 +41,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({QuerySupport.class, IndexResult.class})
+@SuppressWarnings("unchecked")
 public class RustIndexReaderTest {
 
     @Mock

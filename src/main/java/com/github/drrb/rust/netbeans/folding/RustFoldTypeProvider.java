@@ -31,8 +31,7 @@ import org.netbeans.spi.editor.fold.FoldTypeProvider;
 public class RustFoldTypeProvider implements FoldTypeProvider {
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public Collection getValues(Class type) {
+    public Collection<FoldType> getValues(Class type) {
         if (type == FoldType.class) {
             return Arrays.asList(FoldType.CODE_BLOCK, FoldType.DOCUMENTATION);
         } else {
