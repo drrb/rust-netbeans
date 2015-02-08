@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.test;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
+import com.google.common.collect.ObjectArrays;
 import java.awt.EventQueue;
 import java.io.File;
 import java.lang.annotation.Retention;
@@ -36,6 +37,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.api.editor.mimelookup.test.MockMimeLookup;
+import org.netbeans.api.lexer.Language;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
@@ -44,6 +46,7 @@ import org.netbeans.lib.lexer.test.TestLanguageProvider;
 import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.api.test.CslTestBase;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
+import org.netbeans.modules.editor.bracesmatching.BraceMatchingSidebarFactory;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
@@ -111,10 +114,17 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         // so that we know more of what's going on behind the scenes
         //TODO: might need to recurse into subdirectories (getChidren(true)), although
         // that seemed to add some files that broke things...
-        List<String> mimeRoots = asList("/", "/BracesMatchers");
+        MimePath mimePath = MimePath.parse(getPreferredMimeType());
+        Object[] mimeObjects = mimeObjects(mimePath, "/", "/BracesMatchers");
+        MockMimeLookup.setInstances(mimePath, mimeObjects);
+    }
+
+    private Object[] mimeObjects(MimePath mimePath, String... mimeRoots) {
         List<Object> mimeObjects = new LinkedList<>();
         for (String mimeRoot : mimeRoots) {
-            FileObject mimeDir = FileUtil.getConfigFile("Editors/" + getPreferredMimeType() + mimeRoot);
+            String mimeFilePath = "Editors/" + mimePath.getPath() + mimeRoot;
+            FileObject mimeDir = FileUtil.getConfigFile(mimeFilePath);
+            assertNotNull(String.format("Tried to load files from config dir '%s', but it did not exist.", mimeFilePath), mimeDir);
             FileObject[] mimeFiles = mimeDir.getChildren();
             for (FileObject mimeFile : mimeFiles) {
                 if (mimeFile.isData()) {
@@ -122,8 +132,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
                 }
             }
         }
-        Object[] mimeObjectArray = mimeObjects.toArray();
-        MockMimeLookup.setInstances(MimePath.parse(getPreferredMimeType()), mimeObjectArray);
+        return mimeObjects.toArray();
     }
 
     @Override
