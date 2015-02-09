@@ -97,7 +97,7 @@ public class RustBreakInterceptor implements TypedBreakInterceptor {
         private int currentRowIndent() throws BadLocationException {
             if (currentRowIndent == null) {
                 int currentRowStart = IndentUtils.lineStartOffset(context.getDocument(), context.getCaretOffset());
-                return IndentUtils.lineIndent(context.getDocument(), currentRowStart);
+                currentRowIndent = IndentUtils.lineIndent(context.getDocument(), currentRowStart);
             }
             return currentRowIndent;
         }
@@ -106,7 +106,7 @@ public class RustBreakInterceptor implements TypedBreakInterceptor {
             if (nextRowIndent == null) {
                 int currentRowEnd = Utilities.getRowEnd(context.getComponent(), context.getCaretOffset());
                 int nextRowStart = currentRowEnd + 1;
-                return IndentUtils.lineIndent(context.getDocument(), nextRowStart);
+                nextRowIndent = IndentUtils.lineIndent(context.getDocument(), nextRowStart);
             }
             return nextRowIndent;
         }
