@@ -20,12 +20,12 @@ import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.text.BadLocationException;
 import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
-import org.netbeans.api.lexer.Token;
+import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
-import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.Utilities;
 import org.netbeans.modules.editor.indent.api.IndentUtils;
 import org.netbeans.spi.editor.typinghooks.TypedBreakInterceptor;
@@ -35,40 +35,29 @@ import org.netbeans.spi.editor.typinghooks.TypedBreakInterceptor;
  */
 public class RustBreakInterceptor implements TypedBreakInterceptor {
 
+    private final AtomicBoolean cancelled = new AtomicBoolean(false);
+
     @Override
     public boolean beforeInsert(Context context) throws BadLocationException {
+        cancelled.set(false);
         return false;
     }
 
     @Override
-    @SuppressWarnings("UnnecessaryContinue")
-    public void insert(MutableContext context) throws BadLocationException {
-        BaseDocument document = (BaseDocument) context.getDocument();
-        int caretOffset = context.getCaretOffset();
-        TokenSequence<RustTokenId> tokenSequence = new RustLexUtils().getRustTokenSequence(document, caretOffset);
-        tokenSequence.move(caretOffset);
-        tokenSequence.movePrevious();
-        Token<RustTokenId> previousToken = tokenSequence.token();
-        if (previousToken.id() != OPEN_BRACE) {
-            return;
-        }
-        int currentRowEnd = Utilities.getRowEnd(document, caretOffset);
-        int currentIndent = IndentUtils.lineIndent(document, IndentUtils.lineStartOffset(document, caretOffset));
-        int nextIndent = IndentUtils.lineIndent(document, IndentUtils.lineStartOffset(document, currentRowEnd + 1));
-        if (nextIndent > currentIndent) {
+    public void insert(MutableContext ctx) throws BadLocationException {
+        if (cancelled.get()) return;
+
+        ContextHolder context = new ContextHolder(ctx);
+
+        if (context.previousTokenKind() != OPEN_BRACE) {
+            return; // Only insert a close brace after an open brace
+        } else if (context.nextRowIndent() > context.currentRowIndent()) {
             return; // There's already stuff in this block
+        } else if (context.nextTokenKind() == CLOSE_BRACE && context.currentRowIndent() == context.nextRowIndent()) {
+            return; // There's already a closing brace
         }
-        while (tokenSequence.moveNext()) {
-            if (tokenSequence.token().id() == WHITESPACE) {
-                continue;
-            } else if (tokenSequence.token().id() == CLOSE_BRACE && currentIndent == nextIndent) {
-                return;
-            } else {
-                break;
-            }
-        }
-        String indent = IndentUtils.createIndentString(document, currentIndent);
-        context.setText("\n\n" + indent + "}", 0, 1);
+
+        ctx.setText("\n\n" + context.currentRowIndentString() + "}", 0, 1);
     }
 
     @Override
@@ -77,6 +66,78 @@ public class RustBreakInterceptor implements TypedBreakInterceptor {
 
     @Override
     public void cancelled(Context context) {
+        cancelled.set(true);
+    }
+
+    private static class ContextHolder {
+
+        private final MutableContext context;
+        private final TokenSequence<RustTokenId> tokenSequence;
+        private Integer currentRowIndent;
+        private Integer nextRowIndent;
+
+        private ContextHolder(MutableContext context) {
+            this.context = context;
+            this.tokenSequence = new RustLexUtils().getRustTokenSequence(context.getDocument(), context.getCaretOffset());
+            tokenSequence.move(context.getCaretOffset());
+        }
+
+        private RustTokenId previousTokenKind() {
+            return findNonWhitespaceToken(Direction.BACKWARD);
+        }
+
+        private RustTokenId nextTokenKind() {
+            return findNonWhitespaceToken(Direction.FORWARD);
+        }
+
+        private String currentRowIndentString() throws BadLocationException {
+            return IndentUtils.createIndentString(context.getDocument(), currentRowIndent());
+        }
+
+        private int currentRowIndent() throws BadLocationException {
+            if (currentRowIndent == null) {
+                int currentRowStart = IndentUtils.lineStartOffset(context.getDocument(), context.getCaretOffset());
+                return IndentUtils.lineIndent(context.getDocument(), currentRowStart);
+            }
+            return currentRowIndent;
+        }
+
+        private int nextRowIndent() throws BadLocationException {
+            if (nextRowIndent == null) {
+                int currentRowEnd = Utilities.getRowEnd(context.getComponent(), context.getCaretOffset());
+                int nextRowStart = currentRowEnd + 1;
+                return IndentUtils.lineIndent(context.getDocument(), nextRowStart);
+            }
+            return nextRowIndent;
+        }
+
+        private RustTokenId findNonWhitespaceToken(Direction direction) {
+            while (direction.move(tokenSequence)) {
+                RustTokenId nextTokenKind = tokenSequence.token().id();
+                if (nextTokenKind != WHITESPACE) {
+                    return nextTokenKind;
+                }
+            }
+            return null;
+        }
+    }
+
+    private enum Direction {
+
+        FORWARD {
+            @Override
+            public boolean move(TokenSequence<? extends TokenId> tokenSequence) {
+                return tokenSequence.moveNext();
+            }
+        },
+        BACKWARD {
+            @Override
+            public boolean move(TokenSequence<? extends TokenId> tokenSequence) {
+                return tokenSequence.movePrevious();
+            }
+        };
+
+        public abstract boolean move(TokenSequence<? extends TokenId> tokenSequence);
     }
 
     @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TypedBreakInterceptor.Factory.class)
