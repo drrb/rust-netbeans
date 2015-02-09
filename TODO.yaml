@@ -4,8 +4,6 @@ pipeline:
     - Get tests working on Travis
     - rustc/cargo Path config
     - Fix multi-file highlighting (don't compile every file as a crate of type 'bin': maybe pretend everythings a 'dylib'?)
-    - Fix indentation
-    - Add brace completion
     - Create/Reuse output windows
 features:
     editor:
@@ -15,6 +13,7 @@ features:
         - MD highlighting for doc comments
         - Go to declaration
         - Instant rename
+        - Use rustc for formatting
     run:
         - Popup on success/failure
         - Run file
