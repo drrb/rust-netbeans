@@ -18,12 +18,14 @@ package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.rustbridge.RustHighlight;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.rustbridge.RustSemanticHighlighter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
@@ -36,7 +38,7 @@ import org.openide.util.Exceptions;
  *
  */
 public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserResult> {
-
+    private static final Logger LOG = Logger.getLogger(RustSemanticAnalyzer.class.getName());
     private final Map<OffsetRange, Set<ColoringAttributes>> highlights = new HashMap<>();
     private final AtomicBoolean cancelled = new AtomicBoolean();
 
@@ -45,9 +47,9 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
         highlights.clear();
         cancelled.set(false);
 
-        com.github.drrb.rust.netbeans.rustbridge.RustSemanticAnalyzer analyzer = new com.github.drrb.rust.netbeans.rustbridge.RustSemanticAnalyzer();
+        RustSemanticHighlighter highlighter = new RustSemanticHighlighter();
         try {
-            List<RustHighlight> rawHighlights = analyzer.getHighlights(result.getResult());
+            List<RustHighlight> rawHighlights = highlighter.getHighlights(result.getResult());
             highlights.putAll(mapHighlights(rawHighlights));
         } catch (ParseException ex) {
             Exceptions.printStackTrace(ex);

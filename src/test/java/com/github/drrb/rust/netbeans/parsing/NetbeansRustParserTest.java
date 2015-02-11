@@ -29,7 +29,7 @@ public class NetbeansRustParserTest {
     public final CslTestHelper csl = new CslTestHelper();
 
     @Test
-    public void shouldHighlightReferenceToMissingFunction() throws Exception {
+    public void shouldHighlightErrorFromMissingParenthesis() throws Exception {
         csl.checkParseMessages("parse/missing_parenthesis.rs");
     }
 

@@ -19,10 +19,12 @@ package com.github.drrb.rust.netbeans.parsing;
 import com.github.drrb.rust.netbeans.rustbridge.RustParser;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
 import com.google.common.annotations.VisibleForTesting;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.StyledDocument;
 import org.netbeans.modules.csl.api.Error;
@@ -34,13 +36,14 @@ import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.SourceModificationEvent;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.text.NbDocument;
 
 /**
  *
  */
 public class NetbeansRustParser extends Parser {
-
+    private static final Logger LOG = Logger.getLogger(NetbeansRustParser.class.getName());
     private final RustParser rustParser = new RustParser();
     private RustParser.Result result = RustParser.Result.NONE;
     private Snapshot snapshot;
@@ -57,14 +60,9 @@ public class NetbeansRustParser extends Parser {
     }
 
     private RustParser.Result parse(Snapshot snapshot) {
-        String fileName = getFileName(snapshot);
+        File file = FileUtil.toFile(snapshot.getSource().getFileObject());
         String source = snapshot.getText().toString();
-        return rustParser.parse(fileName, source);
-    }
-
-    @VisibleForTesting
-    protected String getFileName(Snapshot snapshot) {
-        return snapshot.getSource().getFileObject().getNameExt();
+        return rustParser.parse(file, source);
     }
 
     @Override

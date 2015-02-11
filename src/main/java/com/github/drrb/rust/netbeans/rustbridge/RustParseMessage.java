@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.rustbridge;
 
 import com.sun.jna.Structure;
+import java.io.File;
 import static java.util.Arrays.asList;
 import java.util.List;
 import org.netbeans.modules.csl.api.Severity;
@@ -48,6 +49,7 @@ public class RustParseMessage extends Structure {
         }
     }
 
+    public String fileName;
     public int level;
     public int startLine;
     public int startCol;
@@ -69,6 +71,10 @@ public class RustParseMessage extends Structure {
 
     public Level getLevel() {
         return Level.values()[level];
+    }
+
+    public File getFile() {
+        return new File(fileName);
     }
 
     public int getStartLine() {
@@ -93,12 +99,12 @@ public class RustParseMessage extends Structure {
 
     @Override
     protected List<String> getFieldOrder() {
-        return asList("level", "startLine", "startCol", "endLine", "endCol", "message");
+        return asList("fileName", "level", "startLine", "startCol", "endLine", "endCol", "message");
     }
 
     @Override
     public String toString() {
-        return String.format("[%s] %s,%s-%s,%s: \"%s\"", getLevel(), startLine, startCol, endLine, endCol, message);
+        return String.format("[%s] %s %s,%s-%s,%s: \"%s\"", getLevel(), fileName, startLine, startCol, endLine, endCol, message);
     }
 
 }

@@ -16,12 +16,15 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
+import com.github.drrb.rust.netbeans.test.PrintTestMethods;
 import java.io.File;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.file.Files;
 import java.util.List;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -33,9 +36,11 @@ public class RustCompilerTest {
 
     @Rule
     public final TemporaryFolder tempFolder = new TemporaryFolder();
+    @Rule
+    public final PrintTestMethods printTestMethods = new PrintTestMethods();
 
     @Test
-    public void shouldCompileFile() throws Exception {
+    public void shouldCompileStringToExecutable() throws Exception {
         File file = tempFolder.newFile("test.rs");
         List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() { }");
         assertThat(messages, is(empty()));
@@ -47,5 +52,23 @@ public class RustCompilerTest {
         // main() shouldn't return String, so we expect an error
         List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() -> String { }");
         assertThat(messages, hasSize(1));
+    }
+
+    @Test
+    public void shouldCompileMultiFileCrate() throws Exception {
+        File mainFile = tempFolder.newFile("main.rs");
+        File modFile = tempFolder.newFile("other.rs");
+        Files.write(modFile.toPath(), "pub fn other_function() { }".getBytes(UTF_8));
+        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }");
+        assertThat(messages, is(empty()));
+    }
+
+    @Test
+    public void shouldOnlyReturnMessagesFromTargetFile() throws Exception {
+        File mainFile = tempFolder.newFile("main.rs");
+        File modFile = tempFolder.newFile("other.rs");
+        Files.write(modFile.toPath(), "pub fn other_function() { x x }".getBytes(UTF_8));
+        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }");
+        assertThat(messages, is(empty()));
     }
 }

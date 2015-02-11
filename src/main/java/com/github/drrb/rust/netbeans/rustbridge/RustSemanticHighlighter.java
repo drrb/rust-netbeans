@@ -21,7 +21,7 @@ import java.util.List;
 /**
  *
  */
-public class RustSemanticAnalyzer {
+public class RustSemanticHighlighter {
 
     public List<RustHighlight> getHighlights(RustParser.Result parseResult) {
         RustNative.HighlightAccumulator highlightAccumulator = new RustNative.HighlightAccumulator();

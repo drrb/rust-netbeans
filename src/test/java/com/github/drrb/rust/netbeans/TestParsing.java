@@ -34,14 +34,7 @@ public class TestParsing {
     public static NetbeansRustParser.NetbeansRustParserResult parse(CharSequence input) {
         try {
             Snapshot snapshot = snapshotOf(input);
-            NetbeansRustParser parser = new NetbeansRustParser() {
-
-                @Override
-                protected String getFileName(Snapshot snapshot) {
-                    return "test.rs";
-                }
-
-            };
+            NetbeansRustParser parser = new NetbeansRustParser();
             parser.parse(snapshot, null, null);
             return parser.getResult(null);
         } catch (Exception ex) {

@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.rustbridge;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -24,10 +25,24 @@ import java.util.List;
  */
 public class RustCompiler {
 
+    //TODO: this looks identical to RustParser.parse()
     public List<RustParseMessage> compile(File sourcePath, String source) {
+        // It's important to tell rustc the full path, because it uses it to find
+        //  mods referenced from this file.
+        if (!sourcePath.isAbsolute()) {
+            throw new IllegalArgumentException("Expected an absolute file, but got " + sourcePath);
+        }
         RustNative.ParseMessageAccumulator messageAccumulator = new RustNative.ParseMessageAccumulator();
         RustNative.INSTANCE.compile(sourcePath.getAbsolutePath(), source, messageAccumulator);
-        return messageAccumulator.getMessages();
+        //TODO: it'd be faster to filter these while we're collecting them.
+        // Can we do that, or do we need the other files' messages for later?
+        List<RustParseMessage> relevantParseMessages = new LinkedList<>();
+        for (RustParseMessage message : messageAccumulator.getMessages()) {
+            if (message.getFile().equals(sourcePath)) {
+                relevantParseMessages.add(message);
+            }
+        }
+        return relevantParseMessages;
     }
 
 }

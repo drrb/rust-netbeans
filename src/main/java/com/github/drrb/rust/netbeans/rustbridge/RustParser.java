@@ -17,7 +17,9 @@
 package com.github.drrb.rust.netbeans.rustbridge;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.io.File;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,11 +27,25 @@ import java.util.List;
  */
 public class RustParser {
 
-    public Result parse(String fileName, String source) {
+    //TODO: this looks identical to RustCompiler.compile()
+    public Result parse(File file, String source) {
+        // It's important to tell rustc the full path, because it uses it to find
+        //  mods referenced from this file.
+        if (!file.isAbsolute()) {
+            throw new IllegalArgumentException("Expected an absolute file, but got " + file);
+        }
         RustNative.AstHolder astHolder = new RustNative.AstHolder();
         RustNative.ParseMessageAccumulator parseMessageAccumulator = new RustNative.ParseMessageAccumulator();
-        RustNative.INSTANCE.parse(fileName, source, astHolder, parseMessageAccumulator);
-        return new Result(astHolder.getAst(), parseMessageAccumulator.getMessages());
+        RustNative.INSTANCE.parse(file.getAbsolutePath(), source, astHolder, parseMessageAccumulator);
+        //TODO: it'd be faster to filter these while we're collecting them.
+        // Can we do that, or do we need the other files' messages for later?
+        List<RustParseMessage> relevantParseMessages = new LinkedList<>();
+        for (RustParseMessage message : parseMessageAccumulator.getMessages()) {
+            if (message.getFile().equals(file)) {
+                relevantParseMessages.add(message);
+            }
+        }
+        return new Result(astHolder.getAst(), relevantParseMessages);
     }
 
     public static class Result {

@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
@@ -50,6 +51,7 @@ import org.openide.util.Exceptions;
  *
  */
 public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustParserResult> {
+    private static final Logger LOG = Logger.getLogger(RustCompileErrorHighlighter.class.getName());
 
     @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TaskFactory.class)
     public static class Factory extends TaskFactory {

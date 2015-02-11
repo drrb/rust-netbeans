@@ -21,6 +21,7 @@ pub struct Ast {
 
 #[repr(C)]
 pub struct ParseMessage {
+    file_name: *const c_char,
     level: ParseMessageLevel,
     start_line: c_int,
     start_col: c_int,
@@ -84,8 +85,10 @@ impl Emitter for MessageCollector {
                 let hi_loc = codemap.lookup_char_pos(span.hi);
                 let hi_line = hi_loc.line;
                 let CharPos(hi_col) = hi_loc.col;
+                let ref file = lo_loc.file;
                 let collect = self.collect;
                 collect(ParseMessage {
+                    file_name: to_ptr(file.name.clone()),
                     level: ParseMessageLevel::from_emitted(lvl),
                     start_line: lo_line as c_int,
                     start_col: lo_col as c_int,
@@ -101,8 +104,10 @@ impl Emitter for MessageCollector {
     }
 
     fn custom_emit(&mut self, _: &CodeMap, _: RenderSpan, msg: &str, lvl: Level) {
+        //TODO: do we ever see this called?
         let collect = self.collect;
         collect(ParseMessage {
+            file_name: to_ptr("lol.rs".to_string()),
             level: ParseMessageLevel::from_emitted(lvl),
             start_line: 0 as c_int,
             start_col: 0 as c_int,

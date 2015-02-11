@@ -21,9 +21,10 @@
 #![feature(std_misc)]
 
 extern crate libc;
-extern crate syntax;
 extern crate rustc;
 extern crate rustc_driver;
+extern crate rustc_trans;
+extern crate syntax;
 
 mod highlights;
 mod lexer;
