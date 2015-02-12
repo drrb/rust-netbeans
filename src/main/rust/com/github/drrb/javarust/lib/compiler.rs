@@ -7,6 +7,7 @@ use rustc::session::search_paths::SearchPaths;
 use rustc::session;
 use rustc::util::common::time;
 use rustc_driver::driver::CompileController;
+use rustc_driver::Compilation;
 use rustc_driver::driver;
 use rustc_trans::back::link;
 use syntax::ast::Crate;
@@ -35,7 +36,7 @@ pub fn compile(input_path: String, source: String, message_collector: MessageCol
     let cfg= config::build_configuration(&sess);
     let plugins = None;
     let mut controller = CompileController::basic();
-    controller.after_analysis.stop = true;
+    controller.after_analysis.stop = Compilation::Stop;
     compile_input(sess, cfg, &input, &odir, &ofile, plugins, controller);
 }
 
