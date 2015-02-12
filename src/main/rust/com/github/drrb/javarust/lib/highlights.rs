@@ -1,5 +1,8 @@
 use lexer::TokenKind;
+use libc::c_char;
 use libc::c_int;
+use std::ffi::CString;
+use std::mem;
 use syntax::ast::Crate;
 use syntax::ast::Item_;
 use syntax::ast::TraitItem;
@@ -30,6 +33,7 @@ pub enum HighlightKind {
 
 #[repr(C)]
 pub struct Highlight {
+    file_name: *const c_char,
     start_line: c_int,
     start_col: c_int,
     start_byte: c_int,
@@ -66,8 +70,10 @@ impl <'a> HighlightVisitor<'a> {
         let CharPos(hi_col) = hi_loc.col;
         let BytePos(hi_byte) = span.hi;
         let CharPos(hi_char) = self.codemap.bytepos_to_file_charpos(span.hi);
+        let ref file = lo_loc.file;
         let report_highlight = self.report_highlight;
         report_highlight(Highlight {
+            file_name: to_ptr(file.name.clone()),
             start_line: lo_line as c_int,
             start_col: lo_col as c_int,
             start_byte: lo_byte as c_int,
@@ -166,4 +172,13 @@ impl<'v,'a> Visitor<'v> for HighlightVisitor<'a> {
     fn visit_mac(&mut self, _macro: &'v ast::Mac) {
         // Ignore macros (the default implementation of visit_mac panics)
     }
+}
+
+fn to_ptr(string: String) -> *const c_char {
+    let cs = CString::from_slice(string.as_bytes());
+    let ptr = cs.as_ptr();
+    // Tell Rust not to clean up the string while we still have a pointer to it.
+    // Otherwise, we'll get a segfault.
+    unsafe { mem::forget(cs) };
+    ptr
 }

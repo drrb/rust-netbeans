@@ -20,6 +20,7 @@ import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -99,10 +100,17 @@ public interface RustNative extends Library {
 
     class HighlightAccumulator implements HighlightCallback {
         private final List<RustHighlight> highlights = new LinkedList<>();
+        private final File file;
+
+        public HighlightAccumulator(File file) {
+            this.file = file;
+        }
 
         @Override
         public void highlightFound(RustHighlight.ByValue highlight) {
-            highlights.add(highlight);
+            if (file.equals(highlight.getFile())) {
+                highlights.add(highlight);
+            }
         }
 
         public List<RustHighlight> getHighlights() {

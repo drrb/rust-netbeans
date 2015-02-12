@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.rustbridge;
 
 import com.sun.jna.Structure;
+import java.io.File;
 import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -56,6 +57,7 @@ public class RustHighlight extends Structure {
         }
     }
 
+    public String fileName;
     public int startLine;
     public int startCol;
     public int startByte;
@@ -65,6 +67,10 @@ public class RustHighlight extends Structure {
     public int endByte;
     public int endChar;
     public int kind;
+
+    public File getFile() {
+        return new File(fileName);
+    }
 
     public int getStartLine() {
         return startLine;
@@ -104,7 +110,7 @@ public class RustHighlight extends Structure {
 
     @Override
     protected List<String> getFieldOrder() {
-        return asList("startLine", "startCol", "startByte", "startChar", "endLine", "endCol", "endByte", "endChar", "kind");
+        return asList("fileName", "startLine", "startCol", "startByte", "startChar", "endLine", "endCol", "endByte", "endChar", "kind");
     }
 
 }

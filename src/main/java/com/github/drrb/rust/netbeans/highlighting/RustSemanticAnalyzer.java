@@ -19,6 +19,7 @@ package com.github.drrb.rust.netbeans.highlighting;
 import com.github.drrb.rust.netbeans.rustbridge.RustHighlight;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.rustbridge.RustSemanticHighlighter;
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.Scheduler;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 
 /**
@@ -47,7 +49,8 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
         highlights.clear();
         cancelled.set(false);
 
-        RustSemanticHighlighter highlighter = new RustSemanticHighlighter();
+        File sourceFile = FileUtil.toFile(result.getSnapshot().getSource().getFileObject());
+        RustSemanticHighlighter highlighter = new RustSemanticHighlighter(sourceFile);
         try {
             List<RustHighlight> rawHighlights = highlighter.getHighlights(result.getResult());
             highlights.putAll(mapHighlights(rawHighlights));

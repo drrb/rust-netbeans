@@ -16,15 +16,21 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
+import java.io.File;
 import java.util.List;
 
 /**
  *
  */
 public class RustSemanticHighlighter {
+    private final File sourceFile;
+
+    public RustSemanticHighlighter(File sourceFile) {
+        this.sourceFile = sourceFile;
+    }
 
     public List<RustHighlight> getHighlights(RustParser.Result parseResult) {
-        RustNative.HighlightAccumulator highlightAccumulator = new RustNative.HighlightAccumulator();
+        RustNative.HighlightAccumulator highlightAccumulator = new RustNative.HighlightAccumulator(sourceFile);
         //TODO: These checks are clumsy. Should they happen in Rust instead?
         if (parseResult.isSuccess()) {
             RustNative.INSTANCE.getHighlights(parseResult.getAst(), highlightAccumulator);
