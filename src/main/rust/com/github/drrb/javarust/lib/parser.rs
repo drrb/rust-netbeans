@@ -1,7 +1,6 @@
 use libc::c_char;
 use libc::c_int;
-use std::ffi::CString;
-use std::mem;
+use raw;
 use syntax::ast::Crate;
 use syntax::codemap::CharPos;
 use syntax::codemap::CodeMap;
@@ -88,13 +87,13 @@ impl Emitter for MessageCollector {
                 let ref file = lo_loc.file;
                 let collect = self.collect;
                 collect(ParseMessage {
-                    file_name: to_ptr(file.name.clone()),
+                    file_name: raw::to_ptr(file.name.clone()),
                     level: ParseMessageLevel::from_emitted(lvl),
                     start_line: lo_line as c_int,
                     start_col: lo_col as c_int,
                     end_line: hi_line as c_int,
                     end_col: hi_col as c_int,
-                    message: to_ptr(msg.to_string()),
+                    message: raw::to_ptr(msg.to_string()),
                 });
             },
             None => {
@@ -107,13 +106,13 @@ impl Emitter for MessageCollector {
         //TODO: do we ever see this called?
         let collect = self.collect;
         collect(ParseMessage {
-            file_name: to_ptr("lol.rs".to_string()),
+            file_name: raw::to_ptr("lol.rs".to_string()),
             level: ParseMessageLevel::from_emitted(lvl),
             start_line: 0 as c_int,
             start_col: 0 as c_int,
             end_line: 0 as c_int,
             end_col: 0 as c_int,
-            message: to_ptr(msg.to_string()),
+            message: raw::to_ptr(msg.to_string()),
         });
     }
 }
@@ -129,14 +128,5 @@ impl ParseMessageLevel {
             Level::Help => ParseMessageLevel::Help,
         }
     }
-}
-
-fn to_ptr(string: String) -> *const c_char {
-    let cs = CString::from_slice(string.as_bytes());
-    let ptr = cs.as_ptr();
-    // Tell Rust not to clean up the string while we still have a pointer to it.
-    // Otherwise, we'll get a segfault.
-    unsafe { mem::forget(cs) };
-    ptr
 }
 

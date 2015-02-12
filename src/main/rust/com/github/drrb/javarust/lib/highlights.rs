@@ -1,8 +1,7 @@
 use lexer::TokenKind;
 use libc::c_char;
 use libc::c_int;
-use std::ffi::CString;
-use std::mem;
+use raw;
 use syntax::ast::Crate;
 use syntax::ast::Item_;
 use syntax::ast::TraitItem;
@@ -73,7 +72,7 @@ impl <'a> HighlightVisitor<'a> {
         let ref file = lo_loc.file;
         let report_highlight = self.report_highlight;
         report_highlight(Highlight {
-            file_name: to_ptr(file.name.clone()),
+            file_name: raw::to_ptr(file.name.clone()),
             start_line: lo_line as c_int,
             start_col: lo_col as c_int,
             start_byte: lo_byte as c_int,
@@ -172,13 +171,4 @@ impl<'v,'a> Visitor<'v> for HighlightVisitor<'a> {
     fn visit_mac(&mut self, _macro: &'v ast::Mac) {
         // Ignore macros (the default implementation of visit_mac panics)
     }
-}
-
-fn to_ptr(string: String) -> *const c_char {
-    let cs = CString::from_slice(string.as_bytes());
-    let ptr = cs.as_ptr();
-    // Tell Rust not to clean up the string while we still have a pointer to it.
-    // Otherwise, we'll get a segfault.
-    unsafe { mem::forget(cs) };
-    ptr
 }

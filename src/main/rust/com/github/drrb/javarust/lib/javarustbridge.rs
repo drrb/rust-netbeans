@@ -26,10 +26,11 @@ extern crate rustc_driver;
 extern crate rustc_trans;
 extern crate syntax;
 
+mod compiler;
 mod highlights;
 mod lexer;
 mod parser;
-mod compiler;
+mod raw;
 
 use highlights::Highlight;
 use highlights::HighlightVisitor;
@@ -41,17 +42,13 @@ use parser::ParseMessage;
 
 use libc::c_char;
 use libc::c_int;
-use std::ffi::CString;
-use std::ffi;
-use std::mem;
 use std::rt::unwind;
-use std::str;
 
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern fn createLexer<'a>(source: *const c_char) -> Box<RustLexer<'a>> {
     let file_name = "<file in netbeans>".to_string();
-    let source = to_string(&source);
+    let source = raw::to_string(&source);
     Box::new(RustLexer::new(file_name, source))
 }
 
@@ -86,7 +83,7 @@ pub extern fn parse(
     let result = unsafe {
         unwind::try(|| {
             let message_collector = MessageCollector::new(message_callback);
-            let ast = parser::parse(to_string(&file_name), to_string(&source), message_collector);
+            let ast = parser::parse(raw::to_string(&file_name), raw::to_string(&source), message_collector);
             result_callback(Box::new(ast));
         })
     };
@@ -121,8 +118,8 @@ pub extern fn compile(
 ) -> c_int {
     unsafe {
         let result = unwind::try(|| {
-            let input_path = to_string(&input_path);
-            let input_source = to_string(&input_source);
+            let input_path = raw::to_string(&input_path);
+            let input_source = raw::to_string(&input_source);
             let message_collector = MessageCollector::new(message_callback);
             compiler::compile(input_path, input_source, message_collector)
         });
@@ -131,19 +128,4 @@ pub extern fn compile(
             Err(_) => 1
         }
     }
-}
-
-fn to_string(pointer: &*const c_char) -> String {
-    let slice = unsafe { ffi::c_str_to_bytes(pointer) };
-    str::from_utf8(slice).unwrap().to_string()
-}
-
-#[allow(dead_code)]
-fn to_ptr(string: String) -> *const c_char {
-    let cs = CString::from_slice(string.as_bytes());
-    let ptr = cs.as_ptr();
-    // Tell Rust not to clean up the string while we still have a pointer to it.
-    // Otherwise, we'll get a segfault.
-    unsafe { mem::forget(cs) };
-    ptr
 }
