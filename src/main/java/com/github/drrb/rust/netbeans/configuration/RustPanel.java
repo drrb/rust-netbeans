@@ -18,18 +18,18 @@ package com.github.drrb.rust.netbeans.configuration;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.openide.util.NbPreferences;
 
 final class RustPanel extends javax.swing.JPanel {
 
     private final RustOptionsPanelController controller;
+    private final RustConfiguration configuration;
 
     RustPanel(RustOptionsPanelController ctrl) {
         this.controller = ctrl;
+        this.configuration = RustConfiguration.get();
         initComponents();
-        rustcPathField.addActionListener(new ChangeListener());
         cargoPathField.addActionListener(new ChangeListener());
-        libraryPathField.addActionListener(new ChangeListener());
+        librariesPathField.addActionListener(new ChangeListener());
         // TODO listen to changes in form fields and call controller.changed()
     }
 
@@ -41,24 +41,18 @@ final class RustPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        rustcPathLabel = new javax.swing.JLabel();
         cargoPathLabel = new javax.swing.JLabel();
-        libraryPathLabel = new javax.swing.JLabel();
-        rustcPathField = new javax.swing.JTextField();
+        librariesPathLabel = new javax.swing.JLabel();
         cargoPathField = new javax.swing.JTextField();
-        libraryPathField = new javax.swing.JTextField();
-
-        org.openide.awt.Mnemonics.setLocalizedText(rustcPathLabel, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.rustcPathLabel.text")); // NOI18N
+        librariesPathField = new javax.swing.JTextField();
 
         org.openide.awt.Mnemonics.setLocalizedText(cargoPathLabel, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.cargoPathLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(libraryPathLabel, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.libraryPathLabel.text")); // NOI18N
-
-        rustcPathField.setText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.rustcPathField.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(librariesPathLabel, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathLabel.text")); // NOI18N
 
         cargoPathField.setText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.cargoPathField.text")); // NOI18N
 
-        libraryPathField.setText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.libraryPathField.text")); // NOI18N
+        librariesPathField.setText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathField.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -67,43 +61,32 @@ final class RustPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(libraryPathLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(libraryPathField, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cargoPathLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(cargoPathField))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(rustcPathLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(rustcPathField)))
+                    .addComponent(librariesPathLabel)
+                    .addComponent(cargoPathLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cargoPathField)
+                    .addComponent(librariesPathField, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(11, 11, 11)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rustcPathLabel)
-                    .addComponent(rustcPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cargoPathLabel)
                     .addComponent(cargoPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(libraryPathLabel)
-                    .addComponent(libraryPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(298, Short.MAX_VALUE))
+                    .addComponent(librariesPathLabel)
+                    .addComponent(librariesPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(343, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     void load() {
-        rustcPathField.setText(NbPreferences.forModule(RustPanel.class).get("rustcPath", ""));
-        cargoPathField.setText(NbPreferences.forModule(RustPanel.class).get("cargoPath", ""));
-        libraryPathField.setText(NbPreferences.forModule(RustPanel.class).get("libraryPath", ""));
+        cargoPathField.setText(configuration.getCargoPath());
+        librariesPathField.setText(configuration.getLibrariesPath());
         // TODO read settings and initialize GUI
         // Example:
         // someCheckBox.setSelected(Preferences.userNodeForPackage(RustPanel.class).getBoolean("someFlag", false));
@@ -114,9 +97,8 @@ final class RustPanel extends javax.swing.JPanel {
     }
 
     void store() {
-        NbPreferences.forModule(RustPanel.class).put("rustcPath", rustcPathField.getText());
-        NbPreferences.forModule(RustPanel.class).put("cargoPath", cargoPathField.getText());
-        NbPreferences.forModule(RustPanel.class).put("libraryPath", libraryPathField.getText());
+        configuration.setCargoPath(cargoPathField.getText());
+        configuration.setLibrariesPath(librariesPathField.getText());
         // TODO store modified settings
         // Example:
         // Preferences.userNodeForPackage(RustPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
@@ -133,10 +115,8 @@ final class RustPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField cargoPathField;
     private javax.swing.JLabel cargoPathLabel;
-    private javax.swing.JTextField libraryPathField;
-    private javax.swing.JLabel libraryPathLabel;
-    private javax.swing.JTextField rustcPathField;
-    private javax.swing.JLabel rustcPathLabel;
+    private javax.swing.JTextField librariesPathField;
+    private javax.swing.JLabel librariesPathLabel;
     // End of variables declaration//GEN-END:variables
 
     private class ChangeListener implements ActionListener {

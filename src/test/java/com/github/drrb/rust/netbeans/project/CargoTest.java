@@ -16,9 +16,14 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
+import com.github.drrb.rust.netbeans.test.TemporaryPreferences;
 import java.io.File;
+import java.util.prefs.Preferences;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.Before;
+import org.junit.Rule;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,22 +32,28 @@ import static org.mockito.Mockito.when;
  *
  */
 public class CargoTest {
+
+    @Rule
+    public final TemporaryPreferences temporaryPreferences = new TemporaryPreferences();
     private Cargo cargo;
     private Shell shell;
     private RustProject project;
+    private RustConfiguration config;
 
     @Before
     public void setUp() {
         project = mock(RustProject.class);
         shell = mock(Shell.class);
-        cargo = new Cargo(shell, project);
+        config = new RustConfiguration(temporaryPreferences.get());
+        cargo = new Cargo(project, shell, config);
     }
 
     @Test
     public void shouldRunCargoCommandsInShell() {
+        config.setCargoPath("/path/to/cargo");
         when(project.dir()).thenReturn(new File("/tmp/myproject"));
         cargo.run("clean", "build");
-        verify(shell).run("cargo clean --verbose && cargo build --verbose", new File("/tmp/myproject"));
+        verify(shell).run("/path/to/cargo clean --verbose && /path/to/cargo build --verbose", new File("/tmp/myproject"));
     }
 
 }

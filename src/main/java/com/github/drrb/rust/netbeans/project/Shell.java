@@ -48,6 +48,7 @@ public class Shell {
         LifecycleManager.getDefault().saveAll();
         InputOutput io = IOProvider.get(name).getIO(name, false);
         IoColorLines.printDebug(io, commandLine);
+        //TODO: make this work on Windows too
         ProcessBuilder processBuilder = new ProcessBuilder()
                 .command("/bin/bash", "-lc", commandLine)
                 .directory(workingDir);
