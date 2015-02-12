@@ -19,18 +19,27 @@ use syntax::parse::token;
 use syntax::parse;
 use syntax;
 
-pub fn compile(input_path: String, source: String, message_collector: MessageCollector) {
+pub struct CompileRequest {
+    pub input_path: String,
+    pub input_source: String,
+    pub search_paths: Vec<String>,
+    pub message_collector: MessageCollector
+}
+
+pub fn compile(request: CompileRequest) {
     let output_dir = "/dummy".to_string();
-    println!("Compiling {}...", input_path);
+    println!("Compiling {}...", request.input_path);
     let mut sopts = config::basic_options();
     sopts.search_paths = SearchPaths::new();
-    sopts.search_paths.add_path("/usr/local/lib/rustlib/x86_64-apple-darwin/lib");
+    for search_path in request.search_paths {
+        sopts.search_paths.add_path(search_path.as_slice());
+    }
     let odir = Some(Path::new(&output_dir));
     let ofile = None;
-    let input = Input::Str(source);
-    let input_file_path = Some(Path::new(&input_path));
+    let input = Input::Str(request.input_source);
+    let input_file_path = Some(Path::new(&request.input_path));
     let codemap = CodeMap::new();
-    let diagnostic_handler = diagnostic::mk_handler(true, Box::new(message_collector));
+    let diagnostic_handler = diagnostic::mk_handler(true, Box::new(request.message_collector));
     let span_diagnostic_handler = diagnostic::mk_span_handler(diagnostic_handler, codemap);
     let sess = session::build_session_(sopts, input_file_path, span_diagnostic_handler);
     let cfg= config::build_configuration(&sess);

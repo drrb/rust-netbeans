@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
+import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.rustbridge.RustCompiler;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
@@ -71,7 +72,7 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
             Snapshot snapshot = parseResult.getSnapshot();
             FileObject sourceFileObject = snapshot.getSource().getFileObject();
             File sourceFile = FileUtil.toFile(sourceFileObject);
-            List<RustParseMessage> messages = new RustCompiler().compile(sourceFile, snapshot.getText().toString());
+            List<RustParseMessage> messages = new RustCompiler().compile(sourceFile, snapshot.getText().toString(), RustConfiguration.get().getSearchPaths());
             StyledDocument document = NbDocument.getDocument(sourceFileObject);
             List<ErrorDescription> errors = getErrors(messages, document);
             setErrors(document, "rust-compile-errors", errors);

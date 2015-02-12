@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #![crate_type = "dylib"]
+#![feature(collections)]
+#![feature(core)]
 #![feature(libc)]
 #![feature(path)]
 #![feature(rustc_private)]
@@ -32,6 +34,7 @@ mod lexer;
 mod parser;
 mod raw;
 
+use compiler::CompileRequest;
 use highlights::Highlight;
 use highlights::HighlightVisitor;
 use lexer::RustLexer;
@@ -114,14 +117,23 @@ pub extern fn getHighlights(
 pub extern fn compile(
     input_path: *const c_char,
     input_source: *const c_char,
+    search_paths: *const *const c_char,
+    search_paths_length: c_int,
     message_callback: extern "C" fn (ParseMessage),
 ) -> c_int {
+    let input_path = raw::to_string(&input_path);
+    let input_source = raw::to_string(&input_source);
+    let search_paths = unsafe { Vec::from_raw_buf(search_paths, search_paths_length as usize) };
+    let search_paths = search_paths.iter().map(|cstring| raw::to_string(&cstring)).collect();
+    let message_collector = MessageCollector::new(message_callback);
     unsafe {
         let result = unwind::try(|| {
-            let input_path = raw::to_string(&input_path);
-            let input_source = raw::to_string(&input_source);
-            let message_collector = MessageCollector::new(message_callback);
-            compiler::compile(input_path, input_source, message_collector)
+            compiler::compile(CompileRequest {
+                input_path: input_path,
+                input_source: input_source,
+                search_paths: search_paths,
+                message_collector: message_collector,
+            })
         });
         match result {
             Ok(_) => 0,

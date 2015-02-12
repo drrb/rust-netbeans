@@ -2,7 +2,6 @@ pipeline:
     - Use CslTestBase for tests
     - Remove unused test stuff
     - Get tests working on Travis
-    - rustc/cargo Path config
     - Create/Reuse output windows
 features:
     editor:

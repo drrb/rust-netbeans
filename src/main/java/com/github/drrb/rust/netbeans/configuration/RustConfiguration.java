@@ -49,6 +49,10 @@ public class RustConfiguration {
         return preferences.get(KEY_LIBRARIES_PATH, getDefaultLibrariesPath());
     }
 
+    public List<String> getSearchPaths() {
+        return Os.getCurrent().splitLibrariesPath(getLibrariesPath());
+    }
+
     public void setCargoPath(String cargoPath) {
         preferences.put(KEY_CARGO_PATH, cargoPath);
     }
@@ -66,19 +70,21 @@ public class RustConfiguration {
     }
 
     private enum Os {
-        MAC_OS(asList("mac", "darwin"), "/usr/local/bin/cargo", "/usr/local/lib/rustlib/x86_64-apple-darwin/lib"),
-        WINDOWS(asList("win"), "C:\\Rust\\cargo.exe", "C:\\Rust\\libs"),
-        GNU_SLASH_LINUX(asList("nux"), "/usr/local/bin/cargo", "/usr/local/lib"),
-        UNKNOWN(Collections.<String>emptyList(), "/usr/local/bin/cargo", "/usr/local/lib");
+        MAC_OS(asList("mac", "darwin"), "/usr/local/bin/cargo", "/usr/local/lib/rustlib/x86_64-apple-darwin/lib", ":"),
+        WINDOWS(asList("win"), "C:\\Rust\\cargo.exe", "C:\\Rust\\libs", ";"),
+        GNU_SLASH_LINUX(asList("nux"), "/usr/local/bin/cargo", "/usr/local/lib", ":"),
+        UNKNOWN(Collections.<String>emptyList(), "/usr/local/bin/cargo", "/usr/local/lib", ":");
 
         private final List<String> substrings;
         private final String defaultCargoPath;
         private final String defaultLibrariesPath;
+        private final String pathDelimiter;
 
-        private Os(List<String> substrings, String defaultCargoPath, String defaultLibrariesPath) {
+        private Os(List<String> substrings, String defaultCargoPath, String defaultLibrariesPath, String pathDelimiter) {
             this.substrings = substrings;
             this.defaultCargoPath = defaultCargoPath;
             this.defaultLibrariesPath = defaultLibrariesPath;
+            this.pathDelimiter = pathDelimiter;
         }
 
         public static Os getCurrent() {
@@ -97,6 +103,10 @@ public class RustConfiguration {
                 }
             }
             return false;
+        }
+
+        private List<String> splitLibrariesPath(String librariesPath) {
+            return asList(librariesPath.split(pathDelimiter));
         }
 
         private static boolean currentIs64Bit() {

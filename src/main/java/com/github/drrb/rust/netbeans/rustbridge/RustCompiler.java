@@ -26,14 +26,20 @@ import java.util.List;
 public class RustCompiler {
 
     //TODO: this looks identical to RustParser.parse()
-    public List<RustParseMessage> compile(File sourcePath, String source) {
+    public List<RustParseMessage> compile(File sourcePath, String source, List<String> searchPaths) {
         // It's important to tell rustc the full path, because it uses it to find
         //  mods referenced from this file.
         if (!sourcePath.isAbsolute()) {
             throw new IllegalArgumentException("Expected an absolute file, but got " + sourcePath);
         }
         RustNative.ParseMessageAccumulator messageAccumulator = new RustNative.ParseMessageAccumulator();
-        RustNative.INSTANCE.compile(sourcePath.getAbsolutePath(), source, messageAccumulator);
+        RustNative.INSTANCE.compile(
+                sourcePath.getAbsolutePath(),
+                source,
+                searchPaths.toArray(new String[searchPaths.size()]),
+                searchPaths.size(),
+                messageAccumulator
+        );
         //TODO: it'd be faster to filter these while we're collecting them.
         // Can we do that, or do we need the other files' messages for later?
         List<RustParseMessage> relevantParseMessages = new LinkedList<>();
