@@ -23,9 +23,13 @@
                   <Component id="cargoPathLabel" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="cargoPathField" max="32767" attributes="0"/>
-                  <Component id="librariesPathField" pref="415" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="librariesPathField" pref="427" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="cargoPathField" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="cargoPathBrowseButton" min="-2" pref="112" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -38,13 +42,14 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="cargoPathLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cargoPathField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="cargoPathBrowseButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="librariesPathLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="librariesPathField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="343" max="32767" attributes="0"/>
+              <EmptySpace pref="341" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -77,6 +82,16 @@
           <ResourceString bundle="com/github/drrb/rust/netbeans/configuration/Bundle.properties" key="RustPanel.librariesPathField.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="cargoPathBrowseButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="com/github/drrb/rust/netbeans/configuration/Bundle.properties" key="RustPanel.cargoPathBrowseButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cargoPathBrowseButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
