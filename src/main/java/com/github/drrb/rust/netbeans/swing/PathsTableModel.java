@@ -16,12 +16,10 @@
  */
 package com.github.drrb.rust.netbeans.swing;
 
-import com.google.common.collect.Ranges;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import jdk.nashorn.internal.codegen.types.Range;
 
 /**
  *
