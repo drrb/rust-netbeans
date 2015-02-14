@@ -44,7 +44,7 @@ public class RustCompilerTest {
     @Test
     public void shouldCompileStringToExecutable() throws Exception {
         File file = tempFolder.newFile("test.rs");
-        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() { }", RustConfiguration.get().getSearchPaths());
+        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() { }", RustConfiguration.get().getLibrariesPaths());
         assertThat(messages, hasSize(1));
         assertThat(messages.get(0).message, containsString("dead_code"));
     }
@@ -53,7 +53,7 @@ public class RustCompilerTest {
     public void shouldGiveMessagesOnNonParseCompileErrors() throws Exception {
         File file = tempFolder.newFile("test.rs");
         // main() shouldn't return String, so we expect an error
-        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() -> String { }", RustConfiguration.get().getSearchPaths());
+        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() -> String { }", RustConfiguration.get().getLibrariesPaths());
         assertThat(messages, hasSize(1));
     }
 
@@ -62,7 +62,7 @@ public class RustCompilerTest {
         File mainFile = tempFolder.newFile("main.rs");
         File modFile = tempFolder.newFile("other.rs");
         Files.write(modFile.toPath(), "pub fn other_function() { }".getBytes(UTF_8));
-        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", RustConfiguration.get().getSearchPaths());
+        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", RustConfiguration.get().getLibrariesPaths());
         assertThat(messages, hasSize(1));
         assertThat(messages.get(0).message, containsString("dead_code"));
     }
@@ -72,7 +72,7 @@ public class RustCompilerTest {
         File mainFile = tempFolder.newFile("main.rs");
         File modFile = tempFolder.newFile("other.rs");
         Files.write(modFile.toPath(), "pub fn other_function() { x x }".getBytes(UTF_8));
-        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", RustConfiguration.get().getSearchPaths());
+        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", RustConfiguration.get().getLibrariesPaths());
         assertThat(messages, is(empty()));
     }
 }

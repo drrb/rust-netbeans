@@ -64,6 +64,7 @@ public final class RustOptionsPanelController extends OptionsPanelController {
 
     @Override
     public HelpCtx getHelpCtx() {
+        //TODO: what is this, and how should we use it?
         return null; // new HelpCtx("...ID") if you have a help set
     }
 

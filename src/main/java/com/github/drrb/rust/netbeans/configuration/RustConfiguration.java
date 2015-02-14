@@ -17,6 +17,8 @@
 package com.github.drrb.rust.netbeans.configuration;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
 import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.List;
@@ -35,9 +37,17 @@ public class RustConfiguration {
         return new RustConfiguration(NbPreferences.forModule(RustLanguage.class));
     }
 
+    private final Os os;
     private final Preferences preferences;
 
+    @VisibleForTesting
     public RustConfiguration(Preferences preferences) {
+        this(Os.getCurrent(), preferences);
+    }
+
+    @VisibleForTesting
+    public RustConfiguration(Os os, Preferences preferences) {
+        this.os = os;
         this.preferences = preferences;
     }
 
@@ -49,8 +59,8 @@ public class RustConfiguration {
         return preferences.get(KEY_LIBRARIES_PATH, getDefaultLibrariesPath());
     }
 
-    public List<String> getSearchPaths() {
-        return Os.getCurrent().splitLibrariesPath(getLibrariesPath());
+    public List<String> getLibrariesPaths() {
+        return os.deserializeLibrariesPath(getLibrariesPath());
     }
 
     public void setCargoPath(String cargoPath) {
@@ -61,15 +71,20 @@ public class RustConfiguration {
         preferences.put(KEY_LIBRARIES_PATH, librariesPath);
     }
 
+    public void setLibrariesPaths(List<String> paths) {
+        preferences.put(KEY_LIBRARIES_PATH, os.serializeLibrariesPath(paths));
+    }
+
     private String getDefaultCargoPath() {
-        return Os.getCurrent().defaultCargoPath;
+        return os.defaultCargoPath;
     }
 
-    private static String getDefaultLibrariesPath() {
-        return Os.getCurrent().defaultLibrariesPath;
+    private String getDefaultLibrariesPath() {
+        return os.defaultLibrariesPath;
     }
 
-    private enum Os {
+    @VisibleForTesting
+    public enum Os {
         MAC_OS(asList("mac", "darwin"), "/usr/local/bin/cargo", "/usr/local/lib/rustlib/x86_64-apple-darwin/lib", ":"),
         WINDOWS(asList("win"), "C:\\Rust\\cargo.exe", "C:\\Rust\\libs", ";"),
         GNU_SLASH_LINUX(asList("nux"), "/usr/local/bin/cargo", "/usr/local/lib", ":"),
@@ -105,8 +120,12 @@ public class RustConfiguration {
             return false;
         }
 
-        private List<String> splitLibrariesPath(String librariesPath) {
+        private List<String> deserializeLibrariesPath(String librariesPath) {
             return asList(librariesPath.split(pathDelimiter));
+        }
+
+        private String serializeLibrariesPath(List<String> paths) {
+            return Joiner.on(pathDelimiter).join(paths);
         }
 
         private static boolean currentIs64Bit() {

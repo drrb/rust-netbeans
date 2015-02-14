@@ -16,28 +16,24 @@
  */
 package com.github.drrb.rust.netbeans.configuration;
 
-import java.awt.Container;
-import java.awt.FileDialog;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 final class RustPanel extends javax.swing.JPanel {
 
     private final RustOptionsPanelController controller;
     private final RustConfiguration configuration;
 
-    RustPanel(RustOptionsPanelController ctrl) {
-        this.controller = ctrl;
+    RustPanel(RustOptionsPanelController controller) {
+        this.controller = controller;
         this.configuration = RustConfiguration.get();
         initComponents();
-        cargoPathField.addActionListener(new ChangeListener());
-        librariesPathField.addActionListener(new ChangeListener());
-        // TODO listen to changes in form fields and call controller.changed()
+        this.cargoPathField.addKeyListener(new ChangeListener());
+        this.librariesPathsTableModel.addTableModelListener(new ChangeListener());
     }
 
     /**
@@ -48,24 +44,47 @@ final class RustPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        librariesPathsTableModel = new com.github.drrb.rust.netbeans.swing.PathsTableModel();
         cargoPathLabel = new javax.swing.JLabel();
-        librariesPathLabel = new javax.swing.JLabel();
+        librariesPathsLabel = new javax.swing.JLabel();
         cargoPathField = new javax.swing.JTextField();
-        librariesPathField = new javax.swing.JTextField();
         cargoPathBrowseButton = new javax.swing.JButton();
+        librariesPathsTableScrollPane = new javax.swing.JScrollPane();
+        librariesPathsTable = new javax.swing.JTable();
+        librariesPathsAddButton = new javax.swing.JButton();
+        librariesPathsRemoveButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(cargoPathLabel, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.cargoPathLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(librariesPathLabel, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(librariesPathsLabel, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathsLabel.text")); // NOI18N
+        librariesPathsLabel.setToolTipText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathsLabel.toolTipText")); // NOI18N
 
         cargoPathField.setText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.cargoPathField.text")); // NOI18N
-
-        librariesPathField.setText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathField.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(cargoPathBrowseButton, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.cargoPathBrowseButton.text")); // NOI18N
         cargoPathBrowseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cargoPathBrowseButtonActionPerformed(evt);
+            }
+        });
+
+        librariesPathsTable.setModel(librariesPathsTableModel);
+        librariesPathsTable.setTableHeader(null);
+        librariesPathsTableScrollPane.setViewportView(librariesPathsTable);
+
+        org.openide.awt.Mnemonics.setLocalizedText(librariesPathsAddButton, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathsAddButton.text")); // NOI18N
+        librariesPathsAddButton.setToolTipText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathsAddButton.toolTipText")); // NOI18N
+        librariesPathsAddButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                librariesPathsAddButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(librariesPathsRemoveButton, org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathsRemoveButton.text")); // NOI18N
+        librariesPathsRemoveButton.setToolTipText(org.openide.util.NbBundle.getMessage(RustPanel.class, "RustPanel.librariesPathsRemoveButton.toolTipText")); // NOI18N
+        librariesPathsRemoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                librariesPathsRemoveButtonActionPerformed(evt);
             }
         });
 
@@ -76,15 +95,20 @@ final class RustPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(librariesPathLabel)
+                    .addComponent(librariesPathsLabel)
                     .addComponent(cargoPathLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(librariesPathField, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(cargoPathField)
+                        .addGap(18, 18, 18)
+                        .addComponent(librariesPathsTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cargoPathBrowseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cargoPathField, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cargoPathBrowseButton, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+                    .addComponent(librariesPathsAddButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(librariesPathsRemoveButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -96,15 +120,22 @@ final class RustPanel extends javax.swing.JPanel {
                     .addComponent(cargoPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cargoPathBrowseButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(librariesPathLabel)
-                    .addComponent(librariesPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(341, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(librariesPathsLabel)
+                        .addContainerGap())
+                    .addComponent(librariesPathsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(librariesPathsAddButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(librariesPathsRemoveButton)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void cargoPathBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargoPathBrowseButtonActionPerformed
         JFileChooser fileChooser = new JFileChooser(new File(configuration.getCargoPath()).getParent());
+        fileChooser.setDialogTitle("Select Path to Cargo Executable");
         //TODO: what will happen if the file doesn't exist?
         fileChooser.setSelectedFile(new File(configuration.getCargoPath()));
         int result = fileChooser.showDialog(this, "Select");
@@ -113,28 +144,28 @@ final class RustPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_cargoPathBrowseButtonActionPerformed
 
+    private void librariesPathsAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_librariesPathsAddButtonActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Add Path to Libraries");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int result = fileChooser.showDialog(this, "Add");
+        if(result == JFileChooser.APPROVE_OPTION) {
+            librariesPathsTableModel.addPath(fileChooser.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_librariesPathsAddButtonActionPerformed
+
+    private void librariesPathsRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_librariesPathsRemoveButtonActionPerformed
+        librariesPathsTableModel.removePathsAt(librariesPathsTable.getSelectedRows());
+    }//GEN-LAST:event_librariesPathsRemoveButtonActionPerformed
+
     void load() {
         cargoPathField.setText(configuration.getCargoPath());
-        librariesPathField.setText(configuration.getLibrariesPath());
-        // TODO read settings and initialize GUI
-        // Example:
-        // someCheckBox.setSelected(Preferences.userNodeForPackage(RustPanel.class).getBoolean("someFlag", false));
-        // or for org.openide.util with API spec. version >= 7.4:
-        // someCheckBox.setSelected(NbPreferences.forModule(RustPanel.class).getBoolean("someFlag", false));
-        // or:
-        // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
+        librariesPathsTableModel.setPaths(configuration.getLibrariesPaths());
     }
 
     void store() {
         configuration.setCargoPath(cargoPathField.getText());
-        configuration.setLibrariesPath(librariesPathField.getText());
-        // TODO store modified settings
-        // Example:
-        // Preferences.userNodeForPackage(RustPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
-        // or for org.openide.util with API spec. version >= 7.4:
-        // NbPreferences.forModule(RustPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
-        // or:
-        // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
+        configuration.setLibrariesPaths(librariesPathsTableModel.getPaths());
     }
 
     boolean valid() {
@@ -145,14 +176,31 @@ final class RustPanel extends javax.swing.JPanel {
     private javax.swing.JButton cargoPathBrowseButton;
     private javax.swing.JTextField cargoPathField;
     private javax.swing.JLabel cargoPathLabel;
-    private javax.swing.JTextField librariesPathField;
-    private javax.swing.JLabel librariesPathLabel;
+    private javax.swing.JButton librariesPathsAddButton;
+    private javax.swing.JLabel librariesPathsLabel;
+    private javax.swing.JButton librariesPathsRemoveButton;
+    private javax.swing.JTable librariesPathsTable;
+    private com.github.drrb.rust.netbeans.swing.PathsTableModel librariesPathsTableModel;
+    private javax.swing.JScrollPane librariesPathsTableScrollPane;
     // End of variables declaration//GEN-END:variables
 
-    private class ChangeListener implements ActionListener {
+    private class ChangeListener implements KeyListener, TableModelListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void keyTyped(KeyEvent e) {
+            controller.changed();
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+        }
+
+        @Override
+        public void tableChanged(TableModelEvent e) {
             controller.changed();
         }
     }

@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.configuration;
 
 import com.github.drrb.rust.netbeans.test.TemporaryPreferences;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -34,7 +35,7 @@ public class RustConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        config = new RustConfiguration(preferences.get());
+        config = new RustConfiguration(RustConfiguration.Os.MAC_OS, preferences.get());
     }
 
     @Test
@@ -44,9 +45,9 @@ public class RustConfigurationTest {
     }
 
     @Test
-    public void shouldReturnSavedLibrariesPath() throws Exception {
-        preferences.get().put(RustConfiguration.KEY_LIBRARIES_PATH, "/path/to/libraries");
-        assertThat(config.getLibrariesPath(), is("/path/to/libraries"));
+    public void shouldReturnSavedLibrariesPaths() throws Exception {
+        preferences.get().put(RustConfiguration.KEY_LIBRARIES_PATH, "/path/to/libraries:/path/to/more/libraries");
+        assertThat(config.getLibrariesPaths(), is(asList("/path/to/libraries", "/path/to/more/libraries")));
     }
 
     @Test
@@ -55,8 +56,8 @@ public class RustConfigurationTest {
     }
 
     @Test
-    public void shouldReturnDefaultLibrariesPathIfNoneSaved() throws Exception {
-        assertThat(config.getLibrariesPath(), is("/usr/local/lib/rustlib/x86_64-apple-darwin/lib"));
+    public void shouldReturnDefaultLibrariesPathsIfNoneSaved() throws Exception {
+        assertThat(config.getLibrariesPaths(), is(asList("/usr/local/lib/rustlib/x86_64-apple-darwin/lib")));
     }
 
     @Test
@@ -67,9 +68,9 @@ public class RustConfigurationTest {
     }
 
     @Test
-    public void shouldSavePreferredLibrariesPath() throws Exception {
-        config.setLibrariesPath("/new/path/to/libraries");
+    public void shouldSavePreferredLibrariesPaths() throws Exception {
+        config.setLibrariesPaths(asList("/new/path/to/libraries", "/new/path/to/more/libraries"));
 
-        assertThat(config.getLibrariesPath(), is("/new/path/to/libraries"));
+        assertThat(config.getLibrariesPaths(), is(asList("/new/path/to/libraries", "/new/path/to/more/libraries")));
     }
 }

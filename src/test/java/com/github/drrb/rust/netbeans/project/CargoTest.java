@@ -19,8 +19,6 @@ package com.github.drrb.rust.netbeans.project;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.test.TemporaryPreferences;
 import java.io.File;
-import java.util.prefs.Preferences;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.Rule;

@@ -72,7 +72,7 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
             Snapshot snapshot = parseResult.getSnapshot();
             FileObject sourceFileObject = snapshot.getSource().getFileObject();
             File sourceFile = FileUtil.toFile(sourceFileObject);
-            List<RustParseMessage> messages = new RustCompiler().compile(sourceFile, snapshot.getText().toString(), RustConfiguration.get().getSearchPaths());
+            List<RustParseMessage> messages = new RustCompiler().compile(sourceFile, snapshot.getText().toString(), RustConfiguration.get().getLibrariesPaths());
             StyledDocument document = NbDocument.getDocument(sourceFileObject);
             List<ErrorDescription> errors = getErrors(messages, document);
             setErrors(document, "rust-compile-errors", errors);
