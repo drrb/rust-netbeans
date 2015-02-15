@@ -12,7 +12,7 @@ in.
 
 * NetBeans 8.x or above
 * Java 7+
-* OSX (probably also works on Linux, may work on Windows with hacks)
+* OSX (Hopefully Linux soon. May work on Windows. Please let me know if you get it working on either!)
 * Rust 1.0 installed by rustup (currently developing against post-1.0-alpha nightlies)
 * Cargo (somewhere on the path)
 
