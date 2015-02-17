@@ -13,6 +13,7 @@ use syntax::parse::token::DelimToken;
 use syntax::parse::token::Lit;
 use syntax::parse::token::Token;
 use syntax::parse::token::keywords;
+use syntax::parse::token::special_idents;
 
 #[repr(C)]
 pub struct RustLexer<'a> {
@@ -132,7 +133,7 @@ pub enum TokenKind {
     Ref,
     Return,
     Static,
-    Self,
+    SelfKeyword,
     Struct,
     Super,
     True,
@@ -209,7 +210,7 @@ impl TokenKind {
                 Lit::Binary(_) => TokenKind::BinaryLiteral,
                 Lit::BinaryRaw(_, _) => TokenKind::BinaryRawLiteral,
             },
-            Token::Ident(_, _) => {
+            Token::Ident(sid, _) => {
                 if token.is_keyword(keywords::As) {
                     TokenKind::As
                 } else if token.is_keyword(keywords::Break) {
@@ -254,8 +255,8 @@ impl TokenKind {
                     TokenKind::Return
                 } else if token.is_keyword(keywords::Static) {
                     TokenKind::Static
-                } else if token.is_keyword(keywords::Self) {
-                    TokenKind::Self
+                } else if sid.name == special_idents::type_self.name {
+                    TokenKind::SelfKeyword
                 } else if token.is_keyword(keywords::Struct) {
                     TokenKind::Struct
                 } else if token.is_keyword(keywords::Super) {

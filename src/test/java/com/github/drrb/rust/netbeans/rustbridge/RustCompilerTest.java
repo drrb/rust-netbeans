@@ -45,8 +45,7 @@ public class RustCompilerTest {
     public void shouldCompileStringToExecutable() throws Exception {
         File file = tempFolder.newFile("test.rs");
         List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() { }", RustConfiguration.get().getLibrariesPaths());
-        assertThat(messages, hasSize(1));
-        assertThat(messages.get(0).message, containsString("dead_code"));
+        assertThat(messages, is(empty()));
     }
 
     @Test
@@ -63,8 +62,7 @@ public class RustCompilerTest {
         File modFile = tempFolder.newFile("other.rs");
         Files.write(modFile.toPath(), "pub fn other_function() { }".getBytes(UTF_8));
         List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", RustConfiguration.get().getLibrariesPaths());
-        assertThat(messages, hasSize(1));
-        assertThat(messages.get(0).message, containsString("dead_code"));
+        assertThat(messages, is(empty()));
     }
 
     @Test
