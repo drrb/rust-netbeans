@@ -101,6 +101,10 @@
                     <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-SetMainProject.instance"/>
                     <attr name="position" intvalue="1500"/>
                 </file>
+                <file name="org-netbeans-modules-project-ui-CloseProject.shadow">
+                    <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-CloseProject.instance"/>
+                    <attr name="position" intvalue="1600"/>
+                </file>
             </folder>
         </folder>
     </folder>
