@@ -1,7 +1,4 @@
 pipeline:
-    - Use CslTestBase for tests
-    - Remove unused test stuff
-    - Get tests working on Travis
     - Create/Reuse output windows
 features:
     editor:
@@ -22,16 +19,14 @@ features:
         - Icons (ask for help)
         - Icon badging (e.g. play arrow for executable source)
         - Project customizer (https://platform.netbeans.org/tutorials/nbm-projecttype.html#projectcustomizer)
-    settings:
-        - cargo path
-        - rustc path
-        - Source path
     cross_platform:
+        - Support Linux (should work, but unable to load Rust shared libraries)
         - Support building plugin on Windows
         - Support Cargo on Windows
 
 development:
     testing:
+        - Unit tests on Travis (requires fixing Linux library loading)
         - Functional tests on Travis: http://about.travis-ci.org/docs/user/gui-and-headless-browsers
     release:
         - How do we distribute a NetBeans plugin?
