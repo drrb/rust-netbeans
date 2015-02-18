@@ -16,10 +16,18 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import com.github.drrb.rust.netbeans.rustbridge.RustCrateType;
 import com.moandjiezana.toml.Toml;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
@@ -83,6 +91,51 @@ public class RustProject implements Project {
                 );
         // Provides Mergers in the base lookup with implementations from the Projects/TYPE/Lookup lookup (e.g. Sources implementations)
         return LookupProviderSupport.createCompositeLookup(baseLookup, PROJECT_LOOKUP_NAME);
+    }
+
+    private Toml getCargoConfig() {
+        FileObject cargoFile = projectDirectory.getFileObject("Cargo.toml");
+        if (cargoFile == null) {
+            return new Toml();
+        }
+        try {
+            return new Toml().parse(new InputStreamReader(cargoFile.getInputStream(), UTF_8));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(RustProject.class.getName()).log(Level.WARNING, "Couldn't read crates from Cargo.toml", ex);
+            return new Toml();
+        }
+    }
+
+    public List<Crate> getCrates() {
+        Toml cargoConfig = getCargoConfig();
+
+        List<Crate> crates = new LinkedList<>();
+        Toml libCrate = cargoConfig.getTable("lib");
+        String libCratePath = libCrate.getString("path");
+        if (libCratePath != null) {
+            FileObject crateFile = projectDirectory.getFileObject(libCratePath);
+            List<String> libCrateTypes = libCrate.getList("crate-type", String.class);
+            if (libCrateTypes.isEmpty()) {
+                libCrateTypes.add("rlib");
+            }
+            for (String libCrateType : libCrateTypes) {
+                if (libCrateType.equals("dylib")) {
+                    crates.add(new Crate(RustCrateType.DYLIB, crateFile));
+                } else if (libCrateType.equals("rlib")) {
+                    crates.add(new Crate(RustCrateType.RLIB, crateFile));
+                } else if (libCrateType.equals("staticlib")) {
+                    crates.add(new Crate(RustCrateType.STATICLIB, crateFile));
+                }
+            }
+        }
+
+        List<Toml> binCrates = cargoConfig.getTables("bin");
+        for (Toml binCrate : binCrates) {
+            String cratePath = binCrate.getString("path");
+            FileObject crateFile = projectDirectory.getFileObject(cratePath);
+            crates.add(new Crate(RustCrateType.EXECUTABLE, crateFile));
+        }
+        return crates;
     }
 
     private class Info implements ProjectInformation {

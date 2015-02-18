@@ -16,18 +16,24 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import com.github.drrb.rust.netbeans.rustbridge.RustCrateType;
 import static com.github.drrb.rust.netbeans.test.TestData.getData;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import static java.util.Arrays.asList;
 import java.util.LinkedList;
 import java.util.List;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import static org.hamcrest.MatcherAssert.assertThat;
-import org.junit.Before;
 import org.junit.Test;
 import org.openide.filesystems.FileObject;
 import static org.hamcrest.Matchers.*;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
@@ -43,17 +49,43 @@ import org.openide.util.test.MockLookup;
  */
 public class RustProjectTest {
 
+    @Rule
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
     private FileObject projectDirectory;
     private Project project;
 
     @Before
-    public void setUp() {
-        projectDirectory = FileUtil.toFileObject(getData("RustProjectTest/testrustproject"));
-        project = new RustProject(projectDirectory, null);
+    public void setUp() throws Exception {
         NamedServicesProviderImpl namedServicesProvider = new NamedServicesProviderImpl();
+        MockLookup.setInstances(namedServicesProvider);
         namedServicesProvider.addNamedLookup("Projects/com-github-drrb-rust-netbeans-project/Lookup", Lookups.fixed(new RustSources(project)));
         namedServicesProvider.addNamedLookup("Projects/com-github-drrb-rust-netbeans-project/Nodes", Lookups.fixed(new ProjectFilesNodeFactory(), new SourcesNodeFactory()));
-        MockLookup.setInstances(namedServicesProvider);
+        projectDirectory = FileUtil.toFileObject(getData("RustProjectTest/testrustproject"));
+        project = new RustProject(projectDirectory, null);
+    }
+
+    @Test
+    public void shouldLookUpCrates() throws Exception {
+        Path projectDirectoryPath = tempFolder.newFolder("RustProjectTest").toPath();
+        FileObject projectDirectory = FileUtil.toFileObject(projectDirectoryPath.toFile());
+        RustProject project = new RustProject(projectDirectory, null);
+        StringBuilder cargoFile = new StringBuilder();
+        cargoFile.append("[package]\n");
+        cargoFile.append("name = \"myproject\"\n");
+        cargoFile.append("\n");
+        cargoFile.append("[lib]\n");
+        cargoFile.append("crate-type = [ \"dylib\" ]\n");
+        cargoFile.append("name = \"greetings\"\n");
+        cargoFile.append("path = \"src/greetings.rs\"\n");
+        cargoFile.append("[[bin]]\n");
+        cargoFile.append("name = \"greet\"\n");
+        cargoFile.append("path = \"src/hello.rs\"\n");
+
+        Files.write(projectDirectoryPath.resolve("Cargo.toml"), cargoFile.toString().getBytes(UTF_8));
+
+        Crate expectedBinCrate = new Crate(RustCrateType.EXECUTABLE, projectDirectory.getFileObject("src/hello.rs"));
+        Crate expectedDylibCrate = new Crate(RustCrateType.DYLIB, projectDirectory.getFileObject("src/greetings.rs"));
+        assertThat(project.getCrates(), is(asList(expectedDylibCrate, expectedBinCrate)));
     }
 
     @Test

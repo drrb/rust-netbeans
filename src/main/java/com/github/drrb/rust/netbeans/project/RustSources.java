@@ -23,21 +23,31 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
+import org.netbeans.spi.project.LookupProvider;
 import org.netbeans.spi.project.ProjectServiceProvider;
 import org.netbeans.spi.project.support.GenericSources;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Lookup;
 
 /**
  *
  */
 @ProjectServiceProvider(service = Sources.class, projectType = RustProject.TYPE)
-public class RustSources implements Sources {
+public class RustSources implements Sources, LookupProvider {
 
     private final Project project;
 
     public RustSources(Project project) {
         //WARNING: don't examine the project in the constructor, as per ProjectServiceProvider's JavaDoc
         this.project = project;
+    }
+
+    /**
+     * Implementing LookupProvider to silence warnings.
+     */
+    @Override
+    public Lookup createAdditionalLookup(Lookup baseContext) {
+        return Lookup.EMPTY;
     }
 
     private RustProject project() {

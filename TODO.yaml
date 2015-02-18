@@ -1,4 +1,5 @@
 pipeline:
+    - Fix highlighting for multi-file crates (compile from root, not file in editor)
     - Create/Reuse output windows
 features:
     editor:
