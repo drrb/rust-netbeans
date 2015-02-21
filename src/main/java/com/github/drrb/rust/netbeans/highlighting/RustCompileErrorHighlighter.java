@@ -71,6 +71,9 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
 
     @Override
     public void run(NetbeansRustParserResult parseResult, SchedulerEvent event) {
+        //TODO: this approach makes highlighting slow if project is more than
+        // a handful of files. We need some caching, which will probably require
+        // changes to be made to rustc.
         try {
             if (parseResult.getResult().isFailure()) {
                 return;
