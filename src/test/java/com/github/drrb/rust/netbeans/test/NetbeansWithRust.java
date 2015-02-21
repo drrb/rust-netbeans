@@ -97,7 +97,7 @@ public class NetbeansWithRust extends CslTestHelper {
                 assertNotNull(parseResult);
 
                 TestableRustCompileErrorHighlighter highlightingTask = new TestableRustCompileErrorHighlighter();
-                highlightingTask.run(parseResult, null);
+                highlightingTask.compile(parseResult.getSnapshot());
 
                 StringBuilder renderedErrors = new StringBuilder();
                 for (ErrorDescription error : highlightingTask.errors) {

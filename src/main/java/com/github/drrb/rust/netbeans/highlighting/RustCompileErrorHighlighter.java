@@ -53,12 +53,14 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
+import org.openide.util.RequestProcessor;
 
 /**
  *
  */
 public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustParserResult> {
     private static final Logger LOG = Logger.getLogger(RustCompileErrorHighlighter.class.getName());
+    private static final RequestProcessor EXECUTOR = new RequestProcessor("Rust Compile", 12);
 
     @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TaskFactory.class)
     public static class Factory extends TaskFactory {
@@ -71,14 +73,29 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
 
     @Override
     public void run(NetbeansRustParserResult parseResult, SchedulerEvent event) {
-        //TODO: this approach makes highlighting slow if project is more than
-        // a handful of files. We need some caching, which will probably require
-        // changes to be made to rustc.
         try {
             if (parseResult.getResult().isFailure()) {
                 return;
             }
-            Snapshot snapshot = parseResult.getSnapshot();
+        } catch (ParseException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        final Snapshot snapshot = parseResult.getSnapshot();
+        EXECUTOR.post(new Runnable() {
+
+            @Override
+            public void run() {
+                compile(snapshot);
+            }
+        });
+    }
+
+    @VisibleForTesting
+    public void compile(Snapshot snapshot) {
+        //TODO: this approach makes highlighting slow if project is more than
+        // a handful of files. We need some caching, which will probably require
+        // changes to be made to rustc.
+        try {
             FileObject sourceFile = snapshot.getSource().getFileObject();
 
             //TODO: What if it's not in a project, or it's in a aproject of a different type?
@@ -100,10 +117,10 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
                 source = crateFile.asText(UTF_8.name());
             }
             List<RustParseMessage> messages = new RustCompiler().compile(FileUtil.toFile(crateFile), source, FileUtil.toFile(sourceFile), RustConfiguration.get().getLibrariesPaths());
-            StyledDocument document = GsfUtilitiesHack.getDocument(sourceFile, false);
+            StyledDocument document = GsfUtilitiesHack.getDocument(sourceFile, true);
             List<ErrorDescription> errors = getErrors(messages, document);
             setErrors(document, "rust-compile-errors", errors);
-        } catch (ParseException | BadLocationException | IOException ex) {
+        } catch (BadLocationException | IOException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
@@ -130,7 +147,7 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
     }
 
     @VisibleForTesting
-    protected List<ErrorDescription> getErrors(List<RustParseMessage> messages, StyledDocument document) throws ParseException, BadLocationException {
+    protected List<ErrorDescription> getErrors(List<RustParseMessage> messages, StyledDocument document) throws BadLocationException {
         List<ErrorDescription> errors = new LinkedList<>();
         for (RustParseMessage message : messages) {
             if (message.getLevel() != HELP) {
