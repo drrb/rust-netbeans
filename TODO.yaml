@@ -1,6 +1,10 @@
 pipeline:
-    - Fix highlighting for multi-file crates (compile from root, not file in editor)
     - Create/Reuse output windows
+    - Git menu in project context menu
+    - Caching AST?
+    - Don't wait for compile highlighting before showing semantic highlighting
+bugs:
+    - Brace completion doesn't work at end of document
 features:
     editor:
         - Cargo.toml highlighting

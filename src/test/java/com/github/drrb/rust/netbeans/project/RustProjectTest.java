@@ -16,33 +16,16 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
-import com.github.drrb.rust.netbeans.rustbridge.RustCrateType;
-import static com.github.drrb.rust.netbeans.test.TestData.getData;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import static java.util.Arrays.asList;
-import java.util.LinkedList;
-import java.util.List;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;
-import org.openide.filesystems.FileObject;
 import static org.hamcrest.Matchers.*;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.api.project.ProjectUtils;
-import org.netbeans.spi.project.ui.LogicalViewProvider;
-import org.openide.filesystems.FileUtil;
-import org.openide.nodes.Node;
-import org.openide.util.UtilitiesTest.NamedServicesProviderImpl;
-import org.openide.util.lookup.Lookups;
-import org.openide.util.test.MockLookup;
 
 /**
  *
@@ -51,46 +34,13 @@ public class RustProjectTest {
 
     @Rule
     public final TemporaryFolder tempFolder = new TemporaryFolder();
-    private FileObject projectDirectory;
+    @Rule
+    public final NetbeansWithRust netbeans = new NetbeansWithRust();
     private Project project;
 
     @Before
     public void setUp() throws Exception {
-        NamedServicesProviderImpl namedServicesProvider = new NamedServicesProviderImpl();
-        MockLookup.setInstances(namedServicesProvider);
-        namedServicesProvider.addNamedLookup("Projects/com-github-drrb-rust-netbeans-project/Lookup", Lookups.fixed(new RustSources(project)));
-        namedServicesProvider.addNamedLookup("Projects/com-github-drrb-rust-netbeans-project/Nodes", Lookups.fixed(new ProjectFilesNodeFactory(), new SourcesNodeFactory()));
-        projectDirectory = FileUtil.toFileObject(getData("RustProjectTest/testrustproject"));
-        project = new RustProject(projectDirectory, null);
-    }
-
-    @Test
-    public void shouldLookUpCrates() throws Exception {
-        Path projectDirectoryPath = tempFolder.newFolder("RustProjectTest").toPath();
-        FileObject projectDirectory = FileUtil.toFileObject(projectDirectoryPath.toFile());
-        RustProject project = new RustProject(projectDirectory, null);
-        StringBuilder cargoFile = new StringBuilder();
-        cargoFile.append("[package]\n");
-        cargoFile.append("name = \"myproject\"\n");
-        cargoFile.append("\n");
-        cargoFile.append("[lib]\n");
-        cargoFile.append("crate-type = [ \"dylib\" ]\n");
-        cargoFile.append("name = \"greetings\"\n");
-        cargoFile.append("path = \"src/greetings.rs\"\n");
-        cargoFile.append("[[bin]]\n");
-        cargoFile.append("name = \"greet\"\n");
-        cargoFile.append("path = \"src/hello.rs\"\n");
-
-        Files.write(projectDirectoryPath.resolve("Cargo.toml"), cargoFile.toString().getBytes(UTF_8));
-
-        Crate expectedBinCrate = new Crate(RustCrateType.EXECUTABLE, projectDirectory.getFileObject("src/hello.rs"));
-        Crate expectedDylibCrate = new Crate(RustCrateType.DYLIB, projectDirectory.getFileObject("src/greetings.rs"));
-        assertThat(project.getCrates(), is(asList(expectedDylibCrate, expectedBinCrate)));
-    }
-
-    @Test
-    public void shouldReturnProjectFolder() {
-        assertThat(project.getProjectDirectory(), is(projectDirectory));
+        project = netbeans.getTestProject("project/simple");
     }
 
     @Test
@@ -111,7 +61,7 @@ public class RustProjectTest {
     public void shouldNameProjectAfterDirectory() {
         ProjectInformation info = ProjectUtils.getInformation(project);
 
-        assertThat(info.getName(), is("testrustproject"));
+        assertThat(info.getName(), is("simple"));
     }
 
     @Test
@@ -119,15 +69,6 @@ public class RustProjectTest {
         ProjectInformation info = ProjectUtils.getInformation(project);
 
         assertThat(info.getDisplayName(), is("Test Rust Project"));
-    }
-
-    @Test
-    public void shouldFallBackToDirNameIfNoPackageNameInConfig() {
-        projectDirectory = FileUtil.toFileObject(getData("RustProjectTest/testrustproject-nocargo"));
-        project = new RustProject(projectDirectory, null);
-        ProjectInformation info = ProjectUtils.getInformation(project);
-
-        assertThat(info.getDisplayName(), is("testrustproject-nocargo"));
     }
 
     @Test
@@ -139,43 +80,12 @@ public class RustProjectTest {
     }
 
     @Test
-    public void shouldHaveLogicalViewProvider() throws Exception {
-        LogicalViewProvider logicalViewProvider = project.getLookup().lookup(LogicalViewProvider.class);
-        Node projectNode = logicalViewProvider.createLogicalView();
-        assertThat(projectNode.getDisplayName(), is("Test Rust Project"));
-
-        assertThat(projectNode, hasChildren("Cargo.toml")); //Actually, it has "Sources" too, but we seem to not be setting up the lookups properly
-//        assertThat(projectNode, hasChildren("Sources", "Cargo.toml"));
+    public void shouldFallBackToDirNameIfNoPackageNameInConfig() throws Exception {
+        netbeans.checkLogicalView("project/noname");
     }
 
-    private Matcher<Node> hasChildren(String... children) {
-        return new HasChildren(children);
-    }
-
-    private static class HasChildren extends TypeSafeDiagnosingMatcher<Node> {
-
-        private final String[] expectedChildNames;
-
-        HasChildren(String[] expectedChildNames) {
-            this.expectedChildNames = expectedChildNames.clone();
-        }
-
-        @Override
-        protected boolean matchesSafely(Node node, Description mismatchDescription) {
-            Node[] actualChildren = node.getChildren().getNodes(true); // 'true' loads the children if they're lazily loading (otherwise they're displayed as "Please Wait..."
-            List<String> actualChildNames = new LinkedList<>();
-            for (Node actualChild : actualChildren) {
-                actualChildNames.add(actualChild.getDisplayName());
-            }
-            mismatchDescription.appendText("got node with children: ")
-                                .appendValueList("<", ", ", ">", actualChildNames);
-            return actualChildNames.equals(asList(expectedChildNames));
-        }
-
-        @Override
-        public void describeTo(Description description) {
-            description.appendText("node with children: ")
-                        .appendValueList("<", ", ", ">", expectedChildNames);
-        }
+    @Test
+    public void shouldDisplaySourcesHierarchyInSourceLogicalView() throws Exception {
+        netbeans.checkLogicalView("project/simple");
     }
 }

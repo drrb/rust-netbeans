@@ -1,0 +1,6 @@
+[package]
+name = "Test Rust Project"
+
+[[bin]]
+name = "run"
+path = "src/main.rs"

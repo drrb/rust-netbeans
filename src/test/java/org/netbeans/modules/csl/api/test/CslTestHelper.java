@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.test;
+package org.netbeans.modules.csl.api.test;
 
-import com.github.drrb.rust.netbeans.RustLanguage;
-import com.google.common.collect.ObjectArrays;
+import com.google.common.base.Strings;
 import java.awt.EventQueue;
 import java.io.File;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.reflect.InvocationTargetException;
-import static java.util.Arrays.asList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JEditorPane;
@@ -37,30 +35,35 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.api.editor.mimelookup.test.MockMimeLookup;
-import org.netbeans.api.lexer.Language;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
+import org.netbeans.api.project.Project;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.lib.lexer.test.TestLanguageProvider;
 import org.netbeans.modules.csl.api.Formatter;
-import org.netbeans.modules.csl.api.test.CslTestBase;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
-import org.netbeans.modules.editor.bracesmatching.BraceMatchingSidebarFactory;
+import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.nodes.Node;
 
 /**
  *
  */
 public class CslTestHelper extends CslTestBase implements TestRule {
-
     @Retention(RUNTIME)
     public @interface RunInEventQueueThread {
     }
 
-    public CslTestHelper() {
+    public static CslTestHelper forLanguage(DefaultLanguageConfig language) {
+        return new CslTestHelper(language);
+    }
+
+    private final DefaultLanguageConfig language;
+    public CslTestHelper(DefaultLanguageConfig language) {
         super("");
+        this.language = language;
     }
 
     @Override
@@ -104,7 +107,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        //This makes RustLanguage available to the formatter (at least: it may do other things too)!
+        //This makes our language available to the formatter (at least: it may do other things too)!
         TestLanguageProvider.register(getPreferredLanguage().getLexerLanguage());
 
         //TODO: why do we have to do this? CslTestBase picks up our generated-layer.xml,
@@ -142,12 +145,12 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
     @Override
     protected DefaultLanguageConfig getPreferredLanguage() {
-        return new RustLanguage();
+        return language;
     }
 
     @Override
     protected String getPreferredMimeType() {
-        return RustLanguage.MIME_TYPE;
+        return getPreferredLanguage().getLexerLanguage().mimeType();
     }
 
     @Override
@@ -172,6 +175,11 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         return hi.tokenSequence(getPreferredLanguage().getLexerLanguage());
     }
 
+    @Override
+    public void assertDescriptionMatches(String relFilePath, String description, boolean includeTestName, String ext) throws Exception {
+        super.assertDescriptionMatches(relFilePath, description, includeTestName, ext);
+    }
+
     public void checkBracketsMatch(String sourceWithBracketPointers) throws Exception {
         super.assertMatches2(sourceWithBracketPointers);
     }
@@ -187,6 +195,13 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
     public void checkParseMessages(String relFilePath) throws Exception {
         super.checkErrors(relFilePath);
+    }
+
+    public void checkLogicalView(String relProjectPath) throws Exception {
+        Project project = getTestProject(relProjectPath);
+        LogicalViewProvider logicalViewProvider = project.getLookup().lookup(LogicalViewProvider.class);
+        String logicalView = new TreeView(logicalViewProvider.createLogicalView()).render();
+        assertDescriptionMatches(relProjectPath, logicalView, false, ".logicalview");
     }
 
     //From PHPNetLineIndenterTest
@@ -221,5 +236,38 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
         String target = doc.getText(0, doc.getLength());
         assertDescriptionMatches(file, target, false, ".indented");
+    }
+
+    protected static class TreeView {
+        private final Node root;
+        private StringBuilder view;
+
+        public TreeView(Node root) {
+            this.root = root;
+        }
+
+        public String render() {
+            view = new StringBuilder();
+            renderTree(root, 0);
+            return view.toString();
+        }
+
+        private void renderTree(Node node, int indentDepth) {
+            String indent;
+            if (indentDepth == 0) {
+                indent = "";
+            } else {
+                indent = Strings.repeat(" ", indentDepth * 4 - 2) + "- ";
+            }
+            view.append(indent).append(node.getDisplayName()).append(":");
+            Node[] childNodes = node.getChildren().getNodes(true);
+            if (childNodes.length == 0) {
+                view.append(" []");
+            }
+            view.append("\n");
+            for (Node child : childNodes) {
+                renderTree(child, indentDepth + 1);
+            }
+        }
     }
 }

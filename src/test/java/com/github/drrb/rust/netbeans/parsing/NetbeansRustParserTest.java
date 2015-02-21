@@ -16,7 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.test.CslTestHelper;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,11 +26,11 @@ import org.junit.Test;
 public class NetbeansRustParserTest {
 
     @Rule
-    public final CslTestHelper csl = new CslTestHelper();
+    public final NetbeansWithRust netbeans = new NetbeansWithRust();
 
     @Test
     public void shouldHighlightErrorFromMissingParenthesis() throws Exception {
-        csl.checkParseMessages("parse/missing_parenthesis.rs");
+        netbeans.checkParseMessages("parse/missing_parenthesis.rs");
     }
 
 }

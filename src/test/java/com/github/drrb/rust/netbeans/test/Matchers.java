@@ -18,7 +18,6 @@ package com.github.drrb.rust.netbeans.test;
 
 import com.google.common.collect.Sets;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import org.hamcrest.Description;

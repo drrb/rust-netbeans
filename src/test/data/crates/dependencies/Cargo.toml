@@ -1,0 +1,6 @@
+[package]
+name = "myproject"
+
+[[bin]]
+name = "dosomething"
+path = "src/main.rs"

@@ -1,0 +1,10 @@
+[package]
+name = "myproject"
+
+[lib]
+crate-type = [ "dylib" ]
+name = "greetings"
+path = "src/greetings.rs"
+[[bin]]
+name = "greet"
+path = "src/hello.rs"

@@ -20,7 +20,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
-import com.github.drrb.rust.netbeans.test.CslTestHelper;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
 import junit.framework.AssertionFailedError;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -33,7 +33,7 @@ import org.netbeans.lib.lexer.test.LexerTestUtilities;
  */
 public class NetbeansRustLexerTest {
 
-    private final CslTestHelper netbeans = new CslTestHelper();
+    private final NetbeansWithRust netbeans = new NetbeansWithRust();
 
     @Test
     public void shouldParseSource() {

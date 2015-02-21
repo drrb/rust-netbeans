@@ -32,7 +32,7 @@ public enum RustCrateType {
         this.cargoName = cargoName;
     }
 
-    private static RustCrateType forCargoName(String cargoName) {
+    public static RustCrateType forCargoName(String cargoName) {
         for (RustCrateType type : values()) {
             if (type.cargoName.equals(cargoName)) {
                 return type;

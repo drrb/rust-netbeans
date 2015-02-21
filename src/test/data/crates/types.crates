@@ -1,0 +1,8 @@
+crates:
+    src/greetings.rs: DYLIB
+    src/hello.rs: EXECUTABLE
+sources:
+    src/hello.rs:
+        crate: src/hello.rs
+    src/greetings.rs:
+        crate: src/greetings.rs

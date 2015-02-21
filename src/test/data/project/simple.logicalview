@@ -1,0 +1,6 @@
+Test Rust Project:
+  - Sources:
+      - dirmod:
+          - mod.rs: []
+      - main.rs: []
+  - Cargo.toml: []

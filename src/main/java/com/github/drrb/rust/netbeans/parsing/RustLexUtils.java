@@ -17,6 +17,9 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import com.github.drrb.rust.netbeans.util.Option;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
@@ -25,9 +28,10 @@ import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.spi.ParserResult;
 
 public class RustLexUtils {
+    private static final Logger LOG = Logger.getLogger(RustLexUtils.class.getName());
 
     public TokenSequence<RustTokenId> getRustTokenSequence(Document doc, int offset) {
-        TokenHierarchy<Document> tokenHierarchy = TokenHierarchy.get(doc);
+        TokenHierarchy<?> tokenHierarchy = TokenHierarchy.get(doc);
         TokenSequence<RustTokenId> topLevelTokenSequence = tokenHierarchy.tokenSequence(RustTokenId.language());
         if (topLevelTokenSequence != null) {
             return topLevelTokenSequence;
@@ -38,10 +42,22 @@ public class RustLexUtils {
             return embeddedRustTokenSequence;
         }
 
-        return getEmbeddedRustTokenSequence(tokenHierarchy, offset, false);
+        TokenSequence<RustTokenId> embeddedRustTokenSequenceForwards = getEmbeddedRustTokenSequence(tokenHierarchy, offset, false);
+        if (embeddedRustTokenSequenceForwards != null) {
+            return embeddedRustTokenSequenceForwards;
+        }
+
+        try {
+            LOG.warning("Couldn't get Rust token sequence for document. Falling back to lexing it ourselves.");
+            tokenHierarchy = TokenHierarchy.create(doc.getText(0, doc.getLength()), RustTokenId.language());
+            return tokenHierarchy.tokenSequence(RustTokenId.language());
+        } catch (BadLocationException ex) {
+            LOG.log(Level.WARNING, "Couldn't get Rust token sequence for document at all!", ex);
+            return null;
+        }
     }
 
-    private TokenSequence<RustTokenId> getEmbeddedRustTokenSequence(TokenHierarchy<Document> tokenHierarchy, int offset, boolean backwardBias) {
+    private TokenSequence<RustTokenId> getEmbeddedRustTokenSequence(TokenHierarchy<?> tokenHierarchy, int offset, boolean backwardBias) {
         for (TokenSequence<? extends TokenId> tokenSequence : tokenHierarchy.embeddedTokenSequences(offset, backwardBias)) {
             if (tokenSequence.language() == RustTokenId.language()) {
                 @SuppressWarnings("unchecked")

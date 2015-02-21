@@ -18,7 +18,6 @@ package com.github.drrb.rust.netbeans.parsing;
 
 import com.github.drrb.rust.netbeans.rustbridge.RustParser;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
-import com.google.common.annotations.VisibleForTesting;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -43,8 +43,7 @@ public class Crate {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        return hash;
+        return Objects.hash(type, file);
     }
 
     @Override
@@ -65,4 +64,8 @@ public class Crate {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Crate(%s): '%s'", type, file);
+    }
 }

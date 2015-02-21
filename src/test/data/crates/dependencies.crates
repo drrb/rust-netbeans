@@ -1,0 +1,11 @@
+crates:
+    src/main.rs: EXECUTABLE
+sources:
+    src/orphan.rs:
+        crate: src/orphan.rs
+    src/main.rs:
+        crate: src/main.rs
+    src/other/mod.rs:
+        crate: src/main.rs
+    src/other/third.rs:
+        crate: src/main.rs

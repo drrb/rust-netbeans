@@ -16,7 +16,11 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.rustbridge.RustCrateType;
+import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
+import com.google.common.collect.Iterables;
 import com.moandjiezana.toml.Toml;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -24,14 +28,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
+import javax.swing.text.Document;
 import org.netbeans.api.annotations.common.StaticResource;
+import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;
@@ -93,49 +98,8 @@ public class RustProject implements Project {
         return LookupProviderSupport.createCompositeLookup(baseLookup, PROJECT_LOOKUP_NAME);
     }
 
-    private Toml getCargoConfig() {
-        FileObject cargoFile = projectDirectory.getFileObject("Cargo.toml");
-        if (cargoFile == null) {
-            return new Toml();
-        }
-        try {
-            return new Toml().parse(new InputStreamReader(cargoFile.getInputStream(), UTF_8));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(RustProject.class.getName()).log(Level.WARNING, "Couldn't read crates from Cargo.toml", ex);
-            return new Toml();
-        }
-    }
-
-    public List<Crate> getCrates() {
-        Toml cargoConfig = getCargoConfig();
-
-        List<Crate> crates = new LinkedList<>();
-        Toml libCrate = cargoConfig.getTable("lib");
-        String libCratePath = libCrate.getString("path");
-        if (libCratePath != null) {
-            FileObject crateFile = projectDirectory.getFileObject(libCratePath);
-            List<String> libCrateTypes = libCrate.getList("crate-type", String.class);
-            if (libCrateTypes.isEmpty()) {
-                libCrateTypes.add("rlib");
-            }
-            for (String libCrateType : libCrateTypes) {
-                if (libCrateType.equals("dylib")) {
-                    crates.add(new Crate(RustCrateType.DYLIB, crateFile));
-                } else if (libCrateType.equals("rlib")) {
-                    crates.add(new Crate(RustCrateType.RLIB, crateFile));
-                } else if (libCrateType.equals("staticlib")) {
-                    crates.add(new Crate(RustCrateType.STATICLIB, crateFile));
-                }
-            }
-        }
-
-        List<Toml> binCrates = cargoConfig.getTables("bin");
-        for (Toml binCrate : binCrates) {
-            String cratePath = binCrate.getString("path");
-            FileObject crateFile = projectDirectory.getFileObject(cratePath);
-            crates.add(new Crate(RustCrateType.EXECUTABLE, crateFile));
-        }
-        return crates;
+    public CargoConfig getCargoConfig() {
+        return new CargoConfig(projectDirectory);
     }
 
     private class Info implements ProjectInformation {
@@ -147,15 +111,12 @@ public class RustProject implements Project {
 
         @Override
         public String getDisplayName() {
-            FileObject cargoFile = projectDirectory.getFileObject("Cargo.toml");
-            if (cargoFile == null) return getName();
-            try {
-                Toml cargoConf = new Toml().parse(cargoFile.asText("UTF-8"));
-                return cargoConf.getTable("package").getString("name");
-            } catch (IOException | IllegalStateException ex) {
-                LOGGER.log(Level.WARNING, "Failed to load project name from Cargo config: {}", ex);
-                return getName();
+            String packageName = getCargoConfig().getPackageName();
+            if (packageName == null) {
+                LOGGER.log(Level.WARNING, "Failed to load project name from Cargo config");
+                packageName = getName();
             }
+            return packageName;
         }
 
         @Override

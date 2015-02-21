@@ -16,8 +16,8 @@
  */
 package com.github.drrb.rust.netbeans.formatting;
 
-import com.github.drrb.rust.netbeans.test.CslTestHelper;
-import com.github.drrb.rust.netbeans.test.CslTestHelper.RunInEventQueueThread;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
+import org.netbeans.modules.csl.api.test.CslTestHelper.RunInEventQueueThread;
 import com.github.drrb.rust.netbeans.test.PrintTestMethods;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,42 +28,42 @@ import org.junit.Test;
 public class RustFormatterTest {
 
     @Rule
-    public final CslTestHelper csl = new CslTestHelper();
+    public final NetbeansWithRust netbeans = new NetbeansWithRust();
     @Rule
     public final PrintTestMethods printTestMethods = new PrintTestMethods();
 
     @Test
     public void shouldFormatFunction() throws Exception {
-        csl.reformatFileContents("format/function.rs");
+        netbeans.reformatFileContents("format/function.rs");
     }
 
     @Test
     public void shouldFormatStruct() throws Exception {
-        csl.reformatFileContents("format/struct.rs");
+        netbeans.reformatFileContents("format/struct.rs");
     }
 
     @Test
     @RunInEventQueueThread
     public void shouldIndentSameInsideBlock() throws Exception {
-        csl.testIndentInFile("indent/inside_block.rs");
+        netbeans.testIndentInFile("indent/inside_block.rs");
     }
 
     @Test
     @RunInEventQueueThread
     public void shouldIndentFurtherAfterBrace() throws Exception {
-        csl.testIndentInFile("indent/into_existing_function.rs");
+        netbeans.testIndentInFile("indent/into_existing_function.rs");
     }
 
     @Test
     @RunInEventQueueThread
     public void shouldIgnoreWhitespaceAfterBrace() throws Exception {
-        csl.testIndentInFile("indent/ignore_trailing_whitespace.rs");
+        netbeans.testIndentInFile("indent/ignore_trailing_whitespace.rs");
     }
 
     @Test
     @RunInEventQueueThread
     public void shouldInsertWhenInsertingBreakAfterBrace() throws Exception {
-        csl.testIndentInFile("indent/after_brace.rs");
+        netbeans.testIndentInFile("indent/after_brace.rs");
     }
 
 }

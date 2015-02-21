@@ -16,45 +16,29 @@
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.RustSourceSnapshot;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.text.StyledDocument;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
+import org.junit.Rule;
 import org.junit.Test;
-import org.netbeans.spi.editor.hints.ErrorDescription;
-import org.netbeans.spi.editor.hints.Severity;
 
 /**
  */
 public class RustCompileErrorHighlighterTest {
 
+    @Rule
+    public final NetbeansWithRust netbeans = new NetbeansWithRust();
+
     @Test
     public void shouldExtractErrorForHighlighting() throws Exception {
-        RustSourceSnapshot function = new RustSourceSnapshot();
-        function.appendln("fn main(name: String) {");
-        function.appendln("    printtheline!(\"Hello, {}\", name);");
-        function.appendln("}");
-        NetbeansRustParserResult parseResult = function.parse();
-        final List<ErrorDescription> errors = new LinkedList<>();
-        RustCompileErrorHighlighter highlightingTask = new RustCompileErrorHighlighter() {
+        netbeans.checkCompileErrors("compile/singlefile", "src/main.rs");
+    }
 
-            @Override
-            protected void setErrors(StyledDocument document, String layerName, List<ErrorDescription> reportedErrors) {
-                errors.addAll(reportedErrors);
-            }
+    @Test
+    public void shouldOnlyShowErrorsFromThisFile() throws Exception {
+        netbeans.checkCompileErrors("compile/errorinotherfile", "src/in_editor.rs");
+    }
 
-        };
-        highlightingTask.run(parseResult, null);
-
-        assertThat(errors, hasSize(1));
-        ErrorDescription error = errors.get(0);
-        assertThat(error.getSeverity(), is(Severity.ERROR));
-        assertThat(error.getDescription(), is("macro undefined: 'printtheline!'"));
-        //TODO: getRange() returns null in the test. Fix it?
-        //assertThat(error.getRange().getBegin().getLine(), is(2));
-        //assertThat(error.getRange().getBegin().getColumn(), is(8));
+    @Test
+    public void shouldParseFromCrate() throws Exception {
+        netbeans.checkCompileErrors("compile/siblingmoduleimport", "src/in_editor.rs");
     }
 }

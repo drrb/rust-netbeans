@@ -16,7 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.test.CslTestHelper;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,20 +26,20 @@ import org.junit.Test;
 public class RustBracesMatcherTest {
 
     @Rule
-    public final CslTestHelper csl = new CslTestHelper();
+    public final NetbeansWithRust netbeans = new NetbeansWithRust();
 
     @Test
     public void shouldMatchBraces() throws Exception {
-        csl.checkBracketsMatch("fn main() ^{ ^}");
+        netbeans.checkBracketsMatch("fn main() ^{ ^}");
     }
 
     @Test
     public void shouldMatchParentheses() throws Exception {
-        csl.checkBracketsMatch("fn main^( ^) { }");
+        netbeans.checkBracketsMatch("fn main^( ^) { }");
     }
 
     @Test
     public void shouldMatchAngleBrackestForGenerics() throws Exception {
-        csl.checkBracketsMatch("fn main^<T^> () { }");
+        netbeans.checkBracketsMatch("fn main^<T^> () { }");
     }
 }

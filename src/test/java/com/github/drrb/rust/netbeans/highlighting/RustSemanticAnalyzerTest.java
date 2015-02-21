@@ -16,7 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.test.CslTestHelper;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,35 +26,35 @@ import org.junit.Test;
 public class RustSemanticAnalyzerTest {
 
     @Rule
-    public final CslTestHelper csl = new CslTestHelper();
+    public final NetbeansWithRust netbeans = new NetbeansWithRust();
 
     @Test
     public void shouldFindFunctionDeclaration() throws Exception {
-        csl.checkSemantic("semantic/function.rs");
+        netbeans.checkSemantic("semantic/function.rs");
     }
 
     @Test
     public void shouldFindStructDeclaration() throws Exception {
-        csl.checkSemantic("semantic/struct.rs");
+        netbeans.checkSemantic("semantic/struct.rs");
     }
 
     @Test
     public void shouldFindImplDeclaration() throws Exception {
-        csl.checkSemantic("semantic/impl.rs");
+        netbeans.checkSemantic("semantic/impl.rs");
     }
 
     @Test
     public void shouldFindEnumDeclaration() throws Exception {
-        csl.checkSemantic("semantic/enum.rs");
+        netbeans.checkSemantic("semantic/enum.rs");
     }
 
     @Test
     public void shouldFindTraitDeclaration() throws Exception {
-        csl.checkSemantic("semantic/trait.rs");
+        netbeans.checkSemantic("semantic/trait.rs");
     }
 
     @Test
     public void shouldFindTraitImplDeclaration() throws Exception {
-        csl.checkSemantic("semantic/trait_impl.rs");
+        netbeans.checkSemantic("semantic/trait_impl.rs");
     }
 }

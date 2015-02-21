@@ -25,8 +25,8 @@ import java.util.List;
  */
 public class RustCompiler {
 
-    //TODO: this looks identical to RustParser.parse()
-    public List<RustParseMessage> compile(File sourcePath, String source, List<String> searchPaths) {
+    //TODO: this looks similar to RustParser.parse()
+    public List<RustParseMessage> compile(File sourcePath, String source, File relevantFile, List<String> searchPaths) {
         // It's important to tell rustc the full path, because it uses it to find
         //  mods referenced from this file.
         if (!sourcePath.isAbsolute()) {
@@ -44,7 +44,7 @@ public class RustCompiler {
         // Can we do that, or do we need the other files' messages for later?
         List<RustParseMessage> relevantParseMessages = new LinkedList<>();
         for (RustParseMessage message : messageAccumulator.getMessages()) {
-            if (message.getFile().equals(sourcePath)) {
+            if (message.getFile().equals(relevantFile)) {
                 relevantParseMessages.add(message);
             }
         }

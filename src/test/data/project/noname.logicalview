@@ -1,0 +1,4 @@
+noname:
+  - Sources:
+      - main.rs: []
+  - Cargo.toml: []

@@ -22,7 +22,6 @@ import java.io.File;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.nio.file.Files;
 import java.util.List;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -44,7 +43,7 @@ public class RustCompilerTest {
     @Test
     public void shouldCompileStringToExecutable() throws Exception {
         File file = tempFolder.newFile("test.rs");
-        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() { }", RustConfiguration.get().getLibrariesPaths());
+        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() { }", file, RustConfiguration.get().getLibrariesPaths());
         assertThat(messages, is(empty()));
     }
 
@@ -52,7 +51,7 @@ public class RustCompilerTest {
     public void shouldGiveMessagesOnNonParseCompileErrors() throws Exception {
         File file = tempFolder.newFile("test.rs");
         // main() shouldn't return String, so we expect an error
-        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() -> String { }", RustConfiguration.get().getLibrariesPaths());
+        List<RustParseMessage> messages = new RustCompiler().compile(file, "fn main() -> String { }", file, RustConfiguration.get().getLibrariesPaths());
         assertThat(messages, hasSize(1));
     }
 
@@ -61,7 +60,7 @@ public class RustCompilerTest {
         File mainFile = tempFolder.newFile("main.rs");
         File modFile = tempFolder.newFile("other.rs");
         Files.write(modFile.toPath(), "pub fn other_function() { }".getBytes(UTF_8));
-        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", RustConfiguration.get().getLibrariesPaths());
+        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", mainFile, RustConfiguration.get().getLibrariesPaths());
         assertThat(messages, is(empty()));
     }
 
@@ -70,7 +69,7 @@ public class RustCompilerTest {
         File mainFile = tempFolder.newFile("main.rs");
         File modFile = tempFolder.newFile("other.rs");
         Files.write(modFile.toPath(), "pub fn other_function() { x x }".getBytes(UTF_8));
-        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", RustConfiguration.get().getLibrariesPaths());
+        List<RustParseMessage> messages = new RustCompiler().compile(mainFile, "mod other;\nfn main() { other::other_function() }", mainFile, RustConfiguration.get().getLibrariesPaths());
         assertThat(messages, is(empty()));
     }
 }

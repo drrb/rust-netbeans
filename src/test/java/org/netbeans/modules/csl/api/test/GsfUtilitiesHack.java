@@ -24,11 +24,9 @@ import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.csl.api.DataLoadersBridge;
-import static org.netbeans.modules.csl.spi.GsfUtilities.getDocument;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.text.FilterDocument;
-import org.openide.util.Exceptions;
 import org.openide.util.UserQuestionException;
 
 /**

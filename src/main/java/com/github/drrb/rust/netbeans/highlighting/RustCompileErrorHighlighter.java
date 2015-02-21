@@ -19,19 +19,25 @@ package com.github.drrb.rust.netbeans.highlighting;
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.project.Crate;
+import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.rustbridge.RustCompiler;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
 import static com.github.drrb.rust.netbeans.rustbridge.RustParseMessage.Level.HELP;
+import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
 import com.google.common.annotations.VisibleForTesting;
-import java.io.File;
+import java.io.IOException;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
+import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.ParserResultTask;
@@ -70,19 +76,37 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
                 return;
             }
             Snapshot snapshot = parseResult.getSnapshot();
-            FileObject sourceFileObject = snapshot.getSource().getFileObject();
-            File sourceFile = FileUtil.toFile(sourceFileObject);
-            List<RustParseMessage> messages = new RustCompiler().compile(sourceFile, snapshot.getText().toString(), RustConfiguration.get().getLibrariesPaths());
-            StyledDocument document = NbDocument.getDocument(sourceFileObject);
+            FileObject sourceFile = snapshot.getSource().getFileObject();
+
+            //TODO: What if it's not in a project, or it's in a aproject of a different type?
+            RustProject project = FileOwnerQuery.getOwner(sourceFile).getLookup().lookup(RustProject.class);
+            Crate crate = project.getCargoConfig().getOwningCrate(sourceFile);
+            FileObject crateFile = crate.getFile();
+
+            // If the crate is the one being edited, use its snapshot (i.e. the
+            //  version that is currently in the editor.
+            // TODO: this is a workaround for rustc only letting us provide the
+            //  root file as a string (the others get read directly from disk).
+            //  Ideally we'd like to be able to have Java read the files and
+            //  pass them into Rust via a callback so that we can use snapshots
+            //  for all files.
+            String source;
+            if (crateFile.equals(sourceFile)) {
+                source = snapshot.getText().toString();
+            } else {
+                source = crateFile.asText(UTF_8.name());
+            }
+            List<RustParseMessage> messages = new RustCompiler().compile(FileUtil.toFile(crateFile), source, FileUtil.toFile(sourceFile), RustConfiguration.get().getLibrariesPaths());
+            StyledDocument document = GsfUtilitiesHack.getDocument(sourceFile, false);
             List<ErrorDescription> errors = getErrors(messages, document);
             setErrors(document, "rust-compile-errors", errors);
-        } catch (ParseException | BadLocationException ex) {
+        } catch (ParseException | BadLocationException | IOException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
     @VisibleForTesting
-    protected void setErrors(StyledDocument document, String layerName, List<ErrorDescription> errors) {
+    protected void setErrors(Document document, String layerName, List<ErrorDescription> errors) {
         HintsController.setErrors(document, layerName, errors);
     }
 
@@ -99,8 +123,10 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
 
     @Override
     public void cancel() {
+        //TODO
     }
 
+    @VisibleForTesting
     protected List<ErrorDescription> getErrors(List<RustParseMessage> messages, StyledDocument document) throws ParseException, BadLocationException {
         List<ErrorDescription> errors = new LinkedList<>();
         for (RustParseMessage message : messages) {
