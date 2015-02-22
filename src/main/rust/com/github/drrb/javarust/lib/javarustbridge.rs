@@ -18,7 +18,7 @@
 #![feature(collections)]
 #![feature(core)]
 #![feature(libc)]
-#![feature(path)]
+#![feature(old_path)]
 #![feature(rustc_private)]
 #![feature(std_misc)]
 
@@ -51,7 +51,7 @@ use std::rt::unwind;
 #[allow(non_snake_case)]
 pub extern fn createLexer<'a>(source: *const c_char) -> Box<RustLexer<'a>> {
     let file_name = "<file in netbeans>".to_string();
-    let source = raw::to_string(&source);
+    let source = raw::to_string(source);
     Box::new(RustLexer::new(file_name, source))
 }
 
@@ -86,7 +86,7 @@ pub extern fn parse(
     let result = unsafe {
         unwind::try(|| {
             let message_collector = MessageCollector::new(message_callback);
-            let ast = parser::parse(raw::to_string(&file_name), raw::to_string(&source), message_collector);
+            let ast = parser::parse(raw::to_string(file_name), raw::to_string(source), message_collector);
             result_callback(Box::new(ast));
         })
     };
@@ -121,10 +121,10 @@ pub extern fn compile(
     search_paths_length: c_int,
     message_callback: extern "C" fn (ParseMessage),
 ) -> c_int {
-    let input_path = raw::to_string(&input_path);
-    let input_source = raw::to_string(&input_source);
+    let input_path = raw::to_string(input_path);
+    let input_source = raw::to_string(input_source);
     let search_paths = unsafe { Vec::from_raw_buf(search_paths, search_paths_length as usize) };
-    let search_paths = search_paths.iter().map(|cstring| raw::to_string(&cstring)).collect();
+    let search_paths = search_paths.iter().map(|cstring| raw::to_string(*cstring)).collect();
     let message_collector = MessageCollector::new(message_callback);
     unsafe {
         let result = unwind::try(|| {

@@ -64,8 +64,8 @@ pub fn compile_input(sess: Session,
     // possible to keep the peak memory usage low
     let (expanded_crate, id) = {
         let krate = phase_1_parse_input(&sess, cfg, input);
-        let id = link::find_crate_name(Some(&sess), &krate.attrs[], input);
-        let expanded_crate = match driver::phase_2_configure_and_expand(&sess, krate, &id[], addl_plugins) {
+        let id = link::find_crate_name(Some(&sess), &krate.attrs[..], input);
+        let expanded_crate = match driver::phase_2_configure_and_expand(&sess, krate, &id[..], addl_plugins) {
                 None => return,
                 Some(k) => k
         };
