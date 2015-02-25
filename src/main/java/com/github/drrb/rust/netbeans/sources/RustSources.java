@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.sources;
 
+import com.github.drrb.rust.netbeans.project.RustProject;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.event.ChangeListener;

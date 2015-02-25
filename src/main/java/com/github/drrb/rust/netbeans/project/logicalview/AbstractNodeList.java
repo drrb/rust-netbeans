@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.project.logicalview;
 
 import javax.swing.event.ChangeListener;
 import org.netbeans.spi.project.ui.support.NodeList;

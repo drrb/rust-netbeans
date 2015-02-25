@@ -18,7 +18,7 @@ package com.github.drrb.rust.netbeans.classpath;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.project.RustProject;
-import com.github.drrb.rust.netbeans.project.RustSourceGroup;
+import com.github.drrb.rust.netbeans.sources.RustSourceGroup;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.classpath.GlobalPathRegistry;
 import org.netbeans.api.project.Project;

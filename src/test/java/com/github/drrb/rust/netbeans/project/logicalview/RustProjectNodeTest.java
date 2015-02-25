@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.project.logicalview;
 
+import com.github.drrb.rust.netbeans.project.RustProject;
 import java.awt.Image;
 import java.beans.BeanInfo;
 import static java.nio.charset.StandardCharsets.UTF_8;

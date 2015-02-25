@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.project.logicalview;
 
+import com.github.drrb.rust.netbeans.sources.RustSourceGroup;
+import com.github.drrb.rust.netbeans.project.RustProject;
 import java.awt.Image;
 import java.util.Arrays;
 import java.util.List;
@@ -115,7 +117,7 @@ public class SourcesNodeFactory implements NodeFactory {
                         return folder.getNodeDelegate();
                     }
                 } catch (IllegalStateException exception) {
-                    //The data systems API is not thread save,
+                    //The data systems API is not thread safe,
                     //the DataObject may become invalid after isValid call and before
                     //getNodeDelegate call, we have to catch the ISE. When the DataObject
                     //is valid - other cause rethrow it otherwise return leaf node.

@@ -19,7 +19,7 @@ package com.github.drrb.rust.netbeans.highlighting;
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.project.Crate;
+import com.github.drrb.rust.netbeans.cargo.Crate;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.rustbridge.RustCompiler;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;

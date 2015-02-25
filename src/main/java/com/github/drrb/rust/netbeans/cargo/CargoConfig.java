@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.cargo;
 
 import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
@@ -23,9 +23,9 @@ import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
 import com.google.common.collect.Iterables;
 import com.moandjiezana.toml.Toml;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

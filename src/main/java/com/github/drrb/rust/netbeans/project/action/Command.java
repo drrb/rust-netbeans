@@ -14,31 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.project.action;
 
-import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
-import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.openide.util.Lookup;
 
 /**
  *
  */
-public class CargoConfigTest {
-
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
-    @Rule
-    public final NetbeansWithRust netbeans = new NetbeansWithRust();
-
-    @Test
-    public void shouldFindCratesInCargoConfig() throws Exception {
-        netbeans.checkCrates("crates/types");
-    }
-
-    @Test
-    public void shouldFindCratesForEachSource() throws Exception {
-        netbeans.checkCrates("crates/dependencies");
-    }
-
+public interface Command {
+    String getId();
+    void run(Lookup context);
 }

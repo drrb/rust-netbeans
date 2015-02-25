@@ -16,27 +16,15 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
-import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
-import com.github.drrb.rust.netbeans.rustbridge.RustCrateType;
-import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
-import com.google.common.collect.Iterables;
-import com.moandjiezana.toml.Toml;
+import com.github.drrb.rust.netbeans.project.logicalview.RustProjectNode;
+import com.github.drrb.rust.netbeans.cargo.CargoConfig;
+import com.github.drrb.rust.netbeans.project.action.RustProjectActionProvider;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
-import javax.swing.text.Document;
 import org.netbeans.api.annotations.common.StaticResource;
-import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ProjectState;

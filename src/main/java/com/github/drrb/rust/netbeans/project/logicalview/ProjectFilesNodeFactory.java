@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.project.logicalview;
 
+import com.github.drrb.rust.netbeans.project.RustProject;
 import java.util.Arrays;
 import java.util.List;
 import org.netbeans.api.project.Project;
@@ -51,5 +52,5 @@ public class ProjectFilesNodeFactory implements NodeFactory {
             }
         };
     }
-    
+
 }

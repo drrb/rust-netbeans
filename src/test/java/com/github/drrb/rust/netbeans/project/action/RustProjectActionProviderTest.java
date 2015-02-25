@@ -14,8 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.project;
+package com.github.drrb.rust.netbeans.project.action;
 
+import com.github.drrb.rust.netbeans.cargo.Cargo;
+import com.github.drrb.rust.netbeans.project.RustProject;
+import com.github.drrb.rust.netbeans.project.action.RustProjectActionProvider;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
@@ -35,7 +38,7 @@ public class RustProjectActionProviderTest {
     public void setUp() {
         project = mock(RustProject.class);
         cargo = mock(Cargo.class);
-        actionProvider = new RustProjectActionProvider(cargo);
+        actionProvider = new RustProjectActionProvider(project, cargo);
     }
 
     @Test

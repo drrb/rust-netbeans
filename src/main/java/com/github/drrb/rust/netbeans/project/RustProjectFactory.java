@@ -26,12 +26,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.ServiceProvider;
 
-/**
- * Rustpkg project type.
- *
- * @todo implement {@link ProjectFactory2} instead. Implement that interface,
- * but still register it as a ProjectFactory instance in the lookup
- */
 @ServiceProvider(service = ProjectFactory.class)
 public class RustProjectFactory implements ProjectFactory2 {
 
