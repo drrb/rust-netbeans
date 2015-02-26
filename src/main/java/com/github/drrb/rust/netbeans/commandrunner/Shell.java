@@ -1,0 +1,37 @@
+/*
+ * Copyright (C) 2015 drrb
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.github.drrb.rust.netbeans.commandrunner;
+
+/**
+ *
+ */
+public enum Shell {
+    BASH("/bin/bash", "-lc"),
+    CMD("cmd", "/c");
+
+    private final String command;
+    private final String flags;
+
+    private Shell(String command, String flags) {
+        this.command = command;
+        this.flags = flags;
+    }
+
+    public ProcessBuilder createProcess(String commandLine) {
+        return new ProcessBuilder().command(command, flags, commandLine);
+    }
+}

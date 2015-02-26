@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.cargo;
 
+import com.github.drrb.rust.netbeans.commandrunner.CommandRunner;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.google.common.base.Joiner;
@@ -27,17 +28,17 @@ import java.util.List;
  */
 public class Cargo {
 
-    private final Shell shell;
+    private final CommandRunner commandRunner;
     private final RustProject project;
     private final RustConfiguration configuration;
 
     public Cargo(RustProject project) {
-        this(project, new Shell("Cargo"), RustConfiguration.get());
+        this(project, new CommandRunner("Cargo"), RustConfiguration.get());
     }
 
-    Cargo(RustProject project, Shell shell, RustConfiguration configuration) {
+    Cargo(RustProject project, CommandRunner commandRunner, RustConfiguration configuration) {
         this.project = project;
-        this.shell = shell;
+        this.commandRunner = commandRunner;
         this.configuration = configuration;
     }
 
@@ -47,7 +48,7 @@ public class Cargo {
             cargoCommands.add(String.format("%s %s --verbose", configuration.getCargoPath(), command));
         }
         String commandLine = Joiner.on(" && ").join(cargoCommands);
-        shell.run(commandLine, project.dir());
+        commandRunner.run(commandLine, project.dir());
     }
 
 }

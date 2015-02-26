@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.cargo;
+package com.github.drrb.rust.netbeans.commandrunner;
 
+import com.github.drrb.rust.netbeans.configuration.Os;
 import com.github.drrb.rust.netbeans.util.IoColorLines;
 import com.github.drrb.rust.netbeans.util.Pipe;
 import java.awt.event.ActionEvent;
@@ -35,23 +36,30 @@ import org.openide.util.TaskListener;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 
-public class Shell {
+public class CommandRunner {
 
-    private static final RequestProcessor EXECUTOR = new RequestProcessor("Shell runner", 12);
+    private static final RequestProcessor EXECUTOR = new RequestProcessor("Command runner", 12);
     private final String name;
+    private final Shell shell;
 
-    public Shell(String name) {
+    public static CommandRunner get(String name) {
+        return new CommandRunner(name);
+    }
+
+    public CommandRunner(String name) {
+        this(name, Os.getCurrent().shell());
+    }
+
+    CommandRunner(String name, Shell shell) {
         this.name = name;
+        this.shell = shell;
     }
 
     public void run(String commandLine, File workingDir) {
         LifecycleManager.getDefault().saveAll();
         InputOutput io = IOProvider.get(name).getIO(name, false);
         IoColorLines.printDebug(io, commandLine);
-        //TODO: make this work on Windows too
-        ProcessBuilder processBuilder = new ProcessBuilder()
-                .command("/bin/bash", "-lc", commandLine)
-                .directory(workingDir);
+        ProcessBuilder processBuilder = shell.createProcess(commandLine).directory(workingDir);
         ExecutorTask task = ExecutionEngine.getDefault().execute(name, new WatchingProcessRunner(processBuilder, io), io);
         task.addTaskListener(new CleanUpStreamsWhenFinished(io));
     }

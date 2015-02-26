@@ -19,27 +19,23 @@ package com.github.drrb.rust.netbeans.configuration;
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
-import java.io.File;
 import static java.util.Arrays.asList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.prefs.Preferences;
+import java.util.regex.Pattern;
 import org.openide.util.NbPreferences;
 
 /**
  *
  */
 public class RustConfiguration {
-    static final String KEY_CARGO_PATH = "com.github.drrb.rust.netbeans.cargoPath";
-    static final String KEY_LIBRARIES_PATH = "com.github.drrb.rust.netbeans.libraryPath";
 
     public static RustConfiguration get() {
         return new RustConfiguration(NbPreferences.forModule(RustLanguage.class));
     }
 
-    private final Os os;
     private final Preferences preferences;
+    private final ConfigFlavour os;
 
     @VisibleForTesting
     public RustConfiguration(Preferences preferences) {
@@ -48,83 +44,70 @@ public class RustConfiguration {
 
     @VisibleForTesting
     public RustConfiguration(Os os, Preferences preferences) {
-        this.os = os;
+        this.os = ConfigFlavour.of(os);
         this.preferences = preferences;
     }
 
     public String getCargoPath() {
-        return preferences.get(KEY_CARGO_PATH, getDefaultCargoPath());
-    }
-
-    public String getLibrariesPath() {
-        return preferences.get(KEY_LIBRARIES_PATH, getDefaultLibrariesPath());
+        return getPref(Preference.CARGO_PATH, os.defaultCargoPath);
     }
 
     public List<String> getLibrariesPaths() {
-        return asList(getLibrariesPath().split(File.pathSeparator));
+        String librariesPath = getPref(Preference.LIBRARIES_PATH, os.defaultLibrariesPath);
+        return os.deserializePath(librariesPath);
     }
 
     public void setCargoPath(String cargoPath) {
-        preferences.put(KEY_CARGO_PATH, cargoPath);
-    }
-
-    public void setLibrariesPath(String librariesPath) {
-        preferences.put(KEY_LIBRARIES_PATH, librariesPath);
+        setPref(Preference.CARGO_PATH, cargoPath);
     }
 
     public void setLibrariesPaths(List<String> paths) {
-        preferences.put(KEY_LIBRARIES_PATH, Joiner.on(File.pathSeparator).join(paths));
+        setPref(Preference.LIBRARIES_PATH, os.serializePath(paths));
     }
 
-    private String getDefaultCargoPath() {
-        return os.defaultCargoPath;
+    private String getPref(Preference pref, String defaultValue) {
+        return preferences.get(pref.key, defaultValue);
     }
 
-    private String getDefaultLibrariesPath() {
-        return os.defaultLibrariesPath;
+    private void setPref(Preference pref, String value) {
+        preferences.put(pref.key, value);
     }
 
-    @VisibleForTesting
-    public enum Os {
-        MAC_OS(asList("mac", "darwin"), "/usr/local/bin/cargo", "/usr/local/lib/rustlib/x86_64-apple-darwin/lib"),
-        WINDOWS(asList("win"), "C:\\Rust\\cargo.exe", "C:\\Rust\\libs"),
-        GNU_SLASH_LINUX(asList("nux"), "/usr/local/bin/cargo", "/usr/local/lib"),
-        UNKNOWN(Collections.<String>emptyList(), "/usr/local/bin/cargo", "/usr/local/lib");
+    private enum Preference {
+        CARGO_PATH("com.github.drrb.rust.netbeans.cargoPath"),
+        LIBRARIES_PATH("com.github.drrb.rust.netbeans.libraryPath");
 
-        private final List<String> substrings;
+        private final String key;
+
+        private Preference(String key) {
+            this.key = key;
+        }
+    }
+
+    private enum ConfigFlavour {
+        WINDOWS(";", "C:\\Rust\\bin\\cargo.exe", "C:\\Rust\\libs"),
+        UNIXY(":", "/usr/local/bin/cargo", "/usr/local/lib/rustlib/x86_64-apple-darwin/lib");
+
+        private final String pathSeparator;
         private final String defaultCargoPath;
         private final String defaultLibrariesPath;
 
-        private Os(List<String> substrings, String defaultCargoPath, String defaultLibrariesPath) {
-            this.substrings = substrings;
+        private ConfigFlavour(String pathSeparator, String defaultCargoPath, String defaultLibrariesPath) {
+            this.pathSeparator = pathSeparator;
             this.defaultCargoPath = defaultCargoPath;
             this.defaultLibrariesPath = defaultLibrariesPath;
         }
 
-        public static Os getCurrent() {
-            for (Os os : values()) {
-                if (os.isCurrent()) {
-                    return os;
-                }
-            }
-            return UNKNOWN;
+        public static ConfigFlavour of(Os os) {
+            return os == Os.WINDOWS ? WINDOWS : UNIXY;
         }
 
-        public boolean isCurrent() {
-            for (String substring : substrings) {
-                if (currentOsString().contains(substring)) {
-                    return true;
-                }
-            }
-            return false;
+        private String serializePath(List<String> paths) {
+            return Joiner.on(pathSeparator).join(paths);
         }
 
-        private static boolean currentIs64Bit() {
-            return System.getProperty("os.arch").contains("64");
-        }
-
-        private static String currentOsString() {
-            return System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH);
+        private List<String> deserializePath(String path) {
+            return asList(path.split(Pattern.quote(pathSeparator)));
         }
     }
 }

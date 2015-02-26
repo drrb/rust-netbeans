@@ -17,6 +17,7 @@
 package com.github.drrb.rust.netbeans.configuration;
 
 import com.github.drrb.rust.netbeans.test.TemporaryPreferences;
+import java.io.File;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import org.junit.Test;
@@ -35,18 +36,18 @@ public class RustConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        config = new RustConfiguration(RustConfiguration.Os.MAC_OS, preferences.get());
+        config = new RustConfiguration(Os.MAC, preferences.get());
     }
 
     @Test
     public void shouldReturnSavedCargoPath() throws Exception {
-        preferences.get().put(RustConfiguration.KEY_CARGO_PATH, "/path/to/cargo");
+        preferences.get().put("com.github.drrb.rust.netbeans.cargoPath", "/path/to/cargo");
         assertThat(config.getCargoPath(), is("/path/to/cargo"));
     }
 
     @Test
     public void shouldReturnSavedLibrariesPaths() throws Exception {
-        preferences.get().put(RustConfiguration.KEY_LIBRARIES_PATH, "/path/to/libraries:/path/to/more/libraries");
+        preferences.get().put("com.github.drrb.rust.netbeans.libraryPath", "/path/to/libraries:/path/to/more/libraries");
         assertThat(config.getLibrariesPaths(), is(asList("/path/to/libraries", "/path/to/more/libraries")));
     }
 

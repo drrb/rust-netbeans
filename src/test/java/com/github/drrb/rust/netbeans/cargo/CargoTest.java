@@ -16,7 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.cargo;
 
-import com.github.drrb.rust.netbeans.cargo.Shell;
+import com.github.drrb.rust.netbeans.commandrunner.CommandRunner;
 import com.github.drrb.rust.netbeans.cargo.Cargo;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
@@ -37,14 +37,14 @@ public class CargoTest {
     @Rule
     public final TemporaryPreferences temporaryPreferences = new TemporaryPreferences();
     private Cargo cargo;
-    private Shell shell;
+    private CommandRunner shell;
     private RustProject project;
     private RustConfiguration config;
 
     @Before
     public void setUp() {
         project = mock(RustProject.class);
-        shell = mock(Shell.class);
+        shell = mock(CommandRunner.class);
         config = new RustConfiguration(temporaryPreferences.get());
         cargo = new Cargo(project, shell, config);
     }
