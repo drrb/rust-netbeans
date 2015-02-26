@@ -23,7 +23,9 @@ import com.github.drrb.rust.netbeans.cargo.CargoConfig;
 import com.github.drrb.rust.netbeans.cargo.Crate;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,17 +60,19 @@ public class NetbeansWithRust extends CslTestHelper {
         RustProject project = getTestProject(relativePath);
         CargoConfig cargoConfig = project.getCargoConfig();
         FileObject projectDir = project.getProjectDirectory();
+        List<Crate> crates = cargoConfig.getCrates();
 
         StringBuilder crateMap = new StringBuilder();
         crateMap.append("crates:\n");
-        for (Crate crate : cargoConfig.getCrates()) {
+        crates.sort(new CratesAlphabetically());
+        for (Crate crate : crates) {
             crateMap.append("    ").append(relativize(projectDir, crate.getFile())).append(": ").append(crate.getType()).append("\n");
         }
 
         crateMap.append("sources:\n");
-        Enumeration<? extends FileObject> files = project.getProjectDirectory().getData(true);
-        while (files.hasMoreElements()) {
-            FileObject file = files.nextElement();
+        ArrayList<? extends FileObject> files = Collections.list(project.getProjectDirectory().getData(true));
+        files.sort(new FilesAlphabetically());
+        for (FileObject file : files) {
             Crate owningCrate = cargoConfig.getOwningCrate(file);
             if (!file.getExt().equals("rs")) {
                 continue;
@@ -116,12 +120,25 @@ public class NetbeansWithRust extends CslTestHelper {
     }
 
     private static class TestableRustCompileErrorHighlighter extends RustCompileErrorHighlighter {
-
         private final List<ErrorDescription> errors = new LinkedList<>();
 
         @Override
         protected void setErrors(Document document, String layerName, List<ErrorDescription> reportedErrors) {
             errors.addAll(reportedErrors);
+        }
+    }
+
+    private static class CratesAlphabetically implements Comparator<Crate> {
+        @Override
+        public int compare(Crate left, Crate right) {
+            return left.getFile().getPath().compareTo(right.getFile().getPath());
+        }
+    }
+
+    private static class FilesAlphabetically implements Comparator<FileObject> {
+        @Override
+        public int compare(FileObject left, FileObject right) {
+            return left.getPath().compareTo(right.getPath());
         }
     }
 }
