@@ -3,8 +3,6 @@
 A NetBeans plugin for [Rust](http://www.rust-lang.org) that embeds the native
 Rust compiler. It's fast, and adapts to changes in the language!
 
-## Build Status
-
 | Linux | Windows |
 | ----- | ------- |
 | [![Linux Build Status](https://travis-ci.org/drrb/rust-netbeans.svg?branch=master)](https://travis-ci.org/drrb/rust-netbeans) | [![Windows Build status](https://ci.appveyor.com/api/projects/status/ae0ci8qvmh5pawi1/branch/master?svg=true)](https://ci.appveyor.com/project/drrb/rust-netbeans/branch/master) |
