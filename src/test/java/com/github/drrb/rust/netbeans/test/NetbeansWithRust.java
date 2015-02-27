@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.text.Document;
@@ -64,14 +63,14 @@ public class NetbeansWithRust extends CslTestHelper {
 
         StringBuilder crateMap = new StringBuilder();
         crateMap.append("crates:\n");
-        crates.sort(new CratesAlphabetically());
+        Collections.sort(crates, new CratesAlphabetically());
         for (Crate crate : crates) {
             crateMap.append("    ").append(relativize(projectDir, crate.getFile())).append(": ").append(crate.getType()).append("\n");
         }
 
         crateMap.append("sources:\n");
         ArrayList<? extends FileObject> files = Collections.list(project.getProjectDirectory().getData(true));
-        files.sort(new FilesAlphabetically());
+        Collections.sort(files, new FilesAlphabetically());
         for (FileObject file : files) {
             Crate owningCrate = cargoConfig.getOwningCrate(file);
             if (!file.getExt().equals("rs")) {
