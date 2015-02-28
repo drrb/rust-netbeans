@@ -80,12 +80,11 @@ $7z = Acquire-7z # Check/Download 7-Zip
 $rust_installer = "$TMP_DIR\rust_install.exe"
 $cargo_binary = "$TMP_DIR\cargo_install.tar.gz"
 
-$web_client = new-object System.Net.WebClient
 echo "Downloading the lastest Rust nightly - this may take a while"
-$web_client.DownloadFile($rust_dl, $rust_installer)
+Invoke-WebRequest $rust_dl -OutFile $rust_installer
 
 echo "Downloading the latest Cargo nightly - this may take a while"
-$web_client.DownloadFile($cargo_dl, $cargo_binary)
+Invoke-WebRequest $cargo_dl -OutFile $cargo_binary
 
 echo "Downloads complete."
 
