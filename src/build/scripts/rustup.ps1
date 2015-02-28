@@ -16,8 +16,6 @@ Start-FileDownload $url
 
 echo "Installing Rust"
 Start-Process ".\$($package)" -ArgumentList "/VERYSILENT /NORESTART" -NoNewWindow -Wait
-echo "Looking for rustc.exe"
-Get-Command "rustc.exe" | Select-Object -ExpandProperty Definition
 echo "Path"
 echo $env:Path
 echo "refreshing Path"
@@ -39,3 +37,6 @@ echo "C:\Program Files (x86)"
 ls "C:\Program Files (x86)"
 
 echo "Rust and Cargo are ready to roll!"
+
+echo "Looking for rustc.exe"
+Get-Command "rustc.exe" | Select-Object -ExpandProperty Definition
