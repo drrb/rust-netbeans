@@ -239,6 +239,11 @@
             <artifactId>org-netbeans-api-progress</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-gsf-testrunner</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
 
         <!-- Options Panel -->
         <dependency>
@@ -360,6 +365,12 @@
                 <configuration>
                     <licenseName>GPL3</licenseName>
                     <licenseFile>LICENSE.txt</licenseFile>
+                    <moduleDependencies>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-gsf-testrunner</id>
+                            <type>impl</type>
+                        </dependency>
+                    </moduleDependencies>
                 </configuration>
             </plugin>
 
