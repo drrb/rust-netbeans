@@ -12,6 +12,6 @@ before_install:
     - travis_retry sudo apt-get update
 install:
     - travis_retry sudo apt-get install --assume-yes rust-nightly
-    - travis_retry mvn dependency:go-offline
-    - mvn package -DskipTests
-script: mvn package
+    - travis_retry mvn --batch-mode dependency:go-offline
+    - mvn --batch-mode package -DskipTests
+script: mvn --batch-mode package
