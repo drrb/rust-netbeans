@@ -9,7 +9,7 @@ environment:
 install:
   - cinst maven
   - ps: Start-FileDownload "https://raw.githubusercontent.com/Fireforge/rustup-powershell/master/rustup.ps1"
-  - ps: rustup.ps1
+  - ps: ./rustup.ps1
   - rustc -V
   - cargo -V
 build_script:
