@@ -17,6 +17,8 @@ Start-FileDownload $url
 echo "Installing Rust"
 #$install_args = "/VERYSILENT", "/NORESTART", "/DIR='$($install_dir)'"
 Start-Process $package -Wait
+echo "Looking for rustc.exe"
+Get-Command "rustc.exe" | Select-Object -ExpandProperty Definition
 echo "Path"
 echo $env:Path
 echo "refreshing Path"
