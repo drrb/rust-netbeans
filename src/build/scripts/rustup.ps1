@@ -38,7 +38,7 @@ function Acquire-7z() {
         # Did we already download and extract it?
         if (!(Test-Path $7z_ex)) {
             # Download 7zip
-            Start-BitsTransfer $7z_url $7z_tmp -DisplayName "Downloading 7-Zip" -Description $7z_url
+            Invoke-WebRequest $7z_url -OutFile $7z_tmp
             Expand-ZIPFile -File $7z_tmp -Destination "$TMP_DIR"
         }
 
@@ -52,8 +52,6 @@ function Acquire-7z() {
 function which($name) {
     Get-Command $name | Select-Object -ExpandProperty Definition
 }
-
-Import-Module BitsTransfer
 
 $TMP_DIR = "$env:temp\rustup-tmp-install"
 New-Item $TMP_DIR -ItemType Directory -Force | Out-Null
