@@ -82,10 +82,10 @@ public class NetbeansWithRust extends CslTestHelper {
         assertDescriptionMatches(relativePath, crateMap.toString(), false, ".crates");
     }
 
-    private Path relativize(FileObject ancestor, FileObject file) {
+    private String relativize(FileObject ancestor, FileObject file) {
         Path ancestorPath = FileUtil.toFile(ancestor).toPath();
         Path path = FileUtil.toFile(file).toPath();
-        return ancestorPath.relativize(path);
+        return ancestorPath.relativize(path).toString().replace('\\', '/');
     }
 
     public void checkCompileErrors(final String relativeProjectPath, String relativeSourceFilePath) throws Exception {
