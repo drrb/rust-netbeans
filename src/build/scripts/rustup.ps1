@@ -1,7 +1,13 @@
 $ErrorActionPreference = "Stop"
 
-$install_dir = "C:\Rust"
-$arch = @{$true = "x86_64"; $false = "i686"}[[environment]::Is64BitOperatingSystem]
+if ([environment]::Is64BitOperatingSystem) {
+    $arch = "x86_64"
+    $install_dir = "C:\Program Files\Rust"
+} else {
+    $arch = "i686"
+    $install_dir = "C:\Program Files (x86)\Rust"
+}
+
 $package = "rust-nightly-$($arch)-pc-windows-gnu.exe"
 $url = "https://static.rust-lang.org/dist/$($package)"
 
