@@ -9,7 +9,9 @@ environment:
 install:
   - ps: choco install maven
   - ps: src/build/scripts/rustup.ps1
+  - ps: $env:Path
   - ps: $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+  - ps: $env:Path
   - mvn --version
   - rustc --version
   - cargo --version
