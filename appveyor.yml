@@ -13,6 +13,7 @@ install:
   - mvn --version
   - rustc --version
   - cargo --version
+  - ps: 'Get-ChildItem -path "C:\Program Files\" -Recurse'
 build_script:
   - mvn clean package -DskipTests
 test_script:
