@@ -8,11 +8,12 @@ environment:
         - JAVA_HOME: C:\Program Files\Java\jdk1.7.0
 install:
   - cinst maven
+  - SET PATH=%PATH%;C:\bin
   - ps: Start-FileDownload 'https://static.rust-lang.org/dist/rust-nightly-i686-pc-windows-gnu.exe'
   - rust-nightly-i686-pc-windows-gnu.exe /NORESTART /DIR="C:\Program Files (x86)\Rust"
   - SET PATH=%PATH%;C:\Program Files (x86)\Rust\bin
-  - rustc -V
-  - cargo -V
+  - rustc --version
+  - cargo --version
 build_script:
   - mvn clean package -DskipTests
 test_script:
