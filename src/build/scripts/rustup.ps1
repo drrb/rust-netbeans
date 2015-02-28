@@ -15,7 +15,7 @@ echo "Downloading Rust and Cargo from $($url)"
 Start-FileDownload $url
 
 echo "Installing Rust"
-Start-Process ".\$($package)" -ArgumentList "/VERYSILENT /NORESTART /DIR='$($install_dir)'" -NoNewWindow -Wait
+Start-Process ".\$($package)" -ArgumentList "/VERYSILENT /NORESTART" -NoNewWindow -Wait
 echo "Looking for rustc.exe"
 Get-Command "rustc.exe" | Select-Object -ExpandProperty Definition
 echo "Path"
