@@ -85,7 +85,7 @@ public class RustConfiguration {
     }
 
     private enum ConfigFlavour {
-        WINDOWS(";", "C:\\Rust\\bin\\cargo.exe", "C:\\Rust\\libs"),
+        WINDOWS(";", "C:\\Rust\\bin\\cargo.exe", "C:\\Rust\\bin"),
         UNIXY(":", "/usr/local/bin/cargo", "/usr/local/lib/rustlib/x86_64-apple-darwin/lib");
 
         private final String pathSeparator;
