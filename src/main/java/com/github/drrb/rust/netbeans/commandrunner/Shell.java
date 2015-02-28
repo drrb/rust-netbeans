@@ -21,7 +21,7 @@ package com.github.drrb.rust.netbeans.commandrunner;
  */
 public enum Shell {
     BASH("/bin/bash", "-lc"),
-    CMD("cmd", "/c");
+    CMD("CMD", "/C");
 
     private final String command;
     private final String flags;
