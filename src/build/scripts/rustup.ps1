@@ -88,6 +88,7 @@ $web_client.DownloadFile($cargo_dl, $cargo_binary)
 echo "Downloads complete."
 
 # Install the rust binaries
+echo "Installing Rust"
 Start-Process $rust_installer -Wait
 
 # Refresh path for this process after installation
@@ -102,6 +103,7 @@ echo "Rust is Ready!"
 
 
 # Extract the Cargo binary with 7-Zip
+echo "Installing Cargo"
 Start-Process $7z -ArgumentList "e $cargo_binary -y" -NoNewWindow -Wait
 Start-Process $7z -ArgumentList "e .\cargo_install.tar *.exe -r -y" -NoNewWindow -Wait
 
