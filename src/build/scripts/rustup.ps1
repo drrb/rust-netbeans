@@ -4,6 +4,8 @@
 # option. This file may not be copied, modified, or distributed
 # except according to those terms.
 
+# Adapted from https://github.com/Fireforge/rustup-powershell
+
 function Expand-ZIPFile($file, $destination) {
     $shell = new-object -com shell.application
     $zip = $shell.namespace($file)
