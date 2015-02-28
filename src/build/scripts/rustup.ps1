@@ -1,7 +1,7 @@
 $install_dir = "C:\Rust"
 $arch = @{$true = "x86_64"; $false = "i686"}[[environment]::Is64BitOperatingSystem]
 $package = "rust-nightly-$($arch)-pc-windows-gnu.exe"
-$url = "https://static.rust-lang.org/dist/$(package)"
+$url = "https://static.rust-lang.org/dist/$($package)"
 
 echo "Downloading Rust and Cargo from $($url)"
 Start-FileDownload $url
