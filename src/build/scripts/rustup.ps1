@@ -14,12 +14,19 @@ $url = "https://static.rust-lang.org/dist/$($package)"
 echo "Downloading Rust and Cargo from $($url)"
 Start-FileDownload $url
 
-echo "Installing Rust into $($install_dir)"
-$install_args = "/VERYSILENT", "/NORESTART", "/DIR='$($install_dir)'"
-& ".\$($package)" $install_args
+echo "Installing Rust"
+#$install_args = "/VERYSILENT", "/NORESTART", "/DIR='$($install_dir)'"
+Start-Process $package -Wait
+echo "Path"
+echo $env:Path
+echo "refreshing Path"
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path", "User")
+$env:Path += ";" + [System.Environment]::GetEnvironmentVariable("Path", "Machine")
+echo "Path"
+echo $env:Path
 
-echo "Adding $($install_dir)\bin to the path"
-[Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable("Path", "User") + "$($install_dir)\bin", "User")
+#echo "Adding $($install_dir)\bin to the path"
+#[Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable("Path", "User") + "$($install_dir)\bin", "User")
 
 echo "C:\"
 ls "C:\"
