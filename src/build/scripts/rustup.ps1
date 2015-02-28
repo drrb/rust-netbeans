@@ -16,27 +16,8 @@ Start-FileDownload $url
 
 echo "Installing Rust"
 Start-Process ".\$($package)" -ArgumentList "/VERYSILENT /NORESTART" -NoNewWindow -Wait
-echo "Path"
-echo $env:Path
-echo "refreshing Path"
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path", "User")
-$env:Path += ";" + [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-echo "Path"
-echo $env:Path
 
-#echo "Adding $($install_dir)\bin to the path"
-#[Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable("Path", "User") + "$($install_dir)\bin", "User")
-
-echo "C:\"
-ls "C:\"
-
-echo "C:\Program Files"
-ls "C:\Program Files"
-
-echo "C:\Program Files (x86)"
-ls "C:\Program Files (x86)"
+echo "Refreshing Path"
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path", "User") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "Machine")
 
 echo "Rust and Cargo are ready to roll!"
-
-echo "Looking for rustc.exe"
-Get-Command "rustc.exe" | Select-Object -ExpandProperty Definition
