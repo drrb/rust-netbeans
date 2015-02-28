@@ -9,9 +9,9 @@ echo "Downloading Rust and Cargo from $($url)"
 Start-FileDownload $url
 
 echo "Installing Rust into $($install_dir)"
-& "./$($package)" /VERYSILENT /NORESTART /DIR=$install_dir
+& ".\$($package)" /VERYSILENT /NORESTART /DIR=$install_dir
 
 echo "Adding Rust to the machine path"
-[Environment]::SetEnvironmentVariable("Path", $env:Path + ";" + $install_dir, [System.EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("Path", [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";$($install_dir)\bin", [System.EnvironmentVariableTarget]::Machine)
 
 echo "Rust and Cargo are ready to roll!"
