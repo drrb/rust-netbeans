@@ -9,6 +9,9 @@ environment:
 install:
   - cinst maven
   - ps: ls C:\bin\apache-maven-3.2.5\bin
+  - echo %PATH%
+  - SET PATH=%PATH%;C:\bin\apache-maven-3.2.5\bin
+  - echo %PATH%
   - mvn --version
   - ps: Start-FileDownload 'https://static.rust-lang.org/dist/rust-nightly-i686-pc-windows-gnu.exe'
   - rust-nightly-i686-pc-windows-gnu.exe /VERYSILENT /NORESTART /DIR="C:\Program Files (x86)\Rust"
