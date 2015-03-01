@@ -15,5 +15,18 @@ build_script:
   - mvn --batch-mode clean package -DskipTests
 test_script:
   - mvn --batch-mode clean package
+after_test:
+  - ps: |
+        Write-Host "Uploading test reports"
+        $web_client = New-Object 'System.Net.WebClient'
+        $url = "https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)"
+        Get-ChildItem "target\surefire-reports" -Filter *.xml | Foreach-Object {
+            $path = (Resolve-Path $_.FullName)
+            Write-Host "Uploading $($path) to $($url)..."
+            $web_client.UploadFile($url, $path)
+        }
+artifacts:
+    - path: target/rust-libs
+
 cache:
   - C:\Users\appveyor\.m2
