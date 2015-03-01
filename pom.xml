@@ -444,9 +444,9 @@
                     <!--
                          java.awt.headless=true: Stop tests hijacking UI on development machine
                          jna.nosys=true: Don't try to load JNA from the host system, use our dependency instead (needed for Appveyor, which has an old JNA on it)
-                         UseSplitVerifier: Fix for JDK bug with PowerMock
+                         noverify: Fix for JDK bug with PowerMock
                      -->
-                    <argLine>-Djava.awt.headless=true -Djna.nosys=true -XX:-UseSplitVerifier</argLine>
+                    <argLine>-Djava.awt.headless=true -Djna.nosys=true -noverify</argLine>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
                     <excludes>
