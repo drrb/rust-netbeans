@@ -26,7 +26,7 @@ after_test:
             $web_client.UploadFile($url, $path)
         }
 artifacts:
-    - path: target/rust-libs
+    - path: target/rust-libs/*
 
 cache:
   - C:\Users\appveyor\.m2
