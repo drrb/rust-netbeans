@@ -16,9 +16,9 @@ in.
 
 * NetBeans 8.x or above
 * Java 7+
-* OSX (Hopefully Linux soon (waiting on [this issue](https://github.com/rust-lang/rust/issues/22528)). May work on Windows. Please let me know if you get it working on either!)
-* Rust 1.0 installed by rustup (currently developing against post-1.0-alpha nightlies)
-* Cargo (somewhere on the path)
+* OSX or Windows. Hopefully Linux soon (waiting on [this issue](https://github.com/rust-lang/rust/issues/22528))
+* Rust 1.0ish (currently developing against post-1.0-alpha nightlies)
+* Cargo
 
 ## Features
 
