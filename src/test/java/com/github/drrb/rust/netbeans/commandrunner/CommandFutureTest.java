@@ -30,7 +30,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Rule;
-import org.openide.util.Exceptions;
 
 public class CommandFutureTest {
 
@@ -147,20 +146,6 @@ public class CommandFutureTest {
         assertFalse(listener.notifiedOfFinish());
         stream.read();
         assertTrue(listener.notifiedOfFinish());
-    }
-
-    private class HumbleCommandFuture extends CommandFuture {
-
-        @Override
-        protected void startEventThread() {
-        }
-
-        @Override
-        protected void processEvents() throws InterruptedException {
-            while (eventQueue.peek() != null) {
-                eventQueue.poll().process();
-            }
-        }
     }
 
     private class CommandFutureListener extends CommandFuture.Listener {

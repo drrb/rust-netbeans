@@ -17,24 +17,21 @@
 package com.github.drrb.rust.netbeans.project.action;
 
 import com.github.drrb.rust.netbeans.cargo.Cargo;
-import com.github.drrb.rust.netbeans.commandrunner.Shell;
+import com.github.drrb.rust.netbeans.cargo.CargoListener;
+import com.github.drrb.rust.netbeans.cargo.TestResult;
+import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.project.RustProject;
-import com.google.common.base.Joiner;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.netbeans.modules.gsf.testrunner.api.Manager;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 import static org.netbeans.spi.project.ActionProvider.COMMAND_TEST;
 import org.openide.util.Lookup;
-import static java.util.Arrays.asList;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.gsf.testrunner.api.Report;
-import org.netbeans.modules.gsf.testrunner.api.Status;
 import org.netbeans.modules.gsf.testrunner.api.TestSuite;
 import org.netbeans.modules.gsf.testrunner.api.Testcase;
 
@@ -43,7 +40,6 @@ import org.netbeans.modules.gsf.testrunner.api.Testcase;
  */
 public class TestCommand implements Command {
     private static final Logger LOG = Logger.getLogger(TestCommand.class.getName());
-    private static final Pattern TEST_RESULT_REGEX = Pattern.compile("^test (.+) ... (ok|FAILED)$");
     public static final TestCommand INSTANCE = new TestCommand();
 
     @Override
@@ -55,10 +51,11 @@ public class TestCommand implements Command {
     public void run(Lookup context) {
         RustProject project = context.lookup(RustProject.class);
         Cargo cargo = context.lookup(Cargo.class);
-//        cargo.run(new TestWatcher(project), "test");
+        CommandFuture commandFuture = cargo.run("test");
+        //commandFuture.addListener(new TestWatcher(project));
     }
 
-//    private static class TestWatcher extends Shell.OutputProcessor {
+//    private static class TestWatcher extends CargoListener {
 //
 //        private final Map<String, List<Testcase>> testCases = new ConcurrentHashMap<>();
 //        private final TestSession testSession;
@@ -97,36 +94,15 @@ public class TestCommand implements Command {
 //        }
 //
 //        @Override
-//        public void onLinePrinted(String line) {
-//            Matcher matcher = TEST_RESULT_REGEX.matcher(line);
-//            if (matcher.matches()) {
-//                //TODO: named capture groups
-//                String testFullName = matcher.group(1);
-//                String testResult = matcher.group(2);
-//                List<String> testNameParts = asList(testFullName.split("::"));
-//                String testName = testNameParts.get(testNameParts.size() - 1);
-//                String moduleName;
-//                if (testNameParts.size() == 1) {
-//                    moduleName = "Root";
-//                } else {
-//                    moduleName = Joiner.on("::").join(testNameParts.subList(0, testNameParts.size() - 1));
-//                }
-//                Status result = testResult.equals("ok") ? Status.PASSED : Status.FAILED;
-//                addTest(moduleName, testName, result);
+//        protected void onTestCompleted(TestResult test) {
+//            if (!testCases.containsKey(test.getModuleName())) {
+//                testCases.put(test.getModuleName(), new LinkedList<Testcase>());
 //            }
-//        }
-//
-//        private synchronized void addTest(String suiteName, String testName, Status result) {
-//            if (!testCases.containsKey(suiteName)) {
-//                testCases.put(suiteName, new LinkedList<Testcase>());
-//            }
-//            Testcase testCase = new Testcase(testName, null, testSession);
+//            Testcase testCase = new Testcase(test.getTestName(), null, testSession);
 ////            testCase.setLocation(suiteName);
 ////            testCase.setClassName(testName);
-//            testCase.setStatus(result);
-//            testCases.get(suiteName).add(testCase);
-//            LOG.warning(String.format("Test added:\n  suiteName=%s\n  testName=%s\n  result=%s\n", suiteName, testName, result));
+//            testCase.setStatus(test.getStatus());
+//            testCases.get(test.getModuleName()).add(testCase);
 //        }
 //    }
-
 }

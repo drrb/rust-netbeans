@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.commandrunner;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -30,6 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class CommandFuture {
     private final ExecutorService eventThread = Executors.newSingleThreadExecutor();
+    @VisibleForTesting
     protected final BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<>();
     private final List<Listener> listeners = new LinkedList<>();
     private final List<String> lines = new LinkedList<>();
@@ -61,18 +63,22 @@ public class CommandFuture {
         }
     }
 
+    @VisibleForTesting
     void start() {
         registerEvent(new CommandStarted());
     }
 
+    @VisibleForTesting
     void printLine(String line) {
         registerEvent(new LinePrinted(line));
     }
 
+    @VisibleForTesting
     void finish() {
         registerEvent(new CommandFinished());
     }
 
+    @VisibleForTesting
     protected void startEventThread() {
         eventThread.submit(new Callable<Void>() {
             @Override
@@ -82,6 +88,7 @@ public class CommandFuture {
         });
     }
 
+    @VisibleForTesting
     protected void processEvents() throws InterruptedException {
         while (true) {
             Event nextEvent = eventQueue.take();
@@ -97,6 +104,7 @@ public class CommandFuture {
         eventQueue.add(event);
     }
 
+    @VisibleForTesting
     protected interface Event {
         void process();
     }

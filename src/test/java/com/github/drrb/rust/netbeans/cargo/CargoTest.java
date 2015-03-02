@@ -18,20 +18,23 @@ package com.github.drrb.rust.netbeans.cargo;
 
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.commandrunner.CommandRunner;
+import com.github.drrb.rust.netbeans.commandrunner.HumbleCommandFuture;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.test.TemporaryPreferences;
 import java.io.File;
-import static org.hamcrest.Matchers.is;
+import java.util.LinkedList;
+import java.util.List;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.Rule;
-import org.mockito.Matchers;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.netbeans.modules.gsf.testrunner.api.Status;
 
 /**
  *
@@ -45,13 +48,13 @@ public class CargoTest {
     private CommandRunner shell;
     private RustProject project;
     private RustConfiguration config;
-    private CommandFuture commandFuture;
+    private HumbleCommandFuture commandFuture;
 
     @Before
     public void setUp() {
         project = mock(RustProject.class);
         shell = mock(CommandRunner.class);
-        commandFuture = mock(CommandFuture.class);
+        commandFuture = new HumbleCommandFuture();
         config = new RustConfiguration(temporaryPreferences.get());
         cargo = new Cargo(project, shell, config);
         config.setCargoPath("/path/to/cargo");
@@ -63,6 +66,24 @@ public class CargoTest {
     public void shouldRunCargoCommandsInShell() {
         when(shell.run("/path/to/cargo clean --verbose && /path/to/cargo build --verbose", file)).thenReturn(commandFuture);
         CommandFuture result = cargo.run("clean", "build");
-        assertThat(result, is(commandFuture));
+        assertEquals(result, commandFuture);
+    }
+
+    @Test
+    public void shouldNotifyOfTestResults() {
+        final List<TestResult> tests = new LinkedList<>();
+        when(shell.run("/path/to/cargo test --verbose", file)).thenReturn(commandFuture);
+        CommandFuture result = cargo.run("test");
+        result.addListener(new CargoListener() {
+            @Override
+            protected void onTestCompleted(TestResult test) {
+                tests.add(test);
+            }
+        });
+        commandFuture.printLine("Starting to run tests");
+        commandFuture.printLine("test myapp::mymodule::mytest ... ok");
+        commandFuture.printLine("test myapp::myothermodule::myfailingtest ... FAILED");
+        commandFuture.processEvents();
+        assertThat(tests, contains(new TestResult("myapp::mymodule", "mytest", Status.PASSED), new TestResult("myapp::myothermodule", "myfailingtest", Status.FAILED)));
     }
 }

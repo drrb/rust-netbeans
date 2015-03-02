@@ -28,8 +28,7 @@ public enum CargoCommand implements Command {
     BUILD(COMMAND_BUILD, "build"),
     CLEAN(COMMAND_CLEAN, "clean"),
     REBUILD(COMMAND_REBUILD, "clean", "build"),
-    RUN(COMMAND_RUN, "run"),
-    TEST(COMMAND_TEST, "test");
+    RUN(COMMAND_RUN, "run");
 
     private final String id;
     private final String[] cargoCommands;
