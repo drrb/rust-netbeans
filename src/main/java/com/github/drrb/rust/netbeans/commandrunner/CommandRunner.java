@@ -55,19 +55,22 @@ public class CommandRunner {
         this.shell = shell;
     }
 
-    public void run(String commandLine, File workingDir) {
+    public CommandFuture run(String commandLine, File workingDir) {
         LifecycleManager.getDefault().saveAll();
         InputOutput io = IOProvider.get(name).getIO(name, false);
         IoColorLines.printDebug(io, commandLine);
         ProcessBuilder processBuilder = shell.createProcess(commandLine).directory(workingDir);
-        ExecutorTask task = ExecutionEngine.getDefault().execute(name, new WatchingProcessRunner(processBuilder, io), io);
+        WatchingProcessRunner processRunner = new WatchingProcessRunner(processBuilder, io);
+        ExecutorTask task = ExecutionEngine.getDefault().execute(name, processRunner, io);
         task.addTaskListener(new CleanUpStreamsWhenFinished(io));
+        return processRunner.future;
     }
 
     private class WatchingProcessRunner implements Runnable {
 
         private final ProcessBuilder processBuilder;
         private final InputOutput io;
+        private final CommandFuture future = new CommandFuture();
 
         public WatchingProcessRunner(ProcessBuilder processBuilder, InputOutput io) {
             this.processBuilder = processBuilder;
@@ -90,7 +93,7 @@ public class CommandRunner {
 
             try {
                 //TODO: wait for these?
-                EXECUTOR.post(Pipe.between(process.getInputStream(), io.getOut()));
+                EXECUTOR.post(Pipe.between(future.wrap(process.getInputStream()), io.getOut()));
                 EXECUTOR.post(Pipe.between(process.getErrorStream(), io.getErr()));
                 EXECUTOR.post(Pipe.between(io.getIn(), process.getOutputStream()));
                 process.waitFor();

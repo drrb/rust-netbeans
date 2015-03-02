@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.cargo;
 
+import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.commandrunner.CommandRunner;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
@@ -42,13 +43,12 @@ public class Cargo {
         this.configuration = configuration;
     }
 
-    public void run(String... commands) {
+    public CommandFuture run(String... commands) {
         List<String> cargoCommands = new ArrayList<>(commands.length);
         for (String command : commands) {
             cargoCommands.add(String.format("%s %s --verbose", configuration.getCargoPath(), command));
         }
         String commandLine = Joiner.on(" && ").join(cargoCommands);
-        commandRunner.run(commandLine, project.dir());
+        return commandRunner.run(commandLine, project.dir());
     }
-
 }
