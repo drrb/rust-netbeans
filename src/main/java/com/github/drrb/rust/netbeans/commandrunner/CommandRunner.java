@@ -19,6 +19,7 @@ package com.github.drrb.rust.netbeans.commandrunner;
 import com.github.drrb.rust.netbeans.configuration.Os;
 import com.github.drrb.rust.netbeans.util.IoColorLines;
 import com.github.drrb.rust.netbeans.util.Pipe;
+import com.github.drrb.rust.netbeans.util.Untested;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +37,16 @@ import org.openide.util.TaskListener;
 import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 
+@Untested(excuses = "Lots of UI stuff")
 public class CommandRunner {
 
     private static final RequestProcessor EXECUTOR = new RequestProcessor("Command runner", 12);
-    private final String name;
-    private final Shell shell;
-
     public static CommandRunner get(String name) {
         return new CommandRunner(name);
     }
+
+    private final String name;
+    private final Shell shell;
 
     public CommandRunner(String name) {
         this(name, Os.getCurrent().shell());
@@ -70,9 +72,9 @@ public class CommandRunner {
 
         private final ProcessBuilder processBuilder;
         private final InputOutput io;
-        private final CommandFuture future = new CommandFuture();
+        final CommandFuture future = new CommandFuture();
 
-        public WatchingProcessRunner(ProcessBuilder processBuilder, InputOutput io) {
+        WatchingProcessRunner(ProcessBuilder processBuilder, InputOutput io) {
             this.processBuilder = processBuilder;
             this.io = io;
         }
@@ -108,7 +110,7 @@ public class CommandRunner {
 
             private final Process process;
 
-            public KillOnCancel(Process process) {
+            KillOnCancel(Process process) {
                 this.process = process;
             }
 
@@ -134,11 +136,11 @@ public class CommandRunner {
         }
     }
 
-    private static class CleanUpStreamsWhenFinished implements TaskListener {
+    private class CleanUpStreamsWhenFinished implements TaskListener {
 
         private final InputOutput io;
 
-        public CleanUpStreamsWhenFinished(InputOutput io) {
+        CleanUpStreamsWhenFinished(InputOutput io) {
             this.io = io;
         }
 

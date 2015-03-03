@@ -25,7 +25,6 @@ import com.moandjiezana.toml.Toml;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

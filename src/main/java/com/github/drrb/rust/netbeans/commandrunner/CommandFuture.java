@@ -31,7 +31,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class CommandFuture {
     private final ExecutorService eventThread = Executors.newSingleThreadExecutor();
-    @VisibleForTesting
     protected final BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<>();
     private final List<Listener> listeners = new LinkedList<>();
     private final List<String> lines = new LinkedList<>();
