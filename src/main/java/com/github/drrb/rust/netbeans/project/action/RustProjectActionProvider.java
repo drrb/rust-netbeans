@@ -37,7 +37,7 @@ public class RustProjectActionProvider implements ActionProvider {
         List<Command> supportedCommands = new LinkedList<>();
         supportedCommands.addAll(asList(CargoCommand.values()));
         supportedCommands.add(TestCommand.INSTANCE);
-        Map<String, Command> commandIndex = new HashMap<>();
+        Map<String, Command> commandIndex = new HashMap<>(supportedCommands.size());
         for (Command command : supportedCommands) {
             commandIndex.put(command.getId(), command);
         }

@@ -19,29 +19,26 @@ package com.github.drrb.rust.netbeans.project.action;
 import com.github.drrb.rust.netbeans.cargo.Cargo;
 import com.github.drrb.rust.netbeans.cargo.TestRunner;
 import com.github.drrb.rust.netbeans.project.RustProject;
-import static org.netbeans.spi.project.ActionProvider.COMMAND_TEST;
+import org.junit.Test;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
-/**
- *
- */
-public class TestCommand implements Command {
-    public static final TestCommand INSTANCE = new TestCommand(new TestRunner.Factory());
-    private final TestRunner.Factory testRunnerFactory;
+public class TestCommandTest {
 
-    public TestCommand(TestRunner.Factory testRunnerFactory) {
-        this.testRunnerFactory = testRunnerFactory;
+    @Test
+    public void shouldRunCargo() throws Exception {
+        TestRunner.Factory testRunnerFactory = mock(TestRunner.Factory.class);
+        TestRunner testRunner = mock(TestRunner.class);
+        Cargo cargo = mock(Cargo.class);
+        RustProject project = mock(RustProject.class);
+
+        Lookup context = Lookups.fixed(cargo, project);
+        when(testRunnerFactory.create(project, cargo)).thenReturn(testRunner);
+        new TestCommand(testRunnerFactory).run(context);
+        verify(testRunner).run();
     }
 
-    @Override
-    public String getId() {
-        return COMMAND_TEST;
-    }
-
-    @Override
-    public void run(Lookup context) {
-        RustProject project = context.lookup(RustProject.class);
-        Cargo cargo = context.lookup(Cargo.class);
-        testRunnerFactory.create(project, cargo).run();
-    }
 }

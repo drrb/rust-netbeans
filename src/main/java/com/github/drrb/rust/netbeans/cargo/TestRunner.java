@@ -34,14 +34,16 @@ import org.netbeans.modules.gsf.testrunner.api.Testcase;
 
 @Untested(excuses = "API classes are final")
 public class TestRunner {
+    public static class Factory {
+        public TestRunner create(RustProject project, Cargo cargo) {
+            return new TestRunner(project, cargo, Manager.getInstance());
+        }
+    }
+
     private static final Logger LOG = Logger.getLogger(TestRunner.class.getName());
     private final RustProject project;
     private final Cargo cargo;
-    private Manager testManager;
-
-    public TestRunner(RustProject project, Cargo cargo) {
-        this(project, cargo, Manager.getInstance());
-    }
+    private final Manager testManager;
 
     public TestRunner(RustProject project, Cargo cargo, Manager testManager) {
         this.project = project;
