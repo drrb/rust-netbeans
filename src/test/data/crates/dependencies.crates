@@ -9,3 +9,5 @@ sources:
         crate: src/main.rs
     src/other/third.rs:
         crate: src/main.rs
+    src/toplevelmod.rs:
+        crate: src/main.rs

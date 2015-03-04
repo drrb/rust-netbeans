@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.gsf.testrunner.api.Manager;
@@ -31,6 +32,7 @@ import org.netbeans.modules.gsf.testrunner.api.Report;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 import org.netbeans.modules.gsf.testrunner.api.TestSuite;
 import org.netbeans.modules.gsf.testrunner.api.Testcase;
+import org.openide.filesystems.FileObject;
 
 @Untested(excuses = "API classes are final")
 public class TestRunner {
@@ -51,8 +53,21 @@ public class TestRunner {
         this.testManager = testManager;
     }
 
+    //TODO: for both of these, run 'RUST_TEST_TASKS=1 cargo test --jobs 1 -- --nocapture'
+    // (we'll have to work out how to do that on Windows)
     public void run() {
-        CommandFuture commandFuture = cargo.run("test");
+        LOG.info("Running all tests");
+        watchCargoCommand("test");
+    }
+
+    public void run(FileObject file) {
+        LOG.log(Level.INFO, "Running tests for file {0}", file);
+        String moduleName = project.getCargoConfig().getModuleName(file);
+        watchCargoCommand("test " + moduleName + "::"); // Cargo matches this against all tests in this module
+    }
+
+    private void watchCargoCommand(String command) {
+        CommandFuture commandFuture = cargo.run(command);
         commandFuture.addListener(new TestWatcher(project, testManager));
     }
 

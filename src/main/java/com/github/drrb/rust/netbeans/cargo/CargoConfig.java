@@ -22,9 +22,11 @@ import com.github.drrb.rust.netbeans.rustbridge.RustCrateType;
 import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
 import com.google.common.collect.Iterables;
 import com.moandjiezana.toml.Toml;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.logging.Logger;
 import javax.swing.text.Document;
 import org.netbeans.api.lexer.TokenSequence;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 
 /**
  *
@@ -137,5 +140,26 @@ public class CargoConfig {
             LOG.log(Level.WARNING, "Couldn't read crates from Cargo.toml", ex);
             return new Toml();
         }
+    }
+
+    public String getModuleName(FileObject file) {
+        if (isCrate(file)) {
+            return "";
+        }
+        FileObject sourceDir = baseDir.getFileObject("src");
+        String relativeModulePath = FileUtil.getRelativePath(sourceDir, file);
+        return relativeModulePath
+                .replaceAll("\\.rs$", "")
+                .replaceAll("/mod$", "") // mod.rs files are named after their directory
+                .replace("/", "::"); //TODO: should we use "/" here, or is it "\\" on Windows?
+    }
+
+    private boolean isCrate(FileObject file) {
+        for (Crate crate : getCrates()) {
+            if (crate.getFile().equals(file)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

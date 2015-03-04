@@ -14,31 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.drrb.rust.netbeans.project.action;
 
 import com.github.drrb.rust.netbeans.cargo.Cargo;
 import com.github.drrb.rust.netbeans.cargo.TestRunner;
 import com.github.drrb.rust.netbeans.project.RustProject;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
 import org.junit.Test;
+import org.junit.Rule;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
-public class TestCommandTest {
+public class TestFileCommandTest {
+    @Rule
+    public final NetbeansWithRust netbeans = new NetbeansWithRust();
+    private TestRunner.Factory testRunnerFactory = mock(TestRunner.Factory.class);
+    private TestRunner testRunner = mock(TestRunner.class);
+    private Cargo cargo = mock(Cargo.class);
 
     @Test
-    public void shouldRunCargoTest() throws Exception {
-        TestRunner.Factory testRunnerFactory = mock(TestRunner.Factory.class);
-        TestRunner testRunner = mock(TestRunner.class);
-        Cargo cargo = mock(Cargo.class);
-        RustProject project = mock(RustProject.class);
-
-        Lookup context = Lookups.fixed(cargo, project);
+    public void shouldRunCargoTestForFile() throws Exception {
+        RustProject project = netbeans.getTestProject("crates/dependencies");
+        FileObject sourceFile = project.getProjectDirectory().getFileObject("src/main.rs");
+        Lookup context = Lookups.fixed(cargo, project, sourceFile);
         when(testRunnerFactory.create(project, cargo)).thenReturn(testRunner);
-        new TestCommand(testRunnerFactory).run(context);
-        verify(testRunner).run();
+        new TestFileCommand(testRunnerFactory).run(context);
+        verify(testRunner).run(sourceFile);
     }
 
 }

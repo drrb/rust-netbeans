@@ -16,10 +16,14 @@
  */
 package com.github.drrb.rust.netbeans.cargo;
 
+import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.openide.filesystems.FileObject;
 
 /**
  *
@@ -41,4 +45,35 @@ public class CargoConfigTest {
         netbeans.checkCrates("crates/dependencies");
     }
 
+    @Test
+    public void shouldFindModuleForObviousPath() throws Exception {
+        RustProject project = netbeans.getTestProject("crates/dependencies");
+        FileObject targetFile = project.getProjectDirectory().getFileObject("src/other/third.rs");
+        String moduleName = project.getCargoConfig().getModuleName(targetFile);
+        assertThat(moduleName, is("other::third"));
+    }
+
+    @Test
+    public void shouldFindModuleForModPath() throws Exception {
+        RustProject project = netbeans.getTestProject("crates/dependencies");
+        FileObject targetFile = project.getProjectDirectory().getFileObject("src/other/mod.rs");
+        String moduleName = project.getCargoConfig().getModuleName(targetFile);
+        assertThat(moduleName, is("other"));
+    }
+
+    @Test
+    public void shouldFindModuleForRootSourceFile() throws Exception {
+        RustProject project = netbeans.getTestProject("crates/dependencies");
+        FileObject targetFile = project.getProjectDirectory().getFileObject("src/main.rs");
+        String moduleName = project.getCargoConfig().getModuleName(targetFile);
+        assertThat(moduleName, is(""));
+    }
+
+    @Test
+    public void shouldFindModuleForOtherTopLevelFile() throws Exception {
+        RustProject project = netbeans.getTestProject("crates/dependencies");
+        FileObject targetFile = project.getProjectDirectory().getFileObject("src/toplevelmod.rs");
+        String moduleName = project.getCargoConfig().getModuleName(targetFile);
+        assertThat(moduleName, is("toplevelmod"));
+    }
 }

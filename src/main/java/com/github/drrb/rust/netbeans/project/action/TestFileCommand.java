@@ -19,26 +19,31 @@ package com.github.drrb.rust.netbeans.project.action;
 import com.github.drrb.rust.netbeans.cargo.Cargo;
 import com.github.drrb.rust.netbeans.cargo.TestRunner;
 import com.github.drrb.rust.netbeans.project.RustProject;
-import org.junit.Test;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.netbeans.spi.project.ActionProvider.COMMAND_TEST_SINGLE;
+import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
-public class TestCommandTest {
+/**
+ *
+ */
+public class TestFileCommand implements Command {
+    public static final TestFileCommand INSTANCE = new TestFileCommand(new TestRunner.Factory());
+    private final TestRunner.Factory testRunnerFactory;
 
-    @Test
-    public void shouldRunCargoTest() throws Exception {
-        TestRunner.Factory testRunnerFactory = mock(TestRunner.Factory.class);
-        TestRunner testRunner = mock(TestRunner.class);
-        Cargo cargo = mock(Cargo.class);
-        RustProject project = mock(RustProject.class);
-
-        Lookup context = Lookups.fixed(cargo, project);
-        when(testRunnerFactory.create(project, cargo)).thenReturn(testRunner);
-        new TestCommand(testRunnerFactory).run(context);
-        verify(testRunner).run();
+    public TestFileCommand(TestRunner.Factory testRunnerFactory) {
+        this.testRunnerFactory = testRunnerFactory;
     }
 
+    @Override
+    public String getId() {
+        return COMMAND_TEST_SINGLE;
+    }
+
+    @Override
+    public void run(Lookup context) {
+        RustProject project = context.lookup(RustProject.class);
+        Cargo cargo = context.lookup(Cargo.class);
+        FileObject file = context.lookup(FileObject.class);
+        testRunnerFactory.create(project, cargo).run(file);
+    }
 }
