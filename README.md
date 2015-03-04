@@ -25,7 +25,7 @@ in.
 So far, it includes
 
 * Cargo project support:
-    * Project view
+    * project view
     * clean/build/run/test from UI
 * Highlighting:
     * syntax highlighting
@@ -38,8 +38,11 @@ So far, it includes
     * brace matching
     * comment toggling
 * Formatting:
-    * basic auto-indentation
+    * auto-indentation
     * basic auto-formatting
+* Testing UI:
+    * run all tests
+    * run module's tests
 * Coming Soon:
     * basic code completion
     * code folding
