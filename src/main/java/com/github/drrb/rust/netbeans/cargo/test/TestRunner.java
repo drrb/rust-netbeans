@@ -21,13 +21,13 @@ import com.github.drrb.rust.netbeans.cargo.Cargo;
 import com.github.drrb.rust.netbeans.cargo.CargoListener;
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.project.RustProject;
-import com.github.drrb.rust.netbeans.util.Untested;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.netbeans.api.project.Project;
 import org.netbeans.modules.gsf.testrunner.api.Manager;
 import org.netbeans.modules.gsf.testrunner.api.TestSuite;
 import org.netbeans.modules.gsf.testrunner.api.Testcase;
@@ -36,19 +36,26 @@ import org.openide.filesystems.FileObject;
 public class TestRunner {
     public static class Factory {
         public TestRunner create(RustProject project, Cargo cargo) {
-            return new TestRunner(project, cargo, Manager.getInstance());
+            return new TestRunner(project, cargo, new WatcherFactory());
+        }
+    }
+
+    static class WatcherFactory {
+        public Watcher createWatcher(Project project) {
+            TestUiSession session = new TestUiSession(project, Manager.getInstance());
+            return new Watcher(session);
         }
     }
 
     private static final Logger LOG = Logger.getLogger(TestRunner.class.getName());
     private final RustProject project;
     private final Cargo cargo;
-    private final Manager testManager;
+    private final WatcherFactory watcherFactory;
 
-    public TestRunner(RustProject project, Cargo cargo, Manager testManager) {
+    public TestRunner(RustProject project, Cargo cargo, WatcherFactory watcherFactory) {
         this.project = project;
         this.cargo = cargo;
-        this.testManager = testManager;
+        this.watcherFactory = watcherFactory;
     }
 
     //TODO: for both of these, run 'RUST_TEST_TASKS=1 cargo test --jobs 1 -- --nocapture'
@@ -65,14 +72,9 @@ public class TestRunner {
     }
 
     private void watchCargoCommand(String command) {
+        Watcher watcher = watcherFactory.createWatcher(project);
         CommandFuture commandFuture = cargo.run(command);
-        Watcher watcher = createTestWatcher();
         commandFuture.addListener(watcher);
-    }
-
-    protected Watcher createTestWatcher() {
-        TestUiSession session = new TestUiSession(project, testManager);
-        return new Watcher(session);
     }
 
     static class Watcher extends CargoListener {

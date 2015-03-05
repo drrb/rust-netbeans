@@ -18,26 +18,23 @@
 package com.github.drrb.rust.netbeans.cargo.test;
 
 import com.github.drrb.rust.netbeans.cargo.Cargo;
-import com.github.drrb.rust.netbeans.commandrunner.HumbleCommandFuture;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Rule;
-import org.mockito.Matchers;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import org.netbeans.modules.gsf.testrunner.api.Status;
+import org.junit.Test;
+import org.netbeans.api.project.Project;
 import static org.netbeans.modules.gsf.testrunner.api.Status.FAILED;
 import static org.netbeans.modules.gsf.testrunner.api.Status.PASSED;
 import org.netbeans.modules.gsf.testrunner.api.TestSuite;
 import org.netbeans.modules.gsf.testrunner.api.Testcase;
 
-public class TestRunnerTest {
+public class SequentialTestRunnerTest {
 
     @Rule
     public final NetbeansWithRust netbeans = new NetbeansWithRust();
@@ -46,22 +43,21 @@ public class TestRunnerTest {
     private TestRunner.Watcher watcher;
     private Cargo cargo;
     private TestRunner testRunner;
-    private TestRunFuture testsProgress;
+    private FakeCargoCommandFuture testsProgress;
 
     @Before
     public void setUp() throws Exception {
         project = netbeans.getTestProject("project/simple");
-        cargo = mock(Cargo.class);
-        testsProgress = new TestRunFuture();
-        when(cargo.run(Matchers.<String[]>anyVararg())).thenReturn(testsProgress);
+        testsProgress = new FakeCargoCommandFuture();
+        cargo = new FakeCargo(testsProgress);
         session = new FakeTestUiSession();
         watcher = new TestRunner.Watcher(session);
-        testRunner = new TestRunner(project, cargo, null) {
+        testRunner = new TestRunner(project, cargo, new TestRunner.WatcherFactory() {
             @Override
-            protected TestRunner.Watcher createTestWatcher() {
+            public TestRunner.Watcher createWatcher(Project project) {
                 return watcher;
             }
-        };
+        });
     }
 
     @Test
@@ -95,23 +91,5 @@ public class TestRunnerTest {
         Testcase test = suite.getTestcases().get(0);
         assertThat(test.getName(), is("my_passing_test"));
         assertThat(test.getStatus(), is (PASSED));
-    }
-
-    private static class TestRunFuture extends HumbleCommandFuture {
-        void testsStarted() {
-            start();
-            processEvents();
-        }
-
-        void testsFinished() {
-            finish();
-            processEvents();
-        }
-
-        void testFinished(String module, String name, Status status) {
-            String statusString = status == PASSED ? "ok" : "FAILED";
-            printLine(String.format("test %s::%s ... %s", module, name, statusString));
-            processEvents();
-        }
     }
 }

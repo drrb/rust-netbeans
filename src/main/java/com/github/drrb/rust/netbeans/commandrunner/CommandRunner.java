@@ -17,143 +17,75 @@
 package com.github.drrb.rust.netbeans.commandrunner;
 
 import com.github.drrb.rust.netbeans.configuration.Os;
-import com.github.drrb.rust.netbeans.util.IoColorLines;
-import com.github.drrb.rust.netbeans.util.Pipe;
-import com.github.drrb.rust.netbeans.util.Untested;
-import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
-import javax.swing.AbstractAction;
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
-import org.openide.LifecycleManager;
-import org.openide.execution.ExecutionEngine;
-import org.openide.execution.ExecutorTask;
-import org.openide.util.Cancellable;
-import org.openide.util.Exceptions;
-import org.openide.util.RequestProcessor;
-import org.openide.util.Task;
-import org.openide.util.TaskListener;
-import org.openide.windows.IOProvider;
-import org.openide.windows.InputOutput;
+import java.util.Deque;
+import java.util.LinkedList;
 
-@Untested(excuses = "Lots of UI stuff")
 public class CommandRunner {
 
-    private static final RequestProcessor EXECUTOR = new RequestProcessor("Command runner", 12);
     public static CommandRunner get(String name) {
         return new CommandRunner(name);
     }
 
     private final String name;
+
+    private final CommandRunnerUi.Factory uiFactory;
     private final Shell shell;
 
     public CommandRunner(String name) {
-        this(name, Os.getCurrent().shell());
+        this(name, new CommandRunnerUi.Factory(), Os.getCurrent().shell());
     }
 
-    CommandRunner(String name, Shell shell) {
+    CommandRunner(String name, CommandRunnerUi.Factory uiFactory, Shell shell) {
         this.name = name;
+        this.uiFactory = uiFactory;
         this.shell = shell;
     }
 
-    public CommandFuture run(String commandLine, File workingDir) {
-        LifecycleManager.getDefault().saveAll();
-        InputOutput io = IOProvider.get(name).getIO(name, false);
-        IoColorLines.printDebug(io, commandLine);
-        ProcessBuilder processBuilder = shell.createProcess(commandLine).directory(workingDir);
-        WatchingProcessRunner processRunner = new WatchingProcessRunner(processBuilder, io);
-        ExecutorTask task = ExecutionEngine.getDefault().execute(name, processRunner, io);
-        task.addTaskListener(new CleanUpStreamsWhenFinished(io));
-        return processRunner.future;
+    public InvocationBuilder run(String commandLine) {
+        return new InvocationBuilder(shell.createProcess(commandLine));
     }
 
-    private class WatchingProcessRunner implements Runnable {
+    public CommandFuture run(String commandLine, File workingDir) {
+        return run(commandLine).inDir(workingDir).start();
+    }
+
+    public CommandFuture run(ProcessBuilder processBuilder) {
+        CommandRunnerUi ui = uiFactory.get(name);
+        ui.printText(printableCommand(processBuilder));
+        return ui.runAndWatch(processBuilder);
+    }
+
+    private String printableCommand(ProcessBuilder processBuilder) {
+        StringBuilder commandString = new StringBuilder();
+        Deque<String> commandParts = new LinkedList<>(processBuilder.command());
+        commandString.append(commandParts.pop()).append(" ");
+        commandString.append(commandParts.pop()).append(" ");
+        commandString.append("'").append(commandParts.pop()).append("'");
+        return commandString.toString();
+    }
+
+    public class InvocationBuilder {
 
         private final ProcessBuilder processBuilder;
-        private final InputOutput io;
-        final CommandFuture future = new CommandFuture();
 
-        WatchingProcessRunner(ProcessBuilder processBuilder, InputOutput io) {
+        private InvocationBuilder(ProcessBuilder processBuilder) {
             this.processBuilder = processBuilder;
-            this.io = io;
         }
 
-        @Override
-        public void run() {
-            try {
-                Process process = processBuilder.start();
-                watch(process);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+        public InvocationBuilder inDir(File workingDir) {
+            processBuilder.directory(workingDir);
+            return this;
         }
 
-        public void watch(Process process) {
-            ProgressHandle progressHandle = ProgressHandleFactory.createHandle(name, new KillOnCancel(process), new SelectOnClick(io));
-            progressHandle.start();
-
-            try {
-                //TODO: wait for these?
-                EXECUTOR.post(Pipe.between(future.wrap(process.getInputStream()), io.getOut()));
-                EXECUTOR.post(Pipe.between(process.getErrorStream(), io.getErr()));
-                EXECUTOR.post(Pipe.between(io.getIn(), process.getOutputStream()));
-                process.waitFor();
-            } catch (InterruptedException ex) {
-                process.destroy();
-            } finally {
-                progressHandle.finish();
-            }
+        public InvocationBuilder withEnvVar(String key, String value) {
+            processBuilder.environment().put(key, value);
+            return this;
         }
 
-        private class KillOnCancel implements Cancellable {
-
-            private final Process process;
-
-            KillOnCancel(Process process) {
-                this.process = process;
-            }
-
-            @Override
-            public boolean cancel() {
-                process.destroy();
-                return true;
-            }
-        }
-
-        private class SelectOnClick extends AbstractAction {
-
-            private final InputOutput io;
-
-            private SelectOnClick(InputOutput io) {
-                this.io = io;
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                io.select();
-            }
+        public CommandFuture start() {
+            return run(processBuilder);
         }
     }
 
-    private class CleanUpStreamsWhenFinished implements TaskListener {
-
-        private final InputOutput io;
-
-        CleanUpStreamsWhenFinished(InputOutput io) {
-            this.io = io;
-        }
-
-        @Override
-        public void taskFinished(Task task) {
-            io.getOut().append("\n");
-            io.getOut().close();
-            io.getErr().close();
-            try {
-                io.getIn().close();
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-    }
 }

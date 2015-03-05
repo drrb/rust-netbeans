@@ -46,7 +46,7 @@ public class CargoTest {
     public final TemporaryPreferences temporaryPreferences = new TemporaryPreferences();
     private final File file = new File("/tmp/myproject");
     private Cargo cargo;
-    private CommandRunner shell;
+    private CommandRunner commandRunner;
     private RustProject project;
     private RustConfiguration config;
     private HumbleCommandFuture commandFuture;
@@ -54,18 +54,18 @@ public class CargoTest {
     @Before
     public void setUp() {
         project = mock(RustProject.class);
-        shell = mock(CommandRunner.class);
+        commandRunner = mock(CommandRunner.class);
         commandFuture = new HumbleCommandFuture();
         config = new RustConfiguration(temporaryPreferences.get());
-        cargo = new Cargo(project, shell, config);
+        cargo = new Cargo(project, commandRunner, config);
         config.setCargoPath("/path/to/cargo");
         when(project.dir()).thenReturn(file);
-        when(shell.run(any(String.class), any(File.class))).thenReturn(commandFuture);
+        when(commandRunner.run(any(String.class), any(File.class))).thenReturn(commandFuture);
     }
 
     @Test
     public void shouldRunCargoCommandsInShell() {
-        when(shell.run("/path/to/cargo clean --verbose && /path/to/cargo build --verbose", file)).thenReturn(commandFuture);
+        when(commandRunner.run("/path/to/cargo clean --verbose && /path/to/cargo build --verbose", file)).thenReturn(commandFuture);
         CommandFuture result = cargo.run("clean", "build");
         assertEquals(result, commandFuture);
     }
@@ -73,7 +73,7 @@ public class CargoTest {
     @Test
     public void shouldNotifyOfTestResults() {
         final List<TestResult> tests = new LinkedList<>();
-        when(shell.run("/path/to/cargo test --verbose", file)).thenReturn(commandFuture);
+        when(commandRunner.run("/path/to/cargo test --verbose", file)).thenReturn(commandFuture);
         CommandFuture result = cargo.run("test");
         result.addListener(new CargoListener() {
             @Override

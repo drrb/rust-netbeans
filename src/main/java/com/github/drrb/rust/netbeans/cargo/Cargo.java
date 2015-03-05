@@ -37,7 +37,7 @@ public class Cargo {
         this(project, new CommandRunner("Cargo"), RustConfiguration.get());
     }
 
-    Cargo(RustProject project, CommandRunner commandRunner, RustConfiguration configuration) {
+    protected Cargo(RustProject project, CommandRunner commandRunner, RustConfiguration configuration) {
         this.project = project;
         this.commandRunner = commandRunner;
         this.configuration = configuration;
