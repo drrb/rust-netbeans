@@ -17,7 +17,7 @@
 package com.github.drrb.rust.netbeans.project.action;
 
 import com.github.drrb.rust.netbeans.cargo.Cargo;
-import com.github.drrb.rust.netbeans.cargo.TestRunner;
+import com.github.drrb.rust.netbeans.cargo.test.TestRunner;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import static org.netbeans.spi.project.ActionProvider.COMMAND_TEST_SINGLE;
 import org.openide.filesystems.FileObject;

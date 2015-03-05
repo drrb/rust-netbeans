@@ -15,8 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.drrb.rust.netbeans.cargo;
+package com.github.drrb.rust.netbeans.cargo.test;
 
+import com.github.drrb.rust.netbeans.cargo.Cargo;
+import com.github.drrb.rust.netbeans.cargo.CargoListener;
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.util.Untested;
@@ -26,15 +28,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.netbeans.api.project.Project;
 import org.netbeans.modules.gsf.testrunner.api.Manager;
-import org.netbeans.modules.gsf.testrunner.api.Report;
-import org.netbeans.modules.gsf.testrunner.api.TestSession;
 import org.netbeans.modules.gsf.testrunner.api.TestSuite;
 import org.netbeans.modules.gsf.testrunner.api.Testcase;
 import org.openide.filesystems.FileObject;
 
-@Untested(excuses = "API classes are final")
 public class TestRunner {
     public static class Factory {
         public TestRunner create(RustProject project, Cargo cargo) {
@@ -68,31 +66,34 @@ public class TestRunner {
 
     private void watchCargoCommand(String command) {
         CommandFuture commandFuture = cargo.run(command);
-        commandFuture.addListener(new TestWatcher(project, testManager));
+        Watcher watcher = createTestWatcher();
+        commandFuture.addListener(watcher);
     }
 
-    private static class TestWatcher extends CargoListener {
+    protected Watcher createTestWatcher() {
+        TestUiSession session = new TestUiSession(project, testManager);
+        return new Watcher(session);
+    }
+
+    static class Watcher extends CargoListener {
 
         private final Map<String, SuiteInProgress> suites = new TreeMap<>();
-        private final Manager testManager;
-        private final TestSession testSession;
+        private final TestUiSession session;
 
-        TestWatcher(Project project, Manager testManager) {
-            this.testManager = testManager;
-            this.testSession = new TestSession("Cargo Tests", project, TestSession.SessionType.TEST);
+        Watcher(TestUiSession session) {
+            this.session = session;
         }
 
         @Override
         public synchronized void onStart() {
             LOG.info("Starting test run");
-            testManager.setTestingFramework("CARGO");
-            testManager.testStarted(testSession);
+            session.start();
         }
 
         @Override
         protected void onTestCompleted(TestResult test) {
             SuiteInProgress testSuite = getSuite(test.getModuleName());
-            Testcase testCase = new Testcase(test.getTestName(), null, testSession);
+            Testcase testCase = session.createTestCase(test.getTestName());
             testCase.setStatus(test.getStatus());
             testSuite.tests.add(testCase);
         }
@@ -101,15 +102,13 @@ public class TestRunner {
         public synchronized void onFinish() {
             LOG.info("Finished test run");
             for (SuiteInProgress suite : suites.values()) {
-                testSession.addSuite(suite.suite);
-                testManager.displaySuiteRunning(testSession, suite.suite);
+                session.startSuite(suite.suite);
                 for (Testcase testCase : suite.tests) {
-                    testSession.addTestCase(testCase);
+                    session.finishTest(testCase);
                 }
-                Report report = testSession.getReport(0);
-                testManager.displayReport(testSession, report, true); // `true` means don't display "running..." next to the suite
+                session.finishCurrentSuite();
             }
-            testManager.sessionFinished(testSession);
+            session.finish();
         }
 
         private SuiteInProgress getSuite(String suiteName) {

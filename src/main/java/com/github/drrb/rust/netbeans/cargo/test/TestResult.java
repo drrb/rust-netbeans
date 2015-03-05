@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.cargo;
+package com.github.drrb.rust.netbeans.cargo.test;
 
 import java.util.Objects;
 import org.netbeans.modules.gsf.testrunner.api.Status;

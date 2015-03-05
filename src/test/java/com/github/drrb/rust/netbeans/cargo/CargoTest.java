@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.cargo;
 
+import com.github.drrb.rust.netbeans.cargo.test.TestResult;
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.commandrunner.CommandRunner;
 import com.github.drrb.rust.netbeans.commandrunner.HumbleCommandFuture;

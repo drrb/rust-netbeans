@@ -16,6 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.cargo;
 
+import com.github.drrb.rust.netbeans.cargo.test.TestResult;
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.google.common.base.Joiner;
 import static java.util.Arrays.asList;
