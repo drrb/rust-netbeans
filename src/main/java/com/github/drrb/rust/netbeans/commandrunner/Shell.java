@@ -16,6 +16,9 @@
  */
 package com.github.drrb.rust.netbeans.commandrunner;
 
+import com.google.common.base.Joiner;
+import java.util.List;
+
 /**
  *
  */
@@ -29,6 +32,11 @@ public enum Shell {
     private Shell(String command, String flags) {
         this.command = command;
         this.flags = flags;
+    }
+
+    public ProcessBuilder createProcess(List<String> commandLines) {
+        String combinedCommandLine = Joiner.on(" && ").join(commandLines);
+        return createProcess(combinedCommandLine);
     }
 
     public ProcessBuilder createProcess(String commandLine) {

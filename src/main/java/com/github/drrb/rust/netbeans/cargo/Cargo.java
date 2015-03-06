@@ -18,37 +18,67 @@ package com.github.drrb.rust.netbeans.cargo;
 
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.commandrunner.CommandRunner;
+import com.github.drrb.rust.netbeans.commandrunner.Shell;
+import com.github.drrb.rust.netbeans.configuration.Os;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
-import com.google.common.base.Joiner;
-import java.util.ArrayList;
+import com.github.drrb.rust.netbeans.util.Template;
+import static com.github.drrb.rust.netbeans.util.Template.template;
+import static com.google.common.collect.Lists.transform;
+import static java.util.Arrays.asList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  */
 public class Cargo {
 
-    private final CommandRunner commandRunner;
     private final RustProject project;
+    private final Shell shell;
+    private final CommandRunner commandRunner;
     private final RustConfiguration configuration;
 
     public Cargo(RustProject project) {
-        this(project, new CommandRunner("Cargo"), RustConfiguration.get());
+        this(project, Os.getCurrent().shell(), new CommandRunner("Cargo"), RustConfiguration.get());
     }
 
-    protected Cargo(RustProject project, CommandRunner commandRunner, RustConfiguration configuration) {
+    protected Cargo(RustProject project, Shell shell, CommandRunner commandRunner, RustConfiguration configuration) {
         this.project = project;
+        this.shell = shell;
         this.commandRunner = commandRunner;
         this.configuration = configuration;
     }
 
     public CommandFuture run(String... commands) {
-        List<String> cargoCommands = new ArrayList<>(commands.length);
-        for (String command : commands) {
-            cargoCommands.add(String.format("%s %s --verbose", configuration.getCargoPath(), command));
+        return run(new CommandSet(commands));
+    }
+
+    public CommandFuture run(CommandSet commandSet) {
+        Template commandTemplate = template("{cargo} {command} --verbose");
+        commandTemplate.interpolate("cargo", configuration.getCargoPath());
+        List<String> commandLines = transform(commandSet.commands, commandTemplate.interpolateFromInput("command"));
+        ProcessBuilder process = shell.createProcess(commandLines).directory(project.dir());
+        process.environment().putAll(commandSet.envVars);
+        return commandRunner.run(process);
+    }
+
+    public static class CommandSet {
+        public static CommandSet commands(String... commands) {
+            return new CommandSet(commands);
         }
-        String commandLine = Joiner.on(" && ").join(cargoCommands);
-        return commandRunner.run(commandLine, project.dir());
+
+        final List<String> commands;
+        final Map<String, String> envVars = new HashMap<>();
+
+        public CommandSet(String... commands) {
+            this.commands = asList(commands);
+        }
+
+        public CommandSet withEnvVar(String key, String value) {
+            envVars.put(key, value);
+            return this;
+        }
     }
 }

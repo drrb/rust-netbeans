@@ -18,13 +18,8 @@
 package com.github.drrb.rust.netbeans.commandrunner;
 
 import java.io.File;
-import static java.util.Arrays.asList;
-import java.util.List;
-import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -35,52 +30,18 @@ public class CommandRunnerTest {
     @Before
     public void setUp() {
         ui = mock(CommandRunnerUi.class);
-        commandRunner = new CommandRunner("My command runner", new CannedUiFactory(ui), Shell.BASH);
+        commandRunner = new CommandRunner("My command runner", new CannedUiFactory(ui));
     }
 
     @Test
     public void shouldRunCommand() {
-        commandRunner.run("cargo test", new File("/tmp"));
-        verify(ui).printText("/bin/bash -lc 'cargo test'");
-        verify(ui).runAndWatch(argThat(isProcessInDir(new File("/tmp"), "/bin/bash", "-lc", "cargo test")));
+        ProcessBuilder process = new ProcessBuilder("/path/to/cargo", "do something").directory(new File("/tmp"));
+        commandRunner.run(process);
+        verify(ui).printText("/path/to/cargo 'do something'");
+        verify(ui).runAndWatch(process);
     }
 
-    @Test
-    public void shouldRunCommandWithBuilderApi() {
-        commandRunner.run("cargo test").inDir(new File("/tmp")).withEnvVar("RUST_TEST_TASKS", "1").start();
-        verify(ui).printText("/bin/bash -lc 'cargo test'");
-        verify(ui).runAndWatch(argThat(isProcessInDir(new File("/tmp"), "/bin/bash", "-lc", "cargo test")));
-    }
-
-    private ArgumentMatcher<ProcessBuilder> isProcessInDir(File workingDir, String... commandParts) {
-        return new ProcessBuilderMatcher(workingDir, commandParts);
-    }
-
-    static class ProcessBuilderMatcher extends ArgumentMatcher<ProcessBuilder> {
-        private final File workingDir;
-        private final List<String> commandParts;
-
-        private ProcessBuilderMatcher(File workingDir, String... commandParts) {
-            this.workingDir = workingDir;
-            this.commandParts = asList(commandParts);
-        }
-
-        @Override
-        public boolean matches(Object argument) {
-            ProcessBuilder pb = (ProcessBuilder) argument;
-            if (!pb.command().equals(commandParts)) {
-                System.out.println("Commands differ");
-                return false;
-            }
-            if (!pb.directory().equals(workingDir)) {
-                System.out.println("working dirs differ");
-                return false;
-            }
-            return true;
-        }
-    }
-
-    static class CannedUiFactory extends CommandRunnerUi.Factory {
+    private static class CannedUiFactory extends CommandRunnerUi.Factory {
         private final CommandRunnerUi ui;
 
         private CannedUiFactory(CommandRunnerUi ui) {
@@ -92,5 +53,4 @@ public class CommandRunnerTest {
             return ui;
         }
     }
-
 }

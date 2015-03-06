@@ -26,7 +26,7 @@ public class FakeCargo extends Cargo {
     private List<String> commandsRun;
 
     public FakeCargo(FakeCargoCommandFuture commandFuture) {
-        super(null, null, null);
+        super(null, null, null, null);
         this.commandFuture = commandFuture;
     }
 

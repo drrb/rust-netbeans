@@ -16,11 +16,6 @@
  */
 package com.github.drrb.rust.netbeans.commandrunner;
 
-import com.github.drrb.rust.netbeans.configuration.Os;
-import java.io.File;
-import java.util.Deque;
-import java.util.LinkedList;
-
 public class CommandRunner {
 
     public static CommandRunner get(String name) {
@@ -28,26 +23,15 @@ public class CommandRunner {
     }
 
     private final String name;
-
     private final CommandRunnerUi.Factory uiFactory;
-    private final Shell shell;
 
     public CommandRunner(String name) {
-        this(name, new CommandRunnerUi.Factory(), Os.getCurrent().shell());
+        this(name, new CommandRunnerUi.Factory());
     }
 
-    CommandRunner(String name, CommandRunnerUi.Factory uiFactory, Shell shell) {
+    CommandRunner(String name, CommandRunnerUi.Factory uiFactory) {
         this.name = name;
         this.uiFactory = uiFactory;
-        this.shell = shell;
-    }
-
-    public InvocationBuilder run(String commandLine) {
-        return new InvocationBuilder(shell.createProcess(commandLine));
-    }
-
-    public CommandFuture run(String commandLine, File workingDir) {
-        return run(commandLine).inDir(workingDir).start();
     }
 
     public CommandFuture run(ProcessBuilder processBuilder) {
@@ -58,34 +42,14 @@ public class CommandRunner {
 
     private String printableCommand(ProcessBuilder processBuilder) {
         StringBuilder commandString = new StringBuilder();
-        Deque<String> commandParts = new LinkedList<>(processBuilder.command());
-        commandString.append(commandParts.pop()).append(" ");
-        commandString.append(commandParts.pop()).append(" ");
-        commandString.append("'").append(commandParts.pop()).append("'");
-        return commandString.toString();
+        for (String commandPart : processBuilder.command()) {
+            if (commandPart.contains(" ")) {
+                commandString.append("'").append(commandPart).append("'");
+            } else {
+                commandString.append(commandPart);
+            }
+            commandString.append(" ");
+        }
+        return commandString.toString().replaceAll(" $", "");
     }
-
-    public class InvocationBuilder {
-
-        private final ProcessBuilder processBuilder;
-
-        private InvocationBuilder(ProcessBuilder processBuilder) {
-            this.processBuilder = processBuilder;
-        }
-
-        public InvocationBuilder inDir(File workingDir) {
-            processBuilder.directory(workingDir);
-            return this;
-        }
-
-        public InvocationBuilder withEnvVar(String key, String value) {
-            processBuilder.environment().put(key, value);
-            return this;
-        }
-
-        public CommandFuture start() {
-            return run(processBuilder);
-        }
-    }
-
 }

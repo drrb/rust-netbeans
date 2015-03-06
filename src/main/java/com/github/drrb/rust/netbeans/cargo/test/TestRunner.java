@@ -21,6 +21,8 @@ import com.github.drrb.rust.netbeans.cargo.Cargo;
 import com.github.drrb.rust.netbeans.cargo.CargoListener;
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.project.RustProject;
+import com.github.drrb.rust.netbeans.util.Template;
+import static com.github.drrb.rust.netbeans.util.Template.template;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +60,7 @@ public class TestRunner {
         this.watcherFactory = watcherFactory;
     }
 
-    //TODO: for both of these, run 'RUST_TEST_TASKS=1 cargo test --jobs 1 -- --nocapture'
+    //TODO: for both of these, run 'RUST_TEST_TASKS=1 cargo test <filter> -- --nocapture'
     // (we'll have to work out how to do that on Windows)
     public void run() {
         LOG.info("Running all tests");
@@ -67,8 +69,10 @@ public class TestRunner {
 
     public void run(FileObject file) {
         LOG.log(Level.INFO, "Running tests for file {0}", file);
+        Template commandTemplate = template("test {moduleName}::"); // Rust's test runner matches "my_module::" against all tests in my_module
         String moduleName = project.getCargoConfig().getModuleName(file);
-        watchCargoCommand("test " + moduleName + "::"); // Cargo matches this against all tests in this module
+        String testCommand = commandTemplate.renderWith("moduleName", moduleName);
+        watchCargoCommand(testCommand);
     }
 
     private void watchCargoCommand(String command) {

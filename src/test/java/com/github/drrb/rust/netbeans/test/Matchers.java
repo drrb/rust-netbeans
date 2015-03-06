@@ -17,12 +17,18 @@
 package com.github.drrb.rust.netbeans.test;
 
 import com.google.common.collect.Sets;
+import java.io.File;
 import java.util.Arrays;
+import static java.util.Arrays.asList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 import org.hamcrest.TypeSafeMatcher;
+import org.mockito.ArgumentMatcher;
 import org.netbeans.modules.csl.api.CompletionProposal;
 import org.netbeans.modules.csl.api.ElementKind;
 import org.netbeans.modules.csl.api.Modifier;
@@ -169,4 +175,57 @@ public class Matchers extends org.hamcrest.Matchers {
                     .appendText(" and icon that ").appendDescriptionOf(iconMatcher);
         }
     }
+
+    public static ProcessMatcher isProcess(String... commandParts) {
+        return new ProcessMatcher(commandParts);
+    }
+
+    public static class ProcessMatcher extends ArgumentMatcher<ProcessBuilder> {
+        private final List<String> expectedCommandParts;
+        private final Map<String, String> expectedEnvVars = new HashMap<>();
+        private Matcher<? super File> expectedWorkingDir = anything();
+
+        private ProcessMatcher(String... commandParts) {
+            this.expectedCommandParts = asList(commandParts);
+        }
+
+        public ProcessMatcher inDir(File workingDir) {
+            this.expectedWorkingDir = equalTo(workingDir);
+            return this;
+        }
+
+        public ProcessMatcher withEnvVar(String key, String value) {
+            this.expectedEnvVars.put(key, value);
+            return this;
+        }
+
+        @Override
+        public boolean matches(Object argument) {
+            ProcessBuilder pb = (ProcessBuilder) argument;
+            if (!pb.command().equals(expectedCommandParts)) {
+                System.out.println("Commands differ");
+                System.out.println("expected = " + expectedCommandParts);
+                System.out.println("actual = " + pb.command());
+                return false;
+            }
+            if (!expectedWorkingDir.matches(pb.directory())) {
+                System.out.println("working dirs differ");
+                return false;
+            }
+            for (Map.Entry<String, String> expectedEnvVar : expectedEnvVars.entrySet()) {
+                String key = expectedEnvVar.getKey();
+                String value = expectedEnvVar.getValue();
+                if (!pb.environment().containsKey(key)) {
+                    System.out.println("env var missing");
+                    return false;
+                }
+                if (!pb.environment().get(key).equals(value)) {
+                    System.out.println("env var differs");
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
 }
