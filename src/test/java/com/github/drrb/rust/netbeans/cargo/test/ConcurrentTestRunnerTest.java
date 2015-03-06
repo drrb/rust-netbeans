@@ -65,7 +65,7 @@ public class ConcurrentTestRunnerTest {
     @Test
     public void shouldRunTestCommandWhenTestingProject() {
         testRunner.run();
-        assertThat(cargo.getCommandsRun(), contains("test"));
+        assertThat(cargo.getCommandsRun(), contains(Cargo.TEST_PARALLEL));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ConcurrentTestRunnerTest {
 
         testRunner.run(sourceFile);
 
-        assertThat(cargo.getCommandsRun(), contains("test dirmod::"));
+        assertThat(cargo.getCommandsRun(), contains(Cargo.TEST_PARALLEL.withArg("dirmod::")));
     }
 
     @Test

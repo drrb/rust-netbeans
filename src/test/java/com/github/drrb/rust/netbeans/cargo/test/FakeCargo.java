@@ -23,7 +23,7 @@ import java.util.List;
 
 public class FakeCargo extends Cargo {
     private final FakeCargoCommandFuture commandFuture;
-    private List<String> commandsRun;
+    private List<Command> commandsRun;
 
     public FakeCargo(FakeCargoCommandFuture commandFuture) {
         super(null, null, null, null);
@@ -31,12 +31,12 @@ public class FakeCargo extends Cargo {
     }
 
     @Override
-    public FakeCargoCommandFuture run(String... commands) {
+    public FakeCargoCommandFuture run(Command... commands) {
         this.commandsRun = asList(commands);
         return commandFuture;
     }
 
-    public List<String> getCommandsRun() {
+    public List<Command> getCommandsRun() {
         return commandsRun;
     }
 }

@@ -42,6 +42,7 @@ public class TestCommand implements Command {
     public void run(Lookup context) {
         RustProject project = context.lookup(RustProject.class);
         Cargo cargo = context.lookup(Cargo.class);
-        testRunnerFactory.create(project, cargo).run();
+        TestRunner testRunner = testRunnerFactory.create(project, cargo);
+        testRunner.run();
     }
 }

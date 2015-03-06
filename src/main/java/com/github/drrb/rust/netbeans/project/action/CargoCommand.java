@@ -25,15 +25,15 @@ import org.openide.util.Lookup;
  */
 public enum CargoCommand implements Command {
 
-    BUILD(COMMAND_BUILD, "build"),
-    CLEAN(COMMAND_CLEAN, "clean"),
-    REBUILD(COMMAND_REBUILD, "clean", "build"),
-    RUN(COMMAND_RUN, "run");
+    BUILD(COMMAND_BUILD, Cargo.BUILD),
+    CLEAN(COMMAND_CLEAN, Cargo.CLEAN),
+    REBUILD(COMMAND_REBUILD, Cargo.CLEAN, Cargo.BUILD),
+    RUN(COMMAND_RUN, Cargo.RUN);
 
     private final String id;
-    private final String[] cargoCommands;
+    private final Cargo.Command[] cargoCommands;
 
-    private CargoCommand(String id, String... cargoCommands) {
+    private CargoCommand(String id, Cargo.Command... cargoCommands) {
         this.id = id;
         this.cargoCommands = cargoCommands;
     }

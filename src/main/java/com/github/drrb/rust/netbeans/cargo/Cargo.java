@@ -23,18 +23,26 @@ import com.github.drrb.rust.netbeans.configuration.Os;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.util.Template;
+import com.google.common.base.Joiner;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import static com.github.drrb.rust.netbeans.cargo.Cargo.Command.command;
 import static com.github.drrb.rust.netbeans.util.Template.template;
 import static com.google.common.collect.Lists.transform;
 import static java.util.Arrays.asList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static java.util.Arrays.spliterator;
+
+import java.util.*;
 
 /**
  *
  */
 public class Cargo {
-
+    public static final Command BUILD = command("build");
+    public static final Command CLEAN = command("clean");
+    public static final Command RUN = command("run");
+    public static final Command TEST_PARALLEL = command("test");
+    public static final Command TEST_SEQUENTIAL = command("test").withEnvVar("RUST_TEST_TASKS", "1");
     private final RustProject project;
     private final Shell shell;
     private final CommandRunner commandRunner;
@@ -51,34 +59,73 @@ public class Cargo {
         this.configuration = configuration;
     }
 
-    public CommandFuture run(String... commands) {
-        return run(new CommandSet(commands));
+    public CommandFuture run(Command... commands) {
+        return run(asList(commands));
     }
 
-    public CommandFuture run(CommandSet commandSet) {
+    public CommandFuture run(List<Command> commands) {
         Template commandTemplate = template("{cargo} {command} --verbose");
         commandTemplate.interpolate("cargo", configuration.getCargoPath());
-        List<String> commandLines = transform(commandSet.commands, commandTemplate.interpolateFromInput("command"));
+        List<String> commandLines = transform(commands, commandTemplate.interpolateFromInput("command"));
         ProcessBuilder process = shell.createProcess(commandLines).directory(project.dir());
-        process.environment().putAll(commandSet.envVars);
+        process.environment().putAll(getEnvVars(commands));
         return commandRunner.run(process);
     }
 
-    public static class CommandSet {
-        public static CommandSet commands(String... commands) {
-            return new CommandSet(commands);
+    private Map<String, String> getEnvVars(List<Command> commands) {
+        Map<String, String> allEnvVars = new HashMap<>(1);
+        for (Command command : commands) {
+            allEnvVars.putAll(command.envVars);
+        }
+        return allEnvVars;
+    }
+
+    public static class Command {
+        public static Command command(String command) {
+            return new Command(command);
         }
 
-        final List<String> commands;
-        final Map<String, String> envVars = new HashMap<>();
+        private final List<String> parts;
+        private final Map<String, String> envVars;
 
-        public CommandSet(String... commands) {
-            this.commands = asList(commands);
+        private Command(String command) {
+            this(asList(command), Collections.<String, String>emptyMap());
         }
 
-        public CommandSet withEnvVar(String key, String value) {
-            envVars.put(key, value);
-            return this;
+        private Command(List<String> parts, Map<String, String> envVars) {
+            this.parts = new ArrayList<>(parts);
+            this.envVars = new HashMap<>(envVars);
+        }
+
+        public Command withEnvVar(String key, String value) {
+            HashMap<String, String> newEnvVars = new HashMap<>(envVars);
+            newEnvVars.put(key, value);
+            return new Command(parts, newEnvVars);
+        }
+
+        public Command withArg(String arg) {
+            return withArgs(arg);
+        }
+
+        public Command withArgs(String... args) {
+            List<String> newParts = new ArrayList<>(parts);
+            newParts.addAll(asList(args));
+            return new Command(newParts, envVars);
+        }
+
+        @Override
+        public String toString() {
+            return Joiner.on(" ").join(parts);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return EqualsBuilder.reflectionEquals(this, o);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(parts, envVars);
         }
     }
 }

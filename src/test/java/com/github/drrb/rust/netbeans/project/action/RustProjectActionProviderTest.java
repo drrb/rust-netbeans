@@ -21,6 +21,9 @@ import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.project.action.RustProjectActionProvider;
 import org.junit.Before;
 import org.junit.Test;
+
+import static com.github.drrb.rust.netbeans.cargo.Cargo.BUILD;
+import static com.github.drrb.rust.netbeans.cargo.Cargo.CLEAN;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import org.openide.util.Lookup;
@@ -30,13 +33,12 @@ import org.openide.util.Lookup;
  */
 public class RustProjectActionProviderTest {
 
-    private RustProject project;
     private Cargo cargo;
     private RustProjectActionProvider actionProvider;
 
     @Before
     public void setUp() {
-        project = mock(RustProject.class);
+        RustProject project = mock(RustProject.class);
         cargo = mock(Cargo.class);
         actionProvider = new RustProjectActionProvider(project, cargo);
     }
@@ -45,14 +47,14 @@ public class RustProjectActionProviderTest {
     public void testBuild() {
         actionProvider.invokeAction("build", Lookup.EMPTY);
 
-        verify(cargo).run("build");
+        verify(cargo).run(BUILD);
     }
 
     @Test
     public void testRebuild() {
         actionProvider.invokeAction("rebuild", Lookup.EMPTY);
 
-        verify(cargo).run("clean", "build");
+        verify(cargo).run(CLEAN, BUILD);
     }
 
 }
