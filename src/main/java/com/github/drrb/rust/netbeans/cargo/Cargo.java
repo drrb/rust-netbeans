@@ -23,26 +23,25 @@ import com.github.drrb.rust.netbeans.configuration.Os;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.util.Template;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import java.util.*;
+
 import static com.github.drrb.rust.netbeans.cargo.Cargo.Command.command;
-import static com.github.drrb.rust.netbeans.util.Template.template;
 import static com.google.common.collect.Lists.transform;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.spliterator;
-
-import java.util.*;
 
 /**
  *
  */
 public class Cargo {
-    public static final Command BUILD = command("build");
-    public static final Command CLEAN = command("clean");
-    public static final Command RUN = command("run");
-    public static final Command TEST_PARALLEL = command("test");
-    public static final Command TEST_SEQUENTIAL = command("test").withEnvVar("RUST_TEST_TASKS", "1");
+    public static final Command BUILD = command("{cargo} build --verbose");
+    public static final Command CLEAN = command("{cargo} clean --verbose");
+    public static final Command RUN = command("{cargo} run --verbose");
+    public static final Command TEST_PARALLEL = command("{cargo} test {args} --verbose");
+    public static final Command TEST_SEQUENTIAL = command("{cargo} test {args} --jobs 1 --verbose -- --nocapture").withEnvVar("RUST_TEST_TASKS", "1");
     private final RustProject project;
     private final Shell shell;
     private final CommandRunner commandRunner;
@@ -64,9 +63,7 @@ public class Cargo {
     }
 
     public CommandFuture run(List<Command> commands) {
-        Template commandTemplate = template("{cargo} {command} --verbose");
-        commandTemplate.interpolate("cargo", configuration.getCargoPath());
-        List<String> commandLines = transform(commands, commandTemplate.interpolateFromInput("command"));
+        List<String> commandLines = transform(commands, new RenderCommandForCargoPath(configuration.getCargoPath()));
         ProcessBuilder process = shell.createProcess(commandLines).directory(project.dir());
         process.environment().putAll(getEnvVars(commands));
         return commandRunner.run(process);
@@ -85,22 +82,24 @@ public class Cargo {
             return new Command(command);
         }
 
-        private final List<String> parts;
+        private final Template template;
+        private final List<String> args;
         private final Map<String, String> envVars;
 
-        private Command(String command) {
-            this(asList(command), Collections.<String, String>emptyMap());
+        private Command(String template) {
+            this(Template.template(template), Collections.<String>emptyList(), Collections.<String, String>emptyMap());
         }
 
-        private Command(List<String> parts, Map<String, String> envVars) {
-            this.parts = new ArrayList<>(parts);
+        private Command(Template template, List<String> args, Map<String, String> envVars) {
+            this.template = template;
+            this.args = new ArrayList<>(args);
             this.envVars = new HashMap<>(envVars);
         }
 
         public Command withEnvVar(String key, String value) {
             HashMap<String, String> newEnvVars = new HashMap<>(envVars);
             newEnvVars.put(key, value);
-            return new Command(parts, newEnvVars);
+            return new Command(template, args, newEnvVars);
         }
 
         public Command withArg(String arg) {
@@ -108,14 +107,15 @@ public class Cargo {
         }
 
         public Command withArgs(String... args) {
-            List<String> newParts = new ArrayList<>(parts);
-            newParts.addAll(asList(args));
-            return new Command(newParts, envVars);
+            List<String> newArgs = new ArrayList<>(this.args);
+            newArgs.addAll(asList(args));
+            return new Command(template, newArgs, envVars);
         }
 
-        @Override
-        public String toString() {
-            return Joiner.on(" ").join(parts);
+        public String renderForCargoPath(String cargoPath) {
+            return template.interpolate("cargo", cargoPath)
+                            .interpolate("args", Joiner.on(" ").join(args))
+                            .render();
         }
 
         @Override
@@ -125,7 +125,20 @@ public class Cargo {
 
         @Override
         public int hashCode() {
-            return Objects.hash(parts, envVars);
+            return Objects.hash(args, envVars);
+        }
+    }
+
+    private class RenderCommandForCargoPath implements Function<Command, String> {
+        private String cargoPath;
+
+        public RenderCommandForCargoPath(String cargoPath) {
+            this.cargoPath = cargoPath;
+        }
+
+        @Override
+        public String apply(Command command) {
+            return command.renderForCargoPath(cargoPath);
         }
     }
 }

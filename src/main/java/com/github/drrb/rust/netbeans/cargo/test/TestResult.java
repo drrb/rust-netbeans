@@ -16,14 +16,19 @@
  */
 package com.github.drrb.rust.netbeans.cargo.test;
 
-import java.util.Objects;
 import org.netbeans.modules.gsf.testrunner.api.Status;
+
+import java.util.Objects;
 
 public class TestResult {
 
     private final String moduleName;
     private final String testName;
     private final Status status;
+
+    public TestResult(String moduleName, String testName) {
+        this(moduleName, testName, null);
+    }
 
     public TestResult(String moduleName, String testName, Status status) {
         this.moduleName = moduleName;
@@ -72,10 +77,7 @@ public class TestResult {
         if (!Objects.equals(this.testName, other.testName)) {
             return false;
         }
-        if (this.status != other.status) {
-            return false;
-        }
-        return true;
+        return this.status == other.status;
     }
 
 }

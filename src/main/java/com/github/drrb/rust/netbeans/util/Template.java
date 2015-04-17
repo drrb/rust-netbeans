@@ -16,36 +16,26 @@
  */
 package com.github.drrb.rust.netbeans.util;
 
-import com.google.common.base.Function;
-
-public class Template implements Function<Object, String> {
+public class Template {
 
     public static Template template(String format) {
         return new Template(format);
     }
-    private String template;
-    private String inputKey = "";
+    private final String format;
 
     private Template(String format) {
-        this.template = format;
+        this.format = format;
     }
 
     public Template interpolate(String key, Object value) {
-        template = renderWith(key, value);
-        return this;
-    }
-
-    public Template interpolateFromInput(String key) {
-        inputKey = key;
-        return this;
-    }
-
-    @Override
-    public String apply(Object input) {
-        return renderWith(inputKey, input);
+        return new Template(format.replace("{" + key + "}", value.toString()));
     }
 
     public String renderWith(String key, Object value) {
-        return template.replace("{" + key + "}", value.toString());
+        return interpolate(key, value).render();
+    }
+
+    public String render() {
+        return format;
     }
 }

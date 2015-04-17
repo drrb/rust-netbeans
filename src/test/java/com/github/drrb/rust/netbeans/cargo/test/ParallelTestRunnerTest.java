@@ -17,32 +17,28 @@
 
 package com.github.drrb.rust.netbeans.cargo.test;
 
-import com.github.drrb.rust.netbeans.cargo.Cargo;
+import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.netbeans.api.project.Project;
-import static org.netbeans.modules.gsf.testrunner.api.Status.FAILED;
-import static org.netbeans.modules.gsf.testrunner.api.Status.PASSED;
 import org.netbeans.modules.gsf.testrunner.api.TestSuite;
 import org.netbeans.modules.gsf.testrunner.api.Testcase;
 import org.openide.filesystems.FileObject;
 
-public class ConcurrentTestRunnerTest {
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.netbeans.modules.gsf.testrunner.api.Status.PASSED;
+
+public class ParallelTestRunnerTest {
 
     @Rule
     public final NetbeansWithRust netbeans = new NetbeansWithRust();
     private RustProject project;
     private FakeTestUiSession session;
-    private TestRunner.Watcher watcher;
+    private ParallelTestWatcher watcher;
     private FakeCargo cargo;
     private TestRunner testRunner;
     private FakeCargoCommandFuture testsProgress;
@@ -53,10 +49,10 @@ public class ConcurrentTestRunnerTest {
         testsProgress = new FakeCargoCommandFuture();
         cargo = new FakeCargo(testsProgress);
         session = new FakeTestUiSession();
-        watcher = new TestRunner.Watcher(session);
-        testRunner = new TestRunner(project, cargo, new TestRunner.WatcherFactory() {
+        watcher = new ParallelTestWatcher(session);
+        testRunner = new TestRunner(project, cargo, new TestRunner.ParallelTestStrategy() {
             @Override
-            public TestRunner.Watcher createWatcher(Project project) {
+            public CommandFuture.Listener createWatcher(TestUiSession session) {
                 return watcher;
             }
         });
@@ -65,7 +61,7 @@ public class ConcurrentTestRunnerTest {
     @Test
     public void shouldRunTestCommandWhenTestingProject() {
         testRunner.run();
-        assertThat(cargo.getCommandsRun(), contains(Cargo.TEST_PARALLEL));
+        assertThat(cargo.getCommandsRun(), contains("cargo test  --verbose"));
     }
 
     @Test
@@ -74,7 +70,16 @@ public class ConcurrentTestRunnerTest {
 
         testRunner.run(sourceFile);
 
-        assertThat(cargo.getCommandsRun(), contains(Cargo.TEST_PARALLEL.withArg("dirmod::")));
+        assertThat(cargo.getCommandsRun(), contains("cargo test dirmod:: --verbose"));
+    }
+
+    @Test
+    public void shouldSpecifyNoFilterWhenTestingCrateFile() {
+        FileObject sourceFile = project.getProjectDirectory().getFileObject("src/main.rs");
+
+        testRunner.run(sourceFile);
+
+        assertThat(cargo.getCommandsRun(), contains("cargo test  --verbose"));
     }
 
     @Test
@@ -94,13 +99,16 @@ public class ConcurrentTestRunnerTest {
     @Test
     public void shouldRecordTestsAtTheEnd() {
         testRunner.run();
-        testsProgress.printLine("");
-        watcher.onTestCompleted(new TestResult("mymodule", "my_passing_test", PASSED));
-        watcher.onTestCompleted(new TestResult("myothermodule", "myothertest", PASSED));
-        watcher.onTestCompleted(new TestResult("mymodule", "my_failing_test", FAILED));
+
+        testsProgress.printLine("Starting to run tests");
+        testsProgress.printLine("test mymodule::my_passing_test ... ok");
+        testsProgress.printLine("test myothermodule::myothertest ... ok");
+        testsProgress.printLine("test mymodule::my_failing_test ... FAILED");
+        testsProgress.processEvents();
         assertThat(session.getSuites(), is(empty()));
 
-        watcher.onFinish();
+        testsProgress.finish();
+        testsProgress.processEvents();
         assertThat(session.getSuites(), hasSize(2));
         TestSuite suite = session.getSuites().get(0);
         assertThat(suite.getName(), is("mymodule"));

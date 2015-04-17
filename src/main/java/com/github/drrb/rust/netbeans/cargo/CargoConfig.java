@@ -20,10 +20,13 @@ import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.github.drrb.rust.netbeans.rustbridge.RustCrateType;
 import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
+import com.github.drrb.rust.netbeans.util.Template;
 import com.google.common.collect.Iterables;
 import com.moandjiezana.toml.Toml;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+
+import static com.github.drrb.rust.netbeans.util.Template.template;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -82,17 +85,24 @@ public class CargoConfig {
         modFiles.add(Collections.singleton(sourceFile));
         for (String modName : modDeclarations) {
             FileObject parentDir = sourceFile.getParent();
-            FileObject possibleFileMod = parentDir.getFileObject(modName + ".rs");
-            FileObject possibleModDir = parentDir.getFileObject(modName);
-            FileObject possibleDirMod = possibleModDir == null ? null : possibleModDir.getFileObject("mod.rs");
-            FileObject modFile = possibleFileMod == null ? possibleDirMod : possibleFileMod;
+            FileObject modFile = getModFile(modName, parentDir);
             if (modFile == null) {
                 LOG.log(Level.WARNING, "Couldn''t find module ''{0}'' (found ''mod {0}'' in {1} but couldn''t find either ''{2}/{0}.rs'' or ''{2}/{0}/mod.rs'')", new Object[]{modName, sourceFile.getPath(), parentDir.getPath()});
-                continue;
+            } else {
+                modFiles.add(modFiles(modFile));
             }
-            modFiles.add(modFiles(modFile));
         }
         return Iterables.concat(modFiles);
+    }
+
+    private FileObject getModFile(String modName, FileObject parentDir) {
+        Template fileModNameTemplate = template("{modName}.rs");
+        Template dirModNameTemplate = template("{modName}/mod.rs");
+        String fileModName = fileModNameTemplate.renderWith("modName", modName);
+        String dirModName = dirModNameTemplate.renderWith("modName", modName);
+        FileObject possibleFileMod = parentDir.getFileObject(fileModName);
+        FileObject possibleDirMod = parentDir.getFileObject(dirModName);
+        return possibleFileMod == null ? possibleDirMod : possibleFileMod;
     }
 
     public List<Crate> getCrates() {
@@ -152,7 +162,7 @@ public class CargoConfig {
                 .replace("/", "::"); //TODO: should we use "/" here, or is it "\\" on Windows?
     }
 
-    private boolean isCrate(FileObject file) {
+    public boolean isCrate(FileObject file) {
         for (Crate crate : getCrates()) {
             if (crate.getFile().equals(file)) {
                 return true;

@@ -18,118 +18,93 @@
 package com.github.drrb.rust.netbeans.cargo.test;
 
 import com.github.drrb.rust.netbeans.cargo.Cargo;
-import com.github.drrb.rust.netbeans.cargo.CargoListener;
+import com.github.drrb.rust.netbeans.cargo.CargoConfig;
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
+import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
+import org.netbeans.modules.gsf.testrunner.api.Manager;
+import org.openide.filesystems.FileObject;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.netbeans.api.project.Project;
-import org.netbeans.modules.gsf.testrunner.api.Manager;
-import org.netbeans.modules.gsf.testrunner.api.TestSuite;
-import org.netbeans.modules.gsf.testrunner.api.Testcase;
-import org.openide.filesystems.FileObject;
 
 public class TestRunner {
     public static class Factory {
+
+        private RustConfiguration config;
+
+        public Factory() {
+            this(RustConfiguration.get());
+        }
+
+        public Factory(RustConfiguration config) {
+            this.config = config;
+        }
+
         public TestRunner create(RustProject project, Cargo cargo) {
-            return new TestRunner(project, cargo, new WatcherFactory());
+            //TODO: if (config.runTestsParallel() {
+            //TODO: } else {
+            return new TestRunner(project, cargo, new SequentialTestStrategy());
+            //TODO: }
         }
     }
 
-    static class WatcherFactory {
-        public Watcher createWatcher(Project project) {
-            TestUiSession session = new TestUiSession(project, Manager.getInstance());
-            return new Watcher(session);
+    interface TestStrategy {
+        Cargo.Command getTestCommand();
+        CommandFuture.Listener createWatcher(TestUiSession session);
+    }
+
+    static class SequentialTestStrategy implements TestStrategy {
+        public Cargo.Command getTestCommand() {
+            return Cargo.TEST_SEQUENTIAL;
+        }
+        public CommandFuture.Listener createWatcher(TestUiSession session) {
+            return new SequentialTestWatcher(session);
+        }
+    }
+
+    static class ParallelTestStrategy implements TestStrategy {
+        public Cargo.Command getTestCommand() {
+            return Cargo.TEST_PARALLEL;
+        }
+        public CommandFuture.Listener createWatcher(TestUiSession session) {
+            return new ParallelTestWatcher(session);
         }
     }
 
     private static final Logger LOG = Logger.getLogger(TestRunner.class.getName());
     private final RustProject project;
     private final Cargo cargo;
-    private final WatcherFactory watcherFactory;
+    private final TestStrategy testStrategy;
 
-    public TestRunner(RustProject project, Cargo cargo, WatcherFactory watcherFactory) {
+    public TestRunner(RustProject project, Cargo cargo, TestStrategy testStrategy) {
         this.project = project;
         this.cargo = cargo;
-        this.watcherFactory = watcherFactory;
+        this.testStrategy = testStrategy;
     }
 
-    //TODO: for both of these, run 'RUST_TEST_TASKS=1 cargo test <filter> -- --nocapture'
-    // (we'll have to work out how to do that on Windows)
     public void run() {
         LOG.info("Running all tests");
-        watchCargoCommand(Cargo.TEST_PARALLEL);
+        watchCargoCommand(testStrategy.getTestCommand());
     }
 
     public void run(FileObject file) {
         LOG.log(Level.INFO, "Running tests for file {0}", file);
-        String moduleName = project.getCargoConfig().getModuleName(file);
-        String moduleFilter = moduleName + "::";  // Rust's test runner matches "my_module::" against all tests in my_module
-        watchCargoCommand(Cargo.TEST_PARALLEL.withArg(moduleFilter));
+        CargoConfig cargoConfig = project.getCargoConfig();
+        String moduleFilter;
+        if (cargoConfig.isCrate(file)) {
+            moduleFilter = "";
+        } else {
+            String moduleName = cargoConfig.getModuleName(file);
+            moduleFilter = moduleName + "::";  // Rust's test runner matches "my_module::" against all tests in my_module
+        }
+        watchCargoCommand(testStrategy.getTestCommand().withArg(moduleFilter));
     }
 
     private void watchCargoCommand(Cargo.Command command) {
-        Watcher watcher = watcherFactory.createWatcher(project);
+        TestUiSession session = new TestUiSession(project, Manager.getInstance());
+        CommandFuture.Listener watcher = testStrategy.createWatcher(session);
         CommandFuture commandFuture = cargo.run(command);
         commandFuture.addListener(watcher);
-    }
-
-    static class Watcher extends CargoListener {
-
-        private final Map<String, SuiteInProgress> suites = new TreeMap<>();
-        private final TestUiSession session;
-
-        Watcher(TestUiSession session) {
-            this.session = session;
-        }
-
-        @Override
-        public synchronized void onStart() {
-            LOG.info("Starting test run");
-            session.start();
-        }
-
-        @Override
-        protected void onTestCompleted(TestResult test) {
-            SuiteInProgress testSuite = getSuite(test.getModuleName());
-            Testcase testCase = session.createTestCase(test.getTestName());
-            testCase.setStatus(test.getStatus());
-            testSuite.tests.add(testCase);
-        }
-
-        @Override
-        public synchronized void onFinish() {
-            LOG.info("Finished test run");
-            for (SuiteInProgress suite : suites.values()) {
-                session.startSuite(suite.suite);
-                for (Testcase testCase : suite.tests) {
-                    session.finishTest(testCase);
-                }
-                session.finishCurrentSuite();
-            }
-            session.finish();
-        }
-
-        private SuiteInProgress getSuite(String suiteName) {
-            if (!suites.containsKey(suiteName)) {
-                SuiteInProgress testSuite = new SuiteInProgress(suiteName);
-                suites.put(suiteName, testSuite);
-            }
-            return suites.get(suiteName);
-        }
-
-        private static class SuiteInProgress {
-            final TestSuite suite;
-            final List<Testcase> tests = new LinkedList<>();
-
-            SuiteInProgress(String name) {
-                this.suite = new TestSuite(name);
-            }
-        }
     }
 }

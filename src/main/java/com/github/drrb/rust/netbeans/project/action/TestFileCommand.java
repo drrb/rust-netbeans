@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans.project.action;
 
 import com.github.drrb.rust.netbeans.cargo.Cargo;
 import com.github.drrb.rust.netbeans.cargo.test.TestRunner;
+import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import static org.netbeans.spi.project.ActionProvider.COMMAND_TEST_SINGLE;
 import org.openide.filesystems.FileObject;
@@ -27,7 +28,7 @@ import org.openide.util.Lookup;
  *
  */
 public class TestFileCommand implements Command {
-    public static final TestFileCommand INSTANCE = new TestFileCommand(new TestRunner.Factory());
+    public static final TestFileCommand INSTANCE = new TestFileCommand(new TestRunner.Factory(RustConfiguration.get()));
     private final TestRunner.Factory testRunnerFactory;
 
     public TestFileCommand(TestRunner.Factory testRunnerFactory) {

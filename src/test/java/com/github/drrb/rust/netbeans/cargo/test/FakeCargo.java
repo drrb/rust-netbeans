@@ -19,11 +19,13 @@ package com.github.drrb.rust.netbeans.cargo.test;
 
 import com.github.drrb.rust.netbeans.cargo.Cargo;
 import static java.util.Arrays.asList;
+
+import java.util.LinkedList;
 import java.util.List;
 
 public class FakeCargo extends Cargo {
     private final FakeCargoCommandFuture commandFuture;
-    private List<Command> commandsRun;
+    private List<String> commandsRun;
 
     public FakeCargo(FakeCargoCommandFuture commandFuture) {
         super(null, null, null, null);
@@ -32,11 +34,14 @@ public class FakeCargo extends Cargo {
 
     @Override
     public FakeCargoCommandFuture run(Command... commands) {
-        this.commandsRun = asList(commands);
+        this.commandsRun = new LinkedList<>();
+        for (Command command : commands) {
+            commandsRun.add(command.renderForCargoPath("cargo"));
+        }
         return commandFuture;
     }
 
-    public List<Command> getCommandsRun() {
+    public List<String> getCommandsRun() {
         return commandsRun;
     }
 }
