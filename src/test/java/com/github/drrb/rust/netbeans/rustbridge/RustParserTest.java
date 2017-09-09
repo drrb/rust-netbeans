@@ -16,25 +16,20 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
-import java.io.File;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import java.nio.file.Files;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import org.junit.After;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.nio.file.Files;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 /**
  *
  */
+@Ignore("This is for the old native parser")
 public class RustParserTest {
 
     @Rule

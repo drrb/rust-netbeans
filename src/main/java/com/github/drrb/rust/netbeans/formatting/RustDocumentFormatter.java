@@ -18,10 +18,6 @@ package com.github.drrb.rust.netbeans.formatting;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Position;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
@@ -30,6 +26,11 @@ import org.netbeans.lib.editor.util.swing.DocumentUtilities;
 import org.netbeans.modules.editor.indent.spi.Context;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.openide.util.Exceptions;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Position;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -59,11 +60,11 @@ public class RustDocumentFormatter {
             while (tokenSequence.moveNext()) {
                 Token<RustTokenId> token = tokenSequence.token();
                 int tokenOffset = tokenSequence.offset();
-                if (token.id() == RustTokenId.OPEN_BRACE) {
+                if (token.id() == RustTokenId.LEFT_BRACE) {
                     delimiters.add(new Delimiter(DelimiterType.OPEN_BRACE, tokenOffset));
-                } else if (token.id() == RustTokenId.CLOSE_BRACE) {
+                } else if (token.id() == RustTokenId.RIGHT_BRACE) {
                     delimiters.add(new Delimiter(DelimiterType.CLOSE_BRACE, tokenOffset));
-                } else if (token.id() == RustTokenId.SEMI) {
+                } else if (token.id() == RustTokenId.SEMICOLON) {
                     delimiters.add(new Delimiter(DelimiterType.SEMICOLON, tokenOffset));
                 }
             }

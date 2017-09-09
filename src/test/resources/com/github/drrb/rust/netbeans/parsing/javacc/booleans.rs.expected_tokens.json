@@ -1,0 +1,116 @@
+{
+  "tokens": [
+    {
+      "image": "fn",
+      "kind": "FN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "booleans",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "let",
+      "kind": "LET"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "t",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "=",
+      "kind": "EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "true",
+      "kind": "TRUE"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "let",
+      "kind": "LET"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "f",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "=",
+      "kind": "EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "false",
+      "kind": "FALSE"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}

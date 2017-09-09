@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require "pathname"
+
+source_file = Pathname.glob("src/main/java/**/RustTokenKind.java").first
+constants_file = Pathname.glob("target/generated-sources/**/RustParserConstants.java").first
+constants = constants_file.read.scan(%r{/\*\* (?:RegularExpression Id|End of File). \*/\n  int ([^ ]+)}).flatten
+new_source = source_file.read.gsub(/.*[A-Z_]*\(RustParserConstants.*\n/,"").gsub(/(enum RustTokenKind {\n\n)/, '\1' + constants.map {|c| "    #{c}(RustParserConstants.#{c})"}.join(",\n") + ";\n")
+puts "Writing constants to #{source_file}"
+source_file.write(new_source)

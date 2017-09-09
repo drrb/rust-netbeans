@@ -18,21 +18,23 @@ package com.github.drrb.rust.netbeans.rustbridge;
 
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.test.PrintTestMethods;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
 import java.io.File;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import java.nio.file.Files;
 import java.util.List;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 /**
  *
  */
+@Ignore
 public class RustCompilerTest {
 
     @Rule

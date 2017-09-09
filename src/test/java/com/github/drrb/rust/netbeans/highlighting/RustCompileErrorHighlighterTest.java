@@ -17,11 +17,13 @@
 package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 /**
  */
+@Ignore
 public class RustCompileErrorHighlighterTest {
 
     @Rule

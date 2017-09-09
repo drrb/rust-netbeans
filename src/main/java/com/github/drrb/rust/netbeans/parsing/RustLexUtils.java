@@ -17,15 +17,16 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import com.github.drrb.rust.netbeans.util.Option;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.spi.ParserResult;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RustLexUtils {
     private static final Logger LOG = Logger.getLogger(RustLexUtils.class.getName());
@@ -80,11 +81,11 @@ public class RustLexUtils {
             return Option.none();
         }
 
-        if (tokenAtOffset.value().id() == RustTokenId.IDENT) {
+        if (tokenAtOffset.value().id() == RustTokenId.IDENTIFIER) {
             return tokenAtOffset;
         } else if (caretOffset > 0) {
             Option<OffsetRustToken> tokenBeforeOffset = offsetTokenAt(caretOffset - 1, tokenSequence);
-            if (tokenBeforeOffset.is() && tokenBeforeOffset.value().id() == RustTokenId.IDENT) {
+            if (tokenBeforeOffset.is() && tokenBeforeOffset.value().id() == RustTokenId.IDENTIFIER) {
                 return tokenBeforeOffset;
             } else {
                 return Option.none();

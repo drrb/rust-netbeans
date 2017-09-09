@@ -19,16 +19,17 @@ package com.github.drrb.rust.netbeans.highlighting;
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.BadLocationException;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.spi.editor.bracesmatching.BracesMatcher;
 import org.netbeans.spi.editor.bracesmatching.BracesMatcherFactory;
 import org.netbeans.spi.editor.bracesmatching.MatcherContext;
+
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -163,10 +164,10 @@ public class RustBracesMatcher implements BracesMatcher {
 
     private enum BracePair {
 
-        PARENS(RustTokenId.OPEN_PAREN, RustTokenId.CLOSE_PAREN),
-        BRACES(RustTokenId.OPEN_BRACE, RustTokenId.CLOSE_BRACE),
-        BRACKETS(RustTokenId.OPEN_BRACKET, RustTokenId.CLOSE_BRACKET),
-        ANGLES(RustTokenId.LT, RustTokenId.GT);
+        PARENS(RustTokenId.LEFT_PAREN, RustTokenId.RIGHT_PAREN),
+        BRACES(RustTokenId.LEFT_BRACE, RustTokenId.RIGHT_BRACE),
+        BRACKETS(RustTokenId.LEFT_BRACKET, RustTokenId.RIGHT_BRACKET),
+        ANGLES(RustTokenId.LEFT_ANGLE_BRACKET, RustTokenId.RIGHT_ANGLE_BRACKET);
         final RustTokenId open;
         final RustTokenId close;
 

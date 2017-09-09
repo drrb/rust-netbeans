@@ -17,14 +17,16 @@
 package com.github.drrb.rust.netbeans.formatting;
 
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
-import org.netbeans.modules.csl.api.test.CslTestHelper.RunInEventQueueThread;
 import com.github.drrb.rust.netbeans.test.PrintTestMethods;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.netbeans.modules.csl.api.test.CslTestHelper.RunInEventQueueThread;
 
 /**
  *
  */
+@Ignore
 public class RustFormatterTest {
 
     @Rule

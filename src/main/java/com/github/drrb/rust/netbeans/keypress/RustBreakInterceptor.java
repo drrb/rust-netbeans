@@ -19,9 +19,6 @@ package com.github.drrb.rust.netbeans.keypress;
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
-import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.swing.text.BadLocationException;
 import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.TokenId;
@@ -29,6 +26,11 @@ import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.editor.Utilities;
 import org.netbeans.modules.editor.indent.api.IndentUtils;
 import org.netbeans.spi.editor.typinghooks.TypedBreakInterceptor;
+
+import javax.swing.text.BadLocationException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
 
 /**
  *
@@ -49,11 +51,11 @@ public class RustBreakInterceptor implements TypedBreakInterceptor {
 
         ContextHolder context = new ContextHolder(ctx);
 
-        if (context.previousTokenKind() != OPEN_BRACE) {
+        if (context.previousTokenKind() != LEFT_BRACE) {
             return; // Only insert a close brace after an open brace
         } else if (context.nextRowIndent() > context.currentRowIndent()) {
             return; // There's already stuff in this block
-        } else if (context.nextTokenKind() == CLOSE_BRACE && context.currentRowIndent() == context.nextRowIndent()) {
+        } else if (context.nextTokenKind() == RIGHT_BRACE && context.currentRowIndent() == context.nextRowIndent()) {
             return; // There's already a closing brace
         }
 

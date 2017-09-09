@@ -1,0 +1,620 @@
+{
+  "tokens": [
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_a",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_a",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "as",
+      "kind": "AS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "moda",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_a",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "submodule",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "SomeType",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_a",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "submodule",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "OtherType",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "as",
+      "kind": "AS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "otype",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_a",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "submodule2",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "*",
+      "kind": "STAR"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_a",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "submodule3",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "Type1",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": "Type2",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "Type3",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "self",
+      "kind": "SELF"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "my_submodule",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "*",
+      "kind": "STAR"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "pub",
+      "kind": "PUB"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_b",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "pub",
+      "kind": "PUB"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_b",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "as",
+      "kind": "AS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "modb",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "pub",
+      "kind": "PUB"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_b",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "submodule",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "SomeType",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "pub",
+      "kind": "PUB"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_b",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "submodule",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "OtherType",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "as",
+      "kind": "AS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "otype2",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "pub",
+      "kind": "PUB"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_b",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "submodule2",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "*",
+      "kind": "STAR"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "pub",
+      "kind": "PUB"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "module_b",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "submodule3",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "Type1",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": "Type2",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": "Type3",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "pub",
+      "kind": "PUB"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "self",
+      "kind": "SELF"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "my_submodule2",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "*",
+      "kind": "STAR"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}

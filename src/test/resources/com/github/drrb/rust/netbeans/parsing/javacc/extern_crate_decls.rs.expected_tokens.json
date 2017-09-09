@@ -1,0 +1,76 @@
+{
+  "tokens": [
+    {
+      "image": "extern",
+      "kind": "EXTERN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "crate",
+      "kind": "CRATE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "another_crate",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "extern",
+      "kind": "EXTERN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "crate",
+      "kind": "CRATE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "second_crate",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "as",
+      "kind": "AS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "crate2",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}

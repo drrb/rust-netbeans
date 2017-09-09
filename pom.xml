@@ -400,12 +400,56 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <useIncrementalCompilation>true</useIncrementalCompilation>
                     <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javacc-maven-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>generate-parser</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>jjtree-javacc</goal>
+                            <goal>jjdoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.java.dev.javacc</groupId>
+                        <artifactId>javacc</artifactId>
+                        <version>7.0.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <id>map-tokens</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>ruby</executable>
+                            <arguments>
+                                <argument>src/scripts/generate-rust-token-kind-enum</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
 
             <!-- Compile and use our build addon that compiles the Rust code -->
             <plugin>
@@ -429,6 +473,7 @@
             </plugin>
 
             <!-- Compile Rust crates -->
+            <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -446,6 +491,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -524,7 +570,9 @@
                             <systemProperties>
                                 <property>
                                     <name>cluster.path.final</name>
-                                    <value>${project.build.directory}/netbeans_clusters/extra:${netbeans.installation}/ide:${netbeans.installation}/platform:${netbeans.installation}/java</value>
+                                    <value>
+                                        ${project.build.directory}/netbeans_clusters/extra:${netbeans.installation}/ide:${netbeans.installation}/platform:${netbeans.installation}/java
+                                    </value>
                                 </property>
                             </systemProperties>
                             <includes>

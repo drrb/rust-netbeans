@@ -1,0 +1,144 @@
+{
+  "tokens": [
+    {
+      "image": "struct",
+      "kind": "STRUCT"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "Person",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "first_name",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ":",
+      "kind": "COLON"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "String",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "last_name",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ":",
+      "kind": "COLON"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "String",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "\n\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "pub",
+      "kind": "PUB"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "struct",
+      "kind": "STRUCT"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "Animal",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "name",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ":",
+      "kind": "COLON"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "String",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}

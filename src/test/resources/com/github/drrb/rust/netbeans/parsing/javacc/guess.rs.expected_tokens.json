@@ -1,0 +1,312 @@
+{
+  "tokens": [
+    {
+      "image": "use",
+      "kind": "USE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "std",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "io",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "fn",
+      "kind": "FN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "main",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "println",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "!",
+      "kind": "BANG"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": "\"Guess the number!\"",
+      "kind": "STRING_LITERAL"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "println",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "!",
+      "kind": "BANG"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": "\"Please input your guess.\"",
+      "kind": "STRING_LITERAL"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "let",
+      "kind": "LET"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "mut",
+      "kind": "MUT"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "guess",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "=",
+      "kind": "EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "String",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "new",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "io",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "::",
+      "kind": "DOUBLE_COLON"
+    },
+    {
+      "image": "stdin",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": ".",
+      "kind": "DOT"
+    },
+    {
+      "image": "read_line",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": "&",
+      "kind": "AMPERSAND"
+    },
+    {
+      "image": "mut",
+      "kind": "MUT"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "guess",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": "\n        ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": ".",
+      "kind": "DOT"
+    },
+    {
+      "image": "expect",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": "\"Failed to read line\"",
+      "kind": "STRING_LITERAL"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "println",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "!",
+      "kind": "BANG"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": "\"You guessed: {}\"",
+      "kind": "STRING_LITERAL"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "guess",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}

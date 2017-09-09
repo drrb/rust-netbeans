@@ -1,0 +1,3 @@
+fn invalid_char() {
+    @
+}

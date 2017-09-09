@@ -15,10 +15,10 @@ in.
 ## Requirements
 
 * NetBeans 8.x or above
-* Java 7+
-* OSX or Windows. Hopefully Linux soon (waiting on [this issue](https://github.com/rust-lang/rust/issues/22528))
+* Java 8+
 * Rust 1.0ish (currently developing against post-1.0-alpha nightlies)
 * Cargo
+* Rustup
 
 ## Features
 

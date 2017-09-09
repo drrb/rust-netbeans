@@ -23,20 +23,21 @@ import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
 import com.github.drrb.rust.netbeans.util.Template;
 import com.google.common.collect.Iterables;
 import com.moandjiezana.toml.Toml;
+import org.netbeans.api.lexer.TokenSequence;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+
+import javax.swing.text.Document;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-
-import static com.github.drrb.rust.netbeans.util.Template.template;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.text.Document;
-import org.netbeans.api.lexer.TokenSequence;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
+
+import static com.github.drrb.rust.netbeans.util.Template.template;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  *
@@ -71,7 +72,7 @@ public class CargoConfig {
                 lookingForModDeclarations:
                 while (rustTokens.moveNext()) {
                     if (rustTokens.token().id() == RustTokenId.MOD && rustTokens.moveNext()) {
-                        if (rustTokens.moveNext() && rustTokens.token().id() == RustTokenId.OPEN_BRACE) {
+                        if (rustTokens.moveNext() && rustTokens.token().id() == RustTokenId.LEFT_BRACE) {
                             // It's a mod literal
                             continue lookingForModDeclarations;
                         } else {
