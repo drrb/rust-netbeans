@@ -247,6 +247,7 @@ TOKEN :
  | <BANG: "!">
  | <EQUALS: "=">
  | <DOT: ".">
+ | <DOUBLE_DOT: "..">
 
  | <DOLLAR: "$">
  | <HASH_ROCKET: "=>">
@@ -565,10 +566,16 @@ void Expr9() :
 void Expr10() :
 {}
 {
-  Expr11() ( "as" Type() )*
+  Expr11() ( ".." Expr11() )*
 }
 
 void Expr11() :
+{}
+{
+  Expr12() ( "as" Type() )*
+}
+
+void Expr12() :
 {}
 {
   ExprPrefix() ( ( "*" | "/" | "%" ) ExprPrefix() )*
@@ -605,6 +612,8 @@ void ExprBottom() :
     | LiteralExpression()
     | IfExpression()
     | WhileLoopExpression()
+    | ForLoopExpression()
+    | LoopExpression()
     | Path() [ ["!"] "(" [ Exprs() ] ")" ]
 }
 
@@ -682,6 +691,20 @@ void WhileLoopExpression() :
 {}
 {
   "while" Expr()
+    Block()
+}
+
+void ForLoopExpression() :
+{}
+{
+  "for" <IDENTIFIER> "in" Expr()
+    Block()
+}
+
+void LoopExpression() :
+{}
+{
+  "loop"
     Block()
 }
 

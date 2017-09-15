@@ -89,6 +89,7 @@ public enum RustTokenKind {
     BANG(RustParserConstants.BANG),
     EQUALS(RustParserConstants.EQUALS),
     DOT(RustParserConstants.DOT),
+    DOUBLE_DOT(RustParserConstants.DOUBLE_DOT),
     DOLLAR(RustParserConstants.DOLLAR),
     HASH_ROCKET(RustParserConstants.HASH_ROCKET),
     ABSTRACT(RustParserConstants.ABSTRACT),
