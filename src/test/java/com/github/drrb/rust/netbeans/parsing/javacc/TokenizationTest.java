@@ -1,10 +1,10 @@
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
+import com.github.drrb.rust.netbeans.test.junit412.Parameterized;
+import com.github.drrb.rust.netbeans.test.junit412.Parameterized.Parameters;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,9 +16,9 @@ import static org.junit.Assert.fail;
 @RunWith(Parameterized.class)
 public class TokenizationTest {
 
-    @Parameters
-    public static Iterable<TestSrc[]> sources() throws IOException {
-        return TestSrc.all().sorted().map(t -> new TestSrc[] {t}).collect(toList());
+    @Parameters(name = "{0}")
+    public static Iterable<TestSrc> sources() throws IOException {
+        return TestSrc.all().sorted().collect(toList());
     }
 
     private final TestSrc sourceFile;

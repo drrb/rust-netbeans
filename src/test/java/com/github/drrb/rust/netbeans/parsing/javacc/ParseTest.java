@@ -1,8 +1,9 @@
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
+import com.github.drrb.rust.netbeans.test.junit412.Parameterized;
+import com.github.drrb.rust.netbeans.test.junit412.Parameterized.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -21,11 +22,11 @@ public class ParseTest {
             .map(TestSrc::get)
             .collect(toList());
 
-    @Parameterized.Parameters
-    public static Iterable<TestSrc[]> sources() {
+    @Parameters(name = "{0}")
+    public static Iterable<TestSrc> sources() {
         List<TestSrc> allSources = TestSrc.all().collect(toList());
         allSources.removeAll(EXCLUDED_SOURCES);
-        return allSources.stream().map(t -> new TestSrc[] {t}).collect(toList());
+        return allSources.stream().collect(toList());
     }
 
     private final TestSrc sourceFile;

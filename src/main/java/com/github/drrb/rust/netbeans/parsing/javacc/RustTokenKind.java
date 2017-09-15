@@ -47,6 +47,7 @@ public enum RustTokenKind {
     RAW_BYTE_STRING_LITERAL_0(RustParserConstants.RAW_BYTE_STRING_LITERAL_0),
     DOUBLE_COLON(RustParserConstants.DOUBLE_COLON),
     ARROW(RustParserConstants.ARROW),
+    DOUBLE_ARROW(RustParserConstants.DOUBLE_ARROW),
     HASH(RustParserConstants.HASH),
     LEFT_BRACKET(RustParserConstants.LEFT_BRACKET),
     RIGHT_BRACKET(RustParserConstants.RIGHT_BRACKET),

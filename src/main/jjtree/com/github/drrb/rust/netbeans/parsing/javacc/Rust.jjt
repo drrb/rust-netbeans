@@ -3,7 +3,7 @@ options {
   CHOICE_AMBIGUITY_CHECK = 2;
   OTHER_AMBIGUITY_CHECK = 1;
   STATIC = false;
-  DEBUG_PARSER = false;
+  DEBUG_PARSER = true;
   DEBUG_LOOKAHEAD = false;
   DEBUG_TOKEN_MANAGER = false;
   ERROR_REPORTING = true;
@@ -195,6 +195,7 @@ TOKEN :
 {
   <DOUBLE_COLON: "::">
  | <ARROW: "->">
+ | <DOUBLE_ARROW: "<->">
  | <HASH: "#">
  | <LEFT_BRACKET: "[">
  | <RIGHT_BRACKET: "]">
@@ -235,7 +236,7 @@ TOKEN :
  | <BANG: "!">
  | <EQUALS: "=">
  | <DOT: ".">
- // For macros. Separate them?
+
  | <DOLLAR: "$">
  | <HASH_ROCKET: "=>">
 }
@@ -451,13 +452,13 @@ void StructFieldDeclaration() :
 void ConstItem() :
 {}
 {
-  "const" <IDENTIFIER> ":" Type() "=" Expression() ";"
+  "const" <IDENTIFIER> ":" Type() "=" Expr() ";"
 }
 
 void StaticItem() :
 {}
 {
-  "static" ["mut"] <IDENTIFIER> ":" Type() "=" Expression() ";"
+  "static" ["mut"] <IDENTIFIER> ":" Type() "=" Expr() ";"
 }
 
 void Mod() :
@@ -484,6 +485,117 @@ void UseDecl() :
   "use" PathGlob() [ "as" <IDENTIFIER> ] //TODO: "as" is actually only valid when "glob" is just a path
 }
 
+void Exprs() :
+{}
+{
+  Expr() ( LOOKAHEAD(2) "," Expr() )*
+}
+
+void Expr() :
+{}
+{
+  Expr1() ( ( "=" | "/=" | "%=" | "^=" | "|=" | "-=" | "*=" | "&=" | "+=" | "<<=" | ">>=" | "<->" ) Expr1() )*
+}
+
+void Expr1() :
+{}
+{
+  Expr2() ( "|" Expr2() )*
+}
+
+void Expr2() :
+{}
+{
+  Expr3() ( "&" Expr3() )*
+}
+
+void Expr3() :
+{}
+{
+  Expr4() ( ("==" | "!=") Expr4() )*
+}
+
+void Expr4() :
+{}
+{
+  Expr5() ( ("<" | "<=" | ">=" | ">") Expr5() )*
+}
+
+void Expr5() :
+{}
+{
+  Expr6() ( "||" Expr6() )*
+}
+
+void Expr6() :
+{}
+{
+  Expr7() ( "^" Expr7() )*
+}
+
+void Expr7() :
+{}
+{
+  Expr8() ( "&&" Expr8() )*
+}
+
+void Expr8() :
+{}
+{
+  Expr9() ( ( "<<" | ">>" ) Expr9() )*
+}
+
+void Expr9() :
+{}
+{
+  Expr10() ( ( "+" | "-" ) Expr10() )*
+}
+
+void Expr10() :
+{}
+{
+  Expr11() ( "as" Type() )*
+}
+
+void Expr11() :
+{}
+{
+  ExprPrefix() ( ( "*" | "/" | "%" ) ExprPrefix() )*
+}
+
+void ExprPrefix() :
+{}
+{
+  "!" ExprPrefix()
+  | "-" ExprPrefix()
+  | "*" ExprPrefix()
+  | "&" ["mut"] ExprPrefix()
+  | LOOKAHEAD(2) "return" ExprPrefix() // Look ahead to check if it's a lone "return"
+  | "return"
+  | ExprDotOrCall()
+}
+
+void ExprDotOrCall() :
+{}
+{
+  ExprBottom() ( ExprDotOrCallPost() )*
+}
+
+void ExprDotOrCallPost() :
+{}
+{
+  "." <IDENTIFIER> "(" [ Exprs() ] ")"
+}
+
+void ExprBottom() :
+{}
+{
+  "(" [ Exprs() [ "," ] ] ")"
+    | LiteralExpression()
+    | IfExpression()
+    | Path() [ ["!"] "(" [ Exprs() ] ")" ]
+}
+
 void Block() :
 {}
 {
@@ -501,7 +613,7 @@ void Statement() :
 void ExpressionOrDeclaration() #void :
 {}
 {
-  Declaration() | Expression() | Block()
+  Declaration() | Expr() | Block()
 }
 
 void Declaration() #void :
@@ -513,41 +625,7 @@ void Declaration() #void :
 void LetDeclaration() :
 {}
 {
-  "let" ["mut"] <IDENTIFIER> "=" Expression()
-}
-
-/* Expressions */
-void Expression() :
-{}
-{
-  (
-    LOOKAHEAD(2) ExpressionImpl() // UnitExpression() can start with a "("
-    | "(" ExpressionImpl() ")"
-  )
-}
-
-void ExpressionImpl() #void :
-{}
-{
-  (
-    (
-        LiteralExpression()
-      | CallExpression()
-      | UnitExpression()
-      | PointerExpression()
-      | MacroExpression()
-      | IfExpression()
-    ) (
-      "." CallExpression()
-    )*
-    [
-      (
-        ( BinOp() Expression() )
-        | ( "as" Type() )
-      )
-    ]
-  )
-  | ReturnExpression()
+  "let" ["mut"] <IDENTIFIER> "=" Expr()
 }
 
 void LiteralExpression() :
@@ -563,24 +641,6 @@ void LiteralExpression() :
   | <RAW_BYTE_STRING_LITERAL>
 }
 
-void CallExpression() :
-{}
-{
-  Path() [ ["!"] "(" ExpressionList() ")" ]
-}
-
-void UnitExpression() :
-{}
-{
-  "(" ")"
-}
-
-void PointerExpression() :
-{}
-{
-  "&" ["mut"] <IDENTIFIER>
-}
-
 void MacroExpression() :
 {}
 {
@@ -593,56 +653,17 @@ void IfExpression() :
 {}
 {
   (
-  "if" Expression()  //TODO: Expression -> NoStructLiteralExpression() ?
+  "if" Expr()  //TODO: Expression -> NoStructLiteralExpression() ?
      Block() #then_block
   )
   ( LOOKAHEAD(2)
-  "else" "if" Expression()
+  "else" "if" Expr()
      Block() #elseif_block
   )*
   [
   "else"
     Block() #else_block
   ]
-}
-
-void ReturnExpression() :
-{}
-{
-  "return" [ Expression() ]
-}
-
-void BinOp() :
-{}
-{
-  ArithmeticOp()
-  | BitwiseOp()
-  | LazyBooleanOp()
-  | ComparisonOp()
-}
-
-void ArithmeticOp() :
-{}
-{
-  ( "+" | "-" | "*" | "/" | "%" )
-}
-
-void BitwiseOp() :
-{}
-{
-  ( "&" | "|" | "^" | "<<" | ">>" )
-}
-
-void LazyBooleanOp() :
-{}
-{
-  ( "&&" | "||" )
-}
-
-void ComparisonOp() :
-{}
-{
-  ( "==" | "!=" | "<" | ">" | "<=" | ">=" )
 }
 
 void MacroRule() :
@@ -709,8 +730,3 @@ void PathItem() :
   <IDENTIFIER> | "self"
 }
 
-void ExpressionList() :
-{}
-{
-  [ Expression() ( "," Expression() )* ]
-}
