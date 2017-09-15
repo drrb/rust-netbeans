@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 public class TestFile implements Comparable<TestSrc> {
-    public static final Path DIRECTORY = Paths.get("src/test/resources/com/github/drrb/rust/netbeans/parsing/javacc");
+    public static final Path DIRECTORY = Paths.get("src/test/data/parse/javacc");
     protected final Path path;
 
     public TestFile(Path path) {
