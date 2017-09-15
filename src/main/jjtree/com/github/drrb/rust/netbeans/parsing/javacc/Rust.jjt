@@ -233,6 +233,17 @@ TOKEN :
  | <DOUBLE_EQUALS: "==">
  | <NOT_EQUAL: "!=">
 
+ | <PLUS_EQUALS: "+=">
+ | <MINUS_EQUALS: "-=">
+ | <TIMES_EQUALS: "*=">
+ | <DIVIDE_EQUALS: "/=">
+ | <MOD_EQUALS: "%=">
+ | <AND_EQUALS: "&=">
+ | <OR_EQUALS: "|=">
+ | <XOR_EQUALS: "^=">
+ | <SHIFT_LEFT_EQUALS: "<<=">
+ | <SHIFT_RIGHT_EQUALS: ">>=">
+
  | <BANG: "!">
  | <EQUALS: "=">
  | <DOT: ".">
@@ -593,6 +604,7 @@ void ExprBottom() :
   "(" [ Exprs() [ "," ] ] ")"
     | LiteralExpression()
     | IfExpression()
+    | WhileLoopExpression()
     | Path() [ ["!"] "(" [ Exprs() ] ")" ]
 }
 
@@ -664,6 +676,13 @@ void IfExpression() :
   "else"
     Block() #else_block
   ]
+}
+
+void WhileLoopExpression() :
+{}
+{
+  "while" Expr()
+    Block()
 }
 
 void MacroRule() :

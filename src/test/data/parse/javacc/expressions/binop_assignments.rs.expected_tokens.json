@@ -1,0 +1,372 @@
+{
+  "tokens": [
+    {
+      "image": "fn",
+      "kind": "FN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "main",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "let",
+      "kind": "LET"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "mut",
+      "kind": "MUT"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "=",
+      "kind": "EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "0",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "+=",
+      "kind": "PLUS_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "1",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "-=",
+      "kind": "MINUS_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "1",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "*",
+      "kind": "STAR"
+    },
+    {
+      "image": "-",
+      "kind": "DASH"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "2",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "/=",
+      "kind": "DIVIDE_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "2",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "%=",
+      "kind": "MOD_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "3",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "^=",
+      "kind": "XOR_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "2",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "&=",
+      "kind": "AND_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "1",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "|=",
+      "kind": "OR_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "1",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "<<=",
+      "kind": "SHIFT_LEFT_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "3",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": ">>=",
+      "kind": "SHIFT_RIGHT_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "3",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+fn main() {
+    while true {
+
+    }
+}

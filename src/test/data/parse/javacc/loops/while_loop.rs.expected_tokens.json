@@ -1,0 +1,80 @@
+{
+  "tokens": [
+    {
+      "image": "fn",
+      "kind": "FN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "main",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "while",
+      "kind": "WHILE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "true",
+      "kind": "TRUE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}
