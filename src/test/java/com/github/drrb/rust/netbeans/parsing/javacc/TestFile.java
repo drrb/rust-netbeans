@@ -20,7 +20,7 @@ public class TestFile implements Comparable<TestSrc> {
 
     public static Stream<? extends TestFile> all() {
         try {
-            return Files.list(DIRECTORY).map(TestFile::new);
+            return Files.walk(DIRECTORY).map(TestFile::new);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

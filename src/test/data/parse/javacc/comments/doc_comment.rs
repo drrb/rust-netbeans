@@ -1,0 +1,4 @@
+/// Entry point
+fn main() {
+
+}

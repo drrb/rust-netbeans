@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 @RunWith(Parameterized.class)
 public class ParseTest {
     private static final List<TestSrc> EXCLUDED_SOURCES = Stream.of(
-            "blocks.rs",
+            "blocks/blocks.rs",
             "macro_complex.rs"
     )
             .map(Paths::get)
