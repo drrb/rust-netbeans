@@ -16,6 +16,10 @@ public class TestSrc extends TestFile {
         return new TestSrc(file.path);
     }
 
+    public static TestSrc named(String fileName) {
+        return all().filter(f -> f.path.getFileName().toString().equals(fileName)).findFirst().get();
+    }
+
     public static Stream<TestSrc> all() {
         return TestFile.all()
                 .map(TestFile::getPath)

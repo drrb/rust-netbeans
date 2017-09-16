@@ -7,12 +7,22 @@ import org.junit.runner.RunWith;
 
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
 @RunWith(Parameterized.class)
 public class ParseTest {
+    // Temporarily run just one test by using this list:
+    private static final List<TestSrc> INCLUDED_SOURCES = Stream.of(
+    )
+            .map(Objects::toString)
+            .map(Paths::get)
+            .map(TestFile::get)
+            .map(TestSrc::get)
+            .collect(toList());
+
     private static final List<TestSrc> EXCLUDED_SOURCES = Stream.of(
             "blocks/blocks.rs",
             "if_then_else/if_statement.rs",
@@ -25,9 +35,13 @@ public class ParseTest {
 
     @Parameters(name = "{0}")
     public static Iterable<TestSrc> sources() {
-        List<TestSrc> allSources = TestSrc.all().collect(toList());
-        allSources.removeAll(EXCLUDED_SOURCES);
-        return allSources.stream().collect(toList());
+        if (INCLUDED_SOURCES.isEmpty()) {
+            List<TestSrc> allSources = TestSrc.all().collect(toList());
+            allSources.removeAll(EXCLUDED_SOURCES);
+            return allSources.stream().collect(toList());
+        } else {
+            return INCLUDED_SOURCES;
+        }
     }
 
     private final TestSrc sourceFile;

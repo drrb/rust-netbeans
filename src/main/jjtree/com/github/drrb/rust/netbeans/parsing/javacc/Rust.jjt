@@ -416,10 +416,11 @@ void Input() :
   ( Item() )* <EOF>
 }
 
-void Item() #void :
+void Item() :
 {}
 {
   //TODO: grammar doesn't include "view_item" here: only inside "mod_item"s
+  [ Annotation() ]
   [ "pub" ] (
     ModItem()
     | FunctionItem()
@@ -429,6 +430,13 @@ void Item() #void :
     | ViewItem()
     | MacroExpression()
   )
+}
+
+// TODO: Not sure what this is actually called
+void Annotation() :
+{}
+{
+  "#" "[" <IDENTIFIER> "]"
 }
 
 void ModItem() :

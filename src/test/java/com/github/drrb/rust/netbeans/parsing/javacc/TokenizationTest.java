@@ -7,18 +7,33 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
 public class TokenizationTest {
+    // Temporarily run just one test by using this list:
+    private static final List<TestSrc> INCLUDED_SOURCES = Stream.of(
+    )
+            .map(Objects::toString)
+            .map(Paths::get)
+            .map(TestFile::get)
+            .map(TestSrc::get)
+            .collect(toList());
 
     @Parameters(name = "{0}")
     public static Iterable<TestSrc> sources() throws IOException {
-        return TestSrc.all().sorted().collect(toList());
+        if (INCLUDED_SOURCES.isEmpty()) {
+            return TestSrc.all().collect(toList());
+        } else {
+            return INCLUDED_SOURCES;
+        }
     }
 
     private final TestSrc sourceFile;
