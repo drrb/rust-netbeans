@@ -2,15 +2,15 @@ package com.github.drrb.rust.netbeans.parsing.javacc;
 
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 
-import static com.github.drrb.rust.netbeans.parsing.javacc.RustTokenKind.EOF;
+import static com.github.drrb.rust.netbeans.parsing.RustTokenId.EOF;
 
 public class RustToken extends Token {
-    private final RustTokenKind enumKind;
+    private final RustTokenId enumKind;
 
     public RustToken(int kind, String image) {
         kind = maybeTranslateSubkind(kind);
         this.kind = kind;
-        this.enumKind = RustTokenKind.get(kind);
+        this.enumKind = RustTokenId.get(kind);
         this.image = image;
     }
 
@@ -35,12 +35,12 @@ public class RustToken extends Token {
         return enumKind == EOF;
     }
 
-    public RustTokenKind kind() {
+    public RustTokenId kind() {
         return enumKind;
     }
 
     public RustTokenId id() {
-        return RustTokenId.valueOf(enumKind.name());
+        return kind();
     }
 
     public RustToken specialToken() {

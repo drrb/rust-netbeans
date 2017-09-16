@@ -17,12 +17,14 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
-import java.util.Collection;
-import static java.util.Collections.*;
-import java.util.EnumSet;
 import org.netbeans.spi.lexer.LanguageHierarchy;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerRestartInfo;
+
+import java.util.Collection;
+import java.util.EnumSet;
+
+import static java.util.Collections.unmodifiableSet;
 
 public class RustLanguageHierarchy extends LanguageHierarchy<RustTokenId> {
     private static final Collection<RustTokenId> TOKEN_IDS = unmodifiableSet(EnumSet.allOf(RustTokenId.class));

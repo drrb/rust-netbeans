@@ -31,7 +31,7 @@ public enum TokenCategory {
     METHOD_DECLARATION("method-declaration");
     private final String name;
 
-    private TokenCategory(String categoryName) {
+    TokenCategory(String categoryName) {
         this.name = categoryName;
     }
 

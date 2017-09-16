@@ -72,7 +72,7 @@ public class NetbeansRustLexer implements Lexer<RustTokenId> {
             if (token.isEof()) {
                 return EOF_TOKEN;
             } else {
-                return info.tokenFactory().createToken(RustTokenId.get(token.kind()));
+                return info.tokenFactory().createToken(RustTokenId.get(token.kind));
             }
         } catch (TokenMgrError e) {
             return info.tokenFactory().createToken(RustTokenId.GARBAGE);

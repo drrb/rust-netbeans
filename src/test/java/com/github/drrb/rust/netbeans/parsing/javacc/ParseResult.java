@@ -1,5 +1,6 @@
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
+import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -13,7 +14,7 @@ import java.util.List;
 public class ParseResult {
     public static class Token {
         public String image;
-        public RustTokenKind kind;
+        public RustTokenId kind;
         private transient Integer beginLine;
         private transient Integer beginColumn;
 
@@ -21,11 +22,11 @@ public class ParseResult {
             this(null, null);
         }
 
-        public Token(String image, RustTokenKind kind) {
+        public Token(String image, RustTokenId kind) {
             this(image, kind, null, null);
         }
 
-        public Token(String image, RustTokenKind kind, Integer beginLine, Integer beginColumn) {
+        public Token(String image, RustTokenId kind, Integer beginLine, Integer beginColumn) {
             this.image = image;
             this.kind = kind;
             this.beginLine = beginLine;
@@ -52,7 +53,7 @@ public class ParseResult {
         }
 
         public boolean isGarbage() {
-            return kind == RustTokenKind.GARBAGE;
+            return kind == RustTokenId.GARBAGE;
         }
     }
 
