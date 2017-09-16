@@ -33,24 +33,44 @@
       "kind": "WHITESPACE"
     },
     {
-      "image": "loop",
-      "kind": "LOOP"
+      "image": "let",
+      "kind": "LET"
     },
     {
       "image": " ",
       "kind": "WHITESPACE"
     },
     {
-      "image": "{",
-      "kind": "LEFT_BRACE"
+      "image": "r",
+      "kind": "IDENTIFIER"
     },
     {
-      "image": "\n\n    ",
+      "image": " ",
       "kind": "WHITESPACE"
     },
     {
-      "image": "}",
-      "kind": "RIGHT_BRACE"
+      "image": "=",
+      "kind": "EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "1",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": "..",
+      "kind": "DOUBLE_DOT"
+    },
+    {
+      "image": "10",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
     },
     {
       "image": "\n",

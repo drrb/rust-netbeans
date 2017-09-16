@@ -15,6 +15,7 @@ import static java.util.stream.Collectors.toList;
 public class ParseTest {
     private static final List<TestSrc> EXCLUDED_SOURCES = Stream.of(
             "blocks/blocks.rs",
+            "if_then_else/if_statement.rs",
             "macro_complex.rs"
     )
             .map(Paths::get)

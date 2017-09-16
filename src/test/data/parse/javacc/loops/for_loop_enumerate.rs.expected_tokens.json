@@ -1,0 +1,196 @@
+{
+  "tokens": [
+    {
+      "image": "fn",
+      "kind": "FN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "main",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "for",
+      "kind": "FOR"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": "index",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "value",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "in",
+      "kind": "IN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": "5",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": "..",
+      "kind": "DOUBLE_DOT"
+    },
+    {
+      "image": "10",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": ".",
+      "kind": "DOT"
+    },
+    {
+      "image": "enumerate",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n        ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "println",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "!",
+      "kind": "BANG"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": "\"index = {} and value = {}\"",
+      "kind": "STRING_LITERAL"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "index",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ",",
+      "kind": "COMMA"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "value",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}

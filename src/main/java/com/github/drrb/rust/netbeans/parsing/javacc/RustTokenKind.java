@@ -146,6 +146,7 @@ public enum RustTokenKind {
     WHILE(RustParserConstants.WHILE),
     YIELD(RustParserConstants.YIELD),
     IDENTIFIER(RustParserConstants.IDENTIFIER),
+    LABEL(RustParserConstants.LABEL),
     XID_start(RustParserConstants.XID_start),
     XID_continue(RustParserConstants.XID_continue),
     GARBAGE(RustParserConstants.GARBAGE);

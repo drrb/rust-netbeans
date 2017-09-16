@@ -315,6 +315,7 @@ TOKEN :
 TOKEN :
 {
   <IDENTIFIER: <XID_start> (<XID_continue>)* >
+ | <LABEL: "'" <IDENTIFIER> >
  | <#XID_start:
       [  // all chars for which Character.isIdentifierStart is true
          //"$",
@@ -611,9 +612,7 @@ void ExprBottom() :
   "(" [ Exprs() [ "," ] ] ")"
     | LiteralExpression()
     | IfExpression()
-    | WhileLoopExpression()
-    | ForLoopExpression()
-    | LoopExpression()
+    | AnyLoopExpression()
     | Path() [ ["!"] "(" [ Exprs() ] ")" ]
 }
 
@@ -634,7 +633,7 @@ void Statement() :
 void ExpressionOrDeclaration() #void :
 {}
 {
-  Declaration() | Expr() | Block()
+  Declaration() | Expr() | Block() | "continue" [ <LABEL> ]
 }
 
 void Declaration() #void :
@@ -687,6 +686,17 @@ void IfExpression() :
   ]
 }
 
+void AnyLoopExpression() :
+{}
+{
+  [ <LABEL> ":" ]
+  (
+    WhileLoopExpression()
+    | ForLoopExpression()
+    | LoopExpression()
+  )
+}
+
 void WhileLoopExpression() :
 {}
 {
@@ -697,7 +707,7 @@ void WhileLoopExpression() :
 void ForLoopExpression() :
 {}
 {
-  "for" <IDENTIFIER> "in" Expr()
+  "for" IdentifierLHS() "in" Expr()
     Block()
 }
 
@@ -772,3 +782,9 @@ void PathItem() :
   <IDENTIFIER> | "self"
 }
 
+void IdentifierLHS() :
+{}
+{
+  <IDENTIFIER>
+  | "(" <IDENTIFIER> ( "," <IDENTIFIER> )* ")"
+}

@@ -1,0 +1,356 @@
+{
+  "tokens": [
+    {
+      "image": "fn",
+      "kind": "FN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "main",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": "(",
+      "kind": "LEFT_PAREN"
+    },
+    {
+      "image": ")",
+      "kind": "RIGHT_PAREN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "'outer",
+      "kind": "LABEL"
+    },
+    {
+      "image": ":",
+      "kind": "COLON"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "for",
+      "kind": "FOR"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "in",
+      "kind": "IN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "0",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": "..",
+      "kind": "DOUBLE_DOT"
+    },
+    {
+      "image": "10",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n        ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "'inner",
+      "kind": "LABEL"
+    },
+    {
+      "image": ":",
+      "kind": "COLON"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "for",
+      "kind": "FOR"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "y",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "in",
+      "kind": "IN"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "0",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": "..",
+      "kind": "DOUBLE_DOT"
+    },
+    {
+      "image": "10",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": "\n            ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "if",
+      "kind": "IF"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "x",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "%",
+      "kind": "PERCENT"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "2",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "==",
+      "kind": "DOUBLE_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "0",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "continue",
+      "kind": "CONTINUE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "'outer",
+      "kind": "LABEL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n            ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "if",
+      "kind": "IF"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "y",
+      "kind": "IDENTIFIER"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "%",
+      "kind": "PERCENT"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "2",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "==",
+      "kind": "DOUBLE_EQUALS"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "0",
+      "kind": "NUMBER_LITERAL"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "{",
+      "kind": "LEFT_BRACE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "continue",
+      "kind": "CONTINUE"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "'inner",
+      "kind": "LABEL"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": " ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": ";",
+      "kind": "SEMICOLON"
+    },
+    {
+      "image": "\n        ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "\n    ",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "\n",
+      "kind": "WHITESPACE"
+    },
+    {
+      "image": "}",
+      "kind": "RIGHT_BRACE"
+    },
+    {
+      "image": "",
+      "kind": "EOF"
+    }
+  ]
+}
