@@ -23,7 +23,7 @@
     <folder name="Editors">
         <folder name="text">
             <folder name="x-rust-source">
-                <!--<attr name="displayName" bundlevalue="com.github.drrb.rust.netbeans.Bundle#Editors/text/x-rust-source"/>-->
+                <attr name="displayName" bundlevalue="com.github.drrb.rust.netbeans.Bundle#Editors/text/x-rust-source"/>
                 <folder name="FoldManager">
                     <file name="org-netbeans-editor-CustomFoldManager$Factory.instance"/>
                 </folder>

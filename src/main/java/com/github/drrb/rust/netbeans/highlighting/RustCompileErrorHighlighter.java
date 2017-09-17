@@ -17,34 +17,18 @@
 package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
+import com.github.drrb.rust.netbeans.cargo.Crate;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.cargo.Crate;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.rustbridge.RustCompiler;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
-import static com.github.drrb.rust.netbeans.rustbridge.RustParseMessage.Level.HELP;
 import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
 import com.google.common.annotations.VisibleForTesting;
-import java.io.IOException;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.modules.parsing.api.Snapshot;
-import org.netbeans.modules.parsing.spi.ParseException;
-import org.netbeans.modules.parsing.spi.ParserResultTask;
-import org.netbeans.modules.parsing.spi.Scheduler;
-import org.netbeans.modules.parsing.spi.SchedulerEvent;
-import org.netbeans.modules.parsing.spi.SchedulerTask;
-import org.netbeans.modules.parsing.spi.TaskFactory;
+import org.netbeans.modules.parsing.spi.*;
 import org.netbeans.spi.editor.hints.ErrorDescription;
 import org.netbeans.spi.editor.hints.ErrorDescriptionFactory;
 import org.netbeans.spi.editor.hints.HintsController;
@@ -54,6 +38,19 @@ import org.openide.filesystems.FileUtil;
 import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.StyledDocument;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import static com.github.drrb.rust.netbeans.rustbridge.RustParseMessage.Level.HELP;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  *
@@ -74,7 +71,7 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
     @Override
     public void run(NetbeansRustParserResult parseResult, SchedulerEvent event) {
         try {
-            if (parseResult.getResult().isFailure()) {
+            if (parseResult.isFailure()) {
                 return;
             }
         } catch (ParseException ex) {

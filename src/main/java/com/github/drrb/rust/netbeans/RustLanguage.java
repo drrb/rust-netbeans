@@ -16,10 +16,12 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
+import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.indexing.PathRecognizerRegistration;
 import org.openide.util.NbBundle;
 
@@ -64,10 +66,10 @@ public class RustLanguage extends DefaultLanguageConfig {
         return RustTokenId.language();
     }
 
-//    @Override
-//    public Parser getParser() {
-//        return new NetbeansRustParser();
-//    }
+    @Override
+    public Parser getParser() {
+        return new NetbeansRustParser();
+    }
 
 //    @Override
 //    public boolean hasFormatter() {

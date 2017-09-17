@@ -16,17 +16,11 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.rustbridge.RustParser;
-import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.StyledDocument;
+import com.github.drrb.rust.netbeans.parsing.javacc.RustParser;
+import com.github.drrb.rust.netbeans.parsing.javacc.SimpleNode;
+import com.github.drrb.rust.netbeans.parsing.javacc.Token;
 import org.netbeans.modules.csl.api.Error;
+import org.netbeans.modules.csl.api.Severity;
 import org.netbeans.modules.csl.spi.DefaultError;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.parsing.api.Snapshot;
@@ -35,51 +29,43 @@ import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.SourceModificationEvent;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.text.NbDocument;
+
+import javax.swing.event.ChangeListener;
+import javax.swing.text.StyledDocument;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
+
+import static java.util.Collections.emptyList;
 
 /**
  *
  */
 public class NetbeansRustParser extends Parser {
     private static final Logger LOG = Logger.getLogger(NetbeansRustParser.class.getName());
-    private final RustParser rustParser = new RustParser();
-    private RustParser.Result result = RustParser.Result.NONE;
     private Snapshot snapshot;
+    private NetbeansRustParserResult result;
 
     @Override
     public void parse(final Snapshot snapshot, Task task, SourceModificationEvent event) {
-        //TODO: if we get segfaults, it's probably to do with this.
-        // we should probably make sure we don't try to access the AST from
-        // a stale (invalidated) result because the AST will have been freed.
-        // (assuming that's actually what ParserResult.invalidate() actually means)
-        this.result.destroy();
         this.snapshot = snapshot;
-        this.result = parse(snapshot);
-    }
-
-    private RustParser.Result parse(Snapshot snapshot) {
-        File file = FileUtil.toFile(snapshot.getSource().getFileObject());
         String source = snapshot.getText().toString();
-        return rustParser.parse(file, source);
+        try {
+            SimpleNode rootNode = RustParser.parse(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
+            result = new NetbeansRustParserResult(snapshot, rootNode, emptyList());
+        } catch (com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
+            result = NetbeansRustParserResult.failure(snapshot, e);
+        }
     }
 
     @Override
     public NetbeansRustParserResult getResult(Task task) throws ParseException {
-        return new NetbeansRustParserResult(snapshot, result, getDiagnostics());
-    }
-
-    private List<Error> getDiagnostics() {
-        FileObject file = snapshot.getSource().getFileObject();
-        StyledDocument document = NbDocument.getDocument(file);
-        List<RustParseMessage> parseMessages = result.getParseMessages();
-        List<Error> diagnostics = new ArrayList<>(parseMessages.size());
-        for (RustParseMessage message : parseMessages) {
-            int startOffset = NbDocument.findLineOffset(document, message.getStartLine() - 1) + message.getStartCol();
-            int endOffset = NbDocument.findLineOffset(document, message.getEndLine() - 1) + message.getEndCol();
-            diagnostics.add(new DefaultError("rust.parse.message", message.getMessage(), message.getMessage(), file, startOffset, endOffset, message.getLevel().severity()));
-        }
-        return diagnostics;
+        return result;
     }
 
     @Override
@@ -92,23 +78,23 @@ public class NetbeansRustParser extends Parser {
 
     public static class NetbeansRustParserResult extends ParserResult {
 
-        private final RustParser.Result result;
         private final AtomicBoolean valid = new AtomicBoolean(true);
         private final List<Error> diagnostics;
+        private final SimpleNode rootNode;
 
-        public NetbeansRustParserResult(Snapshot snapshot, RustParser.Result result, List<Error> diagnostics) {
+        public NetbeansRustParserResult(Snapshot snapshot, SimpleNode rootNode, List<Error> diagnostics) {
             super(snapshot);
-            this.result = result;
+            this.rootNode = rootNode;
             this.diagnostics = Collections.unmodifiableList(diagnostics);
         }
 
-        public RustParser.Result getResult() throws ParseException {
+        public SimpleNode rootNode() throws ParseException {
             //TODO: is this what we should be doing to ensure people don't
             // access a released AST?
             if (!valid.get()) {
                 throw new ParseException();
             }
-            return result;
+            return rootNode;
         }
 
         @Override
@@ -120,6 +106,23 @@ public class NetbeansRustParser extends Parser {
         public List<? extends Error> getDiagnostics() {
             return diagnostics;
         }
+
+        public static NetbeansRustParserResult failure(Snapshot snapshot, com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
+            Token currentToken = e.currentToken;
+            FileObject file = snapshot.getSource().getFileObject();
+            StyledDocument document = NbDocument.getDocument(file);
+            List<Error> diagnostics = new LinkedList<>();
+            int startOffset = NbDocument.findLineOffset(document, currentToken.beginLine - 1) + currentToken.beginColumn;
+            int endOffset = NbDocument.findLineOffset(document, currentToken.endLine - 1) + currentToken.endColumn;
+            diagnostics.add(new DefaultError("rust.parse.message", e.getMessage(), e.getMessage(), file, startOffset, endOffset, Severity.ERROR));
+            return new NetbeansRustParserResult(snapshot, null, diagnostics);
+        }
+
+        public boolean isFailure() throws ParseException {
+            return rootNode() != null;
+        }
+
+
 //
 //        public RustSourceIndex getIndex() {
 //            return getAst().accept(new IndexingVisitor());
