@@ -29,8 +29,18 @@ public class NetbeansRustParserTest {
     public final NetbeansWithRust netbeans = new NetbeansWithRust();
 
     @Test
-    public void shouldHighlightErrorFromMissingParenthesis() throws Exception {
-        netbeans.checkParseMessages("parse/missing_parenthesis.rs");
+    public void highlightsSingleError() throws Exception {
+        netbeans.checkParseMessages("parse/errors/missing_parenthesis.rs");
+    }
+
+    @Test
+    public void highlightsMultipleErrors() throws Exception {
+        netbeans.checkParseMessages("parse/errors/two_errors.rs");
+    }
+
+    @Test
+    public void highlightsAcrossItems() throws Exception {
+        netbeans.checkParseMessages("parse/errors/errors_in_items.rs");
     }
 
 }

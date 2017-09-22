@@ -55,6 +55,29 @@ public class RustToken extends Token {
         return next != null;
     }
 
+    public RustToken next() {
+        return (RustToken) next;
+    }
+
+    public boolean hasNextSpecialToken() {
+        return hasNext() && next().hasSpecialToken();
+    }
+
+    public RustToken nextSpecialToken() {
+        return next().getEarliestSpecialToken();
+    }
+
+    public RustToken getEarliestSpecialToken() {
+        if (specialToken == null) {
+            return null;
+        }
+        Token t = this;
+        while (t.specialToken != null) {
+            t = t.specialToken;
+        }
+        return (RustToken) t;
+    }
+
     @Override
     public String toString() {
         return enumKind + ": '" + image + "'";

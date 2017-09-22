@@ -2,6 +2,7 @@ package com.github.drrb.rust.netbeans.parsing.javacc;
 
 import com.github.drrb.rust.netbeans.test.junit412.Parameterized;
 import com.github.drrb.rust.netbeans.test.junit412.Parameterized.Parameters;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -10,12 +11,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static com.github.drrb.rust.netbeans.parsing.javacc.TestSrc.Dump.DUMP;
 import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
 public class ParseTest {
     // Temporarily run just one test by using this list:
     private static final List<TestSrc> INCLUDED_SOURCES = Stream.of(
+//            "errors/errors_in_items.rs"
     )
             .map(Objects::toString)
             .map(Paths::get)
@@ -52,22 +56,22 @@ public class ParseTest {
 
     @Test
     public void testParse() throws Exception {
-        SimpleNode output = RustParser.parse(sourceFile.getPath());
+        ParseResult actualResult = sourceFile.parse(DUMP);
 
-        dump(output, "");
-    }
-
-
-    public void dump(SimpleNode node, String prefix) {
-        System.out.println(prefix + RustParserTreeConstants.jjtNodeName[node.id] + "[" + node.value + "]");
-        if (node.children != null) {
-            for (int i = 0; i < node.children.length; ++i) {
-                SimpleNode n = (SimpleNode) node.children[i];
-                if (n != null) {
-                    dump(n, prefix + " ");
-                }
-            }
+        ExpectedParseResultFile expectedParseResultFile = sourceFile.expectedParseResultFile();
+        if (!expectedParseResultFile.exists()) {
+            expectedParseResultFile.createWith(actualResult);
+            fail("Expected parse result file doesn't exist: " + expectedParseResultFile + ". Creating it.");
         }
+        ParseResult expectedResult = expectedParseResultFile.result();
+        if (expectedResult.equals(actualResult)) {
+            return;
+        }
+        throw new ComparisonFailure(
+                "Parsing " + sourceFile + " didn't produce expected result",
+                expectedResult.json(),
+                actualResult.json()
+        );
     }
 
 }

@@ -17,7 +17,7 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import com.github.drrb.rust.netbeans.parsing.javacc.RustParser;
-import com.github.drrb.rust.netbeans.parsing.javacc.SimpleNode;
+import com.github.drrb.rust.netbeans.parsing.javacc.SimpleCharStream;
 import com.github.drrb.rust.netbeans.parsing.javacc.Token;
 import org.netbeans.modules.csl.api.Error;
 import org.netbeans.modules.csl.api.Severity;
@@ -34,14 +34,16 @@ import org.openide.text.NbDocument;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.StyledDocument;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
-import static java.util.Collections.emptyList;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -55,12 +57,18 @@ public class NetbeansRustParser extends Parser {
     public void parse(final Snapshot snapshot, Task task, SourceModificationEvent event) {
         this.snapshot = snapshot;
         String source = snapshot.getText().toString();
+
+        RustParser parser;
         try {
-            SimpleNode rootNode = RustParser.parse(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
-            result = new NetbeansRustParserResult(snapshot, rootNode, emptyList());
-        } catch (com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
-            result = NetbeansRustParserResult.failure(snapshot, e);
+            parser = new RustParser(new SimpleCharStream(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)), UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
+        try {
+            parser.Input();
+        } catch (com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
+        }
+        result = NetbeansRustParserResult.complete(snapshot, parser.new Result());
     }
 
     @Override
@@ -80,21 +88,21 @@ public class NetbeansRustParser extends Parser {
 
         private final AtomicBoolean valid = new AtomicBoolean(true);
         private final List<Error> diagnostics;
-        private final SimpleNode rootNode;
+        private final RustParser.Result parseResult;
 
-        public NetbeansRustParserResult(Snapshot snapshot, SimpleNode rootNode, List<Error> diagnostics) {
+        public NetbeansRustParserResult(Snapshot snapshot, RustParser.Result parseResult, List<Error> diagnostics) {
             super(snapshot);
-            this.rootNode = rootNode;
+            this.parseResult = parseResult;
             this.diagnostics = Collections.unmodifiableList(diagnostics);
         }
 
-        public SimpleNode rootNode() throws ParseException {
+        public RustParser.Result rootNode() throws ParseException {
             //TODO: is this what we should be doing to ensure people don't
             // access a released AST?
             if (!valid.get()) {
                 throw new ParseException();
             }
-            return rootNode;
+            return parseResult;
         }
 
         @Override
@@ -107,15 +115,21 @@ public class NetbeansRustParser extends Parser {
             return diagnostics;
         }
 
+        public static NetbeansRustParserResult complete(Snapshot snapshot, RustParser.Result parseResult) {
+            return new NetbeansRustParserResult(snapshot, parseResult, parseResult.syntaxErrors().stream().map(ex -> toError(snapshot, ex)).collect(toList()));
+        }
+
         public static NetbeansRustParserResult failure(Snapshot snapshot, com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
+            return new NetbeansRustParserResult(snapshot, null, singletonList(toError(snapshot, e)));
+        }
+
+        private static DefaultError toError(Snapshot snapshot, com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
             Token currentToken = e.currentToken;
             FileObject file = snapshot.getSource().getFileObject();
             StyledDocument document = NbDocument.getDocument(file);
-            List<Error> diagnostics = new LinkedList<>();
             int startOffset = NbDocument.findLineOffset(document, currentToken.beginLine - 1) + currentToken.beginColumn;
             int endOffset = NbDocument.findLineOffset(document, currentToken.endLine - 1) + currentToken.endColumn;
-            diagnostics.add(new DefaultError("rust.parse.message", e.getMessage(), e.getMessage(), file, startOffset, endOffset, Severity.ERROR));
-            return new NetbeansRustParserResult(snapshot, null, diagnostics);
+            return new DefaultError("rust.parse.message", "Parse error", e.getMessage(), file, startOffset, endOffset, Severity.ERROR);
         }
 
         public boolean isFailure() throws ParseException {

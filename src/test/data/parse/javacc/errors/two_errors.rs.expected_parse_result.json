@@ -1,0 +1,18 @@
+{
+  "errors": [
+    {
+      "tokenKind": "SEMICOLON",
+      "beginLine": 2,
+      "beginColumn": 15,
+      "endLine": 2,
+      "endColumn": 16
+    },
+    {
+      "tokenKind": "SEMICOLON",
+      "beginLine": 6,
+      "beginColumn": 11,
+      "endLine": 6,
+      "endColumn": 12
+    }
+  ]
+}

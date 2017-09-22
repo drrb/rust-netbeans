@@ -44,11 +44,11 @@ public class TokenizationTest {
 
     @Test
     public void testLex() throws Exception {
-        ParseResult actualResult = sourceFile.tokenize();
+        TokenizationResult actualResult = sourceFile.tokenize();
         ExpectedTokensFile expectedTokensFile = sourceFile.expectedTokensFile();
         if (!expectedTokensFile.exists()) {
-            Predicate<ParseResult.Token> isGarbage = ParseResult.Token::isGarbage;
-            List<ParseResult.Token> garbageTokens = actualResult.tokens.stream().filter(isGarbage).collect(toList());
+            Predicate<TokenizationResult.Token> isGarbage = TokenizationResult.Token::isGarbage;
+            List<TokenizationResult.Token> garbageTokens = actualResult.tokens.stream().filter(isGarbage).collect(toList());
             if (garbageTokens.isEmpty()) {
                 expectedTokensFile.createWith(actualResult);
                 fail("Expected tokens file doesn't exist: " + expectedTokensFile + ". Creating it.");
@@ -56,7 +56,7 @@ public class TokenizationTest {
                 fail("Found garbage tokens: " + garbageTokens + "\nin tokenization result:\n" + actualResult);
             }
         }
-        ParseResult expectedResult = expectedTokensFile.tokens();
+        TokenizationResult expectedResult = expectedTokensFile.tokens();
         if (expectedResult.equals(actualResult)) {
             return;
         }

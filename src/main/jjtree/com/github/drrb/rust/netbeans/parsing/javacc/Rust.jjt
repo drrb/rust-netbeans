@@ -1,6 +1,6 @@
 options {
   LOOKAHEAD = 1;
-  CHOICE_AMBIGUITY_CHECK = 2;
+  CHOICE_AMBIGUITY_CHECK = 5;
   OTHER_AMBIGUITY_CHECK = 1;
   STATIC = false;
   DEBUG_PARSER = true;
@@ -32,10 +32,21 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.nio.file.Path;
+import java.util.*;
 
 public class RustParser {
 
-    public static SimpleNode parse(Path file) throws IOException {
+    public class Result {
+        public SimpleNode rootNode() {
+            return (SimpleNode) jjtree.rootNode();
+        }
+
+        public List<ParseException> syntaxErrors() {
+            return syntaxErrors;
+        }
+    }
+
+    public static Result parse(Path file) throws IOException {
         FileInputStream inputStream = new FileInputStream(file.toFile());
         try {
             return parse(inputStream);
@@ -46,14 +57,33 @@ public class RustParser {
         }
     }
 
-    public static SimpleNode parse(InputStream inputStream) throws ParseException {
+    public static Result parse(InputStream inputStream) throws ParseException {
         try {
             RustParser parser = new RustParser(new SimpleCharStream(inputStream, UTF_8.name()));
             parser.Input();
-            return (SimpleNode) parser.jjtree.rootNode();
+            return parser.new Result();
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<ParseException> syntaxErrors = new ArrayList<ParseException>();
+
+    void recover(ParseException ex, int recoveryPoint) {
+        syntaxErrors.add(ex);
+        Token t;
+        do {
+            t = getNextToken();
+        } while(t.kind != EOF && t.kind != recoveryPoint);
+    }
+
+    private boolean contains(int kind, int[] kinds) {
+        for (int k : kinds) {
+            if (k == kind) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
@@ -419,17 +449,21 @@ void Input() :
 void Item() :
 {}
 {
-  //TODO: grammar doesn't include "view_item" here: only inside "mod_item"s
-  [ Annotation() ]
-  [ "pub" ] (
-    ModItem()
-    | FunctionItem()
-    | StructItem()
-    | ConstItem()
-    | StaticItem()
-    | ViewItem()
-    | MacroExpression()
-  )
+  try {
+    //TODO: grammar doesn't include "view_item" here: only inside "mod_item"s
+    [ Annotation() ]
+    [ "pub" ] (
+      ModItem()
+      | FunctionItem()
+      | StructItem()
+      | ConstItem()
+      | StaticItem()
+      | ViewItem()
+      | MacroExpression()
+    )
+  } catch (ParseException e) {
+    error_skipto_orig(RIGHT_BRACE);
+  }
 }
 
 // TODO: Not sure what this is actually called
@@ -628,8 +662,19 @@ void Block() :
 {}
 {
   "{"
-    [ ExpressionOrDeclaration() (LOOKAHEAD(2) ";" ExpressionOrDeclaration())* [";"] ] // That is: ( LOOKAHEAD(Statement()) Statement() )* [ ExpressionOrDeclaration() ]
+    [ BlockElements() ] // That is: ( LOOKAHEAD(Statement()) Statement() )* [ ExpressionOrDeclaration() ]
   "}"
+}
+
+void BlockElements() #void :
+{}
+{
+//    ( ExpressionOrDeclaration() | error_skipto(SEMICOLON, RIGHT_BRACE) ) [LOOKAHEAD(2) ";" [ BlockElements() ]]
+   try {
+     ExpressionOrDeclaration() [LOOKAHEAD(2) ";" [ BlockElements() ]]
+   } catch (ParseException e) {  //TODO: comment out this try catch to see what it does to the tests
+     error_skipto(SEMICOLON, RIGHT_BRACE);
+   }
 }
 
 void Statement() :
@@ -641,7 +686,11 @@ void Statement() :
 void ExpressionOrDeclaration() #void :
 {}
 {
-  Declaration() | Expr() | Block() | "continue" [ <LABEL> ]
+  try {
+    Declaration() | Expr() | Block() | "continue" [ <LABEL> ]
+  } catch (ParseException e) {  //TODO: comment out this try catch to see what it does to the tests
+    error_skipto(SEMICOLON, RIGHT_BRACE);
+  }
 }
 
 void Declaration() #void :
@@ -795,4 +844,98 @@ void IdentifierLHS() :
 {
   <IDENTIFIER>
   | "(" <IDENTIFIER> ( "," <IDENTIFIER> )* ")"
+}
+
+JAVACODE
+void error_skipto(int... recoveryPoints) {
+  ParseException e = generateParseException();
+    System.out.println("error_skipto: got ex: " + e.getMessage());
+    syntaxErrors.add(e);
+    List<String> tokenKinds = new LinkedList<String>();
+    for (int recoveryPoint : recoveryPoints) {
+        tokenKinds.add(tokenImage[recoveryPoint]);
+    }
+    Token t = getToken(0);
+    System.out.println("  current token is " + t);
+    System.out.println("  next token is " + t.next);
+    while (t.next.kind != EOF && !contains(t.next.kind, recoveryPoints)) {
+        t = getNextToken();
+        System.out.println("  saw: " + t);
+        System.out.println("  next: " + t.next);
+        if (t.next == null) {
+            getNextToken();
+        }
+    }
+    System.out.println("  exiting");
+}
+
+
+JAVACODE
+void error_skipto_orig(int... recoveryPoints) {
+  ParseException e = generateParseException();
+    System.out.println("error_skipto: got ex: " + e.getMessage());
+    syntaxErrors.add(e);
+    List<String> tokenKinds = new LinkedList<String>();
+    for (int recoveryPoint : recoveryPoints) {
+        tokenKinds.add(tokenImage[recoveryPoint]);
+    }
+    System.out.println("looking for recovery points: " + tokenKinds);
+
+    Token t = getToken(0);
+    System.out.println("  current token is " + t);
+    System.out.println("  next token is " + t.next);
+    if (t.kind == EOF || contains(t.kind, recoveryPoints)) {
+      System.out.println("    returning");
+      return;
+    }
+    do {
+        t = getNextToken();
+        System.out.println("  saw: " + t);
+    } while (t.kind != EOF && !contains(t.kind, recoveryPoints));
+    System.out.println("  exiting");
+}
+
+
+JAVACODE
+void error_skipto_consume(int... recoveryPoints) {
+  ParseException e = generateParseException();
+    System.out.println("error_skipto_consume: got ex: " + e.getMessage());
+    syntaxErrors.add(e);
+    List<String> tokenKinds = new LinkedList<String>();
+    for (int recoveryPoint : recoveryPoints) {
+        tokenKinds.add(tokenImage[recoveryPoint]);
+    }
+    System.out.println("looking for recovery points: " + tokenKinds);
+    Token t = getToken(0);
+    do {
+        t = t.next == null ? getNextToken() : t.next;
+        System.out.println("  saw: " + t);
+        System.out.println("  next: " + t.next);
+        if (t.next == null) {
+            getNextToken();
+        }
+    } while(t.kind != EOF && !contains(t.kind, recoveryPoints));
+
+    System.out.println("  exiting");
+}
+
+JAVACODE
+void error_skipto_consume_or_not(int recoveryPointConsume, int recoveryPointNotConsume) {
+  ParseException e = generateParseException();
+    System.out.println("error_skipto: got ex: " + e.getMessage());
+    syntaxErrors.add(e);
+    System.out.format("looking for recovery points: %s (consume), %s (not consume)%n", tokenImage[recoveryPointConsume], tokenImage[recoveryPointNotConsume]);
+
+    Token t = getToken(0);
+    System.out.println("  current token is " + t);
+    System.out.println("  next token is " + t.next);
+    if (t.next.kind == EOF || t.next.kind == recoveryPointNotConsume) {
+      System.out.println("    returning");
+      return;
+    }
+    do {
+        t = getNextToken();
+        System.out.println("  saw: " + t);
+    } while (t.kind != EOF && t.kind != recoveryPointConsume && t.next.kind != EOF && t.next.kind != recoveryPointNotConsume);
+    System.out.println("  exiting");
 }

@@ -1,0 +1,25 @@
+{
+  "errors": [
+    {
+      "tokenKind": "SEMICOLON",
+      "beginLine": 3,
+      "beginColumn": 15,
+      "endLine": 3,
+      "endColumn": 16
+    },
+    {
+      "tokenKind": "SEMICOLON",
+      "beginLine": 10,
+      "beginColumn": 11,
+      "endLine": 10,
+      "endColumn": 11
+    },
+    {
+      "tokenKind": "SEMICOLON",
+      "beginLine": 10,
+      "beginColumn": 12,
+      "endLine": 10,
+      "endColumn": 13
+    }
+  ]
+}

@@ -17,19 +17,13 @@
 package com.github.drrb.rust.netbeans.test;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
-import com.github.drrb.rust.netbeans.highlighting.RustCompileErrorHighlighter;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.cargo.CargoConfig;
 import com.github.drrb.rust.netbeans.cargo.Crate;
+import com.github.drrb.rust.netbeans.highlighting.RustCompileErrorHighlighter;
+import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.project.RustProject;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.text.Document;
-import static junit.framework.Assert.assertNotNull;
+import org.junit.ComparisonFailure;
+import org.netbeans.junit.NbTestCase;
 import org.netbeans.modules.csl.api.test.CslTestHelper;
 import org.netbeans.modules.parsing.api.ParserManager;
 import org.netbeans.modules.parsing.api.ResultIterator;
@@ -40,6 +34,13 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.text.PositionBounds;
 import org.openide.text.PositionRef;
+
+import javax.swing.text.Document;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
  *
@@ -116,6 +117,73 @@ public class NetbeansWithRust extends CslTestHelper {
                 assertDescriptionMatches(relativeProjectPath, renderedErrors.toString(), false, ".compile_errors");
             }
         });
+    }
+
+
+    protected void assertDescriptionMatches(String relFilePath,
+                                            String description, boolean includeTestName, String ext, boolean checkFileExistence) throws Exception {
+        File rubyFile = getDataFile(relFilePath);
+        if (checkFileExistence && !rubyFile.exists()) {
+            NbTestCase.fail("File " + rubyFile + " not found.");
+        }
+
+        File goldenFile = getDataFile(relFilePath + (includeTestName ? ("." + getName()) : "") + ext);
+        if (!goldenFile.exists()) {
+            if (!goldenFile.createNewFile()) {
+                NbTestCase.fail("Cannot create file " + goldenFile);
+            }
+            FileWriter fw = new FileWriter(goldenFile);
+            try {
+                fw.write(description);
+            }
+            finally{
+                fw.close();
+            }
+            if (failOnMissingGoldenFile()) {
+                NbTestCase.fail("Created generated golden file " + goldenFile + "\nPlease re-run the test.");
+            }
+            return;
+        }
+
+        String expected = readFile(goldenFile);
+
+        // Because the unit test differ is so bad...
+        if (false) { // disabled
+            if (!expected.equals(description)) {
+                BufferedWriter fw = new BufferedWriter(new FileWriter("/tmp/expected.txt"));
+                fw.write(expected);
+                fw.close();
+                fw = new BufferedWriter(new FileWriter("/tmp/actual.txt"));
+                fw.write(description);
+                fw.close();
+            }
+        }
+
+        //drrb: don't trim. It removes the leading whitespace.
+        String expectedTrimmed = expected.replaceFirst("\n+\\Z", ""); //expected.trim();
+        String actualTrimmed = description.replaceFirst("\n+\\Z", ""); //description.trim();
+
+        if (expectedTrimmed.equals(actualTrimmed)) {
+            return; // Actual and expected content are equals --> Test passed
+        } else {
+            // We want to ignore different line separators (like \r\n against \n) because they
+            // might be causing failing tests on a different operation systems like Windows :]
+            String expectedUnified = expectedTrimmed.replaceAll("\r", "");
+            String actualUnified = actualTrimmed.replaceAll("\r", "");
+
+            if (expectedUnified.equals(actualUnified)) {
+                return; // Only difference is in line separation --> Test passed
+            }
+
+            // There are some diffrerences between expected and actual content --> Test failed
+//            fail(getContentDifferences(relFilePath, ext, includeTestName, expectedUnified, actualUnified));
+
+            throw new ComparisonFailure(
+                   description + " " + relFilePath,
+                    expectedUnified,
+                    actualUnified
+            );
+        }
     }
 
     private static class TestableRustCompileErrorHighlighter extends RustCompileErrorHighlighter {

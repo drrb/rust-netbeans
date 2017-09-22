@@ -1,0 +1,11 @@
+{
+  "errors": [
+    {
+      "tokenKind": "SEMICOLON",
+      "beginLine": 2,
+      "beginColumn": 15,
+      "endLine": 2,
+      "endColumn": 16
+    }
+  ]
+}

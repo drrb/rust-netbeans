@@ -10,6 +10,8 @@ import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class TestSrc extends TestFile {
 
     public static TestSrc get(TestFile file) {
@@ -35,10 +37,36 @@ public class TestSrc extends TestFile {
         return p -> p.toString().endsWith(".rs");
     }
 
-    public ParseResult tokenize() {
+    public enum Dump {
+        DUMP,
+        NO_DUMP
+    }
+
+    public ParseResult parse(Dump dump) {
+        Path file = getPath();
+        RustParser.Result result;
+        try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
+            RustParser parser = new RustParser(new SimpleCharStream(inputStream, UTF_8.name()));
+            try {
+                parser.Input();
+            } catch (ParseException ex) {
+            }
+            result = parser.new Result();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (dump == Dump.DUMP) {
+            dump(result.rootNode(), "");
+        }
+
+        return new ParseResult(result);
+    }
+
+    public TokenizationResult tokenize() {
         try (FileInputStream source = new FileInputStream(path.toFile())) {
             RustParserTokenManager tokenManager = new RustParserTokenManager(new SimpleCharStream(source));
-            ParseResult result = new ParseResult();
+            TokenizationResult result = new TokenizationResult();
             while (true) {
                 RustToken token = (RustToken) tokenManager.getNextToken();
                 Stack<RustToken> tokens = new Stack<>();
@@ -49,7 +77,7 @@ public class TestSrc extends TestFile {
                 }
                 while (!tokens.empty()) {
                     token = tokens.pop();
-                    result.tokens.add(new ParseResult.Token(token.image, token.kind(), token.beginLine, token.beginColumn));
+                    result.tokens.add(new TokenizationResult.Token(token.image, token.kind(), token.beginLine, token.beginColumn));
                 }
                 if (token.isEof()) {
                     break;
@@ -63,6 +91,22 @@ public class TestSrc extends TestFile {
 
     public ExpectedTokensFile expectedTokensFile() {
         return new ExpectedTokensFile(path.getParent().resolve(path.getFileName() + ".expected_tokens.json"));
+    }
+
+    public ExpectedParseResultFile expectedParseResultFile() {
+        return new ExpectedParseResultFile(path.getParent().resolve(path.getFileName() + ".expected_parse_result.json"));
+    }
+
+    private void dump(SimpleNode node, String prefix) {
+        System.out.println(prefix + RustParserTreeConstants.jjtNodeName[node.id] + "[" + node.value + "]");
+        if (node.children != null) {
+            for (int i = 0; i < node.children.length; ++i) {
+                SimpleNode n = (SimpleNode) node.children[i];
+                if (n != null) {
+                    dump(n, prefix + " ");
+                }
+            }
+        }
     }
 
     @Override

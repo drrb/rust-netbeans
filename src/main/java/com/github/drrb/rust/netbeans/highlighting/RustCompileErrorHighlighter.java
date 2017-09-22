@@ -16,7 +16,6 @@
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
-import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.cargo.Crate;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
@@ -25,7 +24,6 @@ import com.github.drrb.rust.netbeans.rustbridge.RustCompiler;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
 import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
 import com.google.common.annotations.VisibleForTesting;
-import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.spi.*;
@@ -59,7 +57,7 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
     private static final Logger LOG = Logger.getLogger(RustCompileErrorHighlighter.class.getName());
     private static final RequestProcessor EXECUTOR = new RequestProcessor("Rust Compile", 12);
 
-    @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TaskFactory.class)
+//    @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TaskFactory.class)
     public static class Factory extends TaskFactory {
 
         @Override
