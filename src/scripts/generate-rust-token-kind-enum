@@ -12,5 +12,7 @@ token_kind_declarations = constants.map {|c| "    #{c}(RustParserConstants.#{c},
 new_source = source_file.read.
         gsub(/.*[A-Z_]*\(RustParserConstants.*\n/,"").
         gsub(/(enum RustTokenId implements TokenId {\n\n)/, '\1' + token_kind_declarations.join(",\n") + ";\n")
-puts "Writing constants to #{source_file}"
-source_file.write(new_source)
+$stderr.puts "Writing constants to #{source_file}"
+File.open(source_file, "w") do |f|
+  f.write(new_source)
+end
