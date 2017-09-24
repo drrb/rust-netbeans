@@ -21,13 +21,13 @@ public class ParseResult extends JsonSerializable {
             tokenKind = unexpectedToken.kind();
             beginLine = unexpectedToken.beginLine;
             beginColumn = unexpectedToken.beginColumn;
-            if (unexpectedToken.hasNextSpecialToken()) {
-                RustToken followingToken = unexpectedToken.nextSpecialToken();
-                endLine = followingToken.beginLine;
-                endColumn = followingToken.beginColumn;
-            } else {
+            RustToken followingToken = unexpectedToken.nextTokenMaybeSpecial();
+            if (unexpectedToken == followingToken) {
                 endLine = unexpectedToken.endLine;
                 endColumn = unexpectedToken.endColumn;
+            } else {
+                endLine = followingToken.beginLine;
+                endColumn = followingToken.beginColumn;
             }
         }
 

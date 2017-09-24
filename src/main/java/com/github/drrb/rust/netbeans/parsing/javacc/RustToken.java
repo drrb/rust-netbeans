@@ -2,33 +2,18 @@ package com.github.drrb.rust.netbeans.parsing.javacc;
 
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static com.github.drrb.rust.netbeans.parsing.RustTokenId.EOF;
 
 public class RustToken extends Token {
     private final RustTokenId enumKind;
 
     public RustToken(int kind, String image) {
-        kind = maybeTranslateSubkind(kind);
         this.kind = kind;
         this.enumKind = RustTokenId.get(kind);
         this.image = image;
-    }
-
-    private int maybeTranslateSubkind(int kind) {
-        switch(kind) {
-            case RustParserConstants.RAW_STRING_LITERAL_0:
-            case RustParserConstants.RAW_STRING_LITERAL_1:
-            case RustParserConstants.RAW_STRING_LITERAL_2:
-            case RustParserConstants.RAW_STRING_LITERAL_3:
-                return RustParserConstants.RAW_STRING_LITERAL;
-            case RustParserConstants.RAW_BYTE_STRING_LITERAL_0:
-            case RustParserConstants.RAW_BYTE_STRING_LITERAL_1:
-            case RustParserConstants.RAW_BYTE_STRING_LITERAL_2:
-            case RustParserConstants.RAW_BYTE_STRING_LITERAL_3:
-                return RustParserConstants.RAW_BYTE_STRING_LITERAL;
-            default:
-                return kind;
-        }
     }
 
     public boolean isEof() {
@@ -71,15 +56,35 @@ public class RustToken extends Token {
         if (specialToken == null) {
             return null;
         }
-        Token t = this;
-        while (t.specialToken != null) {
-            t = t.specialToken;
+        Token token = this;
+        while (token.specialToken != null) {
+            token = token.specialToken;
         }
-        return (RustToken) t;
+        return (RustToken) token;
     }
 
     @Override
     public String toString() {
         return enumKind + ": '" + image + "'";
+    }
+
+    public RustToken nextTokenMaybeSpecial() {
+        if (hasNextSpecialToken()) {
+            return nextSpecialToken();
+        } else if (hasNext()) {
+            return next();
+        } else {
+            return null;
+        }
+    }
+
+    public List<RustToken> withSpecialTokens() {
+        LinkedList<RustToken> thisWithSpecialTokens = new LinkedList<>();
+        RustToken token = this;
+        do {
+            thisWithSpecialTokens.addFirst(token);
+            token = token.specialToken();
+        } while (token != null);
+        return thisWithSpecialTokens;
     }
 }

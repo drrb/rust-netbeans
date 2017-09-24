@@ -11,7 +11,7 @@ public class JavaccCharStream implements CharStream {
 
     private LexerInput input;
 
-    private int offset = 0;
+    public int offset = 0;
     private int tokenOffset = 0;
     private boolean trackLineColumn = true;
 

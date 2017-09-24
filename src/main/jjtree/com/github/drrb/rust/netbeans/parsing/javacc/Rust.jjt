@@ -3,7 +3,7 @@ options {
   CHOICE_AMBIGUITY_CHECK = 5;
   OTHER_AMBIGUITY_CHECK = 1;
   STATIC = false;
-  DEBUG_PARSER = true;
+  DEBUG_PARSER = false;
   DEBUG_LOOKAHEAD = false;
   DEBUG_TOKEN_MANAGER = false;
   ERROR_REPORTING = true;
@@ -16,20 +16,21 @@ options {
   BUILD_TOKEN_MANAGER = true;
   SANITY_CHECK = true;
   FORCE_LA_CHECK = false;
-  TOKEN_FACTORY = "com.github.drrb.rust.netbeans.parsing.javacc.RustTokenFactory";
+  TOKEN_FACTORY = "RustTokenFactory";
 
   TRACK_TOKENS = true; //Saves first/last token on each node
   MULTI = true; //Makes a class per node type
+
+
+  TOKEN_EXTENDS = "BaseToken";
+  COMMON_TOKEN_ACTION=true;
 }
 
 PARSER_BEGIN(RustParser)
 
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import java.nio.file.Path;
 import java.util.*;
@@ -44,6 +45,17 @@ public class RustParser {
         public List<ParseException> syntaxErrors() {
             return syntaxErrors;
         }
+    }
+
+    public static Result parse(String source) {
+        SimpleCharStream stream = new SimpleCharStream(new StringReader(source));
+        RustParser parser = new RustParser(stream);
+        try {
+            parser.Input();
+        } catch (ParseException e) {
+            parser.syntaxErrors.add(e);
+        }
+        return parser.new Result();
     }
 
     public static Result parse(Path file) throws IOException {
@@ -91,8 +103,27 @@ PARSER_END(RustParser)
 
 TOKEN_MGR_DECLS :
 {
-  int bytestringPrefixSeen = 0;
-  int bytestringSuffixSeen = 0;
+    int bytestringPrefixSeen = 0;
+    int bytestringSuffixSeen = 0;
+
+    public void CommonTokenAction(Token token) {
+       int offset = getCurrentTokenAbsolutePosition() + token.image.length();
+       do {
+           token.absoluteEndPosition = offset;
+           offset -= token.image.length();
+           token.absoluteBeginPosition = offset;
+           token = token.specialToken;
+       } while (token != null);
+    }
+
+    public int getCurrentTokenAbsolutePosition() {
+        if (input_stream instanceof SimpleCharStream) {
+            return ((SimpleCharStream) input_stream).getAbsoluteTokenBegin();
+        } else if (input_stream instanceof JavaccCharStream) {
+            return ((JavaccCharStream) input_stream).offset;
+        }
+        return -1;
+    }
 }
 
 /* Whitespace */

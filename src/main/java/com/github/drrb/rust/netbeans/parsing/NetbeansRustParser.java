@@ -17,8 +17,7 @@
 package com.github.drrb.rust.netbeans.parsing;
 
 import com.github.drrb.rust.netbeans.parsing.javacc.RustParser;
-import com.github.drrb.rust.netbeans.parsing.javacc.SimpleCharStream;
-import com.github.drrb.rust.netbeans.parsing.javacc.Token;
+import com.github.drrb.rust.netbeans.parsing.javacc.RustToken;
 import org.netbeans.modules.csl.api.Error;
 import org.netbeans.modules.csl.api.Severity;
 import org.netbeans.modules.csl.spi.DefaultError;
@@ -29,20 +28,13 @@ import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.SourceModificationEvent;
 import org.openide.filesystems.FileObject;
-import org.openide.text.NbDocument;
 
 import javax.swing.event.ChangeListener;
-import javax.swing.text.StyledDocument;
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -58,17 +50,8 @@ public class NetbeansRustParser extends Parser {
         this.snapshot = snapshot;
         String source = snapshot.getText().toString();
 
-        RustParser parser;
-        try {
-            parser = new RustParser(new SimpleCharStream(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)), UTF_8.name()));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            parser.Input();
-        } catch (com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
-        }
-        result = NetbeansRustParserResult.complete(snapshot, parser.new Result());
+        RustParser.Result parseResult = RustParser.parse(source);
+        result = NetbeansRustParserResult.complete(snapshot, parseResult);
     }
 
     @Override
@@ -97,8 +80,7 @@ public class NetbeansRustParser extends Parser {
         }
 
         public RustParser.Result rootNode() throws ParseException {
-            //TODO: is this what we should be doing to ensure people don't
-            // access a released AST?
+            //TODO: i think i've seen the valid field on the parser itself in an example. Where should it be?
             if (!valid.get()) {
                 throw new ParseException();
             }
@@ -119,17 +101,19 @@ public class NetbeansRustParser extends Parser {
             return new NetbeansRustParserResult(snapshot, parseResult, parseResult.syntaxErrors().stream().map(ex -> toError(snapshot, ex)).collect(toList()));
         }
 
-        public static NetbeansRustParserResult failure(Snapshot snapshot, com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
-            return new NetbeansRustParserResult(snapshot, null, singletonList(toError(snapshot, e)));
-        }
-
         private static DefaultError toError(Snapshot snapshot, com.github.drrb.rust.netbeans.parsing.javacc.ParseException e) {
-            Token currentToken = e.currentToken;
+            RustToken currentToken = (RustToken) e.currentToken.next;
             FileObject file = snapshot.getSource().getFileObject();
-            StyledDocument document = NbDocument.getDocument(file);
-            int startOffset = NbDocument.findLineOffset(document, currentToken.beginLine - 1) + currentToken.beginColumn;
-            int endOffset = NbDocument.findLineOffset(document, currentToken.endLine - 1) + currentToken.endColumn;
-            return new DefaultError("rust.parse.message", "Parse error", e.getMessage(), file, startOffset, endOffset, Severity.ERROR);
+            return new DefaultError(
+                    "rust.parse.message",
+                    "Parse error",
+                    e.getMessage(),
+                    file,
+                    currentToken.absoluteBeginPosition - 1,
+                    currentToken.absoluteEndPosition - 1,
+                    false,
+                    Severity.ERROR
+            );
         }
 
         public boolean isFailure() throws ParseException {

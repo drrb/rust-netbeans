@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -69,16 +68,9 @@ public class TestSrc extends TestFile {
             TokenizationResult result = new TokenizationResult();
             while (true) {
                 RustToken token = (RustToken) tokenManager.getNextToken();
-                Stack<RustToken> tokens = new Stack<>();
-                tokens.push(token);
-                while (token.hasSpecialToken()) {
-                    tokens.push(token.specialToken());
-                    token = token.specialToken();
-                }
-                while (!tokens.empty()) {
-                    token = tokens.pop();
-                    result.tokens.add(new TokenizationResult.Token(token.image, token.kind(), token.beginLine, token.beginColumn));
-                }
+                token.withSpecialTokens().stream()
+                        .map(TokenizationResult.Token::new)
+                        .forEach(result.tokens::add);
                 if (token.isEof()) {
                     break;
                 }

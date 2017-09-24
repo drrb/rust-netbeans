@@ -20,6 +20,10 @@ public class TokenizationResult extends JsonSerializable {
             this(null, null);
         }
 
+        public Token(RustToken token) {
+            this(token.image, token.kind(), token.beginLine, token.beginColumn);
+        }
+
         public Token(String image, RustTokenId kind) {
             this(image, kind, null, null);
         }

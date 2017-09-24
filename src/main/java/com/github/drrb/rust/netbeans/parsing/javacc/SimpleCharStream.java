@@ -9,6 +9,12 @@ package com.github.drrb.rust.netbeans.parsing.javacc;
 
 public class SimpleCharStream implements CharStream
 {
+  protected int totalCharsRead = 0;
+  protected int absoluteTokenBegin = 0;
+  public final int getAbsoluteTokenBegin() {
+    return absoluteTokenBegin;
+  }
+
 /** Whether parser is static. */
   public static final boolean staticFlag = false;
   int bufsize;
@@ -137,6 +143,7 @@ public class SimpleCharStream implements CharStream
     tokenBegin = -1;
     char c = readChar();
     tokenBegin = bufpos;
+    absoluteTokenBegin = totalCharsRead;
 
     return c;
   }
@@ -191,12 +198,14 @@ public class SimpleCharStream implements CharStream
       if (++bufpos == bufsize)
         bufpos = 0;
 
+      totalCharsRead++;
       return buffer[bufpos];
     }
 
     if (++bufpos >= maxNextCharInd)
       FillBuff();
 
+    totalCharsRead++;
     char c = buffer[bufpos];
 
     UpdateLineColumn(c);
@@ -247,6 +256,7 @@ public class SimpleCharStream implements CharStream
   public void backup(int amount) {
 
     inBuf += amount;
+    totalCharsRead -= amount;
     if ((bufpos -= amount) < 0)
       bufpos += bufsize;
   }

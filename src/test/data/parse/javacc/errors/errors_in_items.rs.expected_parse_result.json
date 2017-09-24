@@ -12,7 +12,7 @@
       "beginLine": 10,
       "beginColumn": 11,
       "endLine": 10,
-      "endColumn": 11
+      "endColumn": 12
     },
     {
       "tokenKind": "SEMICOLON",

@@ -8,3 +8,5 @@
 /etc
 /.vagrant
 Vagrantfile
+/build
+/cluster-path
