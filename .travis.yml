@@ -1,17 +1,23 @@
 language: java
 
-os:
-    - linux
-    - osx
 jdk:
-    - oraclejdk8
-    - oraclejdk7
-    - openjdk7
+  - oraclejdk8
+  - oraclejdk9
+env:
+  - RUST_CHANNEL=stable
+  - RUST_CHANNEL=nightly
+matrix:
+    allow_failures:
+      - env: RUST_CHANNEL=nightly
+      - jdk: oraclejdk9
 before_install:
-    - travis_retry sudo add-apt-repository --yes ppa:hansjorg/rust
-    - travis_retry sudo apt-get update
+  - "curl https://sh.rustup.rs -sSf > rustup && chmod +x rustup"
+  - "./rustup -y"
+  - "export PATH=$PATH:~/.cargo/bin"
+  - rustc --version
 install:
-    - travis_retry sudo apt-get install --assume-yes rust-nightly
-    - travis_retry mvn --batch-mode dependency:go-offline
-    - mvn --batch-mode package -DskipTests
+  - rustup toolchain install ${RUST_CHANNEL}
+  - rustup override set ${RUST_CHANNEL}
+  - rustc --version
+  - mvn --batch-mode package -DskipTests
 script: mvn --batch-mode package
