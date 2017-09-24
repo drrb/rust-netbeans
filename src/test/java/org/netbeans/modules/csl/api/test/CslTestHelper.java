@@ -131,19 +131,19 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        //This makes our language available to the formatter (at least: it may do other things too)!
-        TestLanguageProvider.register(getPreferredLanguage().getLexerLanguage());
-
-        //TODO: why do we have to do this? CslTestBase picks up our generated-layer.xml,
-        // but it doesn't result in the parser factory, formatter factory, etc being
-        // available in the MimeLookup.
-        //TODO: maybe get more selective (specify per test what you need with annotations)
-        // so that we know more of what's going on behind the scenes
-        //TODO: might need to recurse into subdirectories (getChidren(true)), although
-        // that seemed to add some files that broke things...
-        MimePath mimePath = MimePath.parse(getPreferredMimeType());
-        Object[] mimeObjects = mimeObjects(mimePath, "/", "/BracesMatchers");
-        MockMimeLookup.setInstances(mimePath, mimeObjects);
+//        //This makes our language available to the formatter (at least: it may do other things too)!
+//        TestLanguageProvider.register(getPreferredLanguage().getLexerLanguage());
+//
+//        //TODO: why do we have to do this? CslTestBase picks up our generated-layer.xml,
+//        // but it doesn't result in the parser factory, formatter factory, etc being
+//        // available in the MimeLookup.
+//        //TODO: maybe get more selective (specify per test what you need with annotations)
+//        // so that we know more of what's going on behind the scenes
+//        //TODO: might need to recurse into subdirectories (getChidren(true)), although
+//        // that seemed to add some files that broke things...
+//        MimePath mimePath = MimePath.parse(getPreferredMimeType());
+//        Object[] mimeObjects = mimeObjects(mimePath, "/", "/BracesMatchers");
+//        MockMimeLookup.setInstances(mimePath, mimeObjects);
     }
 
     private Object[] mimeObjects(MimePath mimePath, String... mimeRoots) {

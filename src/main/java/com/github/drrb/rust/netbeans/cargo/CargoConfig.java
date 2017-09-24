@@ -26,6 +26,7 @@ import com.moandjiezana.toml.Toml;
 import org.netbeans.api.lexer.TokenSequence;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.text.NbDocument;
 
 import javax.swing.text.Document;
 import java.io.FileNotFoundException;
@@ -64,7 +65,7 @@ public class CargoConfig {
     private Iterable<? extends FileObject> modFiles(FileObject sourceFile) {
         final List<String> modDeclarations = new LinkedList<>();
         final Document document = GsfUtilitiesHack.getDocument(sourceFile, true); //TODO: why do we need this hack? Why does NbDocument.get not work in tests
-        document.render(new Runnable() { //TODO: apparently render() isn't read-locking the document (accoring to the test logs)
+        document.render(new Runnable() { //TODO: apparently render() isn't read-locking the document (according to the test logs)
 
             @Override
             public void run() {
@@ -111,24 +112,28 @@ public class CargoConfig {
         Toml cargoConfig = getCargoConfig();
 
         List<Crate> crates = new LinkedList<>();
-        Toml libCrate = cargoConfig.getTable("lib");
-        String libCratePath = libCrate.getString("path");
-        if (libCratePath != null) {
-            FileObject crateFile = baseDir.getFileObject(libCratePath);
-            List<String> libCrateTypes = new LinkedList<>(libCrate.getList("crate-type", String.class));
-            if (libCrateTypes.isEmpty()) {
-                libCrateTypes.add("rlib");
-            }
-            for (String libCrateType : libCrateTypes) {
-                crates.add(new Crate(RustCrateType.forCargoName(libCrateType), crateFile));
+        if (cargoConfig.containsTable("lib")) {
+            Toml libCrate = cargoConfig.getTable("lib");
+            String libCratePath = libCrate.getString("path");
+            if (libCratePath != null) {
+                FileObject crateFile = baseDir.getFileObject(libCratePath);
+                List<String> libCrateTypes = new LinkedList<>(libCrate.getList("crate-type"));
+                if (libCrateTypes.isEmpty()) {
+                    libCrateTypes.add("rlib");
+                }
+                for (String libCrateType : libCrateTypes) {
+                    crates.add(new Crate(RustCrateType.forCargoName(libCrateType), crateFile));
+                }
             }
         }
 
-        List<Toml> binCrates = cargoConfig.getTables("bin");
-        for (Toml binCrate : binCrates) {
-            String cratePath = binCrate.getString("path");
-            FileObject crateFile = baseDir.getFileObject(cratePath);
-            crates.add(new Crate(RustCrateType.EXECUTABLE, crateFile));
+        if (cargoConfig.containsTableArray("bin")) {
+            List<Toml> binCrates = cargoConfig.getTables("bin");
+            for (Toml binCrate : binCrates) {
+                String cratePath = binCrate.getString("path");
+                FileObject crateFile = baseDir.getFileObject(cratePath);
+                crates.add(new Crate(RustCrateType.EXECUTABLE, crateFile));
+            }
         }
         return crates;
     }
@@ -144,7 +149,7 @@ public class CargoConfig {
             return new Toml();
         }
         try {
-            return new Toml().parse(new InputStreamReader(cargoFile.getInputStream(), UTF_8));
+            return new Toml().read(new InputStreamReader(cargoFile.getInputStream(), UTF_8));
         } catch (FileNotFoundException ex) {
             LOG.log(Level.WARNING, "Couldn't read crates from Cargo.toml", ex);
             return new Toml();

@@ -22,7 +22,7 @@ import com.github.drrb.rust.netbeans.cargo.CargoConfig;
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
-import org.netbeans.modules.gsf.testrunner.api.Manager;
+import org.netbeans.modules.gsf.testrunner.ui.api.Manager;
 import org.openide.filesystems.FileObject;
 
 import java.util.logging.Level;
