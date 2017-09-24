@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require "pathname"
-require "pry"
 
 source_file = Pathname.glob("src/main/java/**/RustTokenId.java").first
 
