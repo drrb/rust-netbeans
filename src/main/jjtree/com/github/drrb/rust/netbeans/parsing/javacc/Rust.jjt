@@ -48,12 +48,27 @@ public class RustParser {
     }
 
     public static Result parse(String source) {
-        SimpleCharStream stream = new SimpleCharStream(new StringReader(source));
+        return parse(new StringReader(source));
+    }
+
+    public static Result parse(Reader source) {
+        SimpleCharStream stream = new SimpleCharStream(source);
         RustParser parser = new RustParser(stream);
         try {
             parser.Input();
         } catch (ParseException e) {
             parser.syntaxErrors.add(e);
+        }
+        return parser.new Result();
+    }
+
+    public static Result parseFailOnError(Reader source) {
+        SimpleCharStream stream = new SimpleCharStream(source);
+        RustParser parser = new RustParser(stream);
+        try {
+            parser.Input();
+        } catch (ParseException e) {
+            throw new RuntimeException("Failed to parse Rust source", e);
         }
         return parser.new Result();
     }

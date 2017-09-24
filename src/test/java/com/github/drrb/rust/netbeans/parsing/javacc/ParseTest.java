@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -42,7 +43,7 @@ public class ParseTest {
         if (INCLUDED_SOURCES.isEmpty()) {
             List<TestSrc> allSources = TestSrc.all().collect(toList());
             allSources.removeAll(EXCLUDED_SOURCES);
-            return allSources.stream().collect(toList());
+            return new ArrayList<>(allSources);
         } else {
             return INCLUDED_SOURCES;
         }

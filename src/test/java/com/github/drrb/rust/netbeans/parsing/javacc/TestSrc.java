@@ -5,7 +5,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Path;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -38,33 +41,37 @@ public class TestSrc extends TestFile {
 
     public enum Dump {
         DUMP,
-        NO_DUMP
+        NO_DUMP {
+            public void dump(SimpleNode node, String prefix) {
+            }
+        };
+
+        public void dump(SimpleNode node, String prefix) {
+            System.out.println(prefix + RustParserTreeConstants.jjtNodeName[node.id] + "[" + node.value + "]");
+            if (node.children != null) {
+                for (int i = 0; i < node.children.length; ++i) {
+                    SimpleNode n = (SimpleNode) node.children[i];
+                    if (n != null) {
+                        dump(n, prefix + " ");
+                    }
+                }
+            }
+        }
     }
 
     public ParseResult parse(Dump dump) {
         Path file = getPath();
         RustParser.Result result;
-        try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
-            RustParser parser = new RustParser(new SimpleCharStream(inputStream, UTF_8.name()));
-            try {
-                parser.Input();
-            } catch (ParseException ex) {
-            }
-            result = parser.new Result();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        result = withFile(file, RustParser::parseFailOnError);
 
-        if (dump == Dump.DUMP) {
-            dump(result.rootNode(), "");
-        }
+        dump.dump(result.rootNode(), "");
 
         return new ParseResult(result);
     }
 
     public TokenizationResult tokenize() {
-        try (FileInputStream source = new FileInputStream(path.toFile())) {
-            RustParserTokenManager tokenManager = new RustParserTokenManager(new SimpleCharStream(source));
+        return withFile(path, reader -> {
+            RustParserTokenManager tokenManager = new RustParserTokenManager(new SimpleCharStream(reader));
             TokenizationResult result = new TokenizationResult();
             while (true) {
                 RustToken token = (RustToken) tokenManager.getNextToken();
@@ -76,10 +83,19 @@ public class TestSrc extends TestFile {
                 }
             }
             return result;
+        });
+    }
+
+    private <T> T withFile(Path file, Function<Reader, T> function) {
+        try (FileInputStream inputStream = new FileInputStream(file.toFile())) {
+            try (InputStreamReader reader = new InputStreamReader(inputStream, UTF_8)) {
+                return function.apply(reader);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     public ExpectedTokensFile expectedTokensFile() {
         return new ExpectedTokensFile(path.getParent().resolve(path.getFileName() + ".expected_tokens.json"));
@@ -87,18 +103,6 @@ public class TestSrc extends TestFile {
 
     public ExpectedParseResultFile expectedParseResultFile() {
         return new ExpectedParseResultFile(path.getParent().resolve(path.getFileName() + ".expected_parse_result.json"));
-    }
-
-    private void dump(SimpleNode node, String prefix) {
-        System.out.println(prefix + RustParserTreeConstants.jjtNodeName[node.id] + "[" + node.value + "]");
-        if (node.children != null) {
-            for (int i = 0; i < node.children.length; ++i) {
-                SimpleNode n = (SimpleNode) node.children[i];
-                if (n != null) {
-                    dump(n, prefix + " ");
-                }
-            }
-        }
     }
 
     @Override
