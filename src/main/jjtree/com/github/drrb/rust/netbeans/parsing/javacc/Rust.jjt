@@ -103,8 +103,6 @@ PARSER_END(RustParser)
 
 TOKEN_MGR_DECLS :
 {
-    int bytestringPrefixSeen = 0;
-    int bytestringSuffixSeen = 0;
 
     public void CommonTokenAction(Token token) {
        int offset = getCurrentTokenAbsolutePosition() + token.image.length();
