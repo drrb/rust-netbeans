@@ -1,6 +1,7 @@
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import org.netbeans.modules.csl.api.OffsetRange;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -86,5 +87,9 @@ public class RustToken extends Token {
             token = token.specialToken();
         } while (token != null);
         return thisWithSpecialTokens;
+    }
+
+    public OffsetRange offsetRange() {
+        return new OffsetRange(absoluteBeginPosition - 1, absoluteEndPosition - 1);
     }
 }

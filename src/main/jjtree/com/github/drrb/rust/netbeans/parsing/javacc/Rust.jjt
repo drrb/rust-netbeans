@@ -20,6 +20,7 @@ options {
 
   TRACK_TOKENS = true; //Saves first/last token on each node
   MULTI = true; //Makes a class per node type
+  VISITOR = true;
 
 
   TOKEN_EXTENDS = "BaseToken";
@@ -526,14 +527,14 @@ void ModItem() :
 void FunctionItem() :
 {}
 {
-  "fn" <IDENTIFIER> #name "(" ")" [ "->" Type() ]
+  "fn" <IDENTIFIER> #functionName "(" ")" [ "->" Type() ]
     Block()
 }
 
 void StructItem() :
 {}
 {
-  "struct" <IDENTIFIER> "{"
+  "struct" <IDENTIFIER> #structName "{"
     [
       StructFieldDeclaration()
       ( LOOKAHEAD(2) "," StructFieldDeclaration() )*
@@ -545,7 +546,7 @@ void StructItem() :
 void StructFieldDeclaration() :
 {}
 {
-  <IDENTIFIER> ":" Type()
+  <IDENTIFIER> #structField ":" Type()
 }
 
 void ConstItem() :

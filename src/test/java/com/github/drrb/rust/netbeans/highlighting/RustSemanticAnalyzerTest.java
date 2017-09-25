@@ -24,7 +24,6 @@ import org.junit.Test;
 /**
  *
  */
-@Ignore
 public class RustSemanticAnalyzerTest {
 
     @Rule
@@ -41,21 +40,30 @@ public class RustSemanticAnalyzerTest {
     }
 
     @Test
+    public void shouldFindAnnotationOnFunction() throws Exception {
+        netbeans.checkSemantic("semantic/annotation.rs");
+    }
+
+    @Test
+    @Ignore
     public void shouldFindImplDeclaration() throws Exception {
         netbeans.checkSemantic("semantic/impl.rs");
     }
 
     @Test
+    @Ignore
     public void shouldFindEnumDeclaration() throws Exception {
         netbeans.checkSemantic("semantic/enum.rs");
     }
 
     @Test
+    @Ignore
     public void shouldFindTraitDeclaration() throws Exception {
         netbeans.checkSemantic("semantic/trait.rs");
     }
 
     @Test
+    @Ignore
     public void shouldFindTraitImplDeclaration() throws Exception {
         netbeans.checkSemantic("semantic/trait_impl.rs");
     }

@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans.parsing;
 
 import com.github.drrb.rust.netbeans.parsing.javacc.RustParser;
 import com.github.drrb.rust.netbeans.parsing.javacc.RustToken;
+import com.github.drrb.rust.netbeans.parsing.javacc.SimpleNode;
 import org.netbeans.modules.csl.api.Error;
 import org.netbeans.modules.csl.api.Severity;
 import org.netbeans.modules.csl.spi.DefaultError;
@@ -79,12 +80,13 @@ public class NetbeansRustParser extends Parser {
             this.diagnostics = Collections.unmodifiableList(diagnostics);
         }
 
-        public RustParser.Result rootNode() throws ParseException {
+        public SimpleNode rootNode() throws ParseException {
             //TODO: i think i've seen the valid field on the parser itself in an example. Where should it be?
-            if (!valid.get()) {
-                throw new ParseException();
-            }
-            return parseResult;
+            //TODO: also, this seems to be invalidated before the first use. Why?
+//            if (!valid.get()) {
+//                throw new ParseException();
+//            }
+            return parseResult.rootNode();
         }
 
         @Override

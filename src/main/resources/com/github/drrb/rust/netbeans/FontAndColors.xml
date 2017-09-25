@@ -49,6 +49,7 @@
     <fontcolor name="mod-static" >
         <font style="italic" />
     </fontcolor>
+    <fontcolor name="mod-annotation-type" foreColor="007700"/>
 
     <!-- CSL occurrence marking -->
     <fontcolor name="mark-occurrences" bgColor="ECEBA3">

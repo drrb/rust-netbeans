@@ -17,22 +17,23 @@
 package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.rustbridge.RustHighlight;
-import com.github.drrb.rust.netbeans.rustbridge.RustSemanticHighlighter;
+import com.github.drrb.rust.netbeans.parsing.javacc.*;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
+import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.Scheduler;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
-import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 
-import java.io.File;
-import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
+
+import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 
 /**
  *
@@ -45,16 +46,16 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
     @Override
     public void run(NetbeansRustParserResult result, SchedulerEvent event) {
         highlights.clear();
-        cancelled.set(false);
+        cancelled.set(false); //TODO: respect this cancellation in the visitors
 
-        File sourceFile = FileUtil.toFile(result.getSnapshot().getSource().getFileObject());
-        RustSemanticHighlighter highlighter = new RustSemanticHighlighter(sourceFile);
-//        try {
-//            List<RustHighlight> rawHighlights = highlighter.getHighlights(result.getResult());
-//            highlights.putAll(mapHighlights(rawHighlights));
-//        } catch (ParseException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
+        try {
+            SimpleNode rootNode = result.rootNode();
+            rootNode.jjtAccept(new FunctionNameHighlighter(), null);
+            rootNode.jjtAccept(new StructHighlighter(), null);
+            rootNode.jjtAccept(new AnnotationHighlighter(), null);
+        } catch (ParseException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     @Override
@@ -77,11 +78,40 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
         cancelled.set(true);
     }
 
-    private Map<OffsetRange, Set<ColoringAttributes>> mapHighlights(Collection<RustHighlight> highlights) {
-        Map<OffsetRange, Set<ColoringAttributes>> highlightsMap = new HashMap<>(highlights.size());
-        for (RustHighlight highlight : highlights) {
-            highlightsMap.put(new OffsetRange(highlight.startChar, highlight.endChar), highlight.getKind().colors());
+    private class FunctionNameHighlighter extends RustParserDefaultVisitor {
+        @Override
+        public Object visit(ASTfunctionName functionNameNode, Object data) {
+            RustToken identifier = (RustToken) functionNameNode.jjtGetFirstToken();
+            highlights.put(identifier.offsetRange(), EnumSet.of(STATIC, METHOD));
+            return null;
         }
-        return highlightsMap;
+    }
+
+    private class StructHighlighter extends RustParserDefaultVisitor {
+        @Override
+        public Object visit(ASTstructName structNameNode, Object data) {
+            RustToken identifier = (RustToken) structNameNode.jjtGetFirstToken();
+            highlights.put(identifier.offsetRange(), CLASS_SET);
+            return null;
+        }
+
+        @Override
+        public Object visit(ASTstructField fieldNode, Object data) {
+            RustToken identifier = (RustToken) fieldNode.jjtGetFirstToken();
+            highlights.put(identifier.offsetRange(), FIELD_SET);
+            return null;
+        }
+    }
+
+    private class AnnotationHighlighter extends RustParserDefaultVisitor {
+        @Override
+        public Object visit(ASTAnnotation node, Object data) {
+            highlights.put(offsetRange(node), EnumSet.of(ANNOTATION_TYPE));
+            return null;
+        }
+    }
+
+    private OffsetRange offsetRange(ASTAnnotation node) {
+        return new OffsetRange(node.jjtGetFirstToken().absoluteBeginPosition - 1, node.jjtGetLastToken().absoluteEndPosition - 1);
     }
 }
