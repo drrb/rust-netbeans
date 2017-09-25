@@ -1,22 +1,16 @@
 # Rust NetBeans Plugin
 
-A NetBeans plugin for [Rust](http://www.rust-lang.org) that embeds the native
-Rust compiler. It's fast, and adapts to changes in the language!
+A NetBeans plugin for [Rust](https://www.rust-lang.org).
 
 | OSX | Linux | Windows |
 | --- | ----- | ------- |
 | ![OSX Build Status](https://img.shields.io/badge/build-passing%20on%20my%20laptop-brightgreen.svg) | [![Linux Build Status](https://travis-ci.org/drrb/rust-netbeans.svg?branch=master)](https://travis-ci.org/drrb/rust-netbeans) | [![Windows Build status](https://ci.appveyor.com/api/projects/status/ae0ci8qvmh5pawi1/branch/master?svg=true)](https://ci.appveyor.com/project/drrb/rust-netbeans/branch/master) |
 
-**NOTE:** This plugin has recently undergone significant design changes to
-embed the native Rust compiler instead of using one written in Java.
-Consequently, some features have been removed and will be gradually added back
-in.
-
 ## Requirements
 
-* NetBeans 8.x or above
+* NetBeans 8.0.x (later NetBeans versions coming soon)
 * Java 8+
-* Rust 1.0ish (currently developing against post-1.0-alpha nightlies)
+* Rust
 * Cargo
 * Rustup
 
@@ -65,7 +59,7 @@ You can then install the plugin from NetBeans (the plugin will have been package
 
 Rust NetBeans Plugin
 
-Copyright (C) 2015 drrb
+Copyright (C) 2017 drrb
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
