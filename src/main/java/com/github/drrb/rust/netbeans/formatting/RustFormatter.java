@@ -38,17 +38,14 @@ public class RustFormatter implements Formatter {
         NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
         final BaseDocument document = (BaseDocument) context.document();
         final RustDocumentFormatter formatter = new RustDocumentFormatter(this, parseResult, document, context);
-        document.runAtomic(new Runnable() {
-            @Override
-            public void run() {
-                // Not sure why, but setActive(false)/(true) makes the formatting a lot faster
-                MutableTextInput mti = (MutableTextInput) document.getProperty(MutableTextInput.class);
-                try {
-                    mti.tokenHierarchyControl().setActive(false);
-                    formatter.format();
-                } finally {
-                    mti.tokenHierarchyControl().setActive(true);
-                }
+        document.runAtomic(() -> {
+            // Not sure why, but setActive(false)/(true) makes the formatting a lot faster
+            MutableTextInput mti = (MutableTextInput) document.getProperty(MutableTextInput.class);
+            try {
+                mti.tokenHierarchyControl().setActive(false);
+                formatter.format();
+            } finally {
+                mti.tokenHierarchyControl().setActive(true);
             }
         });
     }

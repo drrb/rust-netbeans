@@ -26,7 +26,6 @@ import org.netbeans.modules.csl.api.test.CslTestHelper.RunInEventQueueThread;
 /**
  *
  */
-@Ignore
 public class RustFormatterTest {
 
     @Rule

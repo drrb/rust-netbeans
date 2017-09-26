@@ -16,10 +16,12 @@
  */
 package com.github.drrb.rust.netbeans;
 
+import com.github.drrb.rust.netbeans.formatting.RustFormatter;
 import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.lexer.Language;
+import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
@@ -73,15 +75,15 @@ public class RustLanguage extends DefaultLanguageConfig {
         return new NetbeansRustParser();
     }
 
-//    @Override
-//    public boolean hasFormatter() {
-//        return true;
-//    }
-//
-//    @Override
-//    public Formatter getFormatter() {
-//        return new RustFormatter();
-//    }
+    @Override
+    public boolean hasFormatter() {
+        return true;
+    }
+
+    @Override
+    public Formatter getFormatter() {
+        return new RustFormatter();
+    }
 
     @Override
     public SemanticAnalyzer getSemanticAnalyzer() {
