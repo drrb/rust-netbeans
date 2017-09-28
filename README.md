@@ -23,11 +23,6 @@ So far, it includes
     * clean/build/run/test from UI
 * Highlighting:
     * syntax highlighting
-    * error highlighting for:
-        * syntax errors
-        * lifetime/borrow errors
-        * lint warnings
-        * other compilation errors
 * Editing:
     * brace matching
     * comment toggling
@@ -38,7 +33,8 @@ So far, it includes
     * run all tests
     * run module's tests
 * Coming Soon:
-    * basic code completion
+    * error/warning highlighting
+    * code completion
     * code folding
     * basic file overview
     * basic occurrence matching
