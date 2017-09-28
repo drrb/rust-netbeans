@@ -1,5 +1,8 @@
 language: java
 
+os:
+  - linux
+  - osx
 jdk:
   - oraclejdk8
   - oraclejdk9
@@ -8,8 +11,9 @@ env:
   - RUST_CHANNEL=nightly
 matrix:
     allow_failures:
-      - env: RUST_CHANNEL=nightly
+      - os: osx
       - jdk: oraclejdk9
+      - env: RUST_CHANNEL=nightly
 before_install:
   - "curl https://sh.rustup.rs -sSf > rustup && chmod +x rustup"
   - "./rustup -y"
