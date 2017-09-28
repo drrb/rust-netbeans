@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
+import static com.github.drrb.rust.netbeans.parsing.javacc.ParseUtil.offsetRange;
 import static org.netbeans.modules.csl.api.ColoringAttributes.*;
 
 /**
@@ -109,9 +110,5 @@ public class RustSemanticAnalyzer extends SemanticAnalyzer<NetbeansRustParserRes
             highlights.put(offsetRange(node), EnumSet.of(ANNOTATION_TYPE));
             return null;
         }
-    }
-
-    private OffsetRange offsetRange(ASTAnnotation node) {
-        return new OffsetRange(node.jjtGetFirstToken().absoluteBeginPosition - 1, node.jjtGetLastToken().absoluteEndPosition - 1);
     }
 }

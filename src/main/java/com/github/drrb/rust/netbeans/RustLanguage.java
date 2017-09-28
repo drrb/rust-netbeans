@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.formatting.RustFormatter;
 import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
+import com.github.drrb.rust.netbeans.indexing.RustIndexer;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.lexer.Language;
@@ -26,6 +27,7 @@ import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
+import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
 import org.netbeans.modules.parsing.spi.indexing.PathRecognizerRegistration;
 import org.openide.util.NbBundle;
 
@@ -88,6 +90,11 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public SemanticAnalyzer getSemanticAnalyzer() {
         return new RustSemanticAnalyzer();
+    }
+
+    @Override
+    public EmbeddingIndexerFactory getIndexerFactory() {
+        return new RustIndexer.Factory();
     }
 
     //TODO: are these required? Is the annotation enough?

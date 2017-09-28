@@ -121,11 +121,5 @@ public class NetbeansRustParser extends Parser {
         public boolean isFailure() throws ParseException {
             return rootNode() != null;
         }
-
-
-//
-//        public RustSourceIndex getIndex() {
-//            return getAst().accept(new IndexingVisitor());
-//        }
     }
 }

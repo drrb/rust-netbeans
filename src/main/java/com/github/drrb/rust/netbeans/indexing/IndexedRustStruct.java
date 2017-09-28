@@ -20,6 +20,11 @@ import com.github.drrb.rust.netbeans.parsing.index.RustStruct;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.openide.filesystems.FileObject;
 
+import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
+import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+
 /**
  *
  */
@@ -65,5 +70,45 @@ public class IndexedRustStruct {
 
     public FileObject getFile() {
         return file;
+    }
+
+    @Override
+    public int hashCode() {
+        return reflectionHashCode(this);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return reflectionEquals(this, other);
+    }
+
+    @Override
+    public String toString() {
+        return reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private RustStruct struct;
+        private FileObject file;
+
+        public Builder withStruct(RustStruct struct) {
+            this.struct = struct;
+            return this;
+        }
+
+        public Builder withFile(FileObject file) {
+            this.file = file;
+            return this;
+        }
+
+        public IndexedRustStruct build() {
+            IndexedRustStruct indexedRustStruct = new IndexedRustStruct(struct);
+            indexedRustStruct.file = file;
+            return indexedRustStruct;
+        }
     }
 }

@@ -17,18 +17,6 @@
 package org.netbeans.modules.csl.api.test;
 
 import com.google.common.base.Strings;
-import java.awt.EventQueue;
-import java.io.File;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.JEditorPane;
-import javax.swing.text.Caret;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.Document;
-import static junit.framework.Assert.assertNotNull;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -47,6 +35,19 @@ import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.nodes.Node;
+
+import javax.swing.*;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
+import java.awt.*;
+import java.io.File;
+import java.lang.annotation.Retention;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  *
@@ -158,6 +159,10 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         return new File("src/test/data");
     }
 
+    public FileObject getTestFile(String relFilePath) {
+        return super.getTestFile(relFilePath);
+    }
+
     @Override
     protected void configureIndenters(Document document, Formatter formatter, boolean indentOnly, String mimeType) {
         // Parent implementation messes with the MimeLookup, so don't call it
@@ -236,6 +241,14 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
         String target = doc.getText(0, doc.getLength());
         assertDescriptionMatches(file, target, false, ".indented");
+    }
+
+    public void indexFile(String relFilePath) throws Exception {
+        super.indexFile(relFilePath);
+    }
+
+    public void checkIndexer(String relFilePath) throws Exception {
+        super.checkIndexer(relFilePath);
     }
 
     protected static class TreeView {

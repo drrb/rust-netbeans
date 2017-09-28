@@ -16,18 +16,20 @@
  */
 package com.github.drrb.rust.netbeans.indexing;
 
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.*;
 import org.netbeans.modules.parsing.spi.indexing.support.IndexDocument;
 import org.netbeans.modules.parsing.spi.indexing.support.IndexResult;
-import static org.powermock.api.mockito.PowerMockito.mock;
+import org.openide.filesystems.FileObject;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import static com.github.drrb.rust.netbeans.test.Matchers.*;
-import org.openide.filesystems.FileObject;
+
+import static com.github.drrb.rust.netbeans.test.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  *

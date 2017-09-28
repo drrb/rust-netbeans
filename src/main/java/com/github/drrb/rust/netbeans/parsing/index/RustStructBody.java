@@ -51,16 +51,16 @@ public class RustStructBody {
         private OffsetRange offsetRange;
         private List<RustStructField> fields = new LinkedList<>();
 
-        RustStructBody build() {
+        public RustStructBody build() {
             return new RustStructBody(offsetRange, fields);
         }
 
-        Builder setOffsetRange(OffsetRange offsetRange) {
+        public Builder setOffsetRange(OffsetRange offsetRange) {
             this.offsetRange = offsetRange;
             return this;
         }
 
-        Builder addField(RustStructField field) {
+        public Builder addField(RustStructField field) {
             this.fields.add(field);
             return this;
         }
