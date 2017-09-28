@@ -1,15 +1,19 @@
 language: java
 
-os:
-  - linux
-  - osx
-jdk:
-  - oraclejdk8
-  - oraclejdk9
-env:
-  - RUST_CHANNEL=stable
-  - RUST_CHANNEL=nightly
 matrix:
+    include:
+      - os: linux
+        jdk: oraclejdk8
+        env: RUST_CHANNEL=stable
+      - os: linux
+        jdk: oraclejdk9
+        env: RUST_CHANNEL=stable
+      - os: linux
+        jdk: oraclejdk8
+        env: RUST_CHANNEL=nightly
+      - os: osx
+        osx_image: xcode9
+        env: RUST_CHANNEL=stable
     allow_failures:
       - os: osx
       - jdk: oraclejdk9
