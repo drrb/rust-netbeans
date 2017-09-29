@@ -15,7 +15,6 @@ matrix:
         osx_image: xcode9
         env: RUST_CHANNEL=stable
     allow_failures:
-      - os: osx
       - jdk: oraclejdk9
       - env: RUST_CHANNEL=nightly
 before_install:
