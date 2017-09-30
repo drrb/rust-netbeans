@@ -19,28 +19,50 @@ package com.github.drrb.rust.netbeans.test;
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.cargo.CargoConfig;
 import com.github.drrb.rust.netbeans.cargo.Crate;
+import com.github.drrb.rust.netbeans.classpath.ClasspathSettingProjectOpenedHook;
 import com.github.drrb.rust.netbeans.highlighting.RustCompileErrorHighlighter;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.project.RustProject;
+import com.github.drrb.rust.netbeans.sources.RustSourceGroup;
 import org.junit.ComparisonFailure;
+import org.netbeans.api.project.ProjectUtils;
+import org.netbeans.api.project.SourceGroup;
+import org.netbeans.api.project.Sources;
 import org.netbeans.junit.NbTestCase;
+import org.netbeans.modules.csl.api.ElementHandle;
+import org.netbeans.modules.csl.api.IndexSearcher;
 import org.netbeans.modules.csl.api.test.CslTestHelper;
 import org.netbeans.modules.parsing.api.ParserManager;
 import org.netbeans.modules.parsing.api.ResultIterator;
 import org.netbeans.modules.parsing.api.Source;
 import org.netbeans.modules.parsing.api.UserTask;
+import org.netbeans.modules.parsing.impl.indexing.CacheFolder;
+import org.netbeans.modules.parsing.impl.indexing.FileObjectIndexable;
+import org.netbeans.modules.parsing.impl.indexing.SPIAccessor;
+import org.netbeans.modules.parsing.impl.indexing.SuspendSupport;
+import org.netbeans.modules.parsing.impl.indexing.lucene.TestIndexFactoryImpl;
+import org.netbeans.modules.parsing.lucene.support.DocumentIndex;
+import org.netbeans.modules.parsing.spi.Parser;
+import org.netbeans.modules.parsing.spi.indexing.Context;
+import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexer;
+import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
+import org.netbeans.modules.parsing.spi.indexing.Indexable;
+import org.netbeans.modules.parsing.spi.indexing.support.QuerySupport;
 import org.netbeans.spi.editor.hints.ErrorDescription;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.text.PositionBounds;
 import org.openide.text.PositionRef;
 
+import javax.swing.*;
 import javax.swing.text.Document;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.util.*;
+
+import static java.util.Collections.singleton;
 
 /**
  *
@@ -94,7 +116,7 @@ public class NetbeansWithRust extends CslTestHelper {
         FileObject sourceFile = project.getProjectDirectory().getFileObject(relativeSourceFilePath);
         assertNotNull(String.format("Couldn't find file '%s' in project '%s", relativeSourceFilePath, relativeProjectPath), sourceFile);
         Source source = Source.create(sourceFile);
-        ParserManager.parse(Collections.singleton(source), new UserTask() {
+        ParserManager.parse(singleton(source), new UserTask() {
             public @Override
             void run(ResultIterator resultIterator) throws Exception {
                 NetbeansRustParser.NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) resultIterator.getParserResult();
@@ -186,6 +208,85 @@ public class NetbeansWithRust extends CslTestHelper {
         }
     }
 
+    public List<TestIndexFactoryImpl.TestIndexDocumentImpl> index(RustProject project) {
+        try {
+
+            EmbeddingIndexerFactory indexerFactory = getIndexerFactory();
+
+            Sources sources = ProjectUtils.getSources(project);
+            SourceGroup[] projectSourceGroups = sources.getSourceGroups(RustSourceGroup.NAME);
+            List<TestIndexFactoryImpl.TestIndexDocumentImpl> list = new LinkedList<>();
+            for (SourceGroup sourceGroup : projectSourceGroups) {
+                FileObject sourceRoot = sourceGroup.getRootFolder();
+                TestIndexFactoryImpl tifi = new TestIndexFactoryImpl();
+
+                Context context = SPIAccessor.getInstance().createContext(
+                        CacheFolder.getDataFolder(sourceRoot.toURL()),
+                        sourceRoot.toURL(),
+                        indexerFactory.getIndexerName(),
+                        indexerFactory.getIndexVersion(),
+                        tifi,
+                        false,
+                        false,
+                        false,
+                        SuspendSupport.NOP,
+                        null,
+                        null
+                );
+
+                Enumeration<? extends FileObject> sourceFiles = sourceRoot.getChildren(true);
+                while (sourceFiles.hasMoreElements()) {
+                    FileObject sourceFile = sourceFiles.nextElement();
+
+                    Indexable indexable = SPIAccessor.getInstance().create(new FileObjectIndexable(sourceRoot, sourceFile));
+                    try {
+                        ParserManager.parse(singleton(getTestSource(sourceFile)), new UserTask() {
+                            public @Override
+                            void run(ResultIterator resultIterator) throws Exception {
+                                Parser.Result parseResult = resultIterator.getParserResult();
+                                if (parseResult != null) {
+                                    EmbeddingIndexer indexer = indexerFactory.createIndexer(indexable, parseResult.getSnapshot());
+                                    SPIAccessor.getInstance().index(indexer, indexable, parseResult, context);
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        DocumentIndex index = SPIAccessor.getInstance().getIndexFactory(context).getIndex(context.getIndexFolder());
+                        if (index != null) {
+                            index.removeDirtyKeys(singleton(indexable.getRelativePath()));
+                            index.store(true);
+                        }
+
+                    }
+
+                    TestIndexFactoryImpl.TestIndexImpl tii = tifi.getTestIndex(context.getIndexFolder());
+                    if (tii != null) {
+                        List<TestIndexFactoryImpl.TestIndexDocumentImpl> documents = tii.documents.get(indexable.getRelativePath());
+                        if (list != null) {
+                            list.addAll(documents);
+                        }
+                    }
+                }
+            }
+            return list;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Set<? extends IndexSearcher.Descriptor> searchIndex(RustProject project, String queryText, QuerySupport.Kind searchType) {
+        try {
+            new ClasspathSettingProjectOpenedHook(project).projectOpened(); // Sets up classpath
+            IndexSearcher indexSearcher = getPreferredLanguage().getIndexSearcher();
+            return indexSearcher.getTypes(project, queryText, searchType, new HelperStub());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static class TestableRustCompileErrorHighlighter extends RustCompileErrorHighlighter {
         private final List<ErrorDescription> errors = new LinkedList<>();
 
@@ -206,6 +307,19 @@ public class NetbeansWithRust extends CslTestHelper {
         @Override
         public int compare(FileObject left, FileObject right) {
             return left.getPath().compareTo(right.getPath());
+        }
+    }
+
+
+    private static class HelperStub implements IndexSearcher.Helper {
+        @Override
+        public Icon getIcon(ElementHandle element) {
+            return null;
+        }
+
+        @Override
+        public void open(FileObject fileObject, ElementHandle element) {
+
         }
     }
 }

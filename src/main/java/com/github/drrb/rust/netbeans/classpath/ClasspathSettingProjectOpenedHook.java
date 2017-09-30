@@ -19,6 +19,7 @@ package com.github.drrb.rust.netbeans.classpath;
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.sources.RustSourceGroup;
+import com.google.common.annotations.VisibleForTesting;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.classpath.GlobalPathRegistry;
 import org.netbeans.api.project.Project;
@@ -49,7 +50,8 @@ public class ClasspathSettingProjectOpenedHook extends ProjectOpenedHook {
     }
 
     @Override
-    protected void projectOpened() {
+    @VisibleForTesting
+    public void projectOpened() {
         Sources sources = ProjectUtils.getSources(project);
         SourceGroup[] projectSourceGroups = sources.getSourceGroups(RustSourceGroup.NAME);
         FileObject[] projectSourceGroupRoots = getRoots(projectSourceGroups);

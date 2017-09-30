@@ -18,11 +18,13 @@ package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.formatting.RustFormatter;
 import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
+import com.github.drrb.rust.netbeans.indexing.RustIndexSearcher;
 import com.github.drrb.rust.netbeans.indexing.RustIndexer;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.Formatter;
+import org.netbeans.modules.csl.api.IndexSearcher;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
@@ -95,6 +97,11 @@ public class RustLanguage extends DefaultLanguageConfig {
     @Override
     public EmbeddingIndexerFactory getIndexerFactory() {
         return new RustIndexer.Factory();
+    }
+
+    @Override
+    public IndexSearcher getIndexSearcher() {
+        return new RustIndexSearcher();
     }
 
     //TODO: are these required? Is the annotation enough?

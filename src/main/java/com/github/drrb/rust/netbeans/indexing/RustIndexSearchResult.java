@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.modules.csl.api.ElementHandle;
@@ -113,5 +116,10 @@ public class RustIndexSearchResult extends IndexSearcher.Descriptor {
             Logger logger = Logger.getLogger(RustIndexSearchResult.class.getName());
             logger.log(Level.INFO, "Cannot find {0}", fileObject.toURL());
         }
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

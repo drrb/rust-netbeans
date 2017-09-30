@@ -35,6 +35,10 @@ public class RustIndexSearcher implements IndexSearcher {
     private static final Logger LOGGER = Logger.getLogger(RustIndexSearcher.class.getName());
     private final RustIndex index;
 
+    public RustIndexSearcher() {
+        this(new RustIndex());
+    }
+
     public RustIndexSearcher(RustIndex index) {
         this.index = index;
     }
