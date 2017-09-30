@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static com.github.drrb.rust.netbeans.parsing.javacc.TestSrc.Dump.DUMP;
+import static com.github.drrb.rust.netbeans.parsing.javacc.TestSrc.Dump.NO_DUMP;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.fail;
 
@@ -57,7 +57,7 @@ public class ParseTest {
 
     @Test
     public void testParse() throws Exception {
-        ParseResult actualResult = sourceFile.parse(DUMP);
+        ParseResult actualResult = sourceFile.parse(NO_DUMP);
 
         ExpectedParseResultFile expectedParseResultFile = sourceFile.expectedParseResultFile();
         if (!expectedParseResultFile.exists()) {
