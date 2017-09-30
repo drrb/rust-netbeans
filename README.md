@@ -26,6 +26,8 @@ So far, it includes
 * Editing:
     * brace matching
     * comment toggling
+* Navigation:
+    * Go To Type
 * Formatting:
     * auto-indentation
     * basic auto-formatting
