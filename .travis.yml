@@ -16,7 +16,6 @@ matrix:
         env: RUST_CHANNEL=stable
     allow_failures:
       - jdk: oraclejdk9
-      - env: RUST_CHANNEL=nightly
 before_install:
   - "curl https://sh.rustup.rs -sSf > rustup && chmod +x rustup"
   - "./rustup -y"
@@ -28,3 +27,6 @@ install:
   - rustc --version
   - mvn --batch-mode package -DskipTests
 script: mvn --batch-mode package
+cache:
+    directories:
+      - $HOME/.m2
