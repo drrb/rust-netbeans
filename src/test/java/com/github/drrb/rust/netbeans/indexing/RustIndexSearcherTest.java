@@ -2,6 +2,7 @@ package com.github.drrb.rust.netbeans.indexing;
 
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
+import com.github.drrb.rust.netbeans.test.NetbeansWithRust.Project;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
@@ -23,8 +24,9 @@ public class RustIndexSearcherTest {
     public final NetbeansWithRust netbeans = new NetbeansWithRust();
 
     @Test
+    @Project("index/project/struct")
     public void findsStructsByPrefix() throws Exception {
-        RustProject project = netbeans.getTestProject("index/project/struct");
+        RustProject project = netbeans.getProject();
 
         netbeans.index(project);
 
@@ -38,8 +40,9 @@ public class RustIndexSearcherTest {
     }
 
     @Test
+    @Project("index/project/struct")
     public void findsStructsByCaseInsensitivePrefix() throws Exception {
-        RustProject project = netbeans.getTestProject("index/project/struct");
+        RustProject project = netbeans.getProject();
 
         netbeans.index(project);
 

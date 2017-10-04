@@ -16,24 +16,28 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.project.logicalview.RustProjectNode;
 import com.github.drrb.rust.netbeans.cargo.CargoConfig;
 import com.github.drrb.rust.netbeans.project.action.RustProjectActionProvider;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
+
+import com.github.drrb.rust.netbeans.sources.RustSourceGroup;
 import org.netbeans.api.annotations.common.StaticResource;
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectInformation;
+import org.netbeans.api.java.classpath.ClassPath;
+import org.netbeans.api.project.*;
+import org.netbeans.spi.java.classpath.support.ClassPathSupport;
 import org.netbeans.spi.project.ProjectState;
 import org.netbeans.spi.project.support.LookupProviderSupport;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.netbeans.spi.project.ui.support.UILookupMergerSupport;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.AbstractNode;
@@ -63,6 +67,18 @@ public class RustProject implements Project {
         this.state = state;
     }
 
+    public Map<String, ClassPath[]> getClassPaths() {
+        Sources sources = ProjectUtils.getSources(this);
+        SourceGroup[] projectSourceGroups = sources.getSourceGroups(RustSourceGroup.NAME);
+        FileObject[] projectSourceGroupRoots = getRoots(projectSourceGroups);
+        ClassPath projectClassPath = ClassPathSupport.createClassPath(projectSourceGroupRoots);
+        ClassPath[] projectClassPaths = {projectClassPath};
+        Map<String, ClassPath[]> classpaths = new HashMap<>();
+        //TODO: add Rust library paths too, when the parser is fast enough
+        classpaths.put(RustLanguage.SOURCE_CLASSPATH_ID, projectClassPaths);
+        return classpaths;
+    }
+
     @Override
     public FileObject getProjectDirectory() {
         return projectDirectory;
@@ -90,6 +106,15 @@ public class RustProject implements Project {
 
     public CargoConfig getCargoConfig() {
         return new CargoConfig(projectDirectory);
+    }
+
+    private static FileObject[] getRoots(SourceGroup[] sourceGroups) {
+        FileObject[] roots = new FileObject[sourceGroups.length];
+        for (int i = 0; i < sourceGroups.length; i++) {
+            SourceGroup sourceGroup = sourceGroups[i];
+            roots[i] = sourceGroup.getRootFolder();
+        }
+        return roots;
     }
 
     private class Info implements ProjectInformation {

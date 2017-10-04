@@ -19,12 +19,13 @@ package com.github.drrb.rust.netbeans.test;
 import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.cargo.CargoConfig;
 import com.github.drrb.rust.netbeans.cargo.Crate;
-import com.github.drrb.rust.netbeans.classpath.ClasspathSettingProjectOpenedHook;
 import com.github.drrb.rust.netbeans.highlighting.RustCompileErrorHighlighter;
 import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.sources.RustSourceGroup;
 import org.junit.ComparisonFailure;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
@@ -59,18 +60,56 @@ import javax.swing.text.Document;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.annotation.Retention;
 import java.nio.file.Path;
 import java.util.*;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toMap;
 
 /**
  *
  */
 public class NetbeansWithRust extends CslTestHelper {
 
+
+    @Retention(RUNTIME)
+    public @interface Project {
+        String value();
+    }
+
     public NetbeansWithRust() {
         super(new RustLanguage());
+    }
+
+    private RustProject project;
+
+    public RustProject getProject() {
+        assertNotNull("add @Project to enable getProject()", project);
+        return project;
+    }
+
+    @Override
+    public Statement apply(Statement base, Description description) {
+        Statement inner = super.apply(base, description);
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                Project configuredProject = description.getAnnotation(Project.class);
+                if (configuredProject != null) {
+                    project = getTestProject(configuredProject.value());
+                    for (String classpathId : project.getClassPaths().keySet()) {
+                        if (project.getClassPaths().get(classpathId).length > 1) {
+                            fail("Test project specified with @Project has multiple classpath roots for classpath '" + classpathId + "'. This isn't supported by CslTestBase");
+                        }
+                    }
+
+                    classpaths = project.getClassPaths().entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue()[0]));
+                }
+                inner.evaluate();
+            }
+        };
     }
 
     @Override
@@ -279,7 +318,6 @@ public class NetbeansWithRust extends CslTestHelper {
 
     public Set<? extends IndexSearcher.Descriptor> searchIndex(RustProject project, String queryText, QuerySupport.Kind searchType) {
         try {
-            new ClasspathSettingProjectOpenedHook(project).projectOpened(); // Sets up classpath
             IndexSearcher indexSearcher = getPreferredLanguage().getIndexSearcher();
             return indexSearcher.getTypes(project, queryText, searchType, new HelperStub());
         } catch (Exception e) {

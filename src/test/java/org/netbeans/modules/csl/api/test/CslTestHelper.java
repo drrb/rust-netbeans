@@ -23,6 +23,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.api.editor.mimelookup.test.MockMimeLookup;
+import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
@@ -31,6 +32,7 @@ import org.netbeans.editor.BaseDocument;
 import org.netbeans.lib.lexer.test.TestLanguageProvider;
 import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
+import org.netbeans.spi.java.classpath.support.ClassPathSupport;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -44,8 +46,10 @@ import java.awt.*;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -55,7 +59,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public class CslTestHelper extends CslTestBase implements TestRule {
     @Retention(RUNTIME)
     public @interface RunInEventQueueThread {
+
     }
+    @Retention(RUNTIME)
+    public @interface Classpath {
+        String id();
+        String[] value();
+    }
+
+    protected Map<String, ClassPath> classpaths = null;
 
     public static CslTestHelper forLanguage(DefaultLanguageConfig language) {
         return new CslTestHelper(language);
@@ -72,6 +84,17 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
+                Classpath definedClasspath = description.getAnnotation(Classpath.class);
+                if (definedClasspath != null) {
+                    FileObject[] roots = new FileObject[definedClasspath.value().length];
+                    for (int i = 0; i < definedClasspath.value().length; i++) {
+                        String definedSourceRoot = definedClasspath.value()[i];
+                        roots[i] = getTestFile(definedSourceRoot);
+                    }
+                    ClassPath classPath = ClassPathSupport.createClassPath(roots);
+                    classpaths = new HashMap<>();
+                    classpaths.put(definedClasspath.id(), classPath);
+                }
                 setUp();
                 try {
                     if (description.getAnnotation(RunInEventQueueThread.class) == null) {
@@ -170,8 +193,13 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
     @Override
     protected boolean runInEQ() {
-        // Formatter test needs this
+        // Formatter test needs this (//TODO: should this only be true when we annotate with @RunInEventQueue?)
         return true;
+    }
+
+    @Override
+    protected Map<String, ClassPath> createClassPathsForTest() {
+        return classpaths;
     }
 
     @SuppressWarnings("unchecked")
