@@ -134,6 +134,10 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         //This makes our language available to the formatter (at least: it may do other things too)!
         TestLanguageProvider.register(getPreferredLanguage().getLexerLanguage());
 
+        //Reference files in the main filesystem from the mime lookup:
+
+        //This one adds (at least) a DocumentFactory implementation, which (at least) allows getTestSource() to attach a fileobject to a source
+        MockMimeLookup.setInstances(MimePath.EMPTY, mimeObjects(MimePath.EMPTY, "/"));
         //TODO: why do we have to do this? CslTestBase picks up our generated-layer.xml,
         // but it doesn't result in the parser factory, formatter factory, etc being
         // available in the MimeLookup.
