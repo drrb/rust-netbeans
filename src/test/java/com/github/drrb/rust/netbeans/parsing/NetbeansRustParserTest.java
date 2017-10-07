@@ -16,11 +16,9 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
-import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
 import org.junit.Rule;
 import org.junit.Test;
-import org.netbeans.modules.csl.api.test.CslTestHelper;
 
 /**
  *
