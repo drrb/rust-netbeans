@@ -26,6 +26,7 @@ import com.github.drrb.rust.netbeans.sources.RustSourceGroup;
 import org.junit.ComparisonFailure;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.netbeans.api.java.classpath.GlobalPathRegistry;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
@@ -49,7 +50,9 @@ import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexer;
 import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
 import org.netbeans.modules.parsing.spi.indexing.Indexable;
 import org.netbeans.modules.parsing.spi.indexing.support.QuerySupport;
+import org.netbeans.modules.project.uiapi.ProjectOpenedTrampoline;
 import org.netbeans.spi.editor.hints.ErrorDescription;
+import org.netbeans.spi.project.ui.ProjectOpenedHook;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.text.PositionBounds;
@@ -99,13 +102,17 @@ public class NetbeansWithRust extends CslTestHelper {
                 Project configuredProject = description.getAnnotation(Project.class);
                 if (configuredProject != null) {
                     project = getTestProject(configuredProject.value());
-                    for (String classpathId : project.getClassPaths().keySet()) {
-                        if (project.getClassPaths().get(classpathId).length > 1) {
-                            fail("Test project specified with @Project has multiple classpath roots for classpath '" + classpathId + "'. This isn't supported by CslTestBase");
-                        }
+                    Collection<? extends ProjectOpenedHook> hooks = project.getLookup().lookupAll(ProjectOpenedHook.class);
+                    for (ProjectOpenedHook hook : hooks) {
+                        ProjectOpenedTrampoline.DEFAULT.projectOpened(hook);
                     }
-
-                    classpaths = project.getClassPaths().entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue()[0]));
+                    //TODO: this isn't required now that we run the ClasspathSettingProjectOpenedHook above
+                    //for (String classpathId : project.getClassPaths().keySet()) {
+                    //    if (project.getClassPaths().get(classpathId).length > 1) {
+                    //        fail("Test project specified with @Project has multiple classpath roots for classpath '" + classpathId + "'. This isn't supported by CslTestBase");
+                    //    }
+                    //}
+                    //classpaths = project.getClassPaths().entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue()[0]));
                 }
                 inner.evaluate();
             }
