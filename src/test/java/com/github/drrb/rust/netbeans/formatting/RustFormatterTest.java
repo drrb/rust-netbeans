@@ -17,8 +17,6 @@
 package com.github.drrb.rust.netbeans.formatting;
 
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
-import com.github.drrb.rust.netbeans.test.PrintTestMethods;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.netbeans.modules.csl.api.test.CslTestHelper.RunInEventQueueThread;
@@ -30,8 +28,6 @@ public class RustFormatterTest {
 
     @Rule
     public final NetbeansWithRust netbeans = new NetbeansWithRust();
-    @Rule
-    public final PrintTestMethods printTestMethods = new PrintTestMethods();
 
     @Test
     public void shouldFormatFunction() throws Exception {

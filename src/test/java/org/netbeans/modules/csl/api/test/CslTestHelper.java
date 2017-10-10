@@ -67,6 +67,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         String[] value();
     }
 
+    private boolean runInEventQueueThread = false;
     protected Map<String, ClassPath> classpaths = null;
 
     public static CslTestHelper forLanguage(DefaultLanguageConfig language) {
@@ -100,6 +101,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
                     if (description.getAnnotation(RunInEventQueueThread.class) == null) {
                         base.evaluate();
                     } else {
+                        runInEventQueueThread = true;
                         try {
                             EventQueue.invokeAndWait(new Runnable() {
                                 @Override
@@ -197,8 +199,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
     @Override
     protected boolean runInEQ() {
-        // Formatter test needs this (//TODO: should this only be true when we annotate with @RunInEventQueue?)
-        return true;
+        return runInEventQueueThread;
     }
 
     @Override
