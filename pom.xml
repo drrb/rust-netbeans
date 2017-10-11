@@ -684,36 +684,65 @@
                         </executions>
                     </plugin>
 
-                    <!--<plugin>-->
-                        <!--<groupId>com.mycila.maven-license-plugin</groupId>-->
-                        <!--<artifactId>maven-license-plugin</artifactId>-->
-                        <!--<version>1.9.0</version>-->
-                        <!--<executions>-->
-                            <!--<execution>-->
-                                <!--<goals>-->
-                                    <!--<goal>format</goal>-->
-                                <!--</goals>-->
-                                <!--<phase>process-resources</phase>-->
-                            <!--</execution>-->
-                        <!--</executions>-->
-                        <!--<configuration>-->
-                            <!--<header>license-header.txt</header>-->
-                            <!--<strictCheck>true</strictCheck>-->
-                            <!--<excludes>-->
-                                <!--<exclude>LICENSE.txt</exclude>-->
-                                <!--<exclude>**/*.rs</exclude>-->
-                                <!--<exclude>README.md</exclude>-->
-                                <!--<exclude>NOTICE</exclude>-->
-                                <!--<exclude>NOTICE.template</exclude>-->
-                                <!--<exclude>src/main/antlr4/Rust.g4</exclude>-->
-                                <!--<exclude>src/main/antlr4/xidstart.g4</exclude>-->
-                                <!--<exclude>src/main/antlr4/xidcont.g4</exclude>-->
-                                <!--<exclude>src/main/nbm/manifest.mf</exclude>-->
-                                <!--<exclude>.travis.yml</exclude>-->
-                                <!--<exclude>.gitignore</exclude>-->
-                            <!--</excludes>-->
-                        <!--</configuration>-->
-                    <!--</plugin>-->
+                    <plugin>
+                        <groupId>com.mycila.maven-license-plugin</groupId>
+                        <artifactId>maven-license-plugin</artifactId>
+                        <version>1.9.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>format</goal>
+                                </goals>
+                                <phase>process-resources</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <header>license-header.txt</header>
+                            <strictCheck>true</strictCheck>
+                            <excludes>
+                                <exclude>LICENSE.txt</exclude>
+                                <exclude>**/*.rs</exclude>
+                                <exclude>**/*.json</exclude>
+                                <exclude>**/*.yml</exclude>
+                                <exclude>**/*.yaml</exclude>
+                                <exclude>**/*.jjt</exclude>
+                                <exclude>**/*.toml</exclude>
+                                <exclude>**/*.form</exclude>
+                                <exclude>**/*.ps1</exclude>
+
+                                <exclude>README.md</exclude>
+                                <exclude>NOTICE</exclude>
+                                <exclude>NOTICE.template</exclude>
+                                <exclude>.gitignore</exclude>
+                                <exclude>.headless</exclude>
+                                <exclude>.not-ci</exclude>
+                                <exclude>run</exclude>
+                                <exclude>build</exclude>
+                                <exclude>Makefile</exclude>
+                                <exclude>src/scripts/generate-rust-token-kind-enum</exclude>
+
+                                <exclude>.vagrant/**</exclude>
+                                <exclude>Vagrantfile</exclude>
+                                <exclude>cluster-path</exclude>
+                                <exclude>.idea/**</exclude>
+
+                                <exclude>src/main/nbm/manifest.mf</exclude>
+
+                                <exclude>src/test/data/**</exclude>
+                                <exclude>src/test/java/org/netbeans/api/editor/mimelookup/test/MockMimeLookup.java</exclude>
+                                <exclude>src/test/java/org/netbeans/lib/lexer/test/dump/TokenDumpCheck.java</exclude>
+                                <exclude>src/test/java/org/netbeans/lib/lexer/test/dump/TokenDumpLexer.java</exclude>
+                                <exclude>src/test/java/org/netbeans/lib/lexer/test/dump/TokenDumpTokenId.java</exclude>
+                                <exclude>src/test/java/org/netbeans/lib/lexer/test/LexerTestUtilities.java</exclude>
+                                <exclude>src/test/java/org/netbeans/lib/lexer/test/TestLanguageProvider.java</exclude>
+                                <exclude>src/test/java/org/netbeans/modules/csl/api/test/CslTestBase.java</exclude>
+                                <exclude>src/test/java/org/netbeans/modules/csl/api/test/GsfUtilitiesHack.java</exclude>
+                                <exclude>src/test/java/org/netbeans/modules/editor/bracesmatching/api/BracesMatchingTestUtils.java</exclude>
+                                <exclude>src/test/java/org/netbeans/modules/parsing/impl/indexing/lucene/TestIndexFactoryImpl.java</exclude>
+                                <exclude>src/test/java/org/openide/util/test/MockLookup.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
 
                     <plugin>
                         <groupId>org.jasig.maven</groupId>
