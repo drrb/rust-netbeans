@@ -683,6 +683,56 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!--<plugin>-->
+                        <!--<groupId>com.mycila.maven-license-plugin</groupId>-->
+                        <!--<artifactId>maven-license-plugin</artifactId>-->
+                        <!--<version>1.9.0</version>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<goals>-->
+                                    <!--<goal>format</goal>-->
+                                <!--</goals>-->
+                                <!--<phase>process-resources</phase>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                        <!--<configuration>-->
+                            <!--<header>license-header.txt</header>-->
+                            <!--<strictCheck>true</strictCheck>-->
+                            <!--<excludes>-->
+                                <!--<exclude>LICENSE.txt</exclude>-->
+                                <!--<exclude>**/*.rs</exclude>-->
+                                <!--<exclude>README.md</exclude>-->
+                                <!--<exclude>NOTICE</exclude>-->
+                                <!--<exclude>NOTICE.template</exclude>-->
+                                <!--<exclude>src/main/antlr4/Rust.g4</exclude>-->
+                                <!--<exclude>src/main/antlr4/xidstart.g4</exclude>-->
+                                <!--<exclude>src/main/antlr4/xidcont.g4</exclude>-->
+                                <!--<exclude>src/main/nbm/manifest.mf</exclude>-->
+                                <!--<exclude>.travis.yml</exclude>-->
+                                <!--<exclude>.gitignore</exclude>-->
+                            <!--</excludes>-->
+                        <!--</configuration>-->
+                    <!--</plugin>-->
+
+                    <plugin>
+                        <groupId>org.jasig.maven</groupId>
+                        <artifactId>maven-notice-plugin</artifactId>
+                        <version>1.0.4</version>
+                        <configuration>
+                            <licenseMapping>
+                                <mapping>license-mappings.xml</mapping>
+                            </licenseMapping>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <phase>process-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

@@ -1,33 +1,38 @@
 This project depends on the following libraries (including test and runtime dependencies)
 
-  abego TreeLayout Core under BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)
-  ANTLR 3 Runtime under BSD licence
-  ANTLR 4 Runtime under The BSD License
-  ANTLR 4 Tool under The BSD License
-  AntLR Parser Generator under BSD License
-  ANTLR StringTemplate under BSD licence
+  AOP alliance under Public Domain
+  ASM All under BSD
   ASM Analysis under BSD
   ASM Core under BSD
   ASM Tree under BSD
   ASM Util under BSD
+  Commons Lang under The Apache Software License, Version 2.0
+  Google Guice - Core Library under The Apache Software License, Version 2.0
+  Gson under Apache 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
-  Hamcrest All under BSD style
+  Hamcrest All under New BSD License
   Hamcrest Core under BSD style
+  Java Native Access under LGPL, version 2.1 or ASL, version 2
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
+  javax.inject under The Apache Software License, Version 2.0
   JUnit under Common Public License Version 1.0
   Lucene Core under Apache 2
   Maven definition for jemmy-2.3.1.1.jar - external part of NetBeans module. under GPL v2
   Maven definition for nb-javac-api.jar - external part of NetBeans module. under GPL v2
+  Maven definition for nb-javac-impl.jar - external part of NetBeans module. under GPL v2
   Maven definition for resolver-1.2.jar - external part of NetBeans module. under GPL v2
   Mockito under The MIT License
   Objenesis under Apache 2
-  org-apache-tools-ant-module under GPL v2
   org-apache-xml-resolver under GPL v2
   org-netbeans-api-annotations-common under GPL v2
+  org-netbeans-api-intent under GPL v2
+  org-netbeans-api-io under GPL v2
   org-netbeans-api-java under GPL v2
   org-netbeans-api-java-classpath under GPL v2
   org-netbeans-api-progress under GPL v2
+  org-netbeans-api-progress-nb under GPL v2
   org-netbeans-api-search under GPL v2
+  org-netbeans-api-templates under GPL v2
   org-netbeans-api-visual under GPL v2
   org-netbeans-api-xml under GPL v2
   org-netbeans-bootstrap under GPL v2
@@ -35,13 +40,18 @@ This project depends on the following libraries (including test and runtime depe
   org-netbeans-core-multiview under GPL v2
   org-netbeans-core-output2 under GPL v2
   org-netbeans-core-startup under GPL v2
+  org-netbeans-core-startup-base under GPL v2
   org-netbeans-core-ui under GPL v2
   org-netbeans-insane under GPL v2
+  org-netbeans-lib-nbjavac under GPL v2
+  org-netbeans-libs-asm under GPL v2
   org-netbeans-libs-javacapi under GPL v2
+  org-netbeans-libs-javacimpl under GPL v2
   org-netbeans-libs-junit4 under GPL v2
   org-netbeans-libs-lucene under GPL v2
   org-netbeans-modules-classfile under GPL v2
   org-netbeans-modules-csl-api under GPL v2
+  org-netbeans-modules-csl-types under GPL v2
   org-netbeans-modules-diff under GPL v2
   org-netbeans-modules-editor under GPL v2
   org-netbeans-modules-editor-actions under GPL v2
@@ -49,24 +59,29 @@ This project depends on the following libraries (including test and runtime depe
   org-netbeans-modules-editor-breadcrumbs under GPL v2
   org-netbeans-modules-editor-codetemplates under GPL v2
   org-netbeans-modules-editor-completion under GPL v2
+  org-netbeans-modules-editor-document under GPL v2
   org-netbeans-modules-editor-errorstripe under GPL v2
   org-netbeans-modules-editor-errorstripe-api under GPL v2
   org-netbeans-modules-editor-fold under GPL v2
   org-netbeans-modules-editor-fold-nbui under GPL v2
   org-netbeans-modules-editor-guards under GPL v2
   org-netbeans-modules-editor-indent under GPL v2
-  org-netbeans-modules-editor-indent-project under GPL v2
   org-netbeans-modules-editor-lib under GPL v2
   org-netbeans-modules-editor-lib2 under GPL v2
   org-netbeans-modules-editor-mimelookup under GPL v2
   org-netbeans-modules-editor-settings under GPL v2
+  org-netbeans-modules-editor-settings-lib under GPL v2
   org-netbeans-modules-editor-settings-storage under GPL v2
   org-netbeans-modules-editor-util under GPL v2
+  org-netbeans-modules-extexecution under GPL v2
+  org-netbeans-modules-extexecution-base under GPL v2
+  org-netbeans-modules-gsf-testrunner under GPL v2
+  org-netbeans-modules-gsf-testrunner-ui under GPL v2
   org-netbeans-modules-java-lexer under GPL v2
   org-netbeans-modules-java-platform under GPL v2
   org-netbeans-modules-java-preprocessorbridge under GPL v2
   org-netbeans-modules-java-project under GPL v2
-  org-netbeans-modules-java-source under GPL v2
+  org-netbeans-modules-java-source-base under GPL v2
   org-netbeans-modules-jellytools-ide under GPL v2
   org-netbeans-modules-jellytools-platform under GPL v2
   org-netbeans-modules-jemmy under GPL v2
@@ -77,15 +92,20 @@ This project depends on the following libraries (including test and runtime depe
   org-netbeans-modules-nbjunit under GPL v2
   org-netbeans-modules-options-api under GPL v2
   org-netbeans-modules-options-editor under GPL v2
-  org-netbeans-modules-options-java under GPL v2
   org-netbeans-modules-options-keymap under GPL v2
   org-netbeans-modules-parsing-api under GPL v2
+  org-netbeans-modules-parsing-indexing under GPL v2
   org-netbeans-modules-parsing-lucene under GPL v2
+  org-netbeans-modules-parsing-nb under GPL v2
   org-netbeans-modules-project-ant under GPL v2
   org-netbeans-modules-project-indexingbridge under GPL v2
   org-netbeans-modules-project-libraries under GPL v2
+  org-netbeans-modules-project-spi-intern under GPL v2
+  org-netbeans-modules-project-spi-intern-impl under GPL v2
   org-netbeans-modules-projectapi under GPL v2
+  org-netbeans-modules-projectapi-nb under GPL v2
   org-netbeans-modules-projectuiapi under GPL v2
+  org-netbeans-modules-projectuiapi-base under GPL v2
   org-netbeans-modules-queries under GPL v2
   org-netbeans-modules-refactoring-api under GPL v2
   org-netbeans-modules-sampler under GPL v2
@@ -103,6 +123,7 @@ This project depends on the following libraries (including test and runtime depe
   org-openide-execution under GPL v2
   org-openide-explorer under GPL v2
   org-openide-filesystems under GPL v2
+  org-openide-filesystems-nb under GPL v2
   org-openide-io under GPL v2
   org-openide-loaders under GPL v2
   org-openide-modules under GPL v2
@@ -110,6 +131,7 @@ This project depends on the following libraries (including test and runtime depe
   org-openide-text under GPL v2
   org-openide-util under GPL v2
   org-openide-util-lookup under GPL v2
+  org-openide-util-ui under GPL v2
   org-openide-windows under GPL v2
   parboiled-core under Apache 2
   parboiled-java under Apache 2
@@ -121,5 +143,5 @@ This project depends on the following libraries (including test and runtime depe
   powermock-module-junit4-common under The Apache Software License, Version 2.0
   powermock-reflect under The Apache Software License, Version 2.0
   Rust NetBeans Plugin under GNU General Public License, Version 3
-  StringTemplate 4 under BSD licence
+  toml4j under The MIT License
 
