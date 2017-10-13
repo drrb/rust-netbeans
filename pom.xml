@@ -468,7 +468,7 @@
                 <!-- NetBeans 7.4+ requires JDK 7 -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.3</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -499,6 +499,34 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <!-- Compile build helpers -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>compile-build-helpers</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="compile-build-helpers">
+                                <mkdir dir="target/build-classes"/>
+                                <exec executable="javac">
+                                    <arg value="src/build/java/com/github/drrb/rust/netbeans/build/GenerateRustTokenEnum.java"/>
+                                    <arg value="-d"/>
+                                    <arg value="target/build-classes"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Generate Rust Token IDs -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -508,60 +536,17 @@
                         <id>map-tokens</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>ruby</executable>
-                            <arguments>
-                                <argument>src/scripts/generate-rust-token-kind-enum</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-
-            <!-- Compile and use our build addon that compiles the Rust code -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.9.1</version>
-                <executions>
-                    <execution>
-                        <id>compile-build-addon</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/build/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Compile Rust crates -->
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.3.2</version>
-                <executions>
-                    <execution>
-                        <id>compile-rust-bridge</id>
-                        <phase>compile</phase>
-                        <goals>
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>com.github.drrb.rust.netbeans.build.CompileRustCrates</mainClass>
+                            <mainClass>com.github.drrb.rust.netbeans.build.GenerateRustTokenEnum</mainClass>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>target/build-classes</additionalClasspathElement>
+                            </additionalClasspathElements>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -569,10 +554,9 @@
                 <configuration>
                     <!--
                          java.awt.headless=true: Stop tests hijacking UI on development machine
-                         jna.nosys=true: Don't try to load JNA from the host system, use our dependency instead (needed for Appveyor, which has an old JNA on it)
                          noverify: Fix for JDK bug with PowerMock
                      -->
-                    <argLine>-Djava.awt.headless=true -Djna.nosys=true -noverify</argLine>
+                    <argLine>-Djava.awt.headless=true -noverify</argLine>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
                     <excludes>
@@ -719,7 +703,6 @@
                                 <exclude>run</exclude>
                                 <exclude>build</exclude>
                                 <exclude>Makefile</exclude>
-                                <exclude>src/scripts/generate-rust-token-kind-enum</exclude>
 
                                 <exclude>.vagrant/**</exclude>
                                 <exclude>Vagrantfile</exclude>
