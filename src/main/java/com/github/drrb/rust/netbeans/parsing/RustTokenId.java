@@ -171,7 +171,6 @@ public enum RustTokenId implements TokenId {
     XID_continue(RustParserConstants.XID_continue, TokenCategory.IDENTIFIER),
     GARBAGE(RustParserConstants.GARBAGE, TokenCategory.IDENTIFIER);
 
-
     public static final RustLanguageHierarchy LANGUAGE_HIERARCHY = new RustLanguageHierarchy();
     private static final RustTokenId[] LOOKUP;
     static {
