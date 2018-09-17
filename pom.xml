@@ -5,7 +5,7 @@
 
     <groupId>com.github.drrb</groupId>
     <artifactId>rust-netbeans</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
     <name>Rust NetBeans Plugin</name>
@@ -224,13 +224,12 @@
             <version>${netbeans.version}</version>
         </dependency>
         <!-- TODO: causes "friend" error. Not sure if we actually need it though -->
-        <!--
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-projectui</artifactId>
             <version>${netbeans.version}</version>
+            <scope>provided</scope>
         </dependency>
-        -->
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-project</artifactId>
@@ -319,6 +318,15 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>3.0</version>
+        </dependency>
+        <!-- Configures the module system at runtime to treat this module 
+             as a friend module of gsf's testing infrastructure.  See
+             Installer.
+        -->
+        <dependency>
+            <groupId>org.netbeans.contrib.yenta</groupId>
+            <artifactId>api</artifactId>
+            <version>1.1</version>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -439,16 +447,22 @@
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
+                    <codeNameBase>drrb.rust</codeNameBase>
+                    <verifyRuntime>warn</verifyRuntime>
                     <licenseName>GPL3</licenseName>
                     <licenseFile>LICENSE.txt</licenseFile>
                     <moduleDependencies>
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-gsf-testrunner</id>
-                            <type>impl</type>
+                            <explicitValue>org.netbeans.modules.gsf.testrunner/2 &gt; 1.0</explicitValue>
                         </dependency>
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-gsf-testrunner-ui</id>
-                            <type>impl</type>
+                            <explicitValue>org.netbeans.modules.gsf.testrunner.ui &gt; 1.0</explicitValue>
+                        </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-projectui</id>
+                            <type>loose</type>
                         </dependency>
                     </moduleDependencies>
                 </configuration>

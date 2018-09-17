@@ -10,3 +10,4 @@
 Vagrantfile
 /build
 /cluster-path
+nb-configuration.xml
