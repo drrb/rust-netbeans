@@ -489,34 +489,6 @@
                 <version>1.8</version>
                 <executions>
                     <execution>
-                        <id>download-rust-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <target name="download-rust-sources">
-                                    <echo>Downloading Rust sources to ${basedir}/tmp/rust-sources.zip (may take a while)</echo>
-                                    <mkdir dir="${basedir}/tmp"/>
-                                    <get src="https://api.github.com/repos/rust-lang/rust/zipball/release-0.7"
-                                         dest="${basedir}/tmp/rust-sources.zip"
-                                         tryGzipEncoding="true"
-                                         skipexisting="true"
-                                         verbose="true"/>
-                                    <copy todir="${basedir}/tmp/rust">
-                                        <zipfileset src="${basedir}/tmp/rust-sources.tar">
-                                            <patternset>
-                                                <include name="**/*.rs"/>
-                                            </patternset>
-                                        </zipfileset>
-                                        <flattenmapper/>
-                                    </copy>
-                                </target>
-                            </tasks>
-                            <goals>
-                                <goal>download-rust-sources</goal>
-                            </goals>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>copy-antlr-grammar</id>
                         <phase>generate-sources</phase>
                         <configuration>
@@ -528,98 +500,24 @@
                                         <include name="Rust.g4"/>
                                     </fileset>
                                 </copy>
+                                
                                 <!-- Copy our additional tokens file, which redefines inline strings
                                 from the imported grammar to have meaningful names, so we get
                                 usable, stable constant names on our lexer and parser which map
                                 to token types -->
+                                
                                 <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
                                     <fileset dir="${project.basedir}/src/main/antlr/imports/">
                                         <include name="rust_tokens.g4"/>
                                     </fileset>
                                 </copy>
-                                <!-- Perform some regex magic to generate a properties file with substitutions
-                                from the tokens file, so there is a single source of truth for the
-                                token names we are replacing -->
-                                <copy
-                                    file="${project.basedir}/src/main/antlr/imports/rust_tokens.g4"
-                                    tofile="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                    overwrite="true" encoding="UTF-8" preserveLastModified="true">
-                                    <filterchain>
-                                        <headfilter skip="2" lines="-1"/>
-                                        <tokenfilter>
-                                            <containsregex
-                                                pattern="(\S+?)\s*?:\s*?'(\S+)'\s*;"
-                                                flags="gm"
-                                                byline="true"
-                                                replace="\\\'\2\\\':\1"/>
-                                        </tokenfilter>
-                                    </filterchain>
-                                </copy>
-
-                                <!-- Colon and equals need further escaping that we can't do in properties
-                                substitution -->
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="'::'" value="'\:\:'"/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="='" value="\='"/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="':'" value="'\:'"/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="'=\='" value="'\=\='"/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="'=>'" value="'\=>'"/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="'\\'" value="'\\\\'"/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="'\n'" value="'\\n'"/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="'\r'" value="'\\r'"/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
-                                         token="'\'" value="'\\'"/>
-
-                                <!-- Replace silly rule name -->
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         token="CashMoney" value="DollarSign"/>
-
-                                <!-- Spell out Literal in rule names (see "bug:" comment at end of original grammar) -->
-                                <replaceregexp file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                               match="(\w+)Lit([:\s\W\n])"
-                                               replace="\1Literal\2"
-                                               flags="sg"
-                                               byline="false"/>
-
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         token="'b\''" value="ByteLiteralPrefix"/>
-
-                                <!-- Use our generated properties file to replace occurences of
-                                literal tokens in rust_tokens.g4 with their named equivalents -->
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         replacefilterfile="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"/>
-
-                                <!-- the original grammar skips whitespace tokens, but we need
-                                them in NetBeans lexer -->
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         token=' -> skip' value=' -> channel(1)'/>
-
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         token='import xidstart, xidcontinue;' value='import rust_tokens;'/>
-                                
-                                <!-- The ident rule is moved down into rust_tokens -->
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         token='fragment IDENT:' value=''/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         token='    XID_Start XID_Continue*;' value=''/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         token='Ident:' value=''/>
-                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
-                                         token='    IDENT;' value=''/>
-                                
 
                                 <!-- Copy the supplemental fragment definitions from the antlr grammar project
                                 so they can be found when generating the grammar-->
                                 <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
                                     <fileset dir="${project.build.directory}/../externals/rust-grammar/">
                                         <include name="x*.g4"/>
+                                        <include name="rust_tokens.g4"/>
                                     </fileset>
                                 </copy>
                                 <!-- End of Antlr fiddling -->
@@ -629,7 +527,6 @@
                                      to the generate-test-sources phase, but we do it here.  Cheap except the
                                      first time.
                                 -->
-                                <available file="${basedir}/tmp/rust" property="hasRust"/>
                                 <echo>Downloading Rust sources to ${basedir}/tmp/rust-sources.zip if not present</echo>
                                 <mkdir dir="${basedir}/tmp"/>
                                 <get src="https://api.github.com/repos/rust-lang/rust/zipball/release-0.7"
