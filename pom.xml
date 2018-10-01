@@ -502,21 +502,25 @@
                                 <symlink
                                     link="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
                                     resource="${project.build.directory}/../externals/rust-grammar/Rust.g4"
+                                    overwrite="true"
                                 />
                                 
                                 <symlink
                                     link="${project.build.directory}/generated-sources/antlr-copied/imports/rust_tokens.g4"
                                     resource="${project.build.directory}/../externals/rust-grammar/rust_tokens.g4"
+                                    overwrite="true"
                                 />
                                 
                                 <symlink
                                     link="${project.build.directory}/generated-sources/antlr-copied/imports/xidcontinue.g4"
                                     resource="${project.build.directory}/../externals/rust-grammar/xidcontinue.g4"
+                                    overwrite="true"
                                 />
                                 
                                 <symlink
                                     link="${project.build.directory}/generated-sources/antlr-copied/imports/xidstart.g4"
                                     resource="${project.build.directory}/../externals/rust-grammar/xidstart.g4"
+                                    overwrite="true"
                                 />
                                 
                                 
