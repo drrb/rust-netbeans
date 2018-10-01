@@ -14,57 +14,55 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing;
+package com.github.drrb.rust.netbeans.parsing.antlr;
 
+import com.github.drrb.rust.netbeans.parsing.*;
 import com.github.drrb.rust.netbeans.util.Option;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.spi.ParserResult;
-import org.netbeans.modules.java.source.usages.DocumentUtil;
-
-import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RustLexUtils {
-    private static final Logger LOG = Logger.getLogger(RustLexUtils.class.getName());
+public class AntlrRustLexUtils {
+    private static final Logger LOG = Logger.getLogger(AntlrRustLexUtils.class.getName());
 
-    public TokenSequence<RustTokenId> getRustTokenSequence(Document doc, int offset) {
+    public TokenSequence<AntlrTokenID> getRustTokenSequence(Document doc, int offset) {
         TokenHierarchy<?> tokenHierarchy = TokenHierarchy.get(doc);
-        TokenSequence<RustTokenId> topLevelTokenSequence = tokenHierarchy.tokenSequence(RustTokenId.language());
+        TokenSequence<AntlrTokenID> topLevelTokenSequence = tokenHierarchy.tokenSequence(AntlrRustLanguageHierarchy.INSTANCE.language());
         if (topLevelTokenSequence != null) {
             return topLevelTokenSequence;
         }
 
-        TokenSequence<RustTokenId> embeddedRustTokenSequence = getEmbeddedRustTokenSequence(tokenHierarchy, offset, true);
+        TokenSequence<AntlrTokenID> embeddedRustTokenSequence = getEmbeddedRustTokenSequence(tokenHierarchy, offset, true);
         if (embeddedRustTokenSequence != null) {
             return embeddedRustTokenSequence;
         }
 
-        TokenSequence<RustTokenId> embeddedRustTokenSequenceForwards = getEmbeddedRustTokenSequence(tokenHierarchy, offset, false);
+        TokenSequence<AntlrTokenID> embeddedRustTokenSequenceForwards = getEmbeddedRustTokenSequence(tokenHierarchy, offset, false);
         if (embeddedRustTokenSequenceForwards != null) {
             return embeddedRustTokenSequenceForwards;
         }
 
         try {
             LOG.warning("Couldn't get Rust token sequence for document. Falling back to lexing it ourselves.");
-            tokenHierarchy = TokenHierarchy.create(doc.getText(0, doc.getLength()), RustTokenId.language());
-            return tokenHierarchy.tokenSequence(RustTokenId.language());
+            tokenHierarchy = TokenHierarchy.create(doc.getText(0, doc.getLength()), AntlrRustLanguageHierarchy.INSTANCE.language());
+            return tokenHierarchy.tokenSequence(AntlrRustLanguageHierarchy.INSTANCE.language());
         } catch (BadLocationException ex) {
             LOG.log(Level.WARNING, "Couldn't get Rust token sequence for document at all!", ex);
             return null;
         }
     }
 
-    private TokenSequence<RustTokenId> getEmbeddedRustTokenSequence(TokenHierarchy<?> tokenHierarchy, int offset, boolean backwardBias) {
+    private TokenSequence<AntlrTokenID> getEmbeddedRustTokenSequence(TokenHierarchy<?> tokenHierarchy, int offset, boolean backwardBias) {
         for (TokenSequence<? extends TokenId> tokenSequence : tokenHierarchy.embeddedTokenSequences(offset, backwardBias)) {
-            if (tokenSequence.language() == RustTokenId.language()) {
+            if (tokenSequence.language() == AntlrRustLanguageHierarchy.INSTANCE.language()) {
                 @SuppressWarnings("unchecked")
-                TokenSequence<RustTokenId> embeddedTokenSequence = (TokenSequence<RustTokenId>) tokenSequence;
+                TokenSequence<AntlrTokenID> embeddedTokenSequence = (TokenSequence<AntlrTokenID>) tokenSequence;
                 return embeddedTokenSequence;
             }
         }
@@ -77,17 +75,17 @@ public class RustLexUtils {
     }
 
     public static Option<OffsetRustToken> getIdentifierAt(int caretOffset, TokenHierarchy<?> tokenHierarchy) {
-        TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.language());
+        TokenSequence<?> tokenSequence = tokenHierarchy.tokenSequence(AntlrRustLanguageHierarchy.INSTANCE.language());
         Option<OffsetRustToken> tokenAtOffset = offsetTokenAt(caretOffset, tokenSequence);
         if (tokenAtOffset.isNot()) {
             return Option.none();
         }
-
-        if (tokenAtOffset.value().id() == RustTokenId.IDENTIFIER) {
+        TokenId identId = CommonRustTokenIDs.identifierTokenID();
+        if (tokenAtOffset.value().id() == identId) {
             return tokenAtOffset;
         } else if (caretOffset > 0) {
             Option<OffsetRustToken> tokenBeforeOffset = offsetTokenAt(caretOffset - 1, tokenSequence);
-            if (tokenBeforeOffset.is() && tokenBeforeOffset.value().id() == RustTokenId.IDENTIFIER) {
+            if (tokenBeforeOffset.is() && tokenBeforeOffset.value().id() == identId) {
                 return tokenBeforeOffset;
             } else {
                 return Option.none();
@@ -97,7 +95,7 @@ public class RustLexUtils {
         }
     }
 
-    private static Option<OffsetRustToken> offsetTokenAt(int caretPosition, TokenSequence<RustTokenId> tokenSequence) {
+    private static Option<OffsetRustToken> offsetTokenAt(int caretPosition, TokenSequence<?> tokenSequence) {
         tokenSequence.move(caretPosition);
         if (tokenSequence.moveNext()) {
             return Option.is(OffsetRustToken.atCurrentLocation(tokenSequence));

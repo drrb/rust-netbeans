@@ -2,151 +2,147 @@
   "tokens": [
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "a_function",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "a_public_function",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "function_returning",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "->",
-      "kind": "ARROW"
+      "kind": "FatArrow"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "uint",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
-    },
-    {
-      "image": "",
-      "kind": "EOF"
+      "kind": "RightBrace"
     }
   ]
 }

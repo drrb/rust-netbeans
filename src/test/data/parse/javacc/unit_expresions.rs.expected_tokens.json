@@ -2,55 +2,51 @@
   "tokens": [
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "unit",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
-    },
-    {
-      "image": "",
-      "kind": "EOF"
+      "kind": "RightBrace"
     }
   ]
 }

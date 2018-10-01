@@ -16,8 +16,10 @@
  */
 package com.github.drrb.rust.netbeans.formatting;
 
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrRustLanguageHierarchy;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrParserResult;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
@@ -31,6 +33,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
 import java.util.LinkedList;
 import java.util.List;
+import org.netbeans.api.lexer.Language;
 
 /**
  *
@@ -38,11 +41,11 @@ import java.util.List;
 public class RustDocumentFormatter {
 
     private final RustFormatter formatter;
-    private final NetbeansRustParserResult parseResult;
+    private final RustAntlrParserResult parseResult;
     private final BaseDocument document;
     private final Context context;
 
-    RustDocumentFormatter(RustFormatter formatter, NetbeansRustParserResult parseResult, BaseDocument document, Context context) {
+    RustDocumentFormatter(RustFormatter formatter, RustAntlrParserResult parseResult, BaseDocument document, Context context) {
         this.formatter = formatter;
         this.parseResult = parseResult;
         this.document = document;
@@ -51,20 +54,24 @@ public class RustDocumentFormatter {
 
     public void format() {
         final Snapshot snapshot = parseResult.getSnapshot();
+        final Language<AntlrTokenID> language = AntlrRustLanguageHierarchy.INSTANCE.language();
+        final AntlrTokenID leftBrace = CommonRustTokenIDs.leftBrace();
+        final AntlrTokenID rightBrace = CommonRustTokenIDs.rightBrace();
+        final AntlrTokenID semicolon = CommonRustTokenIDs.semicolon();
         try {
             List<Delimiter> delimiters = new LinkedList<>();
             TokenHierarchy<?> tokenHierarchy = snapshot.getTokenHierarchy();
-            TokenSequence<RustTokenId> tokenSequence = tokenHierarchy.tokenSequence(RustTokenId.language());
+            TokenSequence<AntlrTokenID> tokenSequence = tokenHierarchy.tokenSequence(language);
             tokenSequence.move(0);
 
             while (tokenSequence.moveNext()) {
-                Token<RustTokenId> token = tokenSequence.token();
+                Token<AntlrTokenID> token = tokenSequence.token();
                 int tokenOffset = tokenSequence.offset();
-                if (token.id() == RustTokenId.LEFT_BRACE) {
+                if (token.id() == leftBrace) {
                     delimiters.add(new Delimiter(DelimiterType.OPEN_BRACE, tokenOffset));
-                } else if (token.id() == RustTokenId.RIGHT_BRACE) {
+                } else if (token.id() == rightBrace) {
                     delimiters.add(new Delimiter(DelimiterType.CLOSE_BRACE, tokenOffset));
-                } else if (token.id() == RustTokenId.SEMICOLON) {
+                } else if (token.id() == semicolon) {
                     delimiters.add(new Delimiter(DelimiterType.SEMICOLON, tokenOffset));
                 }
             }

@@ -2,971 +2,967 @@
   "tokens": [
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "simple_return",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "let",
-      "kind": "LET"
+      "kind": "Let"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "x",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "=",
-      "kind": "EQUALS"
+      "kind": "Equals"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return_statement",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "let",
-      "kind": "LET"
+      "kind": "Let"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "x",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "=",
-      "kind": "EQUALS"
+      "kind": "Equals"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "implicit_return",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "->",
-      "kind": "ARROW"
+      "kind": "FatArrow"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "uint",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "explicit_return",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "->",
-      "kind": "ARROW"
+      "kind": "FatArrow"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "uint",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "weird_return",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "->",
-      "kind": "ARROW"
+      "kind": "FatArrow"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "uint",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "let",
-      "kind": "LET"
+      "kind": "Let"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "x",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "=",
-      "kind": "EQUALS"
+      "kind": "Equals"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "explicit_double_return",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "->",
-      "kind": "ARROW"
+      "kind": "FatArrow"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "uint",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "if",
-      "kind": "IF"
+      "kind": "If"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "true",
-      "kind": "TRUE"
+      "kind": "True"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n        ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "else",
-      "kind": "ELSE"
+      "kind": "Else"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n        ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "2",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return_call",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "hello",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": ".",
-      "kind": "DOT"
+      "kind": "Dot"
     },
     {
       "image": "blah",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return_expression",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "+",
-      "kind": "PLUS"
+      "kind": "Plus"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "weird_return_expression",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "+",
-      "kind": "PLUS"
+      "kind": "Plus"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return_expresssion_maybe",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "!",
-      "kind": "BANG"
+      "kind": "Bang"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "true",
-      "kind": "TRUE"
+      "kind": "True"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "weird_returnx",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "return",
-      "kind": "RETURN"
+      "kind": "Return"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "-",
-      "kind": "DASH"
+      "kind": "Minus"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "1",
-      "kind": "NUMBER_LITERAL"
+      "kind": "BareIntLiteral"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "// TODO: this is supported by the Rust LL(1) grammar. But should it be?",
-      "kind": "LINE_COMMENT"
+      "kind": "LineComment"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "//fn return_dot() {",
-      "kind": "LINE_COMMENT"
+      "kind": "LineComment"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "//    return .hello().blah();",
-      "kind": "LINE_COMMENT"
+      "kind": "LineComment"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "//}",
-      "kind": "LINE_COMMENT"
-    },
-    {
-      "image": "",
-      "kind": "EOF"
+      "kind": "LineComment"
     }
   ]
 }

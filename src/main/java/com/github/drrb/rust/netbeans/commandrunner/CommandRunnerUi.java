@@ -102,6 +102,8 @@ public class CommandRunnerUi {
                 process.destroy();
             } finally {
                 progressHandle.finish();
+                io.getOut().close();
+                io.getErr().close();
             }
         }
 

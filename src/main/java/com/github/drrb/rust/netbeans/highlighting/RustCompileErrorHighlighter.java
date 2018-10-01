@@ -16,9 +16,10 @@
  */
 package com.github.drrb.rust.netbeans.highlighting;
 
+import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.cargo.Crate;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrParserResult;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.rustbridge.RustCompiler;
 import com.github.drrb.rust.netbeans.rustbridge.RustParseMessage;
@@ -49,15 +50,16 @@ import java.util.logging.Logger;
 
 import static com.github.drrb.rust.netbeans.rustbridge.RustParseMessage.Level.HELP;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import org.netbeans.api.editor.mimelookup.MimeRegistration;
 
 /**
  *
  */
-public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustParserResult> {
+public class RustCompileErrorHighlighter extends ParserResultTask<RustAntlrParserResult> {
     private static final Logger LOG = Logger.getLogger(RustCompileErrorHighlighter.class.getName());
     private static final RequestProcessor EXECUTOR = new RequestProcessor("Rust Compile", 12);
 
-//    @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TaskFactory.class)
+    @MimeRegistration(mimeType = RustLanguage.MIME_TYPE, service = TaskFactory.class)
     public static class Factory extends TaskFactory {
 
         @Override
@@ -67,14 +69,7 @@ public class RustCompileErrorHighlighter extends ParserResultTask<NetbeansRustPa
     }
 
     @Override
-    public void run(NetbeansRustParserResult parseResult, SchedulerEvent event) {
-        try {
-            if (parseResult.isFailure()) {
-                return;
-            }
-        } catch (ParseException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+    public void run(RustAntlrParserResult parseResult, SchedulerEvent event) {
         final Snapshot snapshot = parseResult.getSnapshot();
         EXECUTOR.post(new Runnable() {
 

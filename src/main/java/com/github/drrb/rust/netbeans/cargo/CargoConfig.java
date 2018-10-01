@@ -16,8 +16,10 @@
  */
 package com.github.drrb.rust.netbeans.cargo;
 
-import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrRustLexUtils;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.forLiteralName;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.leftBrace;
 import com.github.drrb.rust.netbeans.rustbridge.RustCrateType;
 import com.github.drrb.rust.netbeans.util.GsfUtilitiesHack;
 import com.github.drrb.rust.netbeans.util.Template;
@@ -26,7 +28,6 @@ import com.moandjiezana.toml.Toml;
 import org.netbeans.api.lexer.TokenSequence;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import org.openide.text.NbDocument;
 
 import javax.swing.text.Document;
 import java.io.FileNotFoundException;
@@ -69,11 +70,14 @@ public class CargoConfig {
 
             @Override
             public void run() {
-                TokenSequence<RustTokenId> rustTokens = new RustLexUtils().getRustTokenSequence(document, 0);
+                final AntlrTokenID mod = forLiteralName("mod");
+                final AntlrTokenID lbrace = leftBrace();
+                assert mod != null : "'mod' missing from vocabulary";
+                TokenSequence<?> rustTokens = new AntlrRustLexUtils().getRustTokenSequence(document, 0);
                 lookingForModDeclarations:
                 while (rustTokens.moveNext()) {
-                    if (rustTokens.token().id() == RustTokenId.MOD && rustTokens.moveNext()) {
-                        if (rustTokens.moveNext() && rustTokens.token().id() == RustTokenId.LEFT_BRACE) {
+                    if (rustTokens.token().id() == mod && rustTokens.moveNext()) {
+                        if (rustTokens.moveNext() && rustTokens.token().id() == lbrace) {
                             // It's a mod literal
                             continue lookingForModDeclarations;
                         } else {
@@ -117,7 +121,11 @@ public class CargoConfig {
             String libCratePath = libCrate.getString("path");
             if (libCratePath != null) {
                 FileObject crateFile = baseDir.getFileObject(libCratePath);
-                List<String> libCrateTypes = new LinkedList<>(libCrate.getList("crate-type"));
+                List<String> found = libCrate.getList("crate-type");
+                List<String> libCrateTypes = new LinkedList<>();
+                if (found != null) {
+                    libCrateTypes.addAll(found);
+                }
                 if (libCrateTypes.isEmpty()) {
                     libCrateTypes.add("rlib");
                 }

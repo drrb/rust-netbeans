@@ -17,7 +17,6 @@
 package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -45,25 +44,21 @@ public class RustSemanticAnalyzerTest {
     }
 
     @Test
-    @Ignore
     public void shouldFindImplDeclaration() throws Exception {
         netbeans.checkSemantic("semantic/impl.rs");
     }
 
     @Test
-    @Ignore
     public void shouldFindEnumDeclaration() throws Exception {
         netbeans.checkSemantic("semantic/enum.rs");
     }
 
     @Test
-    @Ignore
     public void shouldFindTraitDeclaration() throws Exception {
         netbeans.checkSemantic("semantic/trait.rs");
     }
 
     @Test
-    @Ignore
     public void shouldFindTraitImplDeclaration() throws Exception {
         netbeans.checkSemantic("semantic/trait_impl.rs");
     }

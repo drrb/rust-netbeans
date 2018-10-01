@@ -35,6 +35,10 @@ public class RustStruct {
         this.body = body;
     }
 
+    public String toString() {
+        return name + "@" + offsetRange.getStart() + ":" + offsetRange.getEnd() + " {" + body + "}";
+    }
+
     public String getName() {
         return name;
     }

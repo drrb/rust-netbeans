@@ -17,8 +17,14 @@
 package com.github.drrb.rust.netbeans.highlighting;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
-import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrRustLexUtils;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.leftAngleBracket;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.leftBrace;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.leftBracket;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.rightAngleBracket;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.rightBrace;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.rightBracket;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenSequence;
@@ -30,6 +36,9 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.netbeans.api.lexer.TokenId;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.leftParen;
+import static com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs.rightParen;
 
 /**
  *
@@ -43,7 +52,7 @@ public class RustBracesMatcher implements BracesMatcher {
 
         @Override
         public BracesMatcher createMatcher(MatcherContext context) {
-            return new RustBracesMatcher(context, new RustLexUtils());
+            return new RustBracesMatcher(context, new AntlrRustLexUtils());
             // TODO: is our implementation better than just doing this?:
             //return BracesMatcherSupport.defaultMatcher(context, -1, -1);
             // Probably, because it's dealing with tokens instead of characters
@@ -51,9 +60,9 @@ public class RustBracesMatcher implements BracesMatcher {
         }
     }
     private final MatcherContext context;
-    private final RustLexUtils rustLexUtils;
+    private final AntlrRustLexUtils rustLexUtils;
 
-    public RustBracesMatcher(MatcherContext context, RustLexUtils rustLexUtils) {
+    public RustBracesMatcher(MatcherContext context, AntlrRustLexUtils rustLexUtils) {
         this.context = context;
         this.rustLexUtils = rustLexUtils;
     }
@@ -64,7 +73,7 @@ public class RustBracesMatcher implements BracesMatcher {
         document.readLock();
         try {
             int offset = context.getSearchOffset();
-            TokenSequence<RustTokenId> tokenSequence = rustLexUtils.getRustTokenSequence(document, offset);
+            TokenSequence<?> tokenSequence = rustLexUtils.getRustTokenSequence(document, offset);
             if (tokenSequence == null) {
                 LOGGER.warning("Couldn't get Rust token sequence for braces matching");
                 return null;
@@ -76,12 +85,12 @@ public class RustBracesMatcher implements BracesMatcher {
         }
     }
 
-    private OffsetRange getBraceAtOffset(TokenSequence<RustTokenId> tokenSequence, int offset) {
+    private OffsetRange getBraceAtOffset(TokenSequence<?> tokenSequence, int offset) {
         tokenSequence.move(offset);
         if (tokenSequence.moveNext()) {
-            Token<RustTokenId> token = tokenSequence.token();
-            for (BracePair bracePair : BracePair.values()) {
-                if (token.id() == bracePair.open || token.id() == bracePair.close) {
+            Token<?> token = tokenSequence.token();
+            for (BracePair bracePair : AntlrBracePair.values()) {
+                if (token.id() == bracePair.open() || token.id() == bracePair.close()) {
                     return OffsetRange.ofCurrentToken(tokenSequence);
                 }
             }
@@ -97,7 +106,7 @@ public class RustBracesMatcher implements BracesMatcher {
         document.readLock();
         try {
             int offset = context.getSearchOffset();
-            TokenSequence<RustTokenId> tokenSequence = rustLexUtils.getRustTokenSequence(document, offset);
+            TokenSequence<?> tokenSequence = rustLexUtils.getRustTokenSequence(document, offset);
             if (tokenSequence == null) {
                 LOGGER.warning("Couldn't get Rust token sequence for braces matching");
                 return null;
@@ -109,14 +118,14 @@ public class RustBracesMatcher implements BracesMatcher {
         }
     }
 
-    private OffsetRange getBraceMatchingTheOneAtOffset(TokenSequence<RustTokenId> tokenSequence, int offset) {
+    private OffsetRange getBraceMatchingTheOneAtOffset(TokenSequence<?> tokenSequence, int offset) {
         tokenSequence.move(offset);
         if (tokenSequence.moveNext()) {
-            Token<RustTokenId> token = tokenSequence.token();
-            for (BracePair bracePair : BracePair.values()) {
-                if (token.id() == bracePair.open) {
+            Token<?> token = tokenSequence.token();
+            for (BracePair bracePair : AntlrBracePair.values()) {
+                if (token.id() == bracePair.open()) {
                     return findCloseBraceForward(tokenSequence, bracePair);
-                } else if (token.id() == bracePair.close) {
+                } else if (token.id() == bracePair.close()) {
                     return findOpenBraceBackward(tokenSequence, bracePair);
                 }
             }
@@ -126,14 +135,14 @@ public class RustBracesMatcher implements BracesMatcher {
         return OffsetRange.NONE;
     }
 
-    private static OffsetRange findCloseBraceForward(TokenSequence<? extends RustTokenId> tokenSequence, BracePair bracePair) {
+    private static OffsetRange findCloseBraceForward(TokenSequence<?> tokenSequence, BracePair bracePair) {
         int balance = 0;
 
         while (tokenSequence.moveNext()) {
-            Token<? extends RustTokenId> token = tokenSequence.token();
-            if (token.id() == bracePair.open) {
+            Token<?> token = tokenSequence.token();
+            if (token.id() == bracePair.open()) {
                 balance++;
-            } else if (token.id() == bracePair.close) {
+            } else if (token.id() == bracePair.close()) {
                 if (balance == 0) {
                     return OffsetRange.ofCurrentToken(tokenSequence);
                 }
@@ -144,17 +153,17 @@ public class RustBracesMatcher implements BracesMatcher {
         return OffsetRange.NONE;
     }
 
-    private static OffsetRange findOpenBraceBackward(TokenSequence<? extends RustTokenId> tokenSequence, BracePair bracePair) {
+    private static OffsetRange findOpenBraceBackward(TokenSequence<?> tokenSequence, BracePair bracePair) {
         int balance = 0;
 
         while (tokenSequence.movePrevious()) {
-            Token<? extends RustTokenId> token = tokenSequence.token();
-            if (token.id() == bracePair.open) {
+            Token<?> token = tokenSequence.token();
+            if (token.id() == bracePair.open()) {
                 if (balance == 0) {
                     return OffsetRange.ofCurrentToken(tokenSequence);
                 }
                 balance++;
-            } else if (token.id() == bracePair.close) {
+            } else if (token.id() == bracePair.close()) {
                 balance--;
             }
         }
@@ -162,18 +171,33 @@ public class RustBracesMatcher implements BracesMatcher {
         return OffsetRange.NONE;
     }
 
-    private enum BracePair {
+    interface BracePair {
+        TokenId open();
+        TokenId close();
+    }
 
-        PARENS(RustTokenId.LEFT_PAREN, RustTokenId.RIGHT_PAREN),
-        BRACES(RustTokenId.LEFT_BRACE, RustTokenId.RIGHT_BRACE),
-        BRACKETS(RustTokenId.LEFT_BRACKET, RustTokenId.RIGHT_BRACKET),
-        ANGLES(RustTokenId.LEFT_ANGLE_BRACKET, RustTokenId.RIGHT_ANGLE_BRACKET);
-        final RustTokenId open;
-        final RustTokenId close;
+    private enum AntlrBracePair implements BracePair {
 
-        private BracePair(RustTokenId open, RustTokenId close) {
+        PARENS(leftParen(), rightParen()),
+        BRACES(leftBrace(), rightBrace()),
+        BRACKETS(leftBracket(), rightBracket()),
+        ANGLES(leftAngleBracket(), rightAngleBracket());
+        final TokenId open;
+        final TokenId close;
+
+        private AntlrBracePair(AntlrTokenID open, AntlrTokenID close) {
             this.open = open;
             this.close = close;
+        }
+
+        @Override
+        public TokenId open() {
+            return open;
+        }
+
+        @Override
+        public TokenId close() {
+            return close;
         }
     }
 

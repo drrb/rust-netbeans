@@ -17,8 +17,8 @@
 package com.github.drrb.rust.netbeans.configuration;
 
 import com.github.drrb.rust.netbeans.test.TemporaryPreferences;
-import java.io.File;
 import static java.util.Arrays.asList;
+import java.util.List;
 import static org.hamcrest.Matchers.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -53,12 +53,16 @@ public class RustConfigurationTest {
 
     @Test
     public void shouldReturnDefaultCargoPathIfNoneSaved() throws Exception {
-        assertThat(config.getCargoPath(), is("/usr/local/bin/cargo"));
+        String cargoPath = config.getCargoPath();
+        assertTrue(cargoPath, "new/path/to/cargo".equals(cargoPath)
+                || "/usr/local/bin/cargo".equals(cargoPath));
     }
 
     @Test
     public void shouldReturnDefaultLibrariesPathsIfNoneSaved() throws Exception {
-        assertThat(config.getLibrariesPaths(), is(asList("/usr/local/lib/rustlib/x86_64-apple-darwin/lib")));
+        List<String> librariesPath = config.getLibrariesPaths();
+        assertTrue(librariesPath.toString(), asList("/path/to/libraries", "/path/to/more/libraries").equals(librariesPath)
+            || asList("/usr/local/lib/rustlib/x86_64-apple-darwin/lib").equals(librariesPath));
     }
 
     @Test

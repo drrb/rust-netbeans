@@ -16,6 +16,10 @@
  */
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
+import com.github.drrb.rust.antlr.RustBaseVisitor;
+import com.github.drrb.rust.antlr.RustLexer;
+import com.github.drrb.rust.antlr.RustParser;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -29,6 +33,13 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class TestSrc extends TestFile {
 
@@ -58,47 +69,63 @@ public class TestSrc extends TestFile {
     public enum Dump {
         DUMP,
         NO_DUMP {
-            public void dump(SimpleNode node, String prefix) {
+            public void dump(RustParser node, String prefix) {
             }
         };
 
-        public void dump(SimpleNode node, String prefix) {
-            System.out.println(prefix + RustParserTreeConstants.jjtNodeName[node.id] + "[" + node.value + "]");
-            if (node.children != null) {
-                for (int i = 0; i < node.children.length; ++i) {
-                    SimpleNode n = (SimpleNode) node.children[i];
-                    if (n != null) {
-                        dump(n, prefix + " ");
-                    }
+        public void dump(RustParser node, String prefix) {
+            node.crate().accept(new RustBaseVisitor<Void>(){
+                int depth;
+                @Override
+                public Void visit(ParseTree tree) {
+                    depth++;
+                    char[] indent = new char[depth*2];
+                    Arrays.fill(indent, ' ');
+                    String ds = new String(indent);
+                    System.out.println(ds + tree.getClass().getSimpleName() + " " + tree.getText());
+                    super.visit(tree);
+                    depth--;
+                    return null;
                 }
-            }
+            });
+            node.reset();
         }
     }
 
-    public ParseResult parse(Dump dump) {
+    public ParseResult parse(Dump dump) throws IOException {
         Path file = getPath();
-        RustParser.Result result;
-        result = withFile(file, RustParser::parseFailOnError);
+        ParseResult result = withFile(file, reader -> {
+            try {
+                RustLexer lexer = new RustLexer(CharStreams.fromReader(reader));
+                CommonTokenStream str = new CommonTokenStream(lexer, 0);
+                str.fill();
+                RustParser parser = new RustParser(str);
+                dump.dump(parser, file.toString());
+                return new ParseResult(parser);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        return result;
+    }
 
-        dump.dump(result.rootNode(), "");
-
-        return new ParseResult(result);
+    public List<String> readLines() throws IOException {
+        return Files.readAllLines(path, UTF_8);
     }
 
     public TokenizationResult tokenize() {
         return withFile(path, reader -> {
-            RustParserTokenManager tokenManager = new RustParserTokenManager(new SimpleCharStream(reader));
-            TokenizationResult result = new TokenizationResult();
-            while (true) {
-                RustToken token = (RustToken) tokenManager.getNextToken();
-                token.withSpecialTokens().stream()
-                        .map(TokenizationResult.Token::new)
-                        .forEach(result.tokens::add);
-                if (token.isEof()) {
-                    break;
+            try {
+                TokenizationResult result = new TokenizationResult();
+                RustLexer lexer = new RustLexer(CharStreams.fromReader(reader));
+                for (Token tok = lexer.nextToken(); tok.getType() != -1; tok=lexer.nextToken()) {
+                    result.tokens.add(new TokenizationResult.Token(tok.getText(), CommonRustTokenIDs.forTokenType(tok.getType()),
+                            tok.getLine(), tok.getCharPositionInLine()));
                 }
+                return result;
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
-            return result;
         });
     }
 
@@ -107,8 +134,8 @@ public class TestSrc extends TestFile {
             try (InputStreamReader reader = new InputStreamReader(inputStream, UTF_8)) {
                 return function.apply(reader);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
         }
     }
 

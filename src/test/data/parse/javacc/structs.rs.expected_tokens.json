@@ -2,143 +2,139 @@
   "tokens": [
     {
       "image": "struct",
-      "kind": "STRUCT"
+      "kind": "Struct"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "Person",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "first_name",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ":",
-      "kind": "COLON"
+      "kind": "Colon"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "String",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ",",
-      "kind": "COMMA"
+      "kind": "Comma"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "last_name",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ":",
-      "kind": "COLON"
+      "kind": "Colon"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "String",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ",",
-      "kind": "COMMA"
+      "kind": "Comma"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "struct",
-      "kind": "STRUCT"
+      "kind": "Struct"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "Animal",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "name",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ":",
-      "kind": "COLON"
+      "kind": "Colon"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "String",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
-    },
-    {
-      "image": "",
-      "kind": "EOF"
+      "kind": "RightBrace"
     }
   ]
 }

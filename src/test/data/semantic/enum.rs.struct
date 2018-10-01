@@ -1,0 +1,5 @@
+Color ENUM
+ Red FIELD
+ Green FIELD
+ Blue FIELD
+ Black FIELD

@@ -5,7 +5,7 @@
 
     <groupId>com.github.drrb</groupId>
     <artifactId>rust-netbeans</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
     <name>Rust NetBeans Plugin</name>
@@ -154,6 +154,12 @@
             <artifactId>org-openide-util-ui</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!-- Parsing -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.7.1</version>
+        </dependency>
 
         <!-- For Indenting Task -->
         <dependency>
@@ -224,13 +230,12 @@
             <version>${netbeans.version}</version>
         </dependency>
         <!-- TODO: causes "friend" error. Not sure if we actually need it though -->
-        <!--
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-projectui</artifactId>
             <version>${netbeans.version}</version>
+            <scope>provided</scope>
         </dependency>
-        -->
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-project</artifactId>
@@ -319,6 +324,15 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>3.0</version>
+        </dependency>
+        <!-- Configures the module system at runtime to treat this module
+             as a friend module of gsf's testing infrastructure.  See
+             Installer.
+        -->
+        <dependency>
+            <groupId>org.netbeans.contrib.yenta</groupId>
+            <artifactId>api</artifactId>
+            <version>1.1</version>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -439,16 +453,22 @@
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
+                    <codeNameBase>drrb.rust</codeNameBase>
+                    <verifyRuntime>warn</verifyRuntime>
                     <licenseName>GPL3</licenseName>
                     <licenseFile>LICENSE.txt</licenseFile>
                     <moduleDependencies>
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-gsf-testrunner</id>
-                            <type>impl</type>
+                            <explicitValue>org.netbeans.modules.gsf.testrunner/2 &gt; 1.0</explicitValue>
                         </dependency>
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-modules-gsf-testrunner-ui</id>
-                            <type>impl</type>
+                            <explicitValue>org.netbeans.modules.gsf.testrunner.ui &gt; 1.0</explicitValue>
+                        </dependency>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-projectui</id>
+                            <type>loose</type>
                         </dependency>
                     </moduleDependencies>
                 </configuration>
@@ -465,6 +485,135 @@
             </plugin>
 
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-antlr-grammar</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target name="copy-antlr-sources">
+                                
+                                <!-- Use symlinks for ease of development/modification - leaving copy code
+                                     below as it is more portable long-term (on Windows)
+                                -->
+                                <mkdir dir="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/"/>
+                                <mkdir dir="${project.build.directory}/generated-sources/antlr-copied/imports"/>
+                                <symlink
+                                    link="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                    resource="${project.build.directory}/../externals/rust-grammar/Rust.g4"
+                                    overwrite="true"
+                                />
+                                
+                                <symlink
+                                    link="${project.build.directory}/generated-sources/antlr-copied/imports/rust_tokens.g4"
+                                    resource="${project.build.directory}/../externals/rust-grammar/rust_tokens.g4"
+                                    overwrite="true"
+                                />
+                                
+                                <symlink
+                                    link="${project.build.directory}/generated-sources/antlr-copied/imports/xidcontinue.g4"
+                                    resource="${project.build.directory}/../externals/rust-grammar/xidcontinue.g4"
+                                    overwrite="true"
+                                />
+                                
+                                <symlink
+                                    link="${project.build.directory}/generated-sources/antlr-copied/imports/xidstart.g4"
+                                    resource="${project.build.directory}/../externals/rust-grammar/xidstart.g4"
+                                    overwrite="true"
+                                />
+                                
+                                
+                                <!-- Copy the rust grammar to the dest folder -->
+<!--                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr"
+                                      preservelastmodified="true">
+                                    <fileset dir="${project.build.directory}/../externals/rust-grammar/">
+                                        <include name="Rust.g4"/>
+                                    </fileset>
+                                </copy>-->
+                                
+                                <!-- Copy our additional tokens file, which redefines inline strings
+                                from the imported grammar to have meaningful names, so we get
+                                usable, stable constant names on our lexer and parser which map
+                                to token types -->
+                                
+<!--                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
+                                    <fileset dir="${project.basedir}/src/main/antlr/imports/">
+                                        <include name="rust_tokens.g4"/>
+                                    </fileset>
+                                </copy>-->
+
+                                <!-- Copy the supplemental fragment definitions from the antlr grammar project
+                                so they can be found when generating the grammar-->
+<!--                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
+                                    <fileset dir="${project.build.directory}/../externals/rust-grammar/">
+                                        <include name="x*.g4"/>
+                                        <include name="rust_tokens.g4"/>
+                                    </fileset>
+                                </copy>-->
+                                <!-- End of Antlr fiddling -->
+                                
+                                <!-- Sigh - it appears in antrun 1.8, you cannot attach to two different
+                                     build phases in a single ant build.  So, while this ought to be attached
+                                     to the generate-test-sources phase, but we do it here.  Cheap except the
+                                     first time.
+                                -->
+                                <echo>Downloading Rust sources to ${basedir}/tmp/rust-sources.zip if not present</echo>
+                                <mkdir dir="${basedir}/tmp"/>
+                                <get src="https://api.github.com/repos/rust-lang/rust/zipball/release-0.7"
+                                         dest="${basedir}/tmp/rust-sources.zip"
+                                         skipexisting="true"
+                                         verbose="true"/>
+                                <copy todir="${basedir}/tmp/rust"
+                                         outputencoding="UTF-8"
+                                         verbose="true"
+                                    >
+                                    <zipfileset src="${basedir}/tmp/rust-sources.zip">
+                                        <patternset>
+                                            <include name="**/*.rs"/>
+                                            <exclude name="**/*-fail/**"/>
+                                        </patternset>
+                                    </zipfileset>
+                                    <flattenmapper/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.7.1</version>
+                <configuration>
+                    <sourceDirectory>${project.build.directory}/generated-sources/antlr-copied</sourceDirectory>
+                    <!--<includes>com/github/drrb/rust/antlr/Rust.g4</includes>-->
+                    <libDirectory>${project.build.directory}/generated-sources/antlr-copied/imports</libDirectory>
+                    <!--<includes>**/*.g4</includes>-->
+                    <visitor>true</visitor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <visitor>true</visitor>
+                            <listener>true</listener>
+                            <options>
+                                <language>Java</language>
+                            </options>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <!-- NetBeans 7.4+ requires JDK 7 -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -476,50 +625,6 @@
                     <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>javacc-maven-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <id>generate-parser</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>jjtree-javacc</goal>
-                            <goal>jjdoc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.java.dev.javacc</groupId>
-                        <artifactId>javacc</artifactId>
-                        <version>7.0.2</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.5.0</version>
-                <executions>
-                    <execution>
-                        <id>map-tokens</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>ruby</executable>
-                            <arguments>
-                                <argument>src/scripts/generate-rust-token-kind-enum</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
 
             <!-- Compile and use our build addon that compiles the Rust code -->
             <plugin>
@@ -568,13 +673,36 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!--
-                         java.awt.headless=true: Stop tests hijacking UI on development machine
-                         jna.nosys=true: Don't try to load JNA from the host system, use our dependency instead (needed for Appveyor, which has an old JNA on it)
-                         noverify: Fix for JDK bug with PowerMock
-                     -->
+                        java.awt.headless=true: Stop tests hijacking UI on development machine
+                        jna.nosys=true: Don't try to load JNA from the host system, use our dependency instead (needed for Appveyor, which has an old JNA on it)
+                        noverify: Fix for JDK bug with PowerMock
+                    -->
                     <argLine>-Djava.awt.headless=true -Djna.nosys=true -noverify</argLine>
-                    <forkCount>1</forkCount>
+                    <!-- Force Maven to run tests in-process -->
+                    <!--<fork>never</fork>-->
+                    <!-- Usefile disabled forces output to stdout / stderr in real time -
+                         Useful for development; turn off for continuous builds.
+                    -->
+                    <useFile>false</useFile>
+                    <forkCount>8</forkCount>
                     <reuseForks>false</reuseForks>
+                    <!--<parallel>methods</parallel>-->
+                    <!--<threadCount>1</threadCount>-->
+                    <!--<threadCountMethods>1</threadCountMethods>-->
+                    <!-- Ensure Maven doesn't hide the actually useful part of the stack
+                         trace, which it frequently does in the case a test errors.
+                    -->
+                    <trimStackTrace>false</trimStackTrace>
+                    <!-- Turn on logging for a bunch of stuff -->
+                    <systemProperties>
+                        <org.netbeans.modules.parsing.level>100</org.netbeans.modules.parsing.level>
+                        <org.netbeans.modules.parsing.api.Snapshot>100</org.netbeans.modules.parsing.api.Snapshot>
+                        <org.netbeans.modules.parsing.impl.RunWhenScanFinishedSupport.level>100</org.netbeans.modules.parsing.impl.RunWhenScanFinishedSupport.level>
+                        <org.netbeans.modules.parsing.impl.TaskProcessor.level>100</org.netbeans.modules.parsing.impl.TaskProcessor.level>
+                        <org.netbeans.modules.parsing.impl.indexing.RepositoryUpdater.level>100</org.netbeans.modules.parsing.impl.indexing.RepositoryUpdater.level>
+                        <netbeans.logger.console>true</netbeans.logger.console>
+                        <unit.test>true</unit.test>
+                    </systemProperties>
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>

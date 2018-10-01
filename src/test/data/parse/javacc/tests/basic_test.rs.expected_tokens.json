@@ -1,116 +1,108 @@
 {
   "tokens": [
     {
-      "image": "#",
-      "kind": "HASH"
-    },
-    {
-      "image": "[",
-      "kind": "LEFT_BRACKET"
+      "image": "#[",
+      "kind": "AttrPrefix"
     },
     {
       "image": "test",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "]",
-      "kind": "RIGHT_BRACKET"
+      "kind": "RightBracket"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "fn",
-      "kind": "FN"
+      "kind": "Fn"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "my_passing_test",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "println",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "!",
-      "kind": "BANG"
+      "kind": "Bang"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": "\"some more test output\"",
-      "kind": "STRING_LITERAL"
+      "kind": "StringLiteral"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n    ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "assert",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "!",
-      "kind": "BANG"
+      "kind": "Bang"
     },
     {
       "image": "(",
-      "kind": "LEFT_PAREN"
+      "kind": "LeftParen"
     },
     {
       "image": "true",
-      "kind": "TRUE"
+      "kind": "True"
     },
     {
       "image": ")",
-      "kind": "RIGHT_PAREN"
+      "kind": "RightParen"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
-    },
-    {
-      "image": "",
-      "kind": "EOF"
+      "kind": "RightBrace"
     }
   ]
 }

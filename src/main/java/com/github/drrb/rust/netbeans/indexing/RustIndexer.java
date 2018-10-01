@@ -16,28 +16,24 @@
  */
 package com.github.drrb.rust.netbeans.indexing;
 
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrParserResult;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustStructureItem;
 import com.github.drrb.rust.netbeans.parsing.index.RustStruct;
 import com.github.drrb.rust.netbeans.parsing.index.RustStructBody;
-import com.github.drrb.rust.netbeans.parsing.javacc.ASTStructItem;
-import com.github.drrb.rust.netbeans.parsing.javacc.ASTstructName;
-import com.github.drrb.rust.netbeans.parsing.javacc.RustParserDefaultVisitor;
+import com.github.drrb.rust.netbeans.parsing.index.RustStructField;
 import org.netbeans.modules.parsing.api.Snapshot;
-import org.netbeans.modules.parsing.spi.ParseException;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.modules.parsing.spi.indexing.Context;
 import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexer;
 import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
 import org.netbeans.modules.parsing.spi.indexing.Indexable;
-import org.openide.util.Exceptions;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.github.drrb.rust.netbeans.parsing.javacc.ParseUtil.offsetRange;
+import java.util.ArrayList;
 
 /**
  *
@@ -58,14 +54,47 @@ public class RustIndexer extends EmbeddingIndexer {
         LOGGER.log(Level.INFO, "RustIndexer.index({0})", file.getRelativePath());
         try {
             RustIndexWriter indexWriter = index.createIndexWriter(context);
-            NetbeansRustParserResult parseResult = (NetbeansRustParserResult) parserResult;
-            IndexingRustVisitor visitor = new IndexingRustVisitor();
-            parseResult.rootNode().jjtAccept(visitor, null);
-            for (RustStruct struct : visitor.structs) {
+            List<RustStruct> structs = findIndexable((RustAntlrParserResult) parserResult);
+            for (RustStruct struct : structs) {
+                LOGGER.log(Level.INFO, " include ({0})", struct);
                 indexWriter.write(file, struct);
             }
-        } catch (IOException | ParseException ex) {
-            Exceptions.printStackTrace(ex);
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Exception indexing " + file.getRelativePath(), ex);
+        }
+    }
+
+    private List<RustStruct> findIndexable(RustAntlrParserResult parserResult) {
+        List<RustStruct> result = new ArrayList<>();
+        for (RustStructureItem structureItem : parserResult.structureItems()) {
+            RustStruct struct = toRustStruct(structureItem);
+            if (struct != null) {
+                result.add(struct);
+            }
+        }
+        return result;
+    }
+
+    private RustStruct toRustStruct(RustStructureItem item) {
+        switch (item.rustKind()) {
+            case ATTR:
+            case LIFETIME:
+            case TYPE_REFERENCE:
+            case TYPE:
+                return null;
+            case STRUCT:
+                RustStruct.Builder structBuilder = RustStruct.builder()
+                        .setOffsetRange(item.range()).setName(item.getName());
+                RustStructBody.Builder structBodyBuilder = RustStructBody.builder();
+                for (RustStructureItem child : item.getNestedItems()) {
+                    structBodyBuilder.addField(new RustStructField(child.getName(), child.range()));
+                }
+                structBuilder.setBody(structBodyBuilder.build());
+                return structBuilder.build();
+//            case ENUM :
+//                RustEnum.Builder enumBuilder = RustEnum.builder();
+            default:
+                return null;
         }
     }
 
@@ -96,29 +125,6 @@ public class RustIndexer extends EmbeddingIndexer {
         @Override
         public int getIndexVersion() {
             return VERSION;
-        }
-    }
-
-    private static class IndexingRustVisitor extends RustParserDefaultVisitor {
-        private final List<RustStruct> structs = new LinkedList<>();
-
-        @Override
-        public Object visit(ASTStructItem structNode, Object data) {
-            RustStruct.Builder struct = RustStruct.builder()
-                    .setOffsetRange(offsetRange(structNode));
-            RustStructBody.Builder structBody = RustStructBody.builder();
-            structNode.jjtAccept(new RustParserDefaultVisitor() {
-
-                @Override
-                public Object visit(ASTstructName node, Object data) {
-                    struct.setName(node.jjtGetFirstToken().image);
-                    return null;
-                }
-
-            }, null);
-            struct.setBody(structBody.build());
-            structs.add(struct.build());
-            return null;
         }
     }
 }

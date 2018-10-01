@@ -17,24 +17,27 @@
 package com.github.drrb.rust.netbeans;
 
 import com.github.drrb.rust.netbeans.formatting.RustFormatter;
-import com.github.drrb.rust.netbeans.highlighting.RustSemanticAnalyzer;
 import com.github.drrb.rust.netbeans.indexing.RustIndexSearcher;
 import com.github.drrb.rust.netbeans.indexing.RustIndexer;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrRustLanguageHierarchy;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrParser;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrSemanticAnalyzer;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrStructureScanner;
 import org.netbeans.api.lexer.Language;
-import org.netbeans.modules.csl.api.Formatter;
-import org.netbeans.modules.csl.api.IndexSearcher;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
-import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
 import org.netbeans.modules.parsing.spi.indexing.PathRecognizerRegistration;
 import org.openide.util.NbBundle;
 
 import java.util.Collections;
 import java.util.Set;
+import org.netbeans.modules.csl.api.Formatter;
+import org.netbeans.modules.csl.api.IndexSearcher;
+import org.netbeans.modules.csl.api.StructureScanner;
+import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
 
 @LanguageRegistration(mimeType = RustLanguage.MIME_TYPE)
 @PathRecognizerRegistration(mimeTypes = RustLanguage.MIME_TYPE, sourcePathIds = RustLanguage.SOURCE_CLASSPATH_ID, libraryPathIds = RustLanguage.BOOT_CLASSPATH_ID, binaryLibraryPathIds = {})
@@ -70,13 +73,13 @@ public class RustLanguage extends DefaultLanguageConfig {
     }
 
     @Override
-    public Language<RustTokenId> getLexerLanguage() {
-        return RustTokenId.language();
+    public Language<AntlrTokenID> getLexerLanguage() {
+        return AntlrRustLanguageHierarchy.INSTANCE.language();
     }
 
     @Override
     public Parser getParser() {
-        return new NetbeansRustParser();
+        return new RustAntlrParser();
     }
 
     @Override
@@ -91,17 +94,26 @@ public class RustLanguage extends DefaultLanguageConfig {
 
     @Override
     public SemanticAnalyzer getSemanticAnalyzer() {
-        return new RustSemanticAnalyzer();
+        return new RustAntlrSemanticAnalyzer();
+    }
+
+    @Override
+    public StructureScanner getStructureScanner() {
+        return new RustAntlrStructureScanner();
     }
 
     @Override
     public EmbeddingIndexerFactory getIndexerFactory() {
         return new RustIndexer.Factory();
     }
-
     @Override
     public IndexSearcher getIndexSearcher() {
         return new RustIndexSearcher();
+    }
+
+    @Override
+    public boolean hasStructureScanner() {
+        return true;
     }
 
     //TODO: are these required? Is the annotation enough?

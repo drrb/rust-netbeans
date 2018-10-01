@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2017 drrb
+ * Copyright (C) 2018 Tim Boudreau
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -14,16 +14,14 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.parsing.javacc;
+package com.github.drrb.rust.netbeans.parsing.antlr;
 
-import org.netbeans.modules.csl.api.OffsetRange;
+/**
+ *
+ * @author Tim Boudreau
+ */
+public interface TokenCategorizer {
 
-public class ParseUtil {
+    public String categoryFor(int tokenType, String displayName, String symbolicName, String literalName);
 
-    private ParseUtil() {
-    }
-
-    public static OffsetRange offsetRange(SimpleNode node) {
-        return new OffsetRange(node.jjtGetFirstToken().absoluteBeginPosition - 1, node.jjtGetLastToken().absoluteEndPosition - 1);
-    }
 }

@@ -28,8 +28,10 @@
     <fontcolor name="comment" default="comment"/>
     <fontcolor name="number" default="number"/>
     <fontcolor name="operator" default="operator"/>
+    <fontcolor name="comparisonOperator" default="operator"/>
+    <fontcolor name="assignmentOperator" default="operator"/>
     <fontcolor name="string" default="string"/>
-    <fontcolor name="separator" default="separator"/>
+    <fontcolor name="delimiter" default="separator"/>
     <fontcolor name="whitespace" default="whitespace"/>
 
     <!-- CSL semantic highlighting -->

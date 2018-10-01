@@ -16,68 +16,40 @@
  */
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.modules.csl.api.OffsetRange;
 
-import java.util.LinkedList;
-import java.util.List;
 
-import static com.github.drrb.rust.netbeans.parsing.RustTokenId.EOF;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
+import java.util.Objects;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.TokenSource;
+import org.netbeans.api.lexer.PartType;
+import org.netbeans.api.lexer.Token;
+import org.netbeans.api.lexer.TokenHierarchy;
 
-public class RustToken extends Token {
-    private final RustTokenId enumKind;
-
-    public RustToken(int kind, String image) {
+public class RustToken extends Token implements org.antlr.v4.runtime.Token {
+    private final AntlrTokenID enumKind;
+    private int kind;
+    private String image;
+    private final OffsetRange range;
+    public RustToken(int kind, String image, OffsetRange range) {
         this.kind = kind;
-        this.enumKind = RustTokenId.get(kind);
+        this.enumKind = CommonRustTokenIDs.forTokenType(kind);
         this.image = image;
+        this.range = range;
     }
 
     public boolean isEof() {
-        return enumKind == EOF;
+        return enumKind == CommonRustTokenIDs.eof();
     }
 
-    public RustTokenId kind() {
+    public AntlrTokenID kind() {
         return enumKind;
     }
 
-    public RustTokenId id() {
+    public AntlrTokenID id() {
         return kind();
-    }
-
-    public RustToken specialToken() {
-        return (RustToken) specialToken;
-    }
-
-    public boolean hasSpecialToken() {
-        return specialToken != null;
-    }
-
-    public boolean hasNext() {
-        return next != null;
-    }
-
-    public RustToken next() {
-        return (RustToken) next;
-    }
-
-    public boolean hasNextSpecialToken() {
-        return hasNext() && next().hasSpecialToken();
-    }
-
-    public RustToken nextSpecialToken() {
-        return next().getEarliestSpecialToken();
-    }
-
-    public RustToken getEarliestSpecialToken() {
-        if (specialToken == null) {
-            return null;
-        }
-        Token token = this;
-        while (token.specialToken != null) {
-            token = token.specialToken;
-        }
-        return (RustToken) token;
     }
 
     @Override
@@ -85,27 +57,97 @@ public class RustToken extends Token {
         return enumKind + ": '" + image + "'";
     }
 
-    public RustToken nextTokenMaybeSpecial() {
-        if (hasNextSpecialToken()) {
-            return nextSpecialToken();
-        } else if (hasNext()) {
-            return next();
-        } else {
-            return null;
-        }
-    }
-
-    public List<RustToken> withSpecialTokens() {
-        LinkedList<RustToken> thisWithSpecialTokens = new LinkedList<>();
-        RustToken token = this;
-        do {
-            thisWithSpecialTokens.addFirst(token);
-            token = token.specialToken();
-        } while (token != null);
-        return thisWithSpecialTokens;
-    }
-
     public OffsetRange offsetRange() {
-        return new OffsetRange(absoluteBeginPosition - 1, absoluteEndPosition - 1);
+        return range;
+    }
+
+    @Override
+    public CharSequence text() {
+        return image;
+    }
+
+    @Override
+    public boolean isCustomText() {
+        return !Objects.equals(image, enumKind.literalName());
+    }
+
+    @Override
+    public int length() {
+        return range.getLength();
+    }
+
+    @Override
+    public int offset(TokenHierarchy th) {
+        return range.getStart();
+    }
+
+    @Override
+    public boolean isFlyweight() {
+        return false;
+    }
+
+    @Override
+    public PartType partType() {
+        return PartType.COMPLETE;
+    }
+
+    @Override
+    public boolean hasProperties() {
+        return false;
+    }
+
+    @Override
+    public Object getProperty(Object o) {
+        return null;
+    }
+
+    @Override
+    public String getText() {
+        return image;
+    }
+
+    @Override
+    public int getType() {
+        return kind;
+    }
+
+    @Override
+    public int getLine() {
+        return 0;
+    }
+
+    @Override
+    public int getCharPositionInLine() {
+        return 0;
+    }
+
+    @Override
+    public int getChannel() {
+        return 0;
+    }
+
+    @Override
+    public int getTokenIndex() {
+        return 0;
+    }
+
+    @Override
+    public int getStartIndex() {
+        return range.getStart();
+    }
+
+    @Override
+    public int getStopIndex() {
+        return range.getEnd() -1;
+    }
+
+    @Override
+    public TokenSource getTokenSource() {
+        return null;
+    }
+
+    @Override
+    public CharStream getInputStream() {
+        return null;
     }
 }

@@ -1,0 +1,5 @@
+User STRUCT
+ first_name FIELD
+ family_name FIELD
+ address FIELD
+ phone_num FIELD

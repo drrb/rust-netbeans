@@ -1,0 +1,4 @@
+[submodule "externals/rust-grammar"]
+	path = externals/rust-grammar
+	url = https://github.com/timboudreau/rust-grammar.git
+

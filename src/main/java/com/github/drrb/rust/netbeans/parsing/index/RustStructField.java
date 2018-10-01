@@ -38,4 +38,8 @@ public class RustStructField {
     public OffsetRange getOffsetRange() {
         return offsetRange;
     }
+
+    public String toString() {
+        return name + "@" + offsetRange.getStart() + ":" + offsetRange.getEnd();
+    }
 }

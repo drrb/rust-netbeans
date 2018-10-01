@@ -16,6 +16,8 @@
  */
 package com.github.drrb.rust.netbeans.test;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.junit.rules.TestWatcher;
@@ -38,6 +40,8 @@ public class TemporaryPreferences extends TestWatcher {
             this.preferences.removeNode();
         } catch (BackingStoreException ex) {
             throw new RuntimeException(ex);
+        } catch (IllegalStateException ex) {
+            Logger.getLogger(TemporaryPreferences.class.getName()).log(Level.INFO, "message", ex);
         }
     }
 

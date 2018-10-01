@@ -42,5 +42,4 @@ public class NetbeansRustParserTest {
     public void highlightsAcrossItems() throws Exception {
         netbeans.checkParseMessages("parse/errors/errors_in_items.rs");
     }
-
 }

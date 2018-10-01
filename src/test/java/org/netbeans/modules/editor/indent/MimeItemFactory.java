@@ -17,7 +17,7 @@
 package org.netbeans.modules.editor.indent;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrRustLanguageHierarchy;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Position;
@@ -41,7 +41,7 @@ public class MimeItemFactory {
         } catch (BadLocationException ex) {
             throw new RuntimeException(ex);
         }
-        LanguagePath languagePath = LanguagePath.get(RustTokenId.language());
+        LanguagePath languagePath = LanguagePath.get(AntlrRustLanguageHierarchy.INSTANCE.language());
         return new MimeItem(taskHandler, MimePath.get(RustLanguage.MIME_TYPE), languagePath);
     }
 

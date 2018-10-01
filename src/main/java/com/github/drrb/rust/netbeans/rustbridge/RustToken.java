@@ -16,10 +16,12 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
 import com.sun.jna.Structure;
 import static java.util.Arrays.asList;
 import java.util.List;
+import org.antlr.v4.runtime.Token;
 
 /**
  *
@@ -39,12 +41,22 @@ public class RustToken extends Structure {
     public int endChar;
     public int type;
 
-    boolean isEof() {
-        return getType() == RustTokenId.EOF;
+    public static RustToken of(Token tok) {
+        RustToken result = new RustToken();
+        result.startLine = tok.getLine();
+        result.startCol = tok.getCharPositionInLine();
+        result.type = tok.getType();
+        result.endCol = tok.getCharPositionInLine() + ((tok.getStopIndex() + 1) - tok.getStartIndex());
+        result.endLine = tok.getLine();
+        return result;
     }
 
-    public RustTokenId getType() {
-        return RustTokenId.values()[type];
+    boolean isEof() {
+        return getType() == CommonRustTokenIDs.eof();
+    }
+
+    public AntlrTokenID getType() {
+        return CommonRustTokenIDs.forTokenType(type);
     }
 
     public int length() {

@@ -16,43 +16,44 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrLexer;
 import static org.junit.Assert.assertThat;
 
-@Ignore("This is for the old native parser")
+//@Ignore("This is for the old native parser")
 public class RustLexerTest {
-    private RustLexer lexer;
+
+    private com.github.drrb.rust.antlr.RustLexer lexer;
 
     @After
     public void cleanUpLexer() {
-        lexer.release();
+        lexer.reset();
     }
 
     @Test
     public void shouldTokenizeWhitespace() {
         String input = "  \t ";
-        lexer = RustLexer.forString(input);
-
-        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 0).to(1, 5));
-        assertThat(lexer.nextToken(), isToken(EOF).from(1, 0).to(1, 5));
+        lexer = RustAntlrLexer.fromString(input);
+        lexer.setChannel(-1);
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Whitespace).from(1, 0).to(1, 4));
+//        assertThat(RustToken.of(lexer.nextToken()), isToken(-1).from(1, 0).to(1, 5));
     }
 
     @Test
     public void shouldCopeWithBadSource() throws Exception {
-        lexer = RustLexer.forString("fn main() å\n");
+        lexer = RustAntlrLexer.fromString("fn main() å\n");
         exhaustLexer();
     }
 
     @Test
     public void shouldCopeWithEmptyString() throws Exception {
-        lexer = RustLexer.forString("");
+        lexer = RustAntlrLexer.fromString("");
         exhaustLexer();
     }
 
@@ -63,32 +64,51 @@ public class RustLexerTest {
         source.append("  println!(\"hi!\");\n");
         source.append("}\n");
         source.append("\n");
-        lexer = RustLexer.forString(source.toString());
-        assertThat(lexer.nextToken(), isToken(FN).from(1, 0).to(1, 2));
-        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 2).to(1, 3));
-        assertThat(lexer.nextToken(), isToken(IDENTIFIER).from(1, 3).to(1, 7));
-        assertThat(lexer.nextToken(), isToken(LEFT_PAREN).from(1, 7).to(1, 8));
-        assertThat(lexer.nextToken(), isToken(RIGHT_PAREN).from(1, 8).to(1, 9));
-        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 9).to(1, 10));
-        assertThat(lexer.nextToken(), isToken(LEFT_BRACE).from(1, 10).to(1, 11));
-        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(1, 11).to(2, 2));
-        assertThat(lexer.nextToken(), isToken(IDENTIFIER).from(2, 2).to(2, 9));
-        assertThat(lexer.nextToken(), isToken(BANG).from(2, 9).to(2, 10));
-        assertThat(lexer.nextToken(), isToken(LEFT_PAREN).from(2, 10).to(2, 11));
-        assertThat(lexer.nextToken(), isToken(STRING_LITERAL).from(2, 11).to(2, 16));
-        assertThat(lexer.nextToken(), isToken(RIGHT_PAREN).from(2, 16).to(2, 17));
-        assertThat(lexer.nextToken(), isToken(SEMICOLON).from(2, 17).to(2, 18));
-        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(2, 18).to(3, 0));
-        assertThat(lexer.nextToken(), isToken(RIGHT_BRACE).from(3, 0).to(3, 1));
-        assertThat(lexer.nextToken(), isToken(WHITESPACE).from(3, 1).to(4, 1));
-        assertThat(lexer.nextToken(), isToken(EOF).from(3, 1).to(4, 1));
+        lexer = RustAntlrLexer.fromString(source.toString());
+        lexer.setChannel(-1);
+
+//        org.antlr.v4.runtime.Token tk;
+//        while ((tk = lexer.nextToken()).getType() != -1) {
+//            System.out.println(tk.getText() + "\t"
+//                    + CommonRustTokenIDs.forTokenType(tk.getType()).name()
+//                    + "\t" + tk.getType());
+//        }
+//
+//        lexer = RustAntlrLexer.fromString(source.toString());
+//        lexer.setChannel(-1);
+
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Fn).from(1, 0).to(1, 2));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Whitespace).from(1, 2).to(1, 3));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Ident).from(1, 3).to(1, 7));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.LeftParen).from(1, 7).to(1, 8));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.RightParen).from(1, 8).to(1, 9));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Whitespace).from(1, 9).to(1, 10));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.LeftBrace).from(1, 10).to(1, 11));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Whitespace).from(1, 11).to(1, 14));
+//        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Whitespace).from(2, 0).to(2, 2));
+
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Ident).from(2, 2).to(2, 9));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Bang).from(2, 9).to(2, 10));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.LeftParen).from(2, 10).to(2, 11));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.StringLiteral).from(2, 11).to(2, 16));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.RightParen).from(2, 16).to(2, 17));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Semicolon).from(2, 17).to(2, 18));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Whitespace).from(2, 18).to(2, 19));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.RightBrace).from(3, 0).to(3, 1));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(com.github.drrb.rust.antlr.RustLexer.Whitespace).from(3, 1).to(3, 3));
+        assertThat(RustToken.of(lexer.nextToken()), isToken(-1).from(5, 0).to(5, 0));
     }
 
     private void exhaustLexer() {
-        while (!lexer.nextToken().isEof()) { }
+        while (lexer.nextToken().getType() != -1) {
+        }
     }
 
-    private static RustTokenMatcher.Builder isToken(RustTokenId type) {
+    private static RustTokenMatcher.Builder isToken(RustToken type) {
+        return new RustTokenMatcher.Builder(type);
+    }
+
+    private static RustTokenMatcher.Builder isToken(int type) {
         return new RustTokenMatcher.Builder(type);
     }
 
@@ -96,12 +116,22 @@ public class RustLexerTest {
 
         static class Builder {
 
-            private final RustTokenId type;
+            private final int type;
             private int startLine;
             private int startCol;
 
-            public Builder(RustTokenId type) {
+            public Builder(AntlrTokenID type) {
+                this.type = type.ordinal();
+            }
+
+            public Builder(int type) {
                 this.type = type;
+            }
+
+            public Builder(RustToken token) {
+                this.type = token.type;
+                this.startLine = token.startLine;
+                this.startCol = token.startCol;
             }
 
             public Builder from(int startLine, int startCol) {
@@ -115,13 +145,13 @@ public class RustLexerTest {
             }
         }
 
-        private final RustTokenId type;
+        private final int type;
         private final int startLine;
         private final int startCol;
         private final int endLine;
         private final int endCol;
 
-        public RustTokenMatcher(RustTokenId type, int startLine, int startCol, int endLine, int endCol) {
+        public RustTokenMatcher(int type, int startLine, int startCol, int endLine, int endCol) {
             this.type = type;
             this.startLine = startLine;
             this.startCol = startCol;
@@ -131,7 +161,7 @@ public class RustLexerTest {
 
         @Override
         public boolean matchesSafely(RustToken item) {
-            return item.getType() == type
+            return item.getType() == CommonRustTokenIDs.forTokenType(type)
                     && item.startLine == startLine
                     && item.startCol == startCol
                     && item.endLine == endLine
@@ -141,7 +171,7 @@ public class RustLexerTest {
         @Override
         public void describeTo(Description description) {
             description.appendText("RustToken of type ")
-                    .appendValue(type)
+                    .appendValue(type).appendValue(" ").appendValue(CommonRustTokenIDs.forTokenType(type).name())
                     .appendText(String.format(" at %s,%s - %s,%s", startLine, startCol, endLine, endCol));
         }
     }

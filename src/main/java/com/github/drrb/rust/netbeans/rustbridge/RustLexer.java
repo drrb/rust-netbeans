@@ -16,7 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.rustbridge;
 
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
 
 /**
  *
@@ -28,7 +28,7 @@ public class RustLexer {
         @Override
         public RustToken.ByValue nextToken() {
             RustToken.ByValue token = new RustToken.ByValue();
-            token.type = RustTokenId.EOF.ordinal();
+            token.type = CommonRustTokenIDs.eof().ordinal();
             return token;
         }
 

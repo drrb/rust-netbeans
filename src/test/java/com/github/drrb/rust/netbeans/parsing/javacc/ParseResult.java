@@ -16,52 +16,80 @@
  */
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.antlr.RustBaseVisitor;
+import com.github.drrb.rust.antlr.RustParser;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
+import java.util.BitSet;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.util.Comparator.comparing;
+import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
+import org.antlr.v4.runtime.dfa.DFA;
 
 public class ParseResult extends JsonSerializable {
+
     public static class Error extends JsonSerializable {
 
-        private final RustTokenId tokenKind;
-        private final int beginLine;
-        private final int beginColumn;
-        private final int endLine;
-        private final int endColumn;
+        public final String tokenKind;
+        public final int beginLine;
+        public final int beginColumn;
 
-        public Error(RustToken unexpectedToken, String message) {
-            tokenKind = unexpectedToken.kind();
+        public Error(TokenizationResult.Token unexpectedToken, String message) {
+            tokenKind = unexpectedToken.kind;
             beginLine = unexpectedToken.beginLine;
             beginColumn = unexpectedToken.beginColumn;
-            RustToken followingToken = unexpectedToken.nextTokenMaybeSpecial();
-            if (unexpectedToken == followingToken) {
-                endLine = unexpectedToken.endLine;
-                endColumn = unexpectedToken.endColumn;
-            } else {
-                endLine = followingToken.beginLine;
-                endColumn = followingToken.beginColumn;
-            }
-        }
-
-        public Error(ParseException parseException) {
-            this((RustToken) parseException.currentToken.next, parseException.getMessage());
         }
     }
 
     public List<Error> errors = new LinkedList<>();
 
-    public ParseResult(RustParser.Result result) {
-        result.syntaxErrors().stream()
-                .sorted(byFilePosition())
-                .map(Error::new).forEach(errors::add);
+    public ParseResult(RustParser parser) {
+        parser.addErrorListener(new ANTLRErrorListener() {
+            @Override
+            public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
+                Token t = e == null ? null : e.getOffendingToken();
+                if (offendingSymbol instanceof CommonToken) {
+                    t = (CommonToken) offendingSymbol;
+                }
+                TokenizationResult.Token mdl;
+                if (t == null) {
+                    AntlrTokenID id = CommonRustTokenIDs.forLiteralName(offendingSymbol.toString());
+                    mdl = new TokenizationResult.Token(offendingSymbol.toString(), id == null ? "syntax" : id.name());
+                } else {
+                    mdl = new TokenizationResult.Token(t.getText(),
+                            CommonRustTokenIDs.forTokenType(t.getType()), t.getLine(), t.getCharPositionInLine());
+                }
+                System.out.println("SyntaxError at " + line + ":" + charPositionInLine + " with " + offendingSymbol);
+                Error err = new Error(mdl, e == null ? "syntax error" : e.getMessage());
+                errors.add(err);
+            }
+
+            @Override
+            public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
+                // do nothing
+            }
+
+            @Override
+            public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
+                // do nothing
+            }
+
+            @Override
+            public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
+                // do nothing
+            }
+        });
+        ((CommonTokenStream) parser.getTokenStream()).fill();
+        parser.crate().accept(new RustBaseVisitor());
     }
 
-    private Comparator<ParseException> byFilePosition() {
-        return comparing((ParseException e) -> e.currentToken.beginLine)
-                .thenComparing(e -> e.currentToken.beginColumn);
-    }
 }
