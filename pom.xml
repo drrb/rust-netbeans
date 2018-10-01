@@ -493,33 +493,60 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target name="copy-antlr-sources">
+                                
+                                <!-- Use symlinks for ease of development/modification - leaving copy code
+                                     below as it is more portable long-term (on Windows)
+                                -->
+                                <mkdir dir="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/"/>
+                                <mkdir dir="${project.build.directory}/generated-sources/antlr-copied/imports"/>
+                                <symlink
+                                    link="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                    resource="${project.build.directory}/../externals/rust-grammar/Rust.g4"
+                                />
+                                
+                                <symlink
+                                    link="${project.build.directory}/generated-sources/antlr-copied/imports/rust_tokens.g4"
+                                    resource="${project.build.directory}/../externals/rust-grammar/rust_tokens.g4"
+                                />
+                                
+                                <symlink
+                                    link="${project.build.directory}/generated-sources/antlr-copied/imports/xidcontinue.g4"
+                                    resource="${project.build.directory}/../externals/rust-grammar/xidcontinue.g4"
+                                />
+                                
+                                <symlink
+                                    link="${project.build.directory}/generated-sources/antlr-copied/imports/xidstart.g4"
+                                    resource="${project.build.directory}/../externals/rust-grammar/xidstart.g4"
+                                />
+                                
+                                
                                 <!-- Copy the rust grammar to the dest folder -->
-                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr"
+<!--                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr"
                                       preservelastmodified="true">
                                     <fileset dir="${project.build.directory}/../externals/rust-grammar/">
                                         <include name="Rust.g4"/>
                                     </fileset>
-                                </copy>
+                                </copy>-->
                                 
                                 <!-- Copy our additional tokens file, which redefines inline strings
                                 from the imported grammar to have meaningful names, so we get
                                 usable, stable constant names on our lexer and parser which map
                                 to token types -->
                                 
-                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
+<!--                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
                                     <fileset dir="${project.basedir}/src/main/antlr/imports/">
                                         <include name="rust_tokens.g4"/>
                                     </fileset>
-                                </copy>
+                                </copy>-->
 
                                 <!-- Copy the supplemental fragment definitions from the antlr grammar project
                                 so they can be found when generating the grammar-->
-                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
+<!--                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
                                     <fileset dir="${project.build.directory}/../externals/rust-grammar/">
                                         <include name="x*.g4"/>
                                         <include name="rust_tokens.g4"/>
                                     </fileset>
-                                </copy>
+                                </copy>-->
                                 <!-- End of Antlr fiddling -->
                                 
                                 <!-- Sigh - it appears in antrun 1.8, you cannot attach to two different
