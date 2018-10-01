@@ -17,8 +17,6 @@
 package com.github.drrb.rust.netbeans.keypress;
 
 import com.github.drrb.rust.netbeans.RustLanguage;
-import com.github.drrb.rust.netbeans.parsing.RustLexUtils;
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
 import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.lexer.TokenId;
@@ -30,7 +28,9 @@ import org.netbeans.spi.editor.typinghooks.TypedBreakInterceptor;
 import javax.swing.text.BadLocationException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrRustLexUtils;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
 
 /**
  *
@@ -48,14 +48,16 @@ public class RustBreakInterceptor implements TypedBreakInterceptor {
     @Override
     public void insert(MutableContext ctx) throws BadLocationException {
         if (cancelled.get()) return;
+        final AntlrTokenID leftBrace = CommonRustTokenIDs.leftBrace();
+        final AntlrTokenID rightBrace = CommonRustTokenIDs.rightBrace();
 
         ContextHolder context = new ContextHolder(ctx);
 
-        if (context.previousTokenKind() != LEFT_BRACE) {
+        if (context.previousTokenKind() != leftBrace) {
             return; // Only insert a close brace after an open brace
         } else if (context.nextRowIndent() > context.currentRowIndent()) {
             return; // There's already stuff in this block
-        } else if (context.nextTokenKind() == RIGHT_BRACE && context.currentRowIndent() == context.nextRowIndent()) {
+        } else if (context.nextTokenKind() == rightBrace && context.currentRowIndent() == context.nextRowIndent()) {
             return; // There's already a closing brace
         }
 
@@ -74,21 +76,21 @@ public class RustBreakInterceptor implements TypedBreakInterceptor {
     private static class ContextHolder {
 
         private final MutableContext context;
-        private final TokenSequence<RustTokenId> tokenSequence;
+        private final TokenSequence<?> tokenSequence;
         private Integer currentRowIndent;
         private Integer nextRowIndent;
 
         private ContextHolder(MutableContext context) {
             this.context = context;
-            this.tokenSequence = new RustLexUtils().getRustTokenSequence(context.getDocument(), context.getCaretOffset());
+            this.tokenSequence = new AntlrRustLexUtils().getRustTokenSequence(context.getDocument(), context.getCaretOffset());
             tokenSequence.move(context.getCaretOffset());
         }
 
-        private RustTokenId previousTokenKind() {
+        private TokenId previousTokenKind() {
             return findNonWhitespaceToken(Direction.BACKWARD);
         }
 
-        private RustTokenId nextTokenKind() {
+        private TokenId nextTokenKind() {
             return findNonWhitespaceToken(Direction.FORWARD);
         }
 
@@ -113,10 +115,10 @@ public class RustBreakInterceptor implements TypedBreakInterceptor {
             return nextRowIndent;
         }
 
-        private RustTokenId findNonWhitespaceToken(Direction direction) {
+        private TokenId findNonWhitespaceToken(Direction direction) {
             while (direction.move(tokenSequence)) {
-                RustTokenId nextTokenKind = tokenSequence.token().id();
-                if (nextTokenKind != WHITESPACE) {
+                TokenId nextTokenKind = tokenSequence.token().id();
+                if (nextTokenKind != CommonRustTokenIDs.forSymbolicName("Whitespace")) {
                     return nextTokenKind;
                 }
             }

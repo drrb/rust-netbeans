@@ -1,3 +1,9 @@
 {
-  "errors": []
+  "errors": [
+    {
+      "tokenKind": "AtSymbol",
+      "beginLine": 2,
+      "beginColumn": 4
+    }
+  ]
 }

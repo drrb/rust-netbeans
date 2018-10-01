@@ -2,75 +2,71 @@
   "tokens": [
     {
       "image": "extern",
-      "kind": "EXTERN"
+      "kind": "Extern"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "crate",
-      "kind": "CRATE"
+      "kind": "Crate"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "another_crate",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "extern",
-      "kind": "EXTERN"
+      "kind": "Extern"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "crate",
-      "kind": "CRATE"
+      "kind": "Crate"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "second_crate",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "as",
-      "kind": "AS"
+      "kind": "As"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "crate2",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
-    },
-    {
-      "image": "",
-      "kind": "EOF"
+      "kind": "Semicolon"
     }
   ]
 }

@@ -16,28 +16,30 @@
  */
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
+import static com.github.drrb.rust.netbeans.parsing.javacc.TestSrc.Dump.NO_DUMP;
 import com.github.drrb.rust.netbeans.test.junit412.Parameterized;
 import com.github.drrb.rust.netbeans.test.junit412.Parameterized.Parameters;
+import java.io.IOException;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static com.github.drrb.rust.netbeans.parsing.javacc.TestSrc.Dump.NO_DUMP;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
 public class ParseTest {
+
     // Temporarily run just one test by using this list:
-    private static final List<TestSrc> INCLUDED_SOURCES = Stream.of(
-//            "errors/errors_in_items.rs"
-    )
+    private static final List<TestSrc> INCLUDED_SOURCES = Stream.of( //            "errors/errors_in_items.rs"
+            )
             .map(Objects::toString)
             .map(Paths::get)
             .map(TestFile::get)
@@ -74,21 +76,46 @@ public class ParseTest {
     @Test
     public void testParse() throws Exception {
         ParseResult actualResult = sourceFile.parse(NO_DUMP);
-
         ExpectedParseResultFile expectedParseResultFile = sourceFile.expectedParseResultFile();
         if (!expectedParseResultFile.exists()) {
             expectedParseResultFile.createWith(actualResult);
-            fail("Expected parse result file doesn't exist: " + expectedParseResultFile + ". Creating it.");
+            fail(sourceFile.path + ": Expected parse result file doesn't exist: " + expectedParseResultFile + ". Creating it.");
         }
         ParseResult expectedResult = expectedParseResultFile.result();
         if (expectedResult.equals(actualResult)) {
             return;
         }
         throw new ComparisonFailure(
-                "Parsing " + sourceFile + " didn't produce expected result",
+                "Parsing " + sourceFile.path + " didn't produce expected result - expected\n" + expectedResult.json() + "\n"
+                + highlightErrors(actualResult),
                 expectedResult.json(),
                 actualResult.json()
         );
+    }
+
+    private String highlightErrors(ParseResult res) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        List<String> lines = sourceFile.readLines();
+        outer:
+        for (int i = 0; i < lines.size(); i++) {
+            boolean printThisLine = false;
+            for (ParseResult.Error err : res.errors) {
+                if (err.beginLine == i + 1) {
+                    printThisLine = true;
+                }
+                if (err.beginLine == i) {
+                    sb.append(lines.get(i)).append('\n');
+                    char[] offset = new char[err.beginColumn];
+                    Arrays.fill(offset, ' ');
+                    sb.append(offset).append('^').append('\n');
+                    continue outer;
+                }
+            }
+            if (printThisLine) {
+                sb.append(lines.get(i)).append('\n');
+            }
+        }
+        return sb.toString();
     }
 
 }

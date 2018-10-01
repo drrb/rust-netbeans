@@ -994,6 +994,9 @@ public abstract class CslTestBase extends NbTestCase {
                 ParserResult pr = (ParserResult) r;
                 List<? extends Error> diagnostics = pr.getDiagnostics();
                 String annotatedSource = annotateErrors(diagnostics);
+                System.out.println("\nDIAGNOSTICS FOUND IN " + relFilePath + ":\n");
+                System.out.println(annotatedSource);
+                System.out.println("---------------------------");
                 assertDescriptionMatches(relFilePath, annotatedSource, false, ".errors");
             }
         });

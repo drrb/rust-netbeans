@@ -16,17 +16,18 @@
  */
 package com.github.drrb.rust.netbeans.parsing;
 
+import com.github.drrb.rust.antlr.RustLexer;
 import com.github.drrb.rust.netbeans.test.NetbeansWithRust;
 import junit.framework.AssertionFailedError;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.lib.lexer.test.LexerTestUtilities;
 
-import static com.github.drrb.rust.netbeans.parsing.RustTokenId.*;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -36,9 +37,23 @@ public class NetbeansRustLexerTest {
 
     private final NetbeansWithRust netbeans = new NetbeansWithRust();
 
+    static final AntlrTokenID FN = CommonRustTokenIDs.function();
+    static final AntlrTokenID WHITESPACE = CommonRustTokenIDs.whitespaceTokenID();
+    static final AntlrTokenID IDENTIFIER = CommonRustTokenIDs.identifierTokenID();
+    static final AntlrTokenID STRING_LITERAL = CommonRustTokenIDs.stringLiteral();
+    static final AntlrTokenID LEFT_PAREN = CommonRustTokenIDs.leftParen();
+    static final AntlrTokenID RIGHT_PAREN = CommonRustTokenIDs.rightParen();
+    static final AntlrTokenID LEFT_BRACE = CommonRustTokenIDs.leftBrace();
+    static final AntlrTokenID BANG = CommonRustTokenIDs.bang();
+    static final AntlrTokenID RIGHT_BRACE = CommonRustTokenIDs.rightBrace();
+    static final AntlrTokenID SEMICOLON = CommonRustTokenIDs.semicolon();
+    static final AntlrTokenID DOUBLE_QUOTE = CommonRustTokenIDs.forSymbol('"');
+    static final AntlrTokenID BLOCK_COMMENT_PREFIX = CommonRustTokenIDs.forTokenType(RustLexer.BlockCommentPrefix);
+    static final AntlrTokenID EOF = CommonRustTokenIDs.eof();
+
     @Test
     public void shouldParseSource() {
-        TokenSequence<RustTokenId> ts = netbeans.tokenize("fn main() { }");
+        TokenSequence<AntlrTokenID> ts = netbeans.tokenize("fn main() { }");
         assertThat(ts, hasNextToken(FN, 0, "fn"));
         assertThat(ts, hasNextToken(WHITESPACE, 2, " "));
         assertThat(ts, hasNextToken(IDENTIFIER, 3, "main"));
@@ -58,7 +73,7 @@ public class NetbeansRustLexerTest {
         "  println!(\"hi!\");\n",
         "}\n",
         "\n");
-        TokenSequence<RustTokenId> ts = netbeans.tokenize(source);
+        TokenSequence<AntlrTokenID> ts = netbeans.tokenize(source);
         assertThat(ts, hasNextToken(FN, 0, "fn"));
         assertThat(ts, hasNextToken(WHITESPACE, 2, " "));
         assertThat(ts, hasNextToken(IDENTIFIER, 3, "main"));
@@ -76,34 +91,36 @@ public class NetbeansRustLexerTest {
         assertThat(ts, hasNextToken(WHITESPACE, 30, "\n"));
         assertThat(ts, hasNextToken(RIGHT_BRACE, 31, "}"));
         assertThat(ts, hasNextToken(WHITESPACE, 32, "\n\n"));
-        //assertThat(ts, hasNoNextToken());
+        assertThat(ts, hasNoNextToken());
     }
 
     @Test
     public void shouldCopeWithEmptyString() {
-        TokenSequence<RustTokenId> ts =  netbeans.tokenize("");
+        TokenSequence<AntlrTokenID> ts =  netbeans.tokenize("");
         assertThat(ts, hasNoNextToken());
     }
 
     @Test
     public void shouldCopeWithAHalfFinishedToken() {
-        TokenSequence<RustTokenId> ts =  netbeans.tokenize(" /*\n");
-        assertThat(ts, hasNextToken(GARBAGE, 0, " /*\n"));
+        TokenSequence<AntlrTokenID> ts =  netbeans.tokenize(" /*\n");
+        assertThat(ts, hasNextToken(WHITESPACE, 0, " "));
+        assertThat(ts, hasNextToken(BLOCK_COMMENT_PREFIX, 1, "/*"));
+        assertThat(ts, hasNextToken(WHITESPACE, 3, "\n"));
         assertThat(ts, hasNoNextToken());
     }
 
     @Test
-    @Ignore("panics")
     public void shouldCopeWithAHalfFinishedTokenAtTheStartOfTheSource() {
-        TokenSequence<RustTokenId> ts =  netbeans.tokenize("\"\n");
-        assertThat(ts, hasNextToken(GARBAGE, 0, "\"\n"));
+        TokenSequence<AntlrTokenID> ts =  netbeans.tokenize("\"\n");
+        assertThat(ts, hasNextToken(DOUBLE_QUOTE, 0, "\""));
+        assertThat(ts, hasNextToken(WHITESPACE, 1, "\n"));
         assertThat(ts, hasNoNextToken());
     }
 
-    private Matcher<TokenSequence<RustTokenId>> hasNoNextToken() {
-        return new TypeSafeDiagnosingMatcher<TokenSequence<RustTokenId>>() {
+    private Matcher<TokenSequence<AntlrTokenID>> hasNoNextToken() {
+        return new TypeSafeDiagnosingMatcher<TokenSequence<AntlrTokenID>>() {
             @Override
-            protected boolean matchesSafely(TokenSequence<RustTokenId> actual, Description mismatchDescription) {
+            protected boolean matchesSafely(TokenSequence<AntlrTokenID> actual, Description mismatchDescription) {
                 if (actual.moveNext()) {
                     mismatchDescription.appendText("TokenSequence with next token ")
                         .appendValue(actual.token().id())
@@ -123,14 +140,14 @@ public class NetbeansRustLexerTest {
         };
     }
 
-    private Matcher<TokenSequence<RustTokenId>> hasNextToken(
-            final RustTokenId expectedId,
+    private Matcher<TokenSequence<AntlrTokenID>> hasNextToken(
+            final AntlrTokenID expectedId,
             final int expectedOffset,
             final String expectedText
     ) {
-        return new TypeSafeDiagnosingMatcher<TokenSequence<RustTokenId>>() {
+        return new TypeSafeDiagnosingMatcher<TokenSequence<AntlrTokenID>>() {
             @Override
-            protected boolean matchesSafely(TokenSequence<RustTokenId> actual, Description mismatchDescription) {
+            protected boolean matchesSafely(TokenSequence<AntlrTokenID> actual, Description mismatchDescription) {
                 if (!actual.moveNext()) {
                     mismatchDescription.appendText("TokenSequence with no next token");
                     return false;
@@ -138,6 +155,7 @@ public class NetbeansRustLexerTest {
                 try {
                     LexerTestUtilities.assertTokenEquals("Token index[" + actual.index() + "]", actual, expectedId, expectedText, expectedOffset);
                 } catch (AssertionFailedError failure) {
+                    failure.printStackTrace();
                     mismatchDescription.appendText(failure.getMessage());
                     return false;
                 }

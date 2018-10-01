@@ -20,13 +20,13 @@ import com.github.drrb.rust.netbeans.RustLanguage;
 import com.github.drrb.rust.netbeans.cargo.CargoConfig;
 import com.github.drrb.rust.netbeans.cargo.Crate;
 import com.github.drrb.rust.netbeans.highlighting.RustCompileErrorHighlighter;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrParserResult;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrStructureScanner;
 import com.github.drrb.rust.netbeans.project.RustProject;
 import com.github.drrb.rust.netbeans.sources.RustSourceGroup;
 import org.junit.ComparisonFailure;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.netbeans.api.java.classpath.GlobalPathRegistry;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
@@ -61,21 +61,30 @@ import org.openide.text.PositionRef;
 import javax.swing.*;
 import javax.swing.text.Document;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.nio.file.Path;
 import java.util.*;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.file.Files;
 import static java.util.Collections.singleton;
-import static java.util.stream.Collectors.toMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.LogManager;
+import static junit.framework.Assert.assertNotNull;
+import org.netbeans.modules.csl.api.StructureItem;
+import org.netbeans.modules.csl.spi.ParserResult;
+import org.openide.util.Exceptions;
 
 /**
  *
  */
 public class NetbeansWithRust extends CslTestHelper {
-
 
     @Retention(RUNTIME)
     public @interface Project {
@@ -88,9 +97,85 @@ public class NetbeansWithRust extends CslTestHelper {
 
     private RustProject project;
 
+    void rejiggerLoggers() {
+        LogManager mgr = LogManager.getLogManager();
+        try {
+            mgr.readConfiguration(new ByteArrayInputStream("handlers=java.util.logging.ConsoleHandler\n.level=ALL\n".getBytes(UTF_8)));
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (SecurityException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        Logger.getLogger("org.netbeans.modules.parsing.api.Snapshot").setLevel(Level.ALL);
+        Logger.getLogger("org.netbeans.modules.parsing.impl.RunWhenScanFinishedSupport").setLevel(Level.ALL);
+        Logger.getLogger("org.netbeans.modules.parsing.impl.TaskProcessor").setLevel(Level.ALL);
+        Logger.getLogger("org.netbeans.modules.parsing.impl.indexing.RepositoryUpdater").setLevel(Level.ALL);
+    }
+
+    private static final String START = Long.toString(System.currentTimeMillis() + System.nanoTime(), 36);
+    private long stm = -1;
+    @Override
+    public File getWorkDir() {
+        rejiggerLoggers();
+        // Enable parallel tests by ensuring they don't stomp on the same working dir
+        File tmp = new File(System.getProperty("java.io.tmpdir"));
+        String defaultForkNumber = Long.toString(stm != -1
+                ? stm : (stm = System.currentTimeMillis() + System.nanoTime()), 36);
+        String forkNumber = System.getProperty("surefire.forknumber", defaultForkNumber);
+        File result = new File(tmp, START + "-" + forkNumber);
+        try {
+            synchronized(this) {
+                if (!result.exists()) {
+                    assertTrue("Could not create " + result, result.mkdirs());
+                }
+            }
+            result = result.getCanonicalFile();
+            return result;
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed creating work dir " + result, ex);
+        }
+    }
+
+    public String getWorkDirPath() {
+        return getWorkDir().getAbsolutePath();
+    }
+
     public RustProject getProject() {
         assertNotNull("add @Project to enable getProject()", project);
         return project;
+    }
+
+    public void checkStructure(final String relFilePath) throws Exception {
+        String structFile = relFilePath + ".struct";
+        File structureDefFile = getDataFile(structFile);
+        assertNotNull("Expected structure file " + structFile + " not returned", structureDefFile);
+        assertTrue("Expected structure file " + structFile + " doesn't exist", structureDefFile.exists());
+        String expectedStructure = new String(Files.readAllBytes(structureDefFile.toPath()), UTF_8);
+        assertFalse("Structure file " + structFile + " is empty",
+                expectedStructure.trim().isEmpty());
+        checkStructure(relFilePath, Structure.fromString(expectedStructure));
+    }
+
+    public void checkStructure(final String relFilePath, Structure structure) throws Exception {
+        Source testSource = getTestSource(getTestFile(relFilePath));
+
+        UserTask task = new UserTask() {
+            public @Override void run(ResultIterator resultIterator) throws Exception {
+                Parser.Result r = resultIterator.getParserResult();
+                assertTrue(r instanceof ParserResult);
+                ParserResult pr = (ParserResult) r;
+
+                RustAntlrStructureScanner scanner = new RustAntlrStructureScanner();
+                List<? extends StructureItem> structureItems = scanner.scan(pr);
+                Structure found = new Structure(structureItems);
+                assertEquals("Detected structure does not match structure items:\n" 
+                        + structureItems + " parsing " + relFilePath + "\n",
+                        structure, found);
+            }
+        };
+        assertFalse(ParserManager.isParsing());
+        ParserManager.parse(Collections.singleton(testSource), task);
     }
 
     @Override
@@ -157,6 +242,23 @@ public class NetbeansWithRust extends CslTestHelper {
         return ancestorPath.relativize(path).toString().replace('\\', '/');
     }
 
+    public void parse(File file, ParseResultReceiver c) throws Exception {
+        FileObject fo = FileUtil.toFileObject(file);
+        Source source = Source.create(fo);
+        ParserManager.parse(singleton(source), new UserTask(){
+            public @Override
+            void run(ResultIterator resultIterator) throws Exception {
+                RustAntlrParserResult parseResult = (RustAntlrParserResult) resultIterator.getParserResult();
+                assertNotNull(parseResult);
+                c.accept(parseResult);
+            }
+        });
+    }
+
+    public interface ParseResultReceiver {
+        public void accept(RustAntlrParserResult result) throws Exception;
+    }
+
     public void checkCompileErrors(final String relativeProjectPath, String relativeSourceFilePath) throws Exception {
         RustProject project = getTestProject(relativeProjectPath);
         FileObject sourceFile = project.getProjectDirectory().getFileObject(relativeSourceFilePath);
@@ -165,7 +267,7 @@ public class NetbeansWithRust extends CslTestHelper {
         ParserManager.parse(singleton(source), new UserTask() {
             public @Override
             void run(ResultIterator resultIterator) throws Exception {
-                NetbeansRustParser.NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) resultIterator.getParserResult();
+                RustAntlrParserResult parseResult = (RustAntlrParserResult) resultIterator.getParserResult();
                 assertNotNull(parseResult);
 
                 TestableRustCompileErrorHighlighter highlightingTask = new TestableRustCompileErrorHighlighter();
@@ -310,6 +412,7 @@ public class NetbeansWithRust extends CslTestHelper {
                     TestIndexFactoryImpl.TestIndexImpl tii = tifi.getTestIndex(context.getIndexFolder());
                     if (tii != null) {
                         List<TestIndexFactoryImpl.TestIndexDocumentImpl> documents = tii.documents.get(indexable.getRelativePath());
+                        assertNotNull("Got null documents returned for " + indexable.getRelativePath() + " in " + tii.documents, documents);
                         if (list != null) {
                             list.addAll(documents);
                         }

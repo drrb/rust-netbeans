@@ -16,7 +16,8 @@
  */
 package com.github.drrb.rust.netbeans.parsing.javacc;
 
-import com.github.drrb.rust.netbeans.parsing.RustTokenId;
+import com.github.drrb.rust.netbeans.parsing.antlr.AntlrTokenID;
+import com.github.drrb.rust.netbeans.parsing.antlr.CommonRustTokenIDs;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,25 +29,32 @@ import java.util.List;
 public class TokenizationResult extends JsonSerializable {
     public static class Token {
         public String image;
-        public RustTokenId kind;
-        private transient Integer beginLine;
-        private transient Integer beginColumn;
+        public String kind;
+        transient Integer beginLine;
+        transient Integer beginColumn;
 
         public Token() {
-            this(null, null);
         }
 
-        public Token(RustToken token) {
-            this(token.image, token.kind(), token.beginLine, token.beginColumn);
+        public Token(String image, String kind) {
+            this.image = image;
+            this.kind = kind;
         }
 
-        public Token(String image, RustTokenId kind) {
+        public Token(String image, String kind, int beginLine, int beginColumn) {
+            this.image = image;
+            this.kind = kind;
+            this.beginLine = beginLine;
+            this.beginColumn = beginColumn;
+        }
+
+        public Token(String image, AntlrTokenID kind) {
             this(image, kind, null, null);
         }
 
-        public Token(String image, RustTokenId kind, Integer beginLine, Integer beginColumn) {
+        public Token(String image, AntlrTokenID kind, Integer beginLine, Integer beginColumn) {
             this.image = image;
-            this.kind = kind;
+            this.kind = kind.name();
             this.beginLine = beginLine;
             this.beginColumn = beginColumn;
         }
@@ -71,7 +79,7 @@ public class TokenizationResult extends JsonSerializable {
         }
 
         public boolean isGarbage() {
-            return kind == RustTokenId.GARBAGE;
+            return CommonRustTokenIDs.eof().name().equals(kind);
         }
     }
 

@@ -16,8 +16,7 @@
  */
 package com.github.drrb.rust.netbeans.formatting;
 
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser;
-import com.github.drrb.rust.netbeans.parsing.NetbeansRustParser.NetbeansRustParserResult;
+import com.github.drrb.rust.netbeans.parsing.antlr.RustAntlrParserResult;
 import static java.lang.Character.isWhitespace;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -35,7 +34,7 @@ public class RustFormatter implements Formatter {
 
     @Override
     public void reformat(Context context, ParserResult compilationInfo) {
-        NetbeansRustParserResult parseResult = (NetbeansRustParser.NetbeansRustParserResult) compilationInfo;
+        RustAntlrParserResult parseResult = (RustAntlrParserResult) compilationInfo;
         final BaseDocument document = (BaseDocument) context.document();
         final RustDocumentFormatter formatter = new RustDocumentFormatter(this, parseResult, document, context);
         document.runAtomic(() -> {

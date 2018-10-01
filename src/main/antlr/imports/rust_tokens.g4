@@ -1,0 +1,121 @@
+grammar rust_tokens;
+import xidstart, xidcontinue;
+
+As: 'as';
+Auto: 'auto';
+Box: 'box';
+Break: 'break';
+Crate: 'crate';
+Const: 'const';
+Continue: 'continue';
+Default: 'default';
+Else: 'else';
+Enum: 'enum';
+Extern: 'extern';
+False: 'false';
+For: 'for';
+Let: 'let';
+Loop: 'loop';
+If: 'if';
+Match: 'match';
+Mod: 'mod';
+Move: 'move';
+Pub: 'pub';
+Ref: 'ref';
+Return: 'return';
+Semicolon: ';';
+Super: 'super';
+Static: 'static';
+Struct: 'struct';
+Self: 'self';
+SelfCaps: 'Self';
+True: 'true';
+Type: 'type';
+Trait: 'trait';
+Impl: 'impl';
+Union: 'union';
+Unsafe: 'unsafe';
+Use: 'use';
+Where: 'where';
+While: 'while';
+I32: 'i32';
+I64: 'i64';
+F32: 'f32';
+F64: 'f64';
+Mut: 'mut';
+AttrPrefix: '#[';
+
+AssignShiftLeft: '<<=';
+AssignShiftRight: '>>=';
+ByteLiteralPrefix: 'b\'';
+ByteStringPrefix: 'b"';
+TripleDot: '...';
+InnerAttrPrefix: '#![';
+
+Fn: 'fn';
+In: 'in';
+
+HexLiteralPrefix: '0x';
+OctalLiteralPrefix: '0o';
+BitsLiteralPrefix: '0b';
+BlockCommentPrefix: '/*';
+LineCommentPrefix: '//';
+
+DoubleAmpersand: '&&';
+DoubleColon: '::';
+DoubleEquals: '==';
+DoublePipe: '||';
+DoubleBackslash: '\\\\';
+FatArrow: '->';
+EqArrow: '=>';
+NotEquals: '!=';
+LessThanOrEquals: '<=';
+GreaterThanOrEquals: '>=';
+
+AssignMultiply: '*=';
+AssignDivide: '/=';
+AssignMod: '%=';
+AssignPlus: '+=';
+AssignMinus: '-=';
+AssignAnd: '&=';
+AssignXor: '^=';
+AssignOr: '|=';
+
+
+Newline: '\n';
+CarriageReturn: '\r';
+
+Ampersand: '&';
+Quote: '"';
+SingleQuote: '\'';
+Backslash: '\\';
+Bang: '!';
+Colon: ':';
+Comma: ',';
+Dot: '.';
+DotDot: '..';
+LeftParen: '(';
+RightParen: ')';
+LeftBrace: '{';
+RightBrace: '}';
+LeftBracket: '[';
+RightBracket: ']';
+Equals: '=';
+Percent: '%';
+LeftAngleBracket: '<';
+RightAngleBracket: '>';
+Hash: '#';
+Plus: '+';
+Minus: '-';
+Slash: '/';
+Asterisk: '*';
+Underscore: '_';
+QuestionMark: '?';
+AtSymbol: '@';
+Pipe: '|';
+Circumflex: '^';
+Space: ' ';
+
+Ident: IDENT;
+
+fragment IDENT: XID_Start XID_Continue*;

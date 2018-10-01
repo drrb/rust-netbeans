@@ -1,3 +1,5 @@
+/tmp/rust/
+/tmp/rust-sources.zip
 /target/
 .not-ci
 .headless
@@ -11,3 +13,4 @@ Vagrantfile
 /build
 /cluster-path
 nb-configuration.xml
+/nbproject/

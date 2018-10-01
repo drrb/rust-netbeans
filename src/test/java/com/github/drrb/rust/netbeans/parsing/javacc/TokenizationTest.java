@@ -77,7 +77,7 @@ public class TokenizationTest {
             return;
         }
         throw new ComparisonFailure(
-                "Tokenizing " + sourceFile + " didn't produce expected tokens",
+                "Tokenizing " + sourceFile.path + " didn't produce expected tokens",
                 expectedResult.json(),
                 actualResult.json()
         );

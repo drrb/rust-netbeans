@@ -18,6 +18,7 @@ package com.github.drrb.rust.netbeans.parsing;
 
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
+import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.csl.api.OffsetRange;
 
@@ -26,16 +27,16 @@ import org.netbeans.modules.csl.api.OffsetRange;
  */
 public class OffsetRustToken {
 
-    public static OffsetRustToken atCurrentLocation(TokenSequence<RustTokenId> tokenSequence) {
+    public static OffsetRustToken atCurrentLocation(TokenSequence<?> tokenSequence) {
         return new OffsetRustToken(tokenSequence.offsetToken());
     }
-    private final Token<RustTokenId> token;
+    private final Token<?> token;
 
-    private OffsetRustToken(Token<RustTokenId> offsetToken) {
+    private OffsetRustToken(Token<?> offsetToken) {
         this.token = offsetToken;
     }
 
-    public RustTokenId id() {
+    public TokenId id() {
         return token.id();
     }
 

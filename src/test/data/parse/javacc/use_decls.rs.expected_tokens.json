@@ -2,619 +2,615 @@
   "tokens": [
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_a",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_a",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "as",
-      "kind": "AS"
+      "kind": "As"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "moda",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_a",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "submodule",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "SomeType",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_a",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "submodule",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "OtherType",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "as",
-      "kind": "AS"
+      "kind": "As"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "otype",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_a",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "submodule2",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "*",
-      "kind": "STAR"
+      "kind": "Asterisk"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_a",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "submodule3",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "Type1",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ",",
-      "kind": "COMMA"
+      "kind": "Comma"
     },
     {
       "image": "Type2",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ",",
-      "kind": "COMMA"
+      "kind": "Comma"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "Type3",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "self",
-      "kind": "SELF"
+      "kind": "Self"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "my_submodule",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "*",
-      "kind": "STAR"
+      "kind": "Asterisk"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_b",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_b",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "as",
-      "kind": "AS"
+      "kind": "As"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "modb",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_b",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "submodule",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "SomeType",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_b",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "submodule",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "OtherType",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "as",
-      "kind": "AS"
+      "kind": "As"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "otype2",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_b",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "submodule2",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "*",
-      "kind": "STAR"
+      "kind": "Asterisk"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "module_b",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "submodule3",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "{",
-      "kind": "LEFT_BRACE"
+      "kind": "LeftBrace"
     },
     {
       "image": "Type1",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ",",
-      "kind": "COMMA"
+      "kind": "Comma"
     },
     {
       "image": "Type2",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": ",",
-      "kind": "COMMA"
+      "kind": "Comma"
     },
     {
       "image": "Type3",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "}",
-      "kind": "RIGHT_BRACE"
+      "kind": "RightBrace"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "pub",
-      "kind": "PUB"
+      "kind": "Pub"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "use",
-      "kind": "USE"
+      "kind": "Use"
     },
     {
       "image": " ",
-      "kind": "WHITESPACE"
+      "kind": "Whitespace"
     },
     {
       "image": "self",
-      "kind": "SELF"
+      "kind": "Self"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "my_submodule2",
-      "kind": "IDENTIFIER"
+      "kind": "Ident"
     },
     {
       "image": "::",
-      "kind": "DOUBLE_COLON"
+      "kind": "DoubleColon"
     },
     {
       "image": "*",
-      "kind": "STAR"
+      "kind": "Asterisk"
     },
     {
       "image": ";",
-      "kind": "SEMICOLON"
+      "kind": "Semicolon"
     },
     {
       "image": "\n\n",
-      "kind": "WHITESPACE"
-    },
-    {
-      "image": "",
-      "kind": "EOF"
+      "kind": "Whitespace"
     }
   ]
 }

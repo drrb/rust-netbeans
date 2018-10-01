@@ -154,6 +154,12 @@
             <artifactId>org-openide-util-ui</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+        <!-- Parsing -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.7.1</version>
+        </dependency>
 
         <!-- For Indenting Task -->
         <dependency>
@@ -319,7 +325,7 @@
             <artifactId>guice</artifactId>
             <version>3.0</version>
         </dependency>
-        <!-- Configures the module system at runtime to treat this module 
+        <!-- Configures the module system at runtime to treat this module
              as a friend module of gsf's testing infrastructure.  See
              Installer.
         -->
@@ -479,6 +485,207 @@
             </plugin>
 
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>download-rust-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <target name="download-rust-sources">
+                                    <echo>Downloading Rust sources to ${basedir}/tmp/rust-sources.zip (may take a while)</echo>
+                                    <mkdir dir="${basedir}/tmp"/>
+                                    <get src="https://api.github.com/repos/rust-lang/rust/zipball/release-0.7"
+                                         dest="${basedir}/tmp/rust-sources.zip"
+                                         tryGzipEncoding="true"
+                                         skipexisting="true"
+                                         verbose="true"/>
+                                    <copy todir="${basedir}/tmp/rust">
+                                        <zipfileset src="${basedir}/tmp/rust-sources.tar">
+                                            <patternset>
+                                                <include name="**/*.rs"/>
+                                            </patternset>
+                                        </zipfileset>
+                                        <flattenmapper/>
+                                    </copy>
+                                </target>
+                            </tasks>
+                            <goals>
+                                <goal>download-rust-sources</goal>
+                            </goals>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-antlr-grammar</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target name="copy-antlr-sources">
+                                <!-- Copy the rust grammar to the dest folder -->
+                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr"
+                                      preservelastmodified="true">
+                                    <fileset dir="${project.build.directory}/../externals/rust-grammar/">
+                                        <include name="Rust.g4"/>
+                                    </fileset>
+                                </copy>
+                                <!-- Copy our additional tokens file, which redefines inline strings
+                                from the imported grammar to have meaningful names, so we get
+                                usable, stable constant names on our lexer and parser which map
+                                to token types -->
+                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
+                                    <fileset dir="${project.basedir}/src/main/antlr/imports/">
+                                        <include name="rust_tokens.g4"/>
+                                    </fileset>
+                                </copy>
+                                <!-- Perform some regex magic to generate a properties file with substitutions
+                                from the tokens file, so there is a single source of truth for the
+                                token names we are replacing -->
+                                <copy
+                                    file="${project.basedir}/src/main/antlr/imports/rust_tokens.g4"
+                                    tofile="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                    overwrite="true" encoding="UTF-8" preserveLastModified="true">
+                                    <filterchain>
+                                        <headfilter skip="2" lines="-1"/>
+                                        <tokenfilter>
+                                            <containsregex
+                                                pattern="(\S+?)\s*?:\s*?'(\S+)'\s*;"
+                                                flags="gm"
+                                                byline="true"
+                                                replace="\\\'\2\\\':\1"/>
+                                        </tokenfilter>
+                                    </filterchain>
+                                </copy>
+
+                                <!-- Colon and equals need further escaping that we can't do in properties
+                                substitution -->
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="'::'" value="'\:\:'"/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="='" value="\='"/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="':'" value="'\:'"/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="'=\='" value="'\=\='"/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="'=>'" value="'\=>'"/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="'\\'" value="'\\\\'"/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="'\n'" value="'\\n'"/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="'\r'" value="'\\r'"/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"
+                                         token="'\'" value="'\\'"/>
+
+                                <!-- Replace silly rule name -->
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         token="CashMoney" value="DollarSign"/>
+
+                                <!-- Spell out Literal in rule names (see "bug:" comment at end of original grammar) -->
+                                <replaceregexp file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                               match="(\w+)Lit([:\s\W\n])"
+                                               replace="\1Literal\2"
+                                               flags="sg"
+                                               byline="false"/>
+
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         token="'b\''" value="ByteLiteralPrefix"/>
+
+                                <!-- Use our generated properties file to replace occurences of
+                                literal tokens in rust_tokens.g4 with their named equivalents -->
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         replacefilterfile="${project.build.directory}/generated-sources/antlr-copied/imports/replacements.properties"/>
+
+                                <!-- the original grammar skips whitespace tokens, but we need
+                                them in NetBeans lexer -->
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         token=' -> skip' value=' -> channel(1)'/>
+
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         token='import xidstart, xidcontinue;' value='import rust_tokens;'/>
+                                
+                                <!-- The ident rule is moved down into rust_tokens -->
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         token='fragment IDENT:' value=''/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         token='    XID_Start XID_Continue*;' value=''/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         token='Ident:' value=''/>
+                                <replace file="${project.build.directory}/generated-sources/antlr-copied/com/github/drrb/rust/antlr/Rust.g4"
+                                         token='    IDENT;' value=''/>
+                                
+
+                                <!-- Copy the supplemental fragment definitions from the antlr grammar project
+                                so they can be found when generating the grammar-->
+                                <copy todir="${project.build.directory}/generated-sources/antlr-copied/imports" preservelastmodified="true">
+                                    <fileset dir="${project.build.directory}/../externals/rust-grammar/">
+                                        <include name="x*.g4"/>
+                                    </fileset>
+                                </copy>
+                                <!-- End of Antlr fiddling -->
+                                
+                                <!-- Sigh - it appears in antrun 1.8, you cannot attach to two different
+                                     build phases in a single ant build.  So, while this ought to be attached
+                                     to the generate-test-sources phase, but we do it here.  Cheap except the
+                                     first time.
+                                -->
+                                <available file="${basedir}/tmp/rust" property="hasRust"/>
+                                <echo>Downloading Rust sources to ${basedir}/tmp/rust-sources.zip if not present</echo>
+                                <mkdir dir="${basedir}/tmp"/>
+                                <get src="https://api.github.com/repos/rust-lang/rust/zipball/release-0.7"
+                                         dest="${basedir}/tmp/rust-sources.zip"
+                                         skipexisting="true"
+                                         verbose="true"/>
+                                <copy todir="${basedir}/tmp/rust"
+                                         outputencoding="UTF-8"
+                                         verbose="true"
+                                    >
+                                    <zipfileset src="${basedir}/tmp/rust-sources.zip">
+                                        <patternset>
+                                            <include name="**/*.rs"/>
+                                            <exclude name="**/*-fail/**"/>
+                                        </patternset>
+                                    </zipfileset>
+                                    <flattenmapper/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.7.1</version>
+                <configuration>
+                    <sourceDirectory>${project.build.directory}/generated-sources/antlr-copied</sourceDirectory>
+                    <!--<includes>com/github/drrb/rust/antlr/Rust.g4</includes>-->
+                    <libDirectory>${project.build.directory}/generated-sources/antlr-copied/imports</libDirectory>
+                    <!--<includes>**/*.g4</includes>-->
+                    <visitor>true</visitor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <visitor>true</visitor>
+                            <listener>true</listener>
+                            <options>
+                                <language>Java</language>
+                            </options>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <!-- NetBeans 7.4+ requires JDK 7 -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -490,50 +697,6 @@
                     <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>javacc-maven-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <id>generate-parser</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>jjtree-javacc</goal>
-                            <goal>jjdoc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.java.dev.javacc</groupId>
-                        <artifactId>javacc</artifactId>
-                        <version>7.0.2</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.5.0</version>
-                <executions>
-                    <execution>
-                        <id>map-tokens</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>ruby</executable>
-                            <arguments>
-                                <argument>src/scripts/generate-rust-token-kind-enum</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
 
             <!-- Compile and use our build addon that compiles the Rust code -->
             <plugin>
@@ -582,13 +745,36 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!--
-                         java.awt.headless=true: Stop tests hijacking UI on development machine
-                         jna.nosys=true: Don't try to load JNA from the host system, use our dependency instead (needed for Appveyor, which has an old JNA on it)
-                         noverify: Fix for JDK bug with PowerMock
-                     -->
+                        java.awt.headless=true: Stop tests hijacking UI on development machine
+                        jna.nosys=true: Don't try to load JNA from the host system, use our dependency instead (needed for Appveyor, which has an old JNA on it)
+                        noverify: Fix for JDK bug with PowerMock
+                    -->
                     <argLine>-Djava.awt.headless=true -Djna.nosys=true -noverify</argLine>
-                    <forkCount>1</forkCount>
+                    <!-- Force Maven to run tests in-process -->
+                    <!--<fork>never</fork>-->
+                    <!-- Usefile disabled forces output to stdout / stderr in real time -
+                         Useful for development; turn off for continuous builds.
+                    -->
+                    <useFile>false</useFile>
+                    <forkCount>8</forkCount>
                     <reuseForks>false</reuseForks>
+                    <!--<parallel>methods</parallel>-->
+                    <!--<threadCount>1</threadCount>-->
+                    <!--<threadCountMethods>1</threadCountMethods>-->
+                    <!-- Ensure Maven doesn't hide the actually useful part of the stack
+                         trace, which it frequently does in the case a test errors.
+                    -->
+                    <trimStackTrace>false</trimStackTrace>
+                    <!-- Turn on logging for a bunch of stuff -->
+                    <systemProperties>
+                        <org.netbeans.modules.parsing.level>100</org.netbeans.modules.parsing.level>
+                        <org.netbeans.modules.parsing.api.Snapshot>100</org.netbeans.modules.parsing.api.Snapshot>
+                        <org.netbeans.modules.parsing.impl.RunWhenScanFinishedSupport.level>100</org.netbeans.modules.parsing.impl.RunWhenScanFinishedSupport.level>
+                        <org.netbeans.modules.parsing.impl.TaskProcessor.level>100</org.netbeans.modules.parsing.impl.TaskProcessor.level>
+                        <org.netbeans.modules.parsing.impl.indexing.RepositoryUpdater.level>100</org.netbeans.modules.parsing.impl.indexing.RepositoryUpdater.level>
+                        <netbeans.logger.console>true</netbeans.logger.console>
+                        <unit.test>true</unit.test>
+                    </systemProperties>
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
