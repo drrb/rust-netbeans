@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 
-    Copyright (C) 2015 drrb
+    Copyright (C) 2017 drrb
 
     This program is free software: you can redistribute it and/or modify it under
     the terms of the GNU General Public License as published by the Free Software
@@ -20,12 +20,17 @@
 <license-lookup xmlns="https://source.jasig.org/schemas/maven-notice-plugin/license-lookup" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://source.jasig.org/schemas/maven-notice-plugin/license-lookup https://source.jasig.org/schemas/maven-notice-plugin/license-lookup/license-lookup-v1.0.xsd">
     <artifact>
         <groupId>org.netbeans.api</groupId>
-        <artifactId>org-jdesktop-layout</artifactId>
+        <artifactId>org-apache-xml-resolver</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-api-annotations-common</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-java</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
@@ -45,12 +50,37 @@
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-visual</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-xml</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-core-multiview</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-libs-javacapi</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-libs-junit4</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-libs-lucene</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-classfile</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
@@ -66,6 +96,11 @@
     <artifact>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-modules-editor</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-bracesmatching</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
@@ -125,6 +160,36 @@
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-java-lexer</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-java-platform</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-java-project</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-jellytools-ide</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-jellytools-platform</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-jemmy</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-modules-keyring</artifactId>
         <license>GPL v2</license>
     </artifact>
@@ -135,12 +200,27 @@
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-nbjunit</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-modules-options-api</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-modules-parsing-api</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-project-ant</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-project-libraries</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
@@ -166,6 +246,11 @@
     <artifact>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-modules-sampler</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-xml-catalog</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
@@ -275,7 +360,17 @@
     </artifact>
     <artifact>
         <groupId>org.netbeans.external</groupId>
-        <artifactId>swing-layout-1.0.4</artifactId>
+        <artifactId>jemmy-2.3.1.1</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.external</groupId>
+        <artifactId>nb-javac-api</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.external</groupId>
+        <artifactId>resolver-1.2</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
@@ -290,12 +385,27 @@
     </artifact>
     <artifact>
         <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-core-output2</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
         <artifactId>org-netbeans-core-startup</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.modules</groupId>
         <artifactId>org-netbeans-core-ui</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-insane</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-editor-actions</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
@@ -310,7 +420,17 @@
     </artifact>
     <artifact>
         <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-editor-fold-nbui</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
         <artifactId>org-netbeans-modules-editor-settings-storage</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-java-preprocessorbridge</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
@@ -345,172 +465,128 @@
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-modules-editor-bracesmatching</artifactId>
+        <artifactId>org-netbeans-api-intent</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-modules-sendopts</artifactId>
-        <license>GPL v2</license>
-    </artifact>
-    <artifact>
-        <groupId>org.netbeans.modules</groupId>
-        <artifactId>org-netbeans-core-execution</artifactId>
-        <license>GPL v2</license>
-    </artifact>
-    <artifact>
-        <groupId>org.netbeans.modules</groupId>
-        <artifactId>org-netbeans-modules-favorites</artifactId>
-        <license>GPL v2</license>
-    </artifact>
-    <artifact>
-        <groupId>org.netbeans.modules</groupId>
-        <artifactId>org-netbeans-modules-projectui</artifactId>
+        <artifactId>org-netbeans-api-io</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-api-visual</artifactId>
+        <artifactId>org-netbeans-api-progress-nb</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-libs-junit4</artifactId>
+        <artifactId>org-netbeans-api-templates</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-modules-jellytools-platform</artifactId>
+        <artifactId>org-netbeans-libs-asm</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-modules-jemmy</artifactId>
+        <artifactId>org-netbeans-modules-csl-types</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-modules-nbjunit</artifactId>
+        <artifactId>org-netbeans-modules-editor-document</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-editor-settings-lib</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-extexecution</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-extexecution-base</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-java-source-base</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-parsing-indexing</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-modules-projectuiapi-base</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-filesystems-nb</artifactId>
+        <license>GPL v2</license>
+    </artifact>
+    <artifact>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-util-ui</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.external</groupId>
-        <artifactId>jemmy-2.3.1.1</artifactId>
+        <artifactId>nb-javac-impl</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.modules</groupId>
-        <artifactId>org-netbeans-core-output2</artifactId>
+        <artifactId>org-netbeans-core-startup-base</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.modules</groupId>
-        <artifactId>org-netbeans-insane</artifactId>
-        <license>GPL v2</license>
-    </artifact>
-    <artifact>
-        <groupId>org.netbeans.api</groupId>
-        <artifactId>org-netbeans-modules-jellytools-ide</artifactId>
+        <artifactId>org-netbeans-lib-nbjavac</artifactId>
         <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.modules</groupId>
-        <artifactId>org-netbeans-modules-editor-actions</artifactId>
-	<license>GPL v2</license>
+        <artifactId>org-netbeans-libs-javacimpl</artifactId>
+        <license>GPL v2</license>
     </artifact>
     <artifact>
         <groupId>org.netbeans.modules</groupId>
-        <artifactId>org-netbeans-modules-editor-fold-nbui</artifactId>
-	<license>GPL v2</license>
+        <artifactId>org-netbeans-modules-gsf-testrunner</artifactId>
+        <license>GPL v2</license>
     </artifact>
     <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-apache-xml-resolver</artifactId>
-	<license>GPL v2</license>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-gsf-testrunner-ui</artifactId>
+        <license>GPL v2</license>
     </artifact>
     <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-api-xml</artifactId>
-	<license>GPL v2</license>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-parsing-nb</artifactId>
+        <license>GPL v2</license>
     </artifact>
     <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-project-ant</artifactId>
-	<license>GPL v2</license>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-project-spi-intern</artifactId>
+        <license>GPL v2</license>
     </artifact>
     <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-project-libraries</artifactId>
-	<license>GPL v2</license>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-project-spi-intern-impl</artifactId>
+        <license>GPL v2</license>
     </artifact>
     <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-xml-catalog</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.external</groupId>
-	<artifactId>resolver-1.2</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-apache-tools-ant-module</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-api-java</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-libs-javacapi</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-classfile</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-editor-indent-project</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-java-lexer</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-java-platform</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-java-project</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.api</groupId>
-	<artifactId>org-netbeans-modules-java-source</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.external</groupId>
-	<artifactId>nb-javac-api</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.modules</groupId>
-	<artifactId>org-netbeans-modules-java-preprocessorbridge</artifactId>
-	<license>GPL v2</license>
-    </artifact>
-    <artifact>
-	<groupId>org.netbeans.modules</groupId>
-	<artifactId>org-netbeans-modules-options-java</artifactId>
-	<license>GPL v2</license>
+        <groupId>org.netbeans.modules</groupId>
+        <artifactId>org-netbeans-modules-projectapi-nb</artifactId>
+        <license>GPL v2</license>
     </artifact>
 </license-lookup>
+

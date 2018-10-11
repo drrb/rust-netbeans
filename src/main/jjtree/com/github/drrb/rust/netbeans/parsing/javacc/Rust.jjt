@@ -8,7 +8,7 @@ options {
   DEBUG_TOKEN_MANAGER = false;
   ERROR_REPORTING = true;
   JAVA_UNICODE_ESCAPE = false;
-  UNICODE_INPUT = true;
+  UNICODE_INPUT = true; //TODO: JavaCC book recommends against this. Why?
   IGNORE_CASE = false;
   USER_TOKEN_MANAGER = false;
   USER_CHAR_STREAM = true;

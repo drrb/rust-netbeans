@@ -14,20 +14,23 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.drrb.rust.netbeans.test;
+package org.netbeans.modules.csl.api.test;
 
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import sun.awt.HeadlessToolkit;
 
-/**
- *
- *
- */
-public class PrintTestMethods extends TestWatcher {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
 
+class JEditorPaneThatWorksWithHeadlessToolkit extends JEditorPane {
     @Override
-    protected void starting(Description description) {
-        System.err.println("Starting " + description);
+    public Toolkit getToolkit() {
+        Toolkit originalToolkit = super.getToolkit();
+        return new HeadlessToolkit(originalToolkit) {
+            @Override
+            public Clipboard getSystemSelection() throws HeadlessException {
+                return null; // The default implementation raises a HeadlessException in tests.
+            }
+        };
     }
-
 }

@@ -8,7 +8,7 @@ A NetBeans plugin for [Rust](https://www.rust-lang.org).
 
 ## Requirements
 
-* NetBeans 8.0.x (later NetBeans versions coming soon)
+* NetBeans 8.2.x
 * Java 8+
 * Rust
 * Cargo

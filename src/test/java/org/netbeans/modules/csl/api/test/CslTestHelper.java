@@ -1,18 +1,18 @@
-/*
- * Copyright (C) 2015 drrb
+/**
+ * Copyright (C) 2017 drrb
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.netbeans.modules.csl.api.test;
 
@@ -67,6 +67,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         String[] value();
     }
 
+    private boolean runInEventQueueThread = false;
     protected Map<String, ClassPath> classpaths = null;
 
     public static CslTestHelper forLanguage(DefaultLanguageConfig language) {
@@ -100,6 +101,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
                     if (description.getAnnotation(RunInEventQueueThread.class) == null) {
                         base.evaluate();
                     } else {
+                        runInEventQueueThread = true;
                         try {
                             EventQueue.invokeAndWait(new Runnable() {
                                 @Override
@@ -197,8 +199,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
 
     @Override
     protected boolean runInEQ() {
-        // Formatter test needs this (//TODO: should this only be true when we annotate with @RunInEventQueue?)
-        return true;
+        return runInEventQueueThread;
     }
 
     @Override
