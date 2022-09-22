@@ -19,9 +19,6 @@ package com.github.drrb.rust.netbeans.test;
 import java.io.File;
 import java.nio.file.FileSystems;
 
-/**
- *
- */
 public class TestData {
 
     public static File getData(String path) {

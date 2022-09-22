@@ -33,9 +33,9 @@ package org.netbeans.api.editor.mimelookup.test;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.netbeans.api.editor.mimelookup.MimePath;
 import org.netbeans.spi.editor.mimelookup.MimeDataProvider;
 import org.openide.util.Lookup;
@@ -57,7 +57,7 @@ import org.openide.util.lookup.ProxyLookup;
  */
 public final class MockMimeLookup implements MimeDataProvider {
 
-    private static final Map<MimePath, Lkp> MAP = new HashMap<MimePath, Lkp>();
+    private static final Map<MimePath, Lkp> MAP = new ConcurrentHashMap<>();
 
     /**
      * Sets the lookup for <code>mimePath</code> with zero or more delegate lookups.
@@ -66,17 +66,7 @@ public final class MockMimeLookup implements MimeDataProvider {
      * @param lookups The delegate lookups.
      */
     public static void setLookup(MimePath mimePath, Lookup... lookups) {
-        Lkp toUpdate = null;
-
-        synchronized (MAP) {
-            Lkp lkp = MAP.get(mimePath);
-            if (lkp == null) {
-                lkp = new Lkp(lookups);
-                MAP.put(mimePath, lkp);
-            } else {
-                toUpdate = lkp;
-            }
-        }
+        Lkp toUpdate = MAP.computeIfAbsent(mimePath, id -> new Lkp(lookups));
 
         if (toUpdate != null) {
             toUpdate.set(lookups);

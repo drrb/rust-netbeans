@@ -17,27 +17,23 @@
 package com.github.drrb.rust.netbeans.keypress;
 
 import com.github.drrb.rust.netbeans.RustDocument;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.runner.RunWith;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.netbeans.spi.editor.typinghooks.TypedTextInterceptor.Context;
 import org.netbeans.spi.editor.typinghooks.TypedTextInterceptor.MutableContext;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @todo Try to test this with CslTestBase/golden files instead
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(MutableContext.class)
+
 public class RustBracketCompleterTest {
 
     private RustBracketCompleter interceptor;

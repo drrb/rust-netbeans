@@ -16,15 +16,15 @@
  */
 package com.github.drrb.rust.netbeans.project;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.openide.filesystems.FileObject;
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
 import org.netbeans.spi.project.ProjectState;
@@ -32,13 +32,10 @@ import org.netbeans.spi.project.ProjectState;
 /**
  *
  */
-@RunWith(MockitoJUnitRunner.class)
 public class RustProjectFactoryTest {
 
-    @Mock
-    private FileObject projectFolder;
-    @Mock
-    private ProjectState projectState;
+    private FileObject projectFolder = mock(FileObject.class);
+    private ProjectState projectState=mock(ProjectState.class);
     private RustProjectFactory factory;
 
     @Before
@@ -65,7 +62,7 @@ public class RustProjectFactoryTest {
     public void shouldNotLoadAProjectIfItIsntARustProjectDirectory() throws Exception {
         Project project = factory.loadProject(projectFolder, projectState);
 
-        assertNull(project);
+        assertThat(project, is(nullValue()));
     }
 
     @Test
@@ -73,7 +70,7 @@ public class RustProjectFactoryTest {
         projectFolder = aProject();
         Project project = factory.loadProject(projectFolder, projectState);
 
-        assertNotNull(project);
+        assertThat(project, is(not(nullValue())));
     }
 
     @Test
