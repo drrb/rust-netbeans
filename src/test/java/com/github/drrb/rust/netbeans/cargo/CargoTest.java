@@ -16,23 +16,21 @@
  */
 package com.github.drrb.rust.netbeans.cargo;
 
+import static com.github.drrb.rust.netbeans.cargo.Cargo.*;
 import com.github.drrb.rust.netbeans.commandrunner.CommandFuture;
 import com.github.drrb.rust.netbeans.commandrunner.CommandRunner;
 import com.github.drrb.rust.netbeans.commandrunner.HumbleCommandFuture;
 import com.github.drrb.rust.netbeans.commandrunner.Shell;
 import com.github.drrb.rust.netbeans.configuration.RustConfiguration;
 import com.github.drrb.rust.netbeans.project.RustProject;
+import static com.github.drrb.rust.netbeans.test.Matchers.isProcess;
 import com.github.drrb.rust.netbeans.test.TemporaryPreferences;
+import java.io.File;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.io.File;
-
-import static com.github.drrb.rust.netbeans.cargo.Cargo.*;
-import static com.github.drrb.rust.netbeans.test.Matchers.isProcess;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

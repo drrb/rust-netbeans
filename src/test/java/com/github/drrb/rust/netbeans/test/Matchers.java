@@ -1,18 +1,13 @@
 /**
- * Copyright (C) 2017 drrb
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2017 drrb This program is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package com.github.drrb.rust.netbeans.test;
 
@@ -26,7 +21,6 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
 import org.hamcrest.TypeSafeMatcher;
 import org.mockito.ArgumentMatcher;
 import org.netbeans.modules.csl.api.CompletionProposal;
@@ -42,6 +36,7 @@ public class Matchers extends org.hamcrest.Matchers {
 
     public static Matcher<String> matchesRegex(final String regex) {
         return new TypeSafeMatcher<String>() {
+
             @Override
             public boolean matchesSafely(String item) {
                 return item.matches(regex);
@@ -78,6 +73,7 @@ public class Matchers extends org.hamcrest.Matchers {
 
         public <V> Matcher<Map<K, ? extends V>> mappedToValueThat(final Matcher<V> expectedValueMatcher) {
             return new TypeSafeMatcher<Map<K, ? extends V>>() {
+
                 @Override
                 public boolean matchesSafely(Map<K, ? extends V> item) {
                     if (item.containsKey(expectedKey)) {
@@ -101,8 +97,10 @@ public class Matchers extends org.hamcrest.Matchers {
         }
     }
 
-    public static Matcher<StructureItem> structureItem(final String name, final OffsetRange offsetRange, final ElementKind elementKind, final Modifier... modifiers) {
+    public static Matcher<StructureItem> structureItem(final String name, final OffsetRange offsetRange,
+            final ElementKind elementKind, final Modifier... modifiers) {
         return new TypeSafeMatcher<StructureItem>() {
+
             @Override
             public boolean matchesSafely(StructureItem item) {
                 return name.equals(item.getName())
@@ -122,12 +120,14 @@ public class Matchers extends org.hamcrest.Matchers {
         };
     }
 
-    public static CompletionProposalMatcher completionProposal(final String name, final ElementKind kind, final Modifier... modifiers) {
+    public static CompletionProposalMatcher completionProposal(final String name, final ElementKind kind,
+            final Modifier... modifiers) {
         return new CompletionProposalMatcher(name, kind, modifiers);
     }
 
     public static Matcher<ImageIcon> hasDimensions(final int width, final int height) {
         return new TypeSafeMatcher<ImageIcon>() {
+
             @Override
             public boolean matchesSafely(ImageIcon item) {
                 return item.getIconWidth() == width
@@ -144,8 +144,11 @@ public class Matchers extends org.hamcrest.Matchers {
     public static class CompletionProposalMatcher extends TypeSafeMatcher<CompletionProposal> {
 
         private final String name;
+
         private final ElementKind kind;
+
         private final Modifier[] modifiers;
+
         private Matcher<? super ImageIcon> iconMatcher = is(nullValue());
 
         public CompletionProposalMatcher(String name, ElementKind kind, Modifier[] modifiers) {
@@ -180,9 +183,12 @@ public class Matchers extends org.hamcrest.Matchers {
         return new ProcessMatcher(commandParts);
     }
 
-    public static class ProcessMatcher extends ArgumentMatcher<ProcessBuilder> {
+    public static class ProcessMatcher implements ArgumentMatcher<ProcessBuilder> {
+
         private final List<String> expectedCommandParts;
+
         private final Map<String, String> expectedEnvVars = new HashMap<>();
+
         private Matcher<? super File> expectedWorkingDir = anything();
 
         private ProcessMatcher(String... commandParts) {
@@ -200,8 +206,7 @@ public class Matchers extends org.hamcrest.Matchers {
         }
 
         @Override
-        public boolean matches(Object argument) {
-            ProcessBuilder pb = (ProcessBuilder) argument;
+        public boolean matches(ProcessBuilder pb) {
             if (!pb.command().equals(expectedCommandParts)) {
                 System.out.println("Commands differ");
                 System.out.println("expected = " + expectedCommandParts);
@@ -227,5 +232,4 @@ public class Matchers extends org.hamcrest.Matchers {
             return true;
         }
     }
-
 }

@@ -1,22 +1,30 @@
 /**
- * Copyright (C) 2017 drrb
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2017 drrb This program is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.netbeans.modules.csl.api.test;
 
 import com.google.common.base.Strings;
+import java.awt.*;
+import java.io.File;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import javax.swing.*;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -38,36 +46,26 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.nodes.Node;
 
-import javax.swing.*;
-import javax.swing.text.Caret;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.Document;
-import java.awt.*;
-import java.io.File;
-import java.lang.annotation.Retention;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 /**
  *
  */
 public class CslTestHelper extends CslTestBase implements TestRule {
+
     @Retention(RUNTIME)
     public @interface RunInEventQueueThread {
 
     }
+
     @Retention(RUNTIME)
     public @interface Classpath {
+
         String id();
+
         String[] value();
     }
 
     private boolean runInEventQueueThread = false;
+
     protected Map<String, ClassPath> classpaths = null;
 
     public static CslTestHelper forLanguage(DefaultLanguageConfig language) {
@@ -75,6 +73,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     }
 
     private final DefaultLanguageConfig language;
+
     public CslTestHelper(DefaultLanguageConfig language) {
         super("");
         this.language = language;
@@ -83,6 +82,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     @Override
     public Statement apply(final Statement base, final Description description) {
         return new Statement() {
+
             @Override
             public void evaluate() throws Throwable {
                 Classpath definedClasspath = description.getAnnotation(Classpath.class);
@@ -104,6 +104,7 @@ public class CslTestHelper extends CslTestBase implements TestRule {
                         runInEventQueueThread = true;
                         try {
                             EventQueue.invokeAndWait(new Runnable() {
+
                                 @Override
                                 public void run() {
                                     try {
@@ -157,11 +158,16 @@ public class CslTestHelper extends CslTestBase implements TestRule {
         for (String mimeRoot : mimeRoots) {
             String mimeFilePath = "Editors/" + mimePath.getPath() + mimeRoot;
             FileObject mimeDir = FileUtil.getConfigFile(mimeFilePath);
-            assertNotNull(String.format("Tried to load files from config dir '%s', but it did not exist.", mimeFilePath), mimeDir);
+            assertNotNull(String.format("Tried to load files from config dir '%s', but it did not exist.",
+                    mimeFilePath), mimeDir);
             FileObject[] mimeFiles = mimeDir.getChildren();
             for (FileObject mimeFile : mimeFiles) {
                 if (mimeFile.isData()) {
-                    mimeObjects.add(FileUtil.getConfigObject(mimeFile.getPath(), Object.class));
+                    final Object configObject = FileUtil.getConfigObject(mimeFile.getPath(), Object.class);
+                    if (configObject != null) {
+                        // config object at path Editors/org-netbeans-modules-java-source-indexing-JavaBinaryIndexer$Factory-register.instance is null. why?
+                        mimeObjects.add(configObject);
+                    }
                 }
             }
         }
@@ -193,7 +199,8 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     }
 
     @Override
-    protected void configureIndenters(Document document, Formatter formatter, boolean indentOnly, String mimeType) {
+    protected void configureIndenters(Document document, Formatter formatter, boolean indentOnly,
+            String mimeType) {
         // Parent implementation messes with the MimeLookup, so don't call it
     }
 
@@ -214,7 +221,8 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     }
 
     @Override
-    public void assertDescriptionMatches(String relFilePath, String description, boolean includeTestName, String ext) throws Exception {
+    public void assertDescriptionMatches(String relFilePath, String description, boolean includeTestName,
+            String ext) throws Exception {
         super.assertDescriptionMatches(relFilePath, description, includeTestName, ext);
     }
 
@@ -285,7 +293,9 @@ public class CslTestHelper extends CslTestBase implements TestRule {
     }
 
     protected static class TreeView {
+
         private final Node root;
+
         private StringBuilder view;
 
         public TreeView(Node root) {
