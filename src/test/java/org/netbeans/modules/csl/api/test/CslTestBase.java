@@ -2350,7 +2350,7 @@ public abstract class CslTestBase extends NbTestCase {
             }
         }
 
-        JEditorPane pane = new JEditorPane();
+        JEditorPane pane = new JEditorPaneThatWorksWithHeadlessToolkit();
         pane.setContentType(getPreferredMimeType());
         final NbEditorKit kit = ((NbEditorKit)getEditorKit(getPreferredMimeType()));
 

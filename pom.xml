@@ -540,7 +540,7 @@
                         noverify: Fix for JDK bug with PowerMock
                     -->
                     <argLine>
-                        -Djava.awt.headless=false
+                        -Djava.awt.headless=true
                         -Djna.nosys=true
                         --add-opens=java.desktop/javax.swing.text=ALL-UNNAMED
                         --add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED
